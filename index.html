@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lámpara · Curso bíblico diario</title>
+<meta name="description" content="Aprende la Biblia cada día con preguntas, rachas y juegos en familia. Texto: Reina-Valera 1960.">
+<meta name="theme-color" content="#2B57A7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Figtree:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF0F6; --surface:#FFFFFF; --surface2:#F5F7FB; --ink:#16223F; --muted:#56627F; --line:#D3D9E8;
+  --brand:#2B57A7; --brand-d:#1D3F7E; --on-brand:#FFFFFF;
+  --good:#1F6B3C; --good-bg:#DCEFE3; --bad:#A93325; --bad-bg:#F8E0DC;
+  --flame:#D9780A; --flame-bg:#FCEBD3; --gold:#B8862B;
+  --serif:'Fraunces',Georgia,'Times New Roman',serif;
+  --sans:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1526; --surface:#172038; --surface2:#1D2846; --ink:#E9EDF7; --muted:#A0ACC9; --line:#2C3860;
+    --brand:#3F6BC4; --brand-d:#2A4B8F; --on-brand:#FFFFFF;
+    --good:#6CCB90; --good-bg:#16342A; --bad:#F0877A; --bad-bg:#3B2020;
+    --flame:#F5A63A; --flame-bg:#3A2A14; --gold:#E0B75A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1526; --surface:#172038; --surface2:#1D2846; --ink:#E9EDF7; --muted:#A0ACC9; --line:#2C3860;
+  --brand:#3F6BC4; --brand-d:#2A4B8F; --on-brand:#FFFFFF;
+  --good:#6CCB90; --good-bg:#16342A; --bad:#F0877A; --bad-bg:#3B2020;
+  --flame:#F5A63A; --flame-bg:#3A2A14; --gold:#E0B75A;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+svg{display:block}
+#app{max-width:560px;margin:0 auto;padding:0 16px 110px}
+
+/* barra superior */
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.01em}
+.brand svg{width:30px;height:30px;color:var(--brand)}
+.chips{display:flex;gap:8px;align-items:center}
+.chip{display:flex;align-items:center;gap:5px;font-weight:800;font-size:15px;padding:5px 10px;border-radius:999px;background:var(--surface);border:2px solid var(--line)}
+.chip svg{width:18px;height:18px}
+.chip.streak.on{color:var(--flame);border-color:var(--flame);background:var(--flame-bg)}
+.chip.streak.risk{color:var(--flame);border-style:dashed;border-color:var(--flame)}
+.chip.streak.off{color:var(--muted)}
+.chip.shield{color:var(--brand)}
+.chip.xp{color:var(--gold)}
+
+/* tarjetas */
+.card{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:16px;margin:0 0 14px}
+.goal{display:flex;gap:14px;align-items:center}
+.ring{width:72px;height:72px;flex:none;position:relative}
+.ring svg{width:72px;height:72px}
+.ring circle{fill:none;stroke-width:7}
+.ring .rbg{stroke:var(--line)}
+.ring .rfg{stroke:var(--flame);stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:15px}
+.goal h3{margin:0 0 2px;font-size:17px}
+.goal p{margin:0;color:var(--muted);font-size:14px}
+.week{display:flex;justify-content:space-between;margin-top:12px}
+.day{display:grid;justify-items:center;gap:4px;font-size:12px;color:var(--muted);font-weight:700}
+.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:transparent}
+.dot svg{width:14px;height:14px}
+.dot.on{background:var(--flame);border-color:var(--flame);color:#fff}
+.dot.today{border-color:var(--brand)}
+.votd{background:var(--surface);}
+.votd small{color:var(--muted);font-weight:700;font-size:13px}
+.votd q{display:block;quotes:none;font-family:var(--serif);font-size:19px;line-height:1.55;margin:6px 0 6px}
+.votd cite{font-style:normal;font-weight:800;color:var(--brand);font-size:14px}
+.banner{background:var(--flame-bg);border:2px solid var(--flame);color:var(--ink);border-radius:14px;padding:10px 14px;margin:0 0 14px;font-size:14px}
+
+/* ruta */
+.unit{margin:26px 0 8px}
+.unit-h{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--u);color:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 4px 0 rgba(0,0,0,.22)}
+.unit-h h2{margin:0;font-family:var(--serif);font-weight:600;font-size:21px;letter-spacing:-.01em}
+.unit-h p{margin:0;font-size:14px;opacity:.92}
+.count{font-weight:800;background:rgba(255,255,255,.2);border-radius:999px;padding:3px 10px;font-size:14px}
+.path{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 0 6px}
+.stop{display:grid;justify-items:center;gap:6px;transform:translateX(var(--off,0px));max-width:200px}
+.node{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;background:var(--u);color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.25);transition:transform .08s,box-shadow .08s}
+.node svg{width:30px;height:30px}
+.node:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.node.locked{background:var(--line);color:var(--muted);box-shadow:0 6px 0 rgba(0,0,0,.08);cursor:not-allowed}
+.node.current{outline:4px solid color-mix(in srgb,var(--u) 35%,transparent);outline-offset:4px}
+.stop span{font-size:13px;font-weight:700;text-align:center;color:var(--muted)}
+.stop.cur span{color:var(--ink)}
+.start-tip{background:var(--ink);color:var(--bg);font-weight:800;font-size:13px;padding:3px 10px;border-radius:10px}
+
+/* pestañas */
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:2px solid var(--line);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:6}
+.tabs>div{display:flex;width:100%;max-width:560px;gap:6px}
+.tab{flex:1;display:grid;justify-items:center;gap:2px;padding:6px 4px;border-radius:12px;font-size:12px;font-weight:700;color:var(--muted)}
+.tab svg{width:26px;height:26px}
+.tab.on{color:var(--brand);background:var(--surface2)}
+
+/* botones */
+.btn{display:block;width:100%;background:var(--brand);color:var(--on-brand);font-weight:800;font-size:17px;padding:14px 18px;border-radius:14px;box-shadow:0 4px 0 var(--brand-d);text-align:center;transition:transform .08s,box-shadow .08s}
+.btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--brand-d)}
+.btn:disabled{background:var(--line);color:var(--muted);box-shadow:none;cursor:not-allowed}
+.btn.ghost{background:var(--surface);color:var(--brand);border:2px solid var(--line);box-shadow:0 3px 0 var(--line)}
+.btn.good{background:var(--good);box-shadow:0 4px 0 rgba(0,0,0,.25);color:#fff}
+.btn.bad{background:var(--bad);box-shadow:0 4px 0 rgba(0,0,0,.25);color:#fff}
+:root[data-theme="dark"] .btn.good,:root[data-theme="dark"] .btn.bad{color:#0E1526}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.good,:root:not([data-theme="light"]) .btn.bad{color:#0E1526}}
+
+/* progreso */
+h1.page{font-family:var(--serif);font-weight:600;font-size:28px;margin:10px 0 14px;letter-spacing:-.01em}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 14px}
+.stat b{display:block;font-size:24px;font-family:var(--serif)}
+.stat span{color:var(--muted);font-size:14px}
+.seg{display:flex;gap:8px;margin-top:10px}
+.seg button{flex:1;padding:10px;border-radius:12px;border:2px solid var(--line);font-weight:800;background:var(--surface)}
+.seg button.on{border-color:var(--brand);color:var(--brand);background:var(--surface2)}
+.ach{display:grid;gap:10px}
+.a{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;border:2px solid var(--line);background:var(--surface)}
+.a .ico{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--muted);flex:none}
+.a .ico svg{width:22px;height:22px}
+.a.on .ico{background:var(--gold);color:#fff}
+.a b{display:block}
+.a small{color:var(--muted)}
+.a:not(.on){opacity:.7}
+.list{display:grid;gap:10px}
+.li{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 14px}
+.li cite{font-style:normal;font-weight:800;color:var(--brand);font-size:14px}
+.li p{margin:4px 0 0;font-family:var(--serif);font-size:16px;line-height:1.55}
+.muted{color:var(--muted)}
+.foot{color:var(--muted);font-size:12px;margin:26px 0 0;line-height:1.5}
+.link-danger{color:var(--bad);font-weight:700;padding:10px 0;text-align:left}
+
+/* lección */
+.overlay{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.overlay[hidden],.modal[hidden]{display:none}
+.lh{display:flex;align-items:center;gap:14px;padding:14px 16px;max-width:640px;width:100%;margin:0 auto}
+.x{width:36px;height:36px;display:grid;place-items:center;color:var(--muted);border-radius:10px}
+.x svg{width:24px;height:24px}
+.bar{flex:1;height:14px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--good);border-radius:99px;transition:width .35s ease}
+.lb{flex:1;overflow:auto;padding:8px 16px 24px;max-width:640px;width:100%;margin:0 auto}
+.prompt{font-family:var(--serif);font-size:24px;line-height:1.3;margin:10px 0 16px;letter-spacing:-.01em}
+.verse{margin:0 0 18px;padding:14px 16px;border-left:5px solid var(--brand);background:var(--surface);border-radius:0 14px 14px 0;font-family:var(--serif);font-size:20px;line-height:1.65}
+.blank{display:inline-block;min-width:76px;text-align:center;border-bottom:3px solid var(--brand);color:var(--brand);font-weight:600;padding:0 4px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;background:var(--surface);border:2px solid var(--line);box-shadow:0 3px 0 var(--line);border-radius:14px;padding:13px 14px;font-weight:600;font-size:17px}
+.opt kbd{font:inherit;font-size:13px;font-weight:800;border:2px solid var(--line);border-radius:8px;width:26px;height:26px;display:grid;place-items:center;color:var(--muted);flex:none}
+.opt.sel{border-color:var(--brand);background:var(--surface2);box-shadow:0 3px 0 var(--brand)}
+.opt.sel kbd{border-color:var(--brand);color:var(--brand)}
+.opt.good{border-color:var(--good);background:var(--good-bg);box-shadow:0 3px 0 var(--good)}
+.opt.bad{border-color:var(--bad);background:var(--bad-bg);box-shadow:0 3px 0 var(--bad)}
+.opt:disabled{cursor:default}
+.answer{min-height:64px;border-top:2px solid var(--line);border-bottom:2px solid var(--line);padding:10px 0;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;align-content:flex-start}
+.bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.w{background:var(--surface);border:2px solid var(--line);box-shadow:0 3px 0 var(--line);border-radius:12px;padding:8px 12px;font-family:var(--serif);font-size:18px}
+.w.used{visibility:hidden}
+.answer.good .w{border-color:var(--good);background:var(--good-bg)}
+.answer.bad .w{border-color:var(--bad);background:var(--bad-bg)}
+.lf{padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));border-top:2px solid var(--line);background:var(--surface)}
+.lf .in{max-width:640px;margin:0 auto}
+.lf.good{background:var(--good-bg);border-color:var(--good)}
+.lf.bad{background:var(--bad-bg);border-color:var(--bad)}
+.lf h4{margin:0 0 4px;font-size:20px;font-family:var(--serif)}
+.lf.good h4{color:var(--good)}.lf.bad h4{color:var(--bad)}
+.lf .fv{margin:0 0 10px;font-size:15px;line-height:1.5}
+.fbox{max-height:38vh;overflow:auto;margin-bottom:12px}
+.nota{font-size:14px;line-height:1.5;padding:9px 12px;border-radius:12px;background:var(--surface);border:2px solid var(--line);color:var(--ink);margin:0 0 4px}
+.nota b{color:var(--brand)}
+.retry{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--flame);background:var(--flame-bg);border:2px solid var(--flame);border-radius:999px;padding:4px 12px 4px 8px;margin:6px 0 4px}
+.retry svg{width:18px;height:18px}
+.intro{padding-top:14px}
+.intro .tag{display:inline-block;font-size:13px;font-weight:800;color:var(--brand);background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:3px 12px;margin-bottom:12px}
+.intro h2{font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.2;margin:0 0 12px;letter-spacing:-.01em}
+.intro p{font-family:var(--serif);font-size:19px;line-height:1.65;margin:0 0 14px}
+.lf .fv em{font-family:var(--serif);font-style:normal;font-size:16px}
+.lf .fv cite{font-style:normal;font-weight:800}
+@keyframes up{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.lf.good .in,.lf.bad .in{animation:up .22s ease-out}
+
+/* resultado */
+.res{text-align:center;padding-top:22px}
+.res h1{font-family:var(--serif);font-weight:600;font-size:32px;margin:12px 0 4px;letter-spacing:-.01em}
+.res .big{width:96px;height:96px;margin:0 auto;color:var(--flame)}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.res .big{animation:pop .5s ease-out}
+.rs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.rs div{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 6px}
+.rs b{display:block;font-size:22px;font-family:var(--serif)}
+.rs span{font-size:13px;color:var(--muted)}
+.note{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:10px 14px;margin:10px 0;text-align:left;font-size:15px}
+.note.fl{border-color:var(--flame);background:var(--flame-bg)}
+.note b{font-weight:800}
+.vs{text-align:left;margin-top:16px}
+.vs h3{font-size:16px;margin:0 0 8px}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(10,15,30,.55);z-index:40;display:grid;place-items:center;padding:20px}
+.modal .box{background:var(--surface);border-radius:20px;padding:20px;max-width:380px;width:100%;display:grid;gap:12px}
+.modal h3{margin:0;font-family:var(--serif);font-size:22px}
+.modal p{margin:0;color:var(--muted)}
+
+/* juegos en grupo */
+.gcard{display:grid;gap:4px;text-align:left;width:100%;background:var(--surface);border:2px solid var(--line);box-shadow:0 3px 0 var(--line);border-radius:16px;padding:14px 16px}
+.gcard b{font-family:var(--serif);font-size:20px;font-weight:600}
+.gcard span{color:var(--muted);font-size:15px}
+.gcard em{font-style:normal;font-weight:800;color:var(--brand);font-size:13px}
+.inp{width:100%;font:inherit;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper button{width:46px;height:46px;border-radius:12px;border:2px solid var(--line);background:var(--surface);font-size:24px;font-weight:800}
+.stepper b{font-size:24px;min-width:30px;text-align:center;font-family:var(--serif)}
+.names{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.sec{margin:0 0 22px}
+.sec h3{margin:0 0 8px;font-size:16px}
+.glabel{font-weight:800;color:var(--ink);margin:6px 0 10px}
+.glabel span{color:var(--muted);font-weight:600}
+.gbig{font-size:24px;line-height:1.55}
+.vref{display:block;font-family:var(--sans);font-style:normal;font-size:14px;font-weight:800;color:var(--brand);margin-top:8px}
+.gq{font-family:var(--serif);font-size:26px;line-height:1.4;margin:6px 0 14px}
+.gans{border:2px solid var(--good);background:var(--good-bg);border-radius:14px;padding:12px 14px;margin-top:14px}
+.gans b{display:block;font-family:var(--serif);font-size:26px;font-weight:600}
+.gans span{font-weight:800;color:var(--good)}
+.gans p{margin:8px 0 0;font-family:var(--serif);font-size:17px;line-height:1.55}
+.sb{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.sbp{font-size:13px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:2px 10px}
+.clues{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.clues li{background:var(--surface);border-left:5px solid var(--brand);border-radius:0 14px 14px 0;padding:10px 14px;font-family:var(--serif);font-size:21px;line-height:1.5}
+.clues li span{display:block;font-family:var(--sans);font-size:13px;font-weight:800;color:var(--muted)}
+.clues cite{display:block;font-family:var(--sans);font-style:normal;font-size:13px;font-weight:800;color:var(--brand)}
+.who{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.pl{padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--surface);font-weight:800}
+.pl.on{border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.row2{display:flex;gap:10px;margin-bottom:10px}
+.row2 .btn{flex:1}
+.rk{display:flex;justify-content:space-between;align-items:center}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top" id="top"></header>
+  <main id="main"></main>
+</div>
+<nav class="tabs" id="tabs" aria-label="Secciones"><div></div></nav>
+<div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
+<div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
+<div id="modal" class="modal" hidden></div>
+
+<script>
+/* ============================================================
+   CONTENIDO — Texto bíblico: Reina-Valera 1960
+   Cada versículo: {r: referencia, t: texto}
+   Para agregar contenido: añade lecciones a UNITS siguiendo el mismo formato.
+   Preguntas manuales: [pregunta, respuesta correcta, [3 incorrectas], referencia]
+   ============================================================ */
+const COLORS=['#2B57A7','#23807B','#7B4A93','#5E7F2A','#A86A22','#8C3B52','#3A6E8F','#1F6B3C','#8A4B2E','#5A5AA8'];
+const UNITS=[
+ {title:'La creación',sub:'Génesis 1–2',lessons:[
+  {title:'Principio y luz',verses:[
+    {r:'Génesis 1:1',t:"En el principio creó Dios los cielos y la tierra."},
+    {r:'Génesis 1:2',t:"Y la tierra estaba desordenada y vacía, y las tinieblas estaban sobre la faz del abismo, y el Espíritu de Dios se movía sobre la faz de las aguas."},
+    {r:'Génesis 1:3',t:"Y dijo Dios: Sea la luz; y fue la luz."},
+    {r:'Génesis 1:4',t:"Y vio Dios que la luz era buena; y separó Dios la luz de las tinieblas."},
+    {r:'Génesis 1:5',t:"Y llamó Dios a la luz Día, y a las tinieblas llamó Noche. Y fue la tarde y la mañana un día."}],
+   qs:[
+    ["¿Qué creó Dios en el principio?","Los cielos y la tierra",["La luz y las tinieblas","Al hombre","Los peces del mar"],"Génesis 1:1"],
+    ["¿Cómo llamó Dios a la luz?","Día",["Noche","Tarde","Mañana"],"Génesis 1:5"]]},
+  {title:'Cielos, tierra y mares',verses:[
+    {r:'Génesis 1:6',t:"Luego dijo Dios: Haya expansión en medio de las aguas, y separe las aguas de las aguas."},
+    {r:'Génesis 1:8',t:"Y llamó Dios a la expansión Cielos. Y fue la tarde y la mañana el día segundo."},
+    {r:'Génesis 1:9',t:"Dijo también Dios: Júntense las aguas que están debajo de los cielos en un lugar, y descúbrase lo seco. Y fue así."},
+    {r:'Génesis 1:10',t:"Y llamó Dios a lo seco Tierra, y a la reunión de las aguas llamó Mares. Y vio Dios que era bueno."},
+    {r:'Génesis 1:11',t:"Después dijo Dios: Produzca la tierra hierba verde, hierba que dé semilla; árbol de fruto que dé fruto según su género, que su semilla esté en él, sobre la tierra. Y fue así."}],
+   qs:[
+    ["¿Cómo llamó Dios a la expansión?","Cielos",["Aguas","Tierra","Mares"],"Génesis 1:8"],
+    ["¿Cómo llamó Dios a lo seco?","Tierra",["Cielos","Mares","Expansión"],"Génesis 1:10"],
+    ["Según Génesis 1:11, ¿qué ordenó Dios que produjera la tierra?","Hierba verde y árboles de fruto",["Aves y peces","Estrellas y lumbreras","Bestias y serpientes"],"Génesis 1:11"]]},
+  {title:'Lumbreras, aves y peces',verses:[
+    {r:'Génesis 1:14',t:"Dijo luego Dios: Haya lumbreras en la expansión de los cielos para separar el día de la noche; y sirvan de señales para las estaciones, para días y años,"},
+    {r:'Génesis 1:16',t:"E hizo Dios las dos grandes lumbreras; la lumbrera mayor para que señorease en el día, y la lumbrera menor para que señorease en la noche; hizo también las estrellas."},
+    {r:'Génesis 1:20',t:"Dijo Dios: Produzcan las aguas seres vivientes, y aves que vuelen sobre la tierra, en la abierta expansión de los cielos."},
+    {r:'Génesis 1:21',t:"Y creó Dios los grandes monstruos marinos, y todo ser viviente que se mueve, que las aguas produjeron según su género, y toda ave alada según su especie. Y vio Dios que era bueno."},
+    {r:'Génesis 1:22',t:"Y Dios los bendijo, diciendo: Fructificad y multiplicaos, y llenad las aguas en los mares, y multiplíquense las aves en la tierra."}],
+   qs:[
+    ["Según Génesis 1:14, ¿para qué dijo Dios que hubiera lumbreras en la expansión?","Para separar el día de la noche",["Para dar calor a los animales","Para hacer crecer las plantas","Para marcar el camino de los ángeles"],"Génesis 1:14"],
+    ["¿Qué hizo Dios además de las dos grandes lumbreras?","Las estrellas",["Las nubes","Los ríos","Los montes"],"Génesis 1:16"],
+    ["¿Qué les dijo Dios a los seres vivientes de las aguas y del cielo al bendecirlos?","Fructificad y multiplicaos",["Alabadme y servidme","Guardad mi ley","Señoread sobre el hombre"],"Génesis 1:22"]]},
+  {title:'A imagen de Dios',verses:[
+    {r:'Génesis 1:26',t:"Entonces dijo Dios: Hagamos al hombre a nuestra imagen, conforme a nuestra semejanza; y señoree en los peces del mar, en las aves de los cielos, en las bestias, en toda la tierra, y en todo animal que se arrastra sobre la tierra."},
+    {r:'Génesis 1:27',t:"Y creó Dios al hombre a su imagen, a imagen de Dios lo creó; varón y hembra los creó."},
+    {r:'Génesis 1:28',t:"Y los bendijo Dios, y les dijo: Fructificad y multiplicaos; llenad la tierra, y sojuzgadla, y señoread en los peces del mar, en las aves de los cielos, y en todas las bestias que se mueven sobre la tierra."},
+    {r:'Génesis 1:29',t:"Y dijo Dios: He aquí que os he dado toda planta que da semilla, que está sobre toda la tierra, y todo árbol en que hay fruto y que da semilla; os serán para comer."}],
+   qs:[
+    ["¿A imagen de quién creó Dios al hombre?","A imagen de Dios",["A imagen de los ángeles","A imagen de la tierra","A imagen de los animales"],"Génesis 1:27","Ser imagen de Dios da al ser humano un valor único. Por eso la vida humana es sagrada (Génesis 9:6)."],
+    ["Según Génesis 1:26, ¿sobre quiénes dijo Dios que señoreara el hombre?","Sobre los peces, las aves, las bestias y todo animal",["Sobre los ángeles","Sobre otros hombres","Sobre las estrellas"],"Génesis 1:26"],
+    ["Según Génesis 1:28, ¿qué les dijo Dios al bendecirlos?","Fructificad y multiplicaos; llenad la tierra",["Guardad el huerto","Edificad una ciudad","Apartaos de los animales"],"Génesis 1:28"]]},
+  {title:'El hombre y el reposo',verses:[
+    {r:'Génesis 1:31',t:"Y vio Dios todo lo que había hecho, y he aquí que era bueno en gran manera. Y fue la tarde y la mañana el día sexto."},
+    {r:'Génesis 2:2',t:"Y acabó Dios en el día séptimo la obra que hizo; y reposó el día séptimo de toda la obra que hizo."},
+    {r:'Génesis 2:3',t:"Y bendijo Dios al día séptimo, y lo santificó, porque en él reposó de toda la obra que había hecho en la creación."},
+    {r:'Génesis 2:7',t:"Entonces Jehová Dios formó al hombre del polvo de la tierra, y sopló en su nariz aliento de vida, y fue el hombre un ser viviente."}],
+   qs:[
+    ["¿De qué formó Jehová Dios al hombre?","Del polvo de la tierra",["De agua","De una roca","De la luz"],"Génesis 2:7"],
+    ["¿Qué hizo Dios el día séptimo?","Reposó de toda la obra que hizo",["Creó al hombre","Separó la luz de las tinieblas","Formó los animales"],"Génesis 2:2"],
+    ["¿Cómo vio Dios todo lo que había hecho?","Bueno en gran manera",["Perfecto y sin cambio","Digno de reposo","Grande y santo"],"Génesis 1:31"]]},
+  {title:'El huerto del Edén',verses:[
+    {r:'Génesis 2:8',t:"Y Jehová Dios plantó un huerto en Edén, al oriente; y puso allí al hombre que había formado."},
+    {r:'Génesis 2:9',t:"Y Jehová Dios hizo nacer de la tierra todo árbol delicioso a la vista, y bueno para comer; también el árbol de vida en medio del huerto, y el árbol de la ciencia del bien y del mal."},
+    {r:'Génesis 2:15',t:"Tomó, pues, Jehová Dios al hombre, y lo puso en el huerto de Edén, para que lo labrara y lo guardase."},
+    {r:'Génesis 2:16-17',t:"Y mandó Jehová Dios al hombre, diciendo: De todo árbol del huerto podrás comer; mas del árbol de la ciencia del bien y del mal no comerás; porque el día que de él comieres, ciertamente morirás."}],
+   qs:[
+    ["¿Dónde plantó Jehová Dios un huerto?","En Edén, al oriente",["En Canaán, al norte","En el monte Sinaí","En Egipto, al sur"],"Génesis 2:8"],
+    ["¿Para qué puso Dios al hombre en el huerto?","Para que lo labrara y lo guardase",["Para que descansara","Para que construyera un templo","Para que pusiera nombre a las estrellas"],"Génesis 2:15"],
+    ["¿De qué árbol mandó Dios que el hombre no comiera?","Del árbol de la ciencia del bien y del mal",["Del árbol de la vida","De un árbol de higos","De todo árbol del huerto"],"Génesis 2:16-17"],
+    ["Según Génesis 2:17, ¿qué pasaría el día que el hombre comiera de ese árbol?","Ciertamente moriría",["Se le abrirían los ojos","Sería como Dios","Sería expulsado al instante"],"Génesis 2:16-17"]]},
+  {title:'La mujer y el matrimonio',verses:[
+    {r:'Génesis 2:18',t:"Y dijo Jehová Dios: No es bueno que el hombre esté solo; le haré ayuda idónea para él."},
+    {r:'Génesis 2:22',t:"Y de la costilla que Jehová Dios tomó del hombre, hizo una mujer, y la trajo al hombre."},
+    {r:'Génesis 2:24',t:"Por tanto, dejará el hombre a su padre y a su madre, y se unirá a su mujer, y serán una sola carne."},
+    {r:'Génesis 2:25',t:"Y estaban ambos desnudos, Adán y su mujer, y no se avergonzaban."}],
+   qs:[
+    ["Según Génesis 2:18, ¿qué dijo Jehová Dios que no era bueno?","Que el hombre esté solo",["Que el hombre trabaje","Que el hombre duerma","Que el hombre esté en el huerto"],"Génesis 2:18"],
+    ["¿De qué tomó Jehová Dios para hacer a la mujer?","De una costilla del hombre",["Del polvo de la tierra","De la luz del día","De una nube"],"Génesis 2:22"],
+    ["Según Génesis 2:24, ¿qué serán el hombre y su mujer?","Una sola carne",["Un solo espíritu","Dos casas unidas","Una sola familia"],"Génesis 2:24"],
+    ["Según Génesis 2:25, ¿cómo estaban Adán y su mujer?","Desnudos, y no se avergonzaban",["Vestidos de pieles","Escondidos entre los árboles","Cubiertos de hojas"],"Génesis 2:25"]]}
+ ]},
+ {title:'La caída',sub:'Génesis 3 y sus consecuencias',lessons:[
+  {title:'La serpiente y la pregunta',verses:[
+    {r:'Génesis 3:1',t:"Pero la serpiente era astuta, más que todos los animales del campo que Jehová Dios había hecho; la cual dijo a la mujer: ¿Conque Dios os ha dicho: No comáis de todo árbol del huerto?"},
+    {r:'Génesis 3:2-3',t:"Y la mujer respondió a la serpiente: Del fruto de los árboles del huerto podemos comer; pero del fruto del árbol que está en medio del huerto dijo Dios: No comeréis de él, ni le tocaréis, para que no muráis."},
+    {r:'Génesis 3:4-5',t:"Entonces la serpiente dijo a la mujer: No moriréis; sino que sabe Dios que el día que comáis de él, serán abiertos vuestros ojos, y seréis como Dios, sabiendo el bien y el mal."}],
+   qs:[
+    ["Según Génesis 3:1, ¿cómo era la serpiente?","Astuta, más que todos los animales del campo",["Débil, entre los animales del campo","Sabia, como los ángeles","Mansa, como las ovejas"],"Génesis 3:1","Todo empieza con una duda: «¿Conque Dios os ha dicho…?». La serpiente cuestiona lo que Dios dijo."],
+    ["Según Génesis 3:3, ¿qué pasaría si comían del árbol que estaba en medio del huerto?","Morirían",["Serían expulsados","Serían como Dios","Perderían el huerto"],"Génesis 3:2-3"],
+    ["Según Génesis 3:4, ¿qué le dijo la serpiente a la mujer?","No moriréis",["Moriréis ese mismo día","Dios os ama","Comed y viviréis para siempre"],"Génesis 3:4-5"],
+    ["Según Génesis 3:5, ¿qué prometió la serpiente que serían?","Como Dios, sabiendo el bien y el mal",["Reyes sobre toda la tierra","Inmortales en el huerto","Ángeles servidores de Dios"],"Génesis 3:4-5"]]},
+  {title:'Comieron',verses:[
+    {r:'Génesis 3:6',t:"Y vio la mujer que el árbol era bueno para comer, y que era agradable a los ojos, y árbol codiciable para alcanzar la sabiduría; y tomó de su fruto, y comió; y dio también a su marido, el cual comió así como ella."},
+    {r:'Génesis 3:7',t:"Entonces fueron abiertos los ojos de ambos, y conocieron que estaban desnudos; entonces cosieron hojas de higuera, y se hicieron delantales."},
+    {r:'Génesis 3:8',t:"Y oyeron la voz de Jehová Dios que se paseaba en el huerto, al aire del día; y el hombre y su mujer se escondieron de la presencia de Jehová Dios entre los árboles del huerto."}],
+   qs:[
+    ["Según Génesis 3:6, ¿a quién dio también la mujer del fruto?","A su marido",["A la serpiente","A sus hijos","A los animales"],"Génesis 3:6"],
+    ["Según Génesis 3:7, ¿qué conocieron cuando fueron abiertos sus ojos?","Que estaban desnudos",["Que Dios los había abandonado","Que habían sido engañados","Que el árbol era bueno"],"Génesis 3:7"],
+    ["Según Génesis 3:7, ¿qué se hicieron con hojas de higuera?","Delantales",["Techos","Coronas","Cestas"],"Génesis 3:7"],
+    ["Según Génesis 3:8, ¿qué hicieron el hombre y su mujer al oír la voz de Jehová Dios?","Se escondieron entre los árboles",["Corrieron a su encuentro","Se postraron a orar","Salieron del huerto"],"Génesis 3:8"]]},
+  {title:'¿Dónde estás tú?',verses:[
+    {r:'Génesis 3:9',t:"Mas Jehová Dios llamó al hombre, y le dijo: ¿Dónde estás tú?"},
+    {r:'Génesis 3:10',t:"Y él respondió: Oí tu voz en el huerto, y tuve miedo, porque estaba desnudo; y me escondí."},
+    {r:'Génesis 3:11',t:"Y Dios le dijo: ¿Quién te enseñó que estabas desnudo? ¿Has comido del árbol de que yo te mandé no comieses?"},
+    {r:'Génesis 3:12',t:"Y el hombre respondió: La mujer que me diste por compañera me dio del árbol, y yo comí."},
+    {r:'Génesis 3:13',t:"Entonces Jehová Dios dijo a la mujer: ¿Qué es lo que has hecho? Y dijo la mujer: La serpiente me engañó, y comí."}],
+   qs:[
+    ["¿Qué le preguntó Jehová Dios al hombre en Génesis 3:9?","¿Dónde estás tú?",["¿Qué has hecho?","¿Por qué te escondes?","¿Quién te enseñó?"],"Génesis 3:9"],
+    ["Según Génesis 3:10, ¿por qué tuvo miedo el hombre?","Porque estaba desnudo",["Porque oyó un trueno","Porque vio la espada encendida","Porque vio a la serpiente"],"Génesis 3:10"],
+    ["¿A quién culpó el hombre en Génesis 3:12?","A la mujer que Dios le dio por compañera",["A la serpiente","A sí mismo","A los ángeles"],"Génesis 3:12","Nadie asume la culpa: el hombre señala a la mujer, y la mujer a la serpiente."],
+    ["¿A quién culpó la mujer en Génesis 3:13?","A la serpiente",["Al hombre","A sí misma","A Dios"],"Génesis 3:13"]]},
+  {title:'Las consecuencias',verses:[
+    {r:'Génesis 3:14',t:"Y Jehová Dios dijo a la serpiente: Por cuanto esto hiciste, maldita serás entre todas las bestias y entre todos los animales del campo; sobre tu pecho andarás, y polvo comerás todos los días de tu vida."},
+    {r:'Génesis 3:16',t:"A la mujer dijo: Multiplicaré en gran manera los dolores en tus preñeces; con dolor darás a luz los hijos; y tu deseo será para tu marido, y él se enseñoreará de ti."},
+    {r:'Génesis 3:17',t:"Y al hombre dijo: Por cuanto obedeciste a la voz de tu mujer, y comiste del árbol de que te mandé diciendo: No comerás de él; maldita será la tierra por tu causa; con dolor comerás de ella todos los días de tu vida."},
+    {r:'Génesis 3:19',t:"Con el sudor de tu rostro comerás el pan hasta que vuelvas a la tierra, porque de ella fuiste tomado; pues polvo eres, y al polvo volverás."}],
+   qs:[
+    ["Según Génesis 3:14, ¿sobre qué andaría la serpiente?","Sobre su pecho",["Sobre la tierra seca","Sobre sus pies","Sobre las aguas"],"Génesis 3:14"],
+    ["Según Génesis 3:17, ¿qué fue maldecido por causa del hombre?","La tierra",["El huerto","El mar","El árbol"],"Génesis 3:17"],
+    ["Según Génesis 3:19, ¿con qué comería el hombre el pan?","Con el sudor de su rostro",["Con la ayuda de los ángeles","Con gozo y reposo","Con las manos limpias"],"Génesis 3:19"],
+    ["Según Génesis 3:19, ¿a qué volvería el hombre?","Al polvo",["Al huerto","Al mar","Al cielo"],"Génesis 3:19"]]},
+  {title:'La promesa y la gracia',verses:[
+    {r:'Génesis 3:15',t:"Y pondré enemistad entre ti y la mujer, y entre tu simiente y la simiente suya; ésta te herirá en la cabeza, y tú le herirás en el calcañar."},
+    {r:'Génesis 3:20',t:"Y llamó Adán el nombre de su mujer, Eva, por cuanto ella era madre de todos los vivientes."},
+    {r:'Génesis 3:21',t:"Y Jehová Dios hizo al hombre y a su mujer túnicas de pieles, y los vistió."}],
+   qs:[
+    ["Según Génesis 3:15, ¿qué puso Dios entre la serpiente y la mujer?","Enemistad",["Amistad","Un pacto","Silencio"],"Génesis 3:15"],
+    ["Según Génesis 3:15, ¿quién herirá a la serpiente en la cabeza?","La simiente de la mujer",["El hombre","Los ángeles","Los animales del campo"],"Génesis 3:15","Desde antiguo se ve aquí la primera promesa del evangelio: el Mesías vencería a la serpiente."],
+    ["¿Qué nombre puso Adán a su mujer, y por qué?","Eva, por ser madre de todos los vivientes",["Sara, por ser madre de naciones","Ana, por ser sierva del Señor","Eva, por ser la primera en pecar"],"Génesis 3:20"],
+    ["Según Génesis 3:21, ¿qué hizo Jehová Dios por el hombre y su mujer?","Les hizo túnicas de pieles y los vistió",["Los dejó desnudos","Les dio hojas de higuera","Les dio un manto de lino"],"Génesis 3:21","Dios los cubre: sigue cuidando de ellos aun después de la caída."]]},
+  {title:'Expulsados del huerto',verses:[
+    {r:'Génesis 3:22',t:"Y dijo Jehová Dios: He aquí el hombre es como uno de nosotros, sabiendo el bien y el mal; ahora, pues, que no alargue su mano, y tome también del árbol de la vida, y coma, y viva para siempre."},
+    {r:'Génesis 3:23',t:"Y lo sacó Jehová del huerto del Edén, para que labrase la tierra de que fue tomado."},
+    {r:'Génesis 3:24',t:"Echó, pues, fuera al hombre, y puso al oriente del huerto de Edén querubines, y una espada encendida que se revolvía por todos lados, para guardar el camino del árbol de la vida."}],
+   qs:[
+    ["Según Génesis 3:23, ¿para qué lo sacó Jehová del huerto?","Para que labrase la tierra de que fue tomado",["Para que construyera una ciudad","Para que pastoreara ovejas","Para que llevara mensajes"],"Génesis 3:23"],
+    ["Según Génesis 3:24, ¿qué puso Dios al oriente del huerto?","Querubines y una espada encendida",["Un muro de piedra","Un río de fuego","Dos ángeles con trompetas"],"Génesis 3:24"],
+    ["Según Génesis 3:24, ¿qué debían guardar los querubines y la espada?","El camino del árbol de la vida",["El árbol de la ciencia del bien y del mal","La puerta del huerto","La tierra de Edén"],"Génesis 3:24"]]},
+  {title:'El primer y el postrer Adán',verses:[
+    {r:'Romanos 5:19',t:"Porque así como por la desobediencia de un hombre los muchos fueron constituidos pecadores, así también por la obediencia de uno, los muchos serán constituidos justos."},
+    {r:'1 Corintios 15:22',t:"Porque así como en Adán todos mueren, también en Cristo todos serán vivificados."},
+    {r:'1 Corintios 15:45',t:"Así también está escrito: Fue hecho el primer hombre Adán alma viviente; el postrer Adán, espíritu vivificante."}],
+   qs:[
+    ["Según Romanos 5:12, ¿cómo entró el pecado en el mundo?","Por un hombre",["Por el mar","Por la ley de Moisés","Por los ángeles"],"Romanos 5:12"],
+    ["Según Romanos 5:19, ¿por qué los muchos fueron constituidos pecadores?","Por la desobediencia de un hombre",["Por sus propias obras","Por la ley de Moisés","Por el engaño de la serpiente"],"Romanos 5:19"],
+    ["Según Romanos 5:19, ¿por qué los muchos serán constituidos justos?","Por la obediencia de uno",["Por sus propias obras","Por la ley de Moisés","Por su esfuerzo"],"Romanos 5:19"],
+    ["Según 1 Corintios 15:22, ¿qué pasa en Adán y qué pasa en Cristo?","En Adán todos mueren; en Cristo todos serán vivificados",["En Adán todos viven; en Cristo todos mueren","En Adán y en Cristo todos serán juzgados","En ninguno de los dos hay cambio"],"1 Corintios 15:22","Adán y Cristo actúan como cabezas: en cada uno están los suyos. Lo que hizo el primero trajo muerte; lo que hizo el segundo trae vida."]]}
+ ]},
+ {title:'Los Diez Mandamientos',sub:'Éxodo 20',lessons:[
+  {title:'Primeros mandamientos',verses:[
+    {r:'Éxodo 20:2',t:"Yo soy Jehová tu Dios, que te saqué de la tierra de Egipto, de casa de servidumbre."},
+    {r:'Éxodo 20:3',t:"No tendrás dioses ajenos delante de mí."},
+    {r:'Éxodo 20:7',t:"No tomarás el nombre de Jehová tu Dios en vano; porque no dará por inocente Jehová al que tomare su nombre en vano."},
+    {r:'Éxodo 20:8',t:"Acuérdate del día de reposo para santificarlo."}],
+   qs:[
+    ["¿De dónde sacó Jehová al pueblo?","De la tierra de Egipto",["De Babilonia","De Canaán","Del desierto"],"Éxodo 20:2"],
+    ["¿Qué dice el mandamiento que no se debe tomar en vano?","El nombre de Jehová tu Dios",["El día de reposo","La casa del prójimo","El pan de cada día"],"Éxodo 20:7"]]},
+  {title:'Hacia el prójimo',verses:[
+    {r:'Éxodo 20:12',t:"Honra a tu padre y a tu madre, para que tus días se alarguen en la tierra que Jehová tu Dios te da."},
+    {r:'Éxodo 20:13',t:"No matarás."},
+    {r:'Éxodo 20:14',t:"No cometerás adulterio."},
+    {r:'Éxodo 20:15',t:"No hurtarás."},
+    {r:'Éxodo 20:16',t:"No hablarás contra tu prójimo falso testimonio."},
+    {r:'Éxodo 20:17',t:"No codiciarás la casa de tu prójimo, no codiciarás la mujer de tu prójimo, ni su siervo, ni su criada, ni su buey, ni su asno, ni cosa alguna de tu prójimo."}],
+   qs:[
+    ["¿Qué mandamiento va seguido de «para que tus días se alarguen»?","Honra a tu padre y a tu madre",["No hurtarás","No matarás","No cometerás adulterio"],"Éxodo 20:12"],
+    ["¿Qué no se debe hablar contra el prójimo?","Falso testimonio",["Alabanza","Consejos","Oraciones"],"Éxodo 20:16"]]},
+  {title:'Jesús y el homicidio',verses:[
+    {r:'Mateo 5:17',t:"No penséis que he venido para abrogar la ley o los profetas; no he venido para abrogar, sino para cumplir."},
+    {r:'Mateo 5:21',t:"Oísteis que fue dicho a los antiguos: No matarás; y cualquiera que matare será culpable de juicio."},
+    {r:'Mateo 5:22',t:"Pero yo os digo que cualquiera que se enoje contra su hermano, será culpable de juicio; y cualquiera que diga: Necio, a su hermano, será culpable ante el concilio; y cualquiera que le diga: Fatuo, quedará expuesto al infierno de fuego."},
+    {r:'1 Juan 3:15',t:"Todo aquel que aborrece a su hermano es homicida; y sabéis que ningún homicida tiene vida eterna permanente en él."}],
+   qs:[
+    ["Según Mateo 5:17, ¿para qué dijo Jesús que había venido, respecto a la ley y los profetas?","Para cumplir",["Para abrogar","Para reemplazar","Para olvidar"],"Mateo 5:17"],
+    ["Según Mateo 5:21, ¿qué mandamiento cita Jesús?","No matarás",["No hurtarás","No cometerás adulterio","No codiciarás"],"Mateo 5:21"],
+    ["Según Mateo 5:22, ¿quién será culpable de juicio?","Cualquiera que se enoje contra su hermano",["Solo el que mate con la mano","Solo el que robe","Solo el que mienta"],"Mateo 5:22","Jesús lleva el mandamiento hasta el corazón: el enojo y el desprecio ya son pecado ante Dios, no solo el acto de matar."],
+    ["Según 1 Juan 3:15, ¿quién es homicida?","Todo aquel que aborrece a su hermano",["Solo quien hiere a otro","Quien discute con su hermano","Quien se aleja de su hermano"],"1 Juan 3:15"],
+    ["Éxodo 20:13 dice «No matarás». ¿Qué muestra Jesús sobre este mandamiento?","Que alcanza también al enojo y al desprecio del corazón",["Que ya no está vigente","Que solo aplica a los jueces","Que solo aplica dentro de Israel"],"Éxodo 20:13"]]},
+  {title:'Jesús y el adulterio',verses:[
+    {r:'Mateo 5:27',t:"Oísteis que fue dicho: No cometerás adulterio."},
+    {r:'Mateo 5:28',t:"Pero yo os digo que cualquiera que mira a una mujer para codiciarla, ya adulteró con ella en su corazón."},
+    {r:'Mateo 5:29',t:"Por tanto, si tu ojo derecho te es ocasión de caer, sácalo, y échalo de ti; pues mejor te es que se pierda uno de tus miembros, y no que todo tu cuerpo sea echado al infierno."},
+    {r:'Mateo 15:19',t:"Porque del corazón salen los malos pensamientos, los homicidios, los adulterios, las fornicaciones, los hurtos, los falsos testimonios, las blasfemias."}],
+   qs:[
+    ["Según Mateo 5:27, ¿qué mandamiento cita Jesús?","No cometerás adulterio",["No matarás","No hurtarás","No codiciarás"],"Mateo 5:27"],
+    ["Según Mateo 5:28, ¿quién ya adulteró en su corazón?","El que mira a una mujer para codiciarla",["El que habla con una mujer","El que no cumple sus votos","El que no se casa"],"Mateo 5:28","Como con el homicidio, Jesús muestra que la ley de Dios mira el corazón: el deseo codicioso ya es pecado, aunque no llegue al acto."],
+    ["Según Mateo 15:19, ¿de dónde salen los malos pensamientos, los homicidios y los adulterios?","Del corazón",["De los ojos","De las manos","Del mundo"],"Mateo 15:19"],
+    ["Éxodo 20:14 dice «No cometerás adulterio». ¿Qué enseña Jesús sobre este mandamiento?","Que también alcanza a la mirada y al deseo del corazón",["Que ya no está vigente","Que solo aplica a los casados","Que solo se trata del acto físico"],"Éxodo 20:14"],
+    ["Según Mateo 5:29, ¿qué tan en serio debemos tomar el pecado?","Es mejor perder un miembro que ser echado al infierno",["Solo importa si otros nos ven","Solo importa si es un pecado grande","Se resuelve con paciencia, sin cambiar nada"],"Mateo 5:29"]]},
+  {title:'El resumen de la ley',verses:[
+    {r:'Mateo 22:37',t:"Jesús le dijo: Amarás al Señor tu Dios con todo tu corazón, y con toda tu alma, y con toda tu mente."},
+    {r:'Mateo 22:39',t:"Y el segundo es semejante: Amarás a tu prójimo como a ti mismo."},
+    {r:'Mateo 22:40',t:"De estos dos mandamientos depende toda la ley y los profetas."},
+    {r:'Romanos 13:10',t:"El amor no hace mal al prójimo; así que el cumplimiento de la ley es el amor."},
+    {r:'Gálatas 5:14',t:"Porque toda la ley en esta sola palabra se cumple: Amarás a tu prójimo como a ti mismo."}],
+   qs:[
+    ["Según Mateo 22:37, ¿con qué debemos amar al Señor nuestro Dios?","Con todo el corazón, toda el alma y toda la mente",["Solo con obras y sacrificios","Solo con el corazón","Con la fuerza y el dinero"],"Mateo 22:37"],
+    ["Según Mateo 22:39, ¿cómo debemos amar al prójimo?","Como a nosotros mismos",["Más que a nosotros mismos","Solo si nos aman","Según lo que merezca"],"Mateo 22:39","Los diez mandamientos se resumen así: los primeros, amar a Dios; los demás, amar al prójimo."],
+    ["Según Mateo 22:40, ¿de qué depende toda la ley y los profetas?","De estos dos mandamientos",["De los diez mandamientos solamente","De los sacrificios","Del templo"],"Mateo 22:40"],
+    ["Según Romanos 13:10, ¿cuál es el cumplimiento de la ley?","El amor",["El sacrificio","La obediencia externa","El temor"],"Romanos 13:10"]]}
+
+ ]},
+ {title:'Jehová es mi pastor',sub:'Salmo 23',lessons:[
+  {title:'Pastos y aguas de reposo',verses:[
+    {r:'Salmo 23:1',t:"Jehová es mi pastor; nada me faltará."},
+    {r:'Salmo 23:2',t:"En lugares de delicados pastos me hará descansar; Junto a aguas de reposo me pastoreará."},
+    {r:'Salmo 23:3',t:"Confortará mi alma; Me guiará por sendas de justicia por amor de su nombre."}],
+   qs:[
+    ["Según el salmista, ¿qué no le faltará?","Nada",["Pan","Agua","Descanso"],"Salmo 23:1"],
+    ["¿Junto a qué aguas me pastoreará?","Aguas de reposo",["Aguas profundas","Aguas del Jordán","Aguas del mar"],"Salmo 23:2"]]},
+  {title:'Valle de sombra',verses:[
+    {r:'Salmo 23:4',t:"Aunque ande en valle de sombra de muerte, No temeré mal alguno, porque tú estarás conmigo; Tu vara y tu cayado me infundirán aliento."},
+    {r:'Salmo 23:5',t:"Aderezas mesa delante de mí en presencia de mis angustiadores; Unges mi cabeza con aceite; mi copa está rebosando."},
+    {r:'Salmo 23:6',t:"Ciertamente el bien y la misericordia me seguirán todos los días de mi vida, Y en la casa de Jehová moraré por largos días."}],
+   qs:[
+    ["Aunque ande en valle de sombra de muerte, ¿qué no temeré?","Mal alguno",["A los hombres","La oscuridad","Al enemigo"],"Salmo 23:4"],
+    ["¿Con qué unge Jehová mi cabeza?","Con aceite",["Con agua","Con vino","Con miel"],"Salmo 23:5"],
+    ["¿Por cuánto tiempo moraré en la casa de Jehová?","Por largos días",["Por un momento","Por siete días","Por cuarenta años"],"Salmo 23:6"]]}
+ ]},
+ {title:'Sermón del Monte',sub:'Mateo 5–6',lessons:[
+  {title:'Bienaventuranzas (1)',verses:[
+    {r:'Mateo 5:3',t:"Bienaventurados los pobres en espíritu, porque de ellos es el reino de los cielos."},
+    {r:'Mateo 5:4',t:"Bienaventurados los que lloran, porque ellos recibirán consolación."},
+    {r:'Mateo 5:5',t:"Bienaventurados los mansos, porque ellos recibirán la tierra por heredad."},
+    {r:'Mateo 5:6',t:"Bienaventurados los que tienen hambre y sed de justicia, porque ellos serán saciados."}],
+   qs:[
+    ["¿De quiénes es el reino de los cielos, según Mateo 5:3?","De los pobres en espíritu",["De los ricos","De los sabios","De los fuertes"],"Mateo 5:3"],
+    ["¿Quiénes recibirán la tierra por heredad?","Los mansos",["Los pacificadores","Los que lloran","Los misericordiosos"],"Mateo 5:5"]]},
+  {title:'Bienaventuranzas (2)',verses:[
+    {r:'Mateo 5:7',t:"Bienaventurados los misericordiosos, porque ellos alcanzarán misericordia."},
+    {r:'Mateo 5:8',t:"Bienaventurados los de limpio corazón, porque ellos verán a Dios."},
+    {r:'Mateo 5:9',t:"Bienaventurados los pacificadores, porque ellos serán llamados hijos de Dios."}],
+   qs:[
+    ["¿Quiénes verán a Dios, según Mateo 5:8?","Los de limpio corazón",["Los mansos","Los que lloran","Los pobres en espíritu"],"Mateo 5:8"],
+    ["¿Cómo serán llamados los pacificadores?","Hijos de Dios",["Siervos del Altísimo","Amigos de Dios","Herederos del reino"],"Mateo 5:9"]]},
+  {title:'Sal y luz',verses:[
+    {r:'Mateo 5:13',t:"Vosotros sois la sal de la tierra; pero si la sal se desvaneciere, ¿con qué será salada? No sirve más para nada, sino para ser echada fuera y hollada por los hombres."},
+    {r:'Mateo 5:14',t:"Vosotros sois la luz del mundo; una ciudad asentada sobre un monte no se puede esconder."},
+    {r:'Mateo 5:15',t:"Ni se enciende una luz y se pone debajo de un almud, sino sobre el candelero, y alumbra a todos los que están en casa."},
+    {r:'Mateo 5:16',t:"Así alumbre vuestra luz delante de los hombres, para que vean vuestras buenas obras, y glorifiquen a vuestro Padre que está en los cielos."}],
+   qs:[
+    ["Según Mateo 5:13, ¿qué dijo Jesús que son sus discípulos?","La sal de la tierra",["La raíz de la tierra","El fruto de la tierra","El fuego de la tierra"],"Mateo 5:13"],
+    ["Según Mateo 5:14, ¿qué no se puede esconder?","Una ciudad asentada sobre un monte",["Una casa en el valle","Un camino en el desierto","Un pozo en el campo"],"Mateo 5:14"],
+    ["Según Mateo 5:15, ¿dónde se pone una luz encendida?","Sobre el candelero",["Debajo de un almud","Detrás de la puerta","En el suelo"],"Mateo 5:15"],
+    ["Según Mateo 5:16, ¿para qué debe alumbrar nuestra luz delante de los hombres?","Para que vean nuestras buenas obras y glorifiquen al Padre",["Para que nos admiren","Para que nos imiten","Para que nos teman"],"Mateo 5:16","La luz no es para lucirnos: el fin es que la gloria vaya al Padre."]]},
+  {title:'La ley y la justicia mayor',verses:[
+    {r:'Mateo 5:18',t:"Porque de cierto os digo que hasta que pasen el cielo y la tierra, ni una jota ni una tilde pasará de la ley, hasta que todo se haya cumplido."},
+    {r:'Mateo 5:20',t:"Porque os digo que si vuestra justicia no fuere mayor que la de los escribas y fariseos, no entraréis en el reino de los cielos."},
+    {r:'Mateo 5:23-24',t:"Por tanto, si traes tu ofrenda al altar, y allí te acuerdas de que tu hermano tiene algo contra ti, deja allí tu ofrenda delante del altar, y anda, reconcíliate primero con tu hermano, y entonces ven y presenta tu ofrenda."}],
+   qs:[
+    ["Según Mateo 5:18, ¿qué no pasará de la ley hasta que todo se haya cumplido?","Ni una jota ni una tilde",["Ni una palabra ni un nombre","Ni un libro ni un capítulo","Ni una fiesta ni un sábado"],"Mateo 5:18"],
+    ["Según Mateo 5:20, ¿cómo debe ser nuestra justicia para entrar en el reino de los cielos?","Mayor que la de los escribas y fariseos",["Igual que la de los escribas y fariseos","Menor, pero sincera","Conocida por todos"],"Mateo 5:20"],
+    ["Según Mateo 5:23-24, si tu hermano tiene algo contra ti, ¿qué haces antes de presentar tu ofrenda?","Reconciliarte primero con tu hermano",["Terminar la ofrenda y luego hablar","Esperar a que él venga","Orar en secreto por él"],"Mateo 5:23-24"]]},
+  {title:'Amad a vuestros enemigos',verses:[
+    {r:'Mateo 5:38-39',t:"Oísteis que fue dicho: Ojo por ojo, y diente por diente. Pero yo os digo: No resistáis al que es malo; antes, a cualquiera que te hiera en la mejilla derecha, vuélvele también la otra;"},
+    {r:'Mateo 5:41',t:"Y a cualquiera que te obligue a llevar carga por una milla, ve con él dos."},
+    {r:'Mateo 5:43-44',t:"Oísteis que fue dicho: Amarás a tu prójimo, y aborrecerás a tu enemigo. Pero yo os digo: Amad a vuestros enemigos, bendecid a los que os maldicen, haced bien a los que os aborrecen, y orad por los que os ultrajan y os persiguen;"},
+    {r:'Mateo 5:45',t:"para que seáis hijos de vuestro Padre que está en los cielos, que hace salir su sol sobre malos y buenos, y que hace llover sobre justos e injustos."}],
+   qs:[
+    ["Según Mateo 5:39, si alguien te hiere en la mejilla derecha, ¿qué dijo Jesús que hicieras?","Volverle también la otra",["Devolver el golpe","Acusarlo ante el juez","Huir de él"],"Mateo 5:38-39"],
+    ["Según Mateo 5:41, si alguien te obliga a llevar carga por una milla, ¿qué debes hacer?","Ir con él dos",["Negarte","Cobrarle","Ir solo una"],"Mateo 5:41"],
+    ["Según Mateo 5:44, ¿qué dijo Jesús que hiciéramos con nuestros enemigos?","Amarlos y orar por los que nos persiguen",["Evitarlos","Olvidarlos","Vencerlos"],"Mateo 5:43-44"],
+    ["Según Mateo 5:45, ¿sobre quiénes hace salir el Padre su sol?","Sobre malos y buenos",["Solo sobre los justos","Solo sobre Israel","Solo sobre los que oran"],"Mateo 5:45","Amar al enemigo refleja el carácter del Padre, que da su sol y su lluvia a todos."]]},
+  {title:'Hijos del Padre',verses:[
+    {r:'Mateo 5:46',t:"Porque si amáis a los que os aman, ¿qué recompensa tendréis? ¿No hacen también lo mismo los publicanos?"},
+    {r:'Mateo 5:48',t:"Sed, pues, vosotros perfectos, como vuestro Padre que está en los cielos es perfecto."},
+    {r:'Mateo 6:1',t:"Guardaos de hacer vuestra justicia delante de los hombres, para ser vistos de ellos; de otra manera no tendréis recompensa de vuestro Padre que está en los cielos."}],
+   qs:[
+    ["Según Mateo 5:46, ¿quiénes también aman a los que los aman?","Los publicanos",["Los sacerdotes","Los escribas","Los levitas"],"Mateo 5:46"],
+    ["Según Mateo 5:48, ¿cómo dijo Jesús que debemos ser?","Perfectos, como nuestro Padre celestial es perfecto",["Fuertes, como nuestro Padre es fuerte","Sabios, como nuestro Padre es sabio","Piadosos solo delante de los hombres"],"Mateo 5:48"],
+    ["Según Mateo 6:1, ¿de qué debemos guardarnos?","De hacer nuestra justicia delante de los hombres para ser vistos de ellos",["De orar en la mañana","De hablar con los pecadores","De ayunar los lunes"],"Mateo 6:1"]]},
+  {title:'Dar y orar en secreto',verses:[
+    {r:'Mateo 6:4',t:"para que sea tu limosna en secreto; y tu Padre que ve en lo secreto te recompensará en público."},
+    {r:'Mateo 6:6',t:"Mas tú, cuando ores, entra en tu aposento, y cerrada la puerta, ora a tu Padre que está en secreto; y tu Padre que ve en lo secreto te recompensará en público."},
+    {r:'Mateo 6:7',t:"Y orando, no uséis vanas repeticiones, como los gentiles, que piensan que por su palabrería serán oídos."},
+    {r:'Mateo 6:8',t:"No os hagáis, pues, semejantes a ellos; porque vuestro Padre sabe de qué cosas tenéis necesidad, antes que vosotros le pidáis."}],
+   qs:[
+    ["Según Mateo 6:4, ¿cómo te recompensará el Padre que ve en lo secreto?","En público",["En secreto","Con silencio","Con riquezas"],"Mateo 6:4"],
+    ["Según Mateo 6:6, ¿dónde debes orar?","En tu aposento, con la puerta cerrada",["En la plaza para ser visto","Solo en el templo","Solo en la sinagoga"],"Mateo 6:6"],
+    ["Según Mateo 6:7, ¿qué no debemos usar al orar?","Vanas repeticiones",["Palabras en voz baja","Lágrimas","Cantos"],"Mateo 6:7"],
+    ["Según Mateo 6:8, ¿qué sabe el Padre antes de que le pidamos?","De qué cosas tenemos necesidad",["Cuánto hemos pecado","Quién nos escucha","Cuántas oraciones hemos hecho"],"Mateo 6:8"]]},
+  {title:'Padre nuestro',verses:[
+    {r:'Mateo 6:9',t:"Vosotros, pues, oraréis así: Padre nuestro que estás en los cielos, santificado sea tu nombre."},
+    {r:'Mateo 6:10',t:"Venga tu reino. Hágase tu voluntad, como en el cielo, así también en la tierra."},
+    {r:'Mateo 6:11',t:"El pan nuestro de cada día, dánoslo hoy."},
+    {r:'Mateo 6:12',t:"Y perdónanos nuestras deudas, como también nosotros perdonamos a nuestros deudores."}],
+   qs:[
+    ["«Hágase tu voluntad, como en el cielo…», ¿qué sigue?","Así también en la tierra",["Por siempre y para siempre","Hoy y todos los días","En tu santo nombre"],"Mateo 6:10"],
+    ["¿Qué se pide que se nos dé hoy?","El pan nuestro de cada día",["Las riquezas del reino","El descanso de la noche","La sabiduría de lo alto"],"Mateo 6:11"]]},
+  {title:'Perdonar y ser perdonado',verses:[
+    {r:'Mateo 6:14',t:"Porque si perdonáis a los hombres sus ofensas, os perdonará también a vosotros vuestro Padre celestial;"},
+    {r:'Mateo 6:15',t:"mas si no perdonáis a los hombres sus ofensas, tampoco vuestro Padre os perdonará vuestras ofensas."}],
+   qs:[
+    ["Según Mateo 6:14, si perdonáis a los hombres sus ofensas, ¿qué pasa?","Vuestro Padre celestial os perdonará también",["Los hombres os perdonarán","Seréis libres de toda deuda","Dios olvidará vuestras ofensas pasadas"],"Mateo 6:14"],
+    ["Según Mateo 6:15, si no perdonáis a los hombres sus ofensas, ¿qué pasa?","Tampoco vuestro Padre os perdonará",["Los hombres se alejarán de vosotros","Dios os castigará de inmediato","Nada cambia"],"Mateo 6:15","Quien ha sido perdonado, perdona. Jesús lo ilustra con el siervo que no perdonó (Mateo 18:21-35)."],
+    ["En el Padre nuestro (Mateo 6:12), ¿cómo pedimos que se nos perdonen las deudas?","Como nosotros perdonamos a nuestros deudores",["Según nuestros méritos","Cuando lo merezcamos","Solo al final de la vida"],"Mateo 6:12"]]},
+  {title:'Tesoros en el cielo',verses:[
+    {r:'Mateo 6:19',t:"No os hagáis tesoros en la tierra, donde la polilla y el orín corrompen, y donde ladrones minan y hurtan;"},
+    {r:'Mateo 6:20',t:"sino haceos tesoros en el cielo, donde ni la polilla ni el orín corrompen, y donde ladrones no minan ni hurtan."},
+    {r:'Mateo 6:21',t:"Porque donde esté vuestro tesoro, allí estará también vuestro corazón."},
+    {r:'Mateo 6:24',t:"Ninguno puede servir a dos señores; porque o aborrecerá al uno y amará al otro, o estimará al uno y menospreciará al otro. No podéis servir a Dios y a las riquezas."}],
+   qs:[
+    ["Según Mateo 6:19, ¿qué corrompen la polilla y el orín?","Los tesoros de la tierra",["Las obras de la ley","Las ofrendas del templo","Los frutos del huerto"],"Mateo 6:19"],
+    ["Según Mateo 6:20, ¿dónde debemos hacernos tesoros?","En el cielo",["En los graneros","En el templo","En la casa"],"Mateo 6:20"],
+    ["Según Mateo 6:21, ¿dónde estará nuestro corazón?","Donde esté nuestro tesoro",["Donde esté nuestra familia","Donde esté nuestro trabajo","Donde esté nuestro hogar"],"Mateo 6:21"],
+    ["Según Mateo 6:24, ¿a quiénes no podemos servir a la vez?","A Dios y a las riquezas",["A Dios y al César","A Dios y a los hombres","A Dios y a la ley"],"Mateo 6:24"]]},
+  {title:'Las aves y los lirios',verses:[
+    {r:'Mateo 6:25',t:"Por tanto os digo: No os afanéis por vuestra vida, qué habéis de comer o qué habéis de beber; ni por vuestro cuerpo, qué habéis de vestir. ¿No es la vida más que el alimento, y el cuerpo más que el vestido?"},
+    {r:'Mateo 6:26',t:"Mirad las aves del cielo, que no siembran, ni siegan, ni recogen en graneros; y vuestro Padre celestial las alimenta. ¿No valéis vosotros mucho más que ellas?"},
+    {r:'Mateo 6:28-29',t:"Y por el vestido, ¿por qué os afanáis? Considerad los lirios del campo, cómo crecen: no trabajan ni hilan; pero os digo, que ni aun Salomón con toda su gloria se vistió así como uno de ellos."}],
+   qs:[
+    ["Según Mateo 6:25, ¿qué dijo Jesús que no hiciéramos por nuestra vida?","Afanarnos por qué comer o beber",["Trabajar por el pan de cada día","Guardar para el futuro","Dar gracias antes de comer"],"Mateo 6:25"],
+    ["Según Mateo 6:26, ¿quién alimenta a las aves del cielo?","Vuestro Padre celestial",["Los sembradores","La naturaleza","Los ángeles"],"Mateo 6:26"],
+    ["Según Mateo 6:28-29, ¿qué ejemplo usa Jesús al hablar del vestido?","Los lirios del campo",["Las aves del cielo","Los árboles del huerto","Las ovejas del pastor"],"Mateo 6:28-29"],
+    ["Según Mateo 6:29, ¿quién no se vistió con toda su gloria como uno de los lirios?","Salomón",["David","Moisés","Elías"],"Mateo 6:28-29"]]},
+  {title:'Buscad primeramente el reino',verses:[
+    {r:'Mateo 6:31-32',t:"No os afanéis, pues, diciendo: ¿Qué comeremos, o qué beberemos, o qué vestiremos? Porque los gentiles buscan todas estas cosas; pero vuestro Padre celestial sabe que tenéis necesidad de todas estas cosas."},
+    {r:'Mateo 6:33',t:"Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas."},
+    {r:'Mateo 6:34',t:"Así que, no os afanéis por el día de mañana, porque el día de mañana traerá su afán. Basta a cada día su propio mal."}],
+   qs:[
+    ["Según Mateo 6:32, ¿quiénes buscan todas estas cosas?","Los gentiles",["Los publicanos","Los escribas","Los fariseos"],"Mateo 6:31-32"],
+    ["Según Mateo 6:33, ¿qué debemos buscar primeramente?","El reino de Dios y su justicia",["Las riquezas y la salud","La paz y el descanso","El reconocimiento de los hombres"],"Mateo 6:33"],
+    ["Según Mateo 6:33, ¿qué nos será añadido?","Todas estas cosas",["Una larga vida","La sabiduría","Un gran nombre"],"Mateo 6:33"],
+    ["Según Mateo 6:34, ¿qué basta a cada día?","Su propio mal",["Su propia luz","Su propio pan","Su propio descanso"],"Mateo 6:34"]]}
+ ]},
+ {title:'El Evangelio de Juan',sub:'Juan 1, 3, 6, 8, 10, 11, 14',lessons:[
+  {title:'El Verbo y el amor de Dios',verses:[
+    {r:'Juan 1:1',t:"En el principio era el Verbo, y el Verbo era con Dios, y el Verbo era Dios."},
+    {r:'Juan 1:14',t:"Y aquel Verbo fue hecho carne, y habitó entre nosotros (y vimos su gloria, gloria como del unigénito del Padre), lleno de gracia y de verdad."},
+    {r:'Juan 3:16',t:"Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna."},
+    {r:'Juan 11:35',t:"Jesús lloró."}],
+   qs:[
+    ["¿Quién era con Dios y era Dios, según Juan 1:1?","El Verbo",["El profeta","El ángel","El sacerdote"],"Juan 1:1"],
+    ["¿A quién ha dado Dios, según Juan 3:16?","A su Hijo unigénito",["A su siervo Moisés","A su pueblo Israel","A su ángel"],"Juan 3:16"]]},
+  {title:'Yo soy',verses:[
+    {r:'Juan 6:35',t:"Jesús les dijo: Yo soy el pan de vida; el que a mí viene, nunca tendrá hambre; y el que en mí cree, no tendrá sed jamás."},
+    {r:'Juan 8:12',t:"Otra vez Jesús les habló, diciendo: Yo soy la luz del mundo; el que me sigue, no andará en tinieblas, sino que tendrá la luz de la vida."},
+    {r:'Juan 10:11',t:"Yo soy el buen pastor; el buen pastor su vida da por las ovejas."},
+    {r:'Juan 14:6',t:"Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí."}],
+   qs:[
+    ["Según Juan 6:35, ¿qué dijo Jesús que es?","El pan de vida",["La sal de la tierra","El agua del pozo","La roca del desierto"],"Juan 6:35"],
+    ["Según Juan 8:12, ¿qué tendrá el que sigue a Jesús?","La luz de la vida",["Riquezas","Reposo","Un nombre nuevo"],"Juan 8:12"],
+    ["Según Juan 10:11, ¿qué da el buen pastor por las ovejas?","Su vida",["Su manto","Su vara","Su pan"],"Juan 10:11"]]}
+ ]},
+ {title:'Salvación por gracia',sub:'Romanos y Efesios',lessons:[
+  {title:'Pecado y gracia',verses:[
+    {r:'Romanos 3:23',t:"por cuanto todos pecaron, y están destituidos de la gloria de Dios,"},
+    {r:'Romanos 5:8',t:"Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros."},
+    {r:'Romanos 6:23',t:"Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro."},
+    {r:'Romanos 8:1',t:"Ahora, pues, ninguna condenación hay para los que están en Cristo Jesús, los que no andan conforme a la carne, sino conforme al Espíritu."}],
+   qs:[
+    ["Según Romanos 6:23, ¿cuál es la paga del pecado?","Muerte",["Esclavitud","Tristeza","Olvido"],"Romanos 6:23"],
+    ["Según Romanos 6:23, ¿qué es la dádiva de Dios en Cristo Jesús?","Vida eterna",["Paz en la tierra","Riquezas del cielo","Sabiduría"],"Romanos 6:23"],
+    ["Según Romanos 5:8, ¿cuándo murió Cristo por nosotros?","Siendo aún pecadores",["Cuando lo buscamos","Cuando obedecimos la ley","Cuando lo pedimos"],"Romanos 5:8"]]},
+  {title:'Fe y salvación',verses:[
+    {r:'Romanos 8:28',t:"Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien, esto es, a los que conforme a su propósito son llamados."},
+    {r:'Romanos 10:9',t:"que si confesares con tu boca que Jesús es el Señor, y creyeres en tu corazón que Dios le levantó de los muertos, serás salvo."},
+    {r:'Efesios 2:8',t:"Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios;"},
+    {r:'Efesios 2:9',t:"no por obras, para que nadie se gloríe."}],
+   qs:[
+    ["Según Efesios 2:8, ¿por medio de qué somos salvos?","Por medio de la fe",["Por medio de la ley","Por medio del esfuerzo","Por medio del ayuno"],"Efesios 2:8"],
+    ["Según Efesios 2:9, ¿para qué la salvación no es por obras?","Para que nadie se gloríe",["Para que todos trabajen","Para que la ley se cumpla","Para que haya reposo"],"Efesios 2:9"],
+    ["Según Romanos 10:9, ¿qué se confiesa con la boca?","Que Jesús es el Señor",["Que Dios es justo","Que el pecado es grande","Que el cielo es eterno"],"Romanos 10:9"]]}
+ ]}
+ ,{title:'Atributos de Dios (1)',sub:'Su ser y su conocimiento',lessons:[
+  {title:'Santo, espíritu y uno',verses:[
+    {r:'Isaías 6:3',t:"Y el uno al otro daba voces, diciendo: Santo, santo, santo, Jehová de los ejércitos; toda la tierra está llena de su gloria."},
+    {r:'Juan 4:24',t:"Dios es Espíritu; y los que le adoran, en espíritu y en verdad es necesario que adoren."},
+    {r:'Deuteronomio 6:4',t:"Oye, Israel: Jehová nuestro Dios, Jehová uno es."}],
+   qs:[
+    ["¿Cuántas veces se repite «santo» en Isaías 6:3?","Tres veces",["Una vez","Dos veces","Siete veces"],"Isaías 6:3"],
+    ["Según Juan 4:24, ¿qué es Dios?","Espíritu",["Un ángel","Un hombre","Una fuerza"],"Juan 4:24"],
+    ["Según Deuteronomio 6:4, ¿cuántos es Jehová nuestro Dios?","Uno",["Dos","Tres","Muchos"],"Deuteronomio 6:4","Un solo Dios verdadero, que existe eternamente como Padre, Hijo y Espíritu Santo."]]},
+  {title:'Dios por sí mismo',intro:{t:'Aseidad: Dios existe por sí mismo',p:'Aseidad significa que Dios tiene vida en sí mismo. No depende de nadie para existir ni para ser quien es; todo lo demás depende de él.'},
+   verses:[
+    {r:'Juan 5:26',t:"Porque como el Padre tiene vida en sí mismo, así también ha dado al Hijo el tener vida en sí mismo;"},
+    {r:'Hechos 17:25',t:"ni es honrado por manos de hombres, como si necesitase de algo; pues él es quien da a todos vida y aliento y todas las cosas."},
+    {r:'Jeremías 10:10',t:"Mas Jehová es el Dios verdadero; él es Dios vivo y Rey eterno; a su ira tiembla la tierra, y las naciones no pueden sufrir su indignación."}],
+   qs:[
+    ["Según Juan 5:26, ¿dónde tiene vida el Padre?","En sí mismo",["En el templo","En los cielos solamente","En sus obras"],"Juan 5:26"],
+    ["Según Hechos 17:25, ¿por qué Dios no necesita ser servido por manos de hombres?","Porque él da a todos vida y aliento y todas las cosas",["Porque está lejos de los hombres","Porque los ángeles lo sirven","Porque no se interesa por los hombres"],"Hechos 17:25"],
+    ["El nombre «YO SOY EL QUE SOY» apunta a un Dios que…","Existe por sí mismo",["Cambia con el tiempo","Depende de su pueblo","Solo existe en el templo"],"Éxodo 3:14","«YO SOY» expresa que Dios existe por sí mismo y no depende de nadie."],
+    ["Según Jeremías 10:10, ¿cómo es Jehová?","El Dios verdadero, Dios vivo y Rey eterno",["Un dios entre muchos","Un dios de los montes","Un dios olvidado"],"Jeremías 10:10"]]},
+  {title:'Creador de todas las cosas',verses:[
+    {r:'Salmo 33:6',t:"Por la palabra de Jehová fueron hechos los cielos, Y todo el ejército de ellos por el aliento de su boca."},
+    {r:'Salmo 33:9',t:"Porque él dijo, y fue hecho; Él mandó, y existió."},
+    {r:'Apocalipsis 4:11',t:"Señor, digno eres de recibir la gloria y la honra y el poder; porque tú creaste todas las cosas, y por tu voluntad existen y fueron creadas."},
+    {r:'Hebreos 11:3',t:"Por la fe entendemos haber sido constituido el universo por la palabra de Dios, de modo que lo que se ve fue hecho de lo que no se veía."},
+    {r:'Colosenses 1:16',t:"Porque en él fueron creadas todas las cosas, las que hay en los cielos y las que hay en la tierra, visibles e invisibles; sean tronos, sean dominios, sean principados, sean potestades; todo fue creado por medio de él y para él."}],
+   qs:[
+    ["Según Salmo 33:6, ¿por qué fueron hechos los cielos?","Por la palabra de Jehová",["Por el poder de los ángeles","Por el paso del tiempo","Por la voluntad de los reyes"],"Salmo 33:6"],
+    ["Según Salmo 33:9, ¿qué pasó cuando Dios dijo?","Fue hecho",["Fue detenido","Fue olvidado","Fue postergado"],"Salmo 33:9"],
+    ["Según Apocalipsis 4:11, ¿por qué existen y fueron creadas todas las cosas?","Por la voluntad de Dios",["Por el azar","Por la necesidad","Por los hombres"],"Apocalipsis 4:11"]]},
+  {title:'Sabio, presente y eterno',verses:[
+    {r:'Salmo 147:5',t:"Grande es el Señor nuestro, y de mucho poder; Y su entendimiento es infinito."},
+    {r:'Salmo 139:7',t:"¿A dónde me iré de tu Espíritu? ¿Y a dónde huiré de tu presencia?"},
+    {r:'Salmo 90:2',t:"Antes que naciesen los montes Y formases la tierra y el mundo, Desde el siglo y hasta el siglo, tú eres Dios."}],
+   qs:[
+    ["Según Salmo 147:5, ¿cómo es el entendimiento del Señor?","Infinito",["Limitado","Oculto","Cambiante"],"Salmo 147:5"],
+    ["En Salmo 139:7, el salmista pregunta: «¿A dónde huiré de…?»","Tu presencia",["Tu ley","Tu templo","Tu ira"],"Salmo 139:7"],
+    ["Según Salmo 90:2, ¿desde cuándo y hasta cuándo es Dios?","Desde el siglo y hasta el siglo",["Desde el diluvio hasta hoy","Desde Abraham hasta Cristo","Desde la creación del hombre"],"Salmo 90:2"]]},
+  {title:'Todo lo conoce',verses:[
+    {r:'Salmo 139:1-2',t:"Oh Jehová, tú me has examinado y conocido. Tú has conocido mi sentarme y mi levantarme; Has entendido desde lejos mis pensamientos."},
+    {r:'Hebreos 4:13',t:"Y no hay cosa creada que no sea manifiesta en su presencia; antes bien todas las cosas están desnudas y abiertas a los ojos de aquel a quien tenemos que dar cuenta."},
+    {r:'1 Juan 3:20',t:"pues si nuestro corazón nos reprende, mayor que nuestro corazón es Dios, y él sabe todas las cosas."},
+    {r:'Mateo 10:29-30',t:"¿No se venden dos pajarillos por un cuarto? Con todo, ni uno de ellos cae a tierra sin vuestro Padre. Pues aun vuestros cabellos están todos contados."}],
+   qs:[
+    ["Según Salmo 139:1-2, ¿qué ha entendido Dios desde lejos?","Mis pensamientos",["Mis obras","Mis viajes","Mis sueños"],"Salmo 139:1-2"],
+    ["Según Hebreos 4:13, ¿cómo están todas las cosas ante los ojos de Dios?","Desnudas y abiertas",["Ocultas y cerradas","Olvidadas","Sin importancia"],"Hebreos 4:13"],
+    ["Según 1 Juan 3:20, ¿qué sabe Dios?","Todas las cosas",["Solo lo que hacemos","Solo lo pasado","Solo lo bueno"],"1 Juan 3:20"],
+    ["Según Mateo 10:30, ¿qué está contado por el Padre?","Los cabellos de vuestra cabeza",["Los pasos del camino","Las lágrimas de los justos","Los años de la vida"],"Mateo 10:29-30"]]},
+  {title:'Presente en todo lugar',verses:[
+    {r:'Jeremías 23:24',t:"¿Se ocultará alguno, dice Jehová, en escondrijos que yo no lo vea? ¿No lleno yo, dice Jehová, el cielo y la tierra?"},
+    {r:'Salmo 139:8',t:"Si subiere a los cielos, allí estás tú; Y si en el Seol hiciere mi estrado, he aquí, allí tú estás."},
+    {r:'Salmo 139:9-10',t:"Si tomare las alas del alba Y habitare en el extremo del mar, Aun allí me guiará tu mano, Y me asirá tu diestra."}],
+   qs:[
+    ["Según Jeremías 23:24, ¿qué llena Jehová?","El cielo y la tierra",["Solo el templo","Solo Jerusalén","Solo el cielo"],"Jeremías 23:24"],
+    ["Según Salmo 139:8, si el salmista sube a los cielos, ¿quién está allí?","Dios",["Nadie","Solo los ángeles","El silencio"],"Salmo 139:8"],
+    ["Según Salmo 139:9-10, aun en el extremo del mar, ¿qué lo guiaría?","La mano de Dios",["El viento","Una estrella","Su propia fuerza"],"Salmo 139:9-10"]]},
+  {title:'Conoce lo por venir',intro:{t:'Presciencia de Dios',p:'Presciencia significa que Dios conoce de antemano lo que sucederá, desde el principio hasta el fin. Nada le sorprende: anuncia lo por venir desde el principio (Isaías 46:10).'},
+   verses:[
+    {r:'Isaías 46:9-10',t:"Acordaos de las cosas pasadas desde los tiempos antiguos; porque yo soy Dios, y no hay otro Dios, y nada hay semejante a mí, que anuncio lo por venir desde el principio, y desde la antigüedad lo que aún no era hecho; que digo: Mi consejo permanecerá, y haré todo lo que quiero;"},
+    {r:'Hechos 2:23',t:"a éste, entregado por el determinado consejo y anticipado conocimiento de Dios, prendisteis y matasteis por manos de inicuos, crucificándole;"},
+    {r:'1 Pedro 1:2',t:"elegidos según la presciencia de Dios Padre en santificación del Espíritu, para obedecer y ser rociados con la sangre de Jesucristo: Gracia y paz os sean multiplicadas."}],
+   qs:[
+    ["Según Isaías 46:10, ¿qué anuncia Dios desde el principio?","Lo por venir",["Lo ya hecho","Los sueños de los profetas","Las leyes de Moisés"],"Isaías 46:9-10"],
+    ["Según Hechos 2:23, ¿por medio de qué fue entregado Jesús?","Del determinado consejo y anticipado conocimiento de Dios",["Del enojo de los romanos","Del azar","De la decisión del pueblo"],"Hechos 2:23"],
+    ["Según 1 Pedro 1:2, ¿según qué son elegidos los creyentes?","Según la presciencia de Dios Padre",["Según sus obras","Según su edad","Según la ley"],"1 Pedro 1:2"]]},
+  {title:'Sabiduría de Dios',verses:[
+    {r:'Romanos 11:33',t:"¡Oh profundidad de las riquezas de la sabiduría y de la ciencia de Dios! ¡Cuán insondables son sus juicios, e inescrutables sus caminos!"},
+    {r:'Romanos 16:27',t:"al único y sabio Dios, sea gloria mediante Jesucristo para siempre. Amén."},
+    {r:'Proverbios 3:19',t:"Jehová con sabiduría fundó la tierra; Afirmó los cielos con inteligencia."}],
+   qs:[
+    ["Según Romanos 16:27, ¿cómo es Dios?","Único y sabio",["Grande y lejano","Justo y airado","Fuerte y oculto"],"Romanos 16:27"],
+    ["Según Proverbios 3:19, ¿con qué fundó Jehová la tierra?","Con sabiduría",["Con fuerza","Con fuego","Con palabras solamente"],"Proverbios 3:19"],
+    ["Según Romanos 11:33, ¿cómo son los juicios de Dios?","Insondables",["Fáciles de entender","Cambiantes","Apresurados"],"Romanos 11:33"]]},
+  {title:'Grande e incomprensible',verses:[
+    {r:'Salmo 145:3',t:"Grande es Jehová, y digno de suprema alabanza; Y su grandeza es inescrutable."},
+    {r:'Isaías 55:8',t:"Porque mis pensamientos no son vuestros pensamientos, ni vuestros caminos mis caminos, dijo Jehová."},
+    {r:'Isaías 55:9',t:"Como son más altos los cielos que la tierra, así son mis caminos más altos que vuestros caminos, y mis pensamientos más que vuestros pensamientos."}],
+   qs:[
+    ["Según Salmo 145:3, ¿cómo es la grandeza de Jehová?","Inescrutable",["Pasajera","Limitada","Visible a todos"],"Salmo 145:3"],
+    ["Según Isaías 55:9, ¿cuánto más altos son los caminos de Dios que los nuestros?","Como los cielos son más altos que la tierra",["Como el sol respecto a la luna","Como un monte respecto a un valle","Son igual de altos"],"Isaías 55:9"],
+    ["Según Isaías 55:8, ¿qué dice Jehová de sus pensamientos?","No son nuestros pensamientos",["Son iguales a los nuestros","Son un secreto para siempre","Son solo para los profetas"],"Isaías 55:8"]]}
+ ]}
+ ,{title:'Atributos de Dios (2)',sub:'Su poder y su carácter',lessons:[
+  {title:'Todopoderoso',verses:[
+    {r:'Génesis 17:1',t:"Era Abram de edad de noventa y nueve años, cuando le apareció Jehová y le dijo: Yo soy el Dios Todopoderoso; anda delante de mí y sé perfecto."},
+    {r:'Job 42:2',t:"Yo conozco que todo lo puedes, Y que no hay pensamiento que se esconda de ti."},
+    {r:'Lucas 1:37',t:"porque nada hay imposible para Dios."}],
+   qs:[
+    ["Según Génesis 17:1, ¿cómo se presenta Dios a Abram?","Como el Dios Todopoderoso",["Como el Dios de los montes","Como el Dios de los hebreos","Como el Dios de los ejércitos"],"Génesis 17:1"],
+    ["Según Job 42:2, ¿qué conoce Job de Dios?","Que todo lo puede",["Que nunca calla","Que duerme de noche","Que no interviene"],"Job 42:2"],
+    ["Según Lucas 1:37, ¿qué cosa hay imposible para Dios?","Ninguna",["Pocas","Muchas","La que pida el hombre"],"Lucas 1:37"]]},
+  {title:'Poder, soberanía y justicia',verses:[
+    {r:'Jeremías 32:17',t:"¡Oh Señor Jehová! he aquí que tú hiciste el cielo y la tierra con tu gran poder, y con tu brazo extendido, ni hay nada que sea difícil para ti;"},
+    {r:'Salmo 115:3',t:"Nuestro Dios está en los cielos; Todo lo que quiso ha hecho."},
+    {r:'Deuteronomio 32:4',t:"El es la Roca, cuya obra es perfecta, Porque todos sus caminos son rectitud; Dios de verdad, y sin ninguna iniquidad en él; Es justo y recto."}],
+   qs:[
+    ["Según Jeremías 32:17, ¿qué cosa es difícil para Dios?","Ninguna",["Poca","Casi todas","Las que están ocultas"],"Jeremías 32:17"],
+    ["Según Salmo 115:3, ¿qué ha hecho nuestro Dios?","Todo lo que quiso",["Lo que el pueblo pidió","Solo lo que era fácil","Lo que decidieron los ángeles"],"Salmo 115:3","Soberanía: Dios gobierna todas las cosas conforme a su voluntad."],
+    ["Según Deuteronomio 32:4, ¿cómo son todos los caminos de Dios?","Rectitud",["Misterio","Sombra","Tinieblas"],"Deuteronomio 32:4"]]},
+  {title:'Soberano sobre todo',verses:[
+    {r:'Daniel 4:35',t:"Todos los habitantes de la tierra son considerados como nada; y él hace según su voluntad en el ejército del cielo, y en los habitantes de la tierra, y no hay quien detenga su mano, y le diga: ¿Qué haces?"},
+    {r:'Proverbios 21:1',t:"Como los repartimientos de las aguas, Así está el corazón del rey en la mano de Jehová; A todo lo que quiere lo inclina."},
+    {r:'Salmo 103:19',t:"Jehová estableció en los cielos su trono, Y su reino domina sobre todos."}],
+   qs:[
+    ["Según Daniel 4:35, ¿según qué hace Dios en el cielo y en la tierra?","Según su voluntad",["Según el consejo de los hombres","Según la costumbre","Según la suerte"],"Daniel 4:35"],
+    ["Según Proverbios 21:1, ¿en la mano de quién está el corazón del rey?","En la mano de Jehová",["En la mano de sus consejeros","En la mano del pueblo","En la mano de sus enemigos"],"Proverbios 21:1"],
+    ["Según Salmo 103:19, ¿sobre quiénes domina el reino de Jehová?","Sobre todos",["Solo sobre Israel","Solo sobre los justos","Solo sobre los ángeles"],"Salmo 103:19"]]},
+  {title:'Los decretos de Dios',intro:{t:'Los decretos de Dios',p:'Los decretos de Dios son su plan eterno: lo que él determinó que sucedería. La Escritura dice que su consejo permanece para siempre y que hace todas las cosas según el designio de su voluntad.'},
+   verses:[
+    {r:'Isaías 14:27',t:"Porque Jehová de los ejércitos lo ha determinado, ¿y quién lo impedirá? Y su mano extendida, ¿quién la hará retroceder?"},
+    {r:'Salmo 33:11',t:"El consejo de Jehová permanecerá para siempre; Los pensamientos de su corazón por todas las generaciones."},
+    {r:'Efesios 1:11',t:"En él asimismo tuvimos herencia, habiendo sido predestinados conforme al propósito del que hace todas las cosas según el designio de su voluntad,"}],
+   qs:[
+    ["Según Isaías 14:27, cuando Jehová determina algo, ¿quién puede impedirlo?","Nadie",["Los reyes","Los ángeles","El pueblo si ora"],"Isaías 14:27"],
+    ["Según Salmo 33:11, ¿por cuánto tiempo permanece el consejo de Jehová?","Para siempre",["Por una generación","Hasta que el pueblo lo cambie","Por siete años"],"Salmo 33:11"],
+    ["Según Efesios 1:11, ¿conforme a qué hace Dios todas las cosas?","Conforme al designio de su voluntad",["Conforme a la suerte","Conforme a los deseos de los hombres","Conforme a la ley natural"],"Efesios 1:11"]]},
+  {title:'Inmutable, amor y verdad',verses:[
+    {r:'Malaquías 3:6',t:"Porque yo Jehová no cambio; por esto, hijos de Jacob, no habéis sido consumidos."},
+    {r:'1 Juan 4:8',t:"El que no ama, no ha conocido a Dios; porque Dios es amor."},
+    {r:'Números 23:19',t:"Dios no es hombre, para que mienta, ni hijo de hombre para que se arrepienta. Él dijo, ¿y no hará? Habló, ¿y no lo ejecutará?"}],
+   qs:[
+    ["Según Malaquías 3:6, Jehová dice: «Yo Jehová no…»","Cambio",["Olvido","Miento","Duermo"],"Malaquías 3:6"],
+    ["Según 1 Juan 4:8, el que no ama no ha conocido a Dios, porque Dios es…","Amor",["Justicia","Poder","Silencio"],"1 Juan 4:8"],
+    ["Según Números 23:19, ¿qué no es Dios?","Hombre, para que mienta",["Juez, para que olvide","Pastor, para que abandone","Ángel, para que cambie"],"Números 23:19"]]},
+  {title:'Bueno para con todos',verses:[
+    {r:'Salmo 145:9',t:"Bueno es Jehová para con todos, Y sus misericordias sobre todas sus obras."},
+    {r:'Nahúm 1:7',t:"Jehová es bueno, fortaleza en el día de la angustia; y conoce a los que en él confían."},
+    {r:'Salmo 100:5',t:"Porque Jehová es bueno; para siempre es su misericordia, Y su verdad por todas las generaciones."}],
+   qs:[
+    ["Según Salmo 145:9, ¿para con quiénes es bueno Jehová?","Para con todos",["Solo para los justos","Solo para Israel","Solo para los sacerdotes"],"Salmo 145:9"],
+    ["Según Nahúm 1:7, ¿qué es Jehová en el día de la angustia?","Fortaleza",["Juez","Silencio","Distancia"],"Nahúm 1:7"],
+    ["Según Salmo 100:5, ¿qué es para siempre?","Su misericordia",["Su ira","Su templo","Su ley"],"Salmo 100:5"]]},
+  {title:'Paciente y misericordioso',verses:[
+    {r:'Éxodo 34:6',t:"Y pasando Jehová por delante de él, proclamó: ¡Jehová! ¡Jehová! fuerte, misericordioso y piadoso; tardo para la ira, y grande en misericordia y verdad;"},
+    {r:'Salmo 103:8',t:"Misericordioso y clemente es Jehová; Lento para la ira, y grande en misericordia."},
+    {r:'Romanos 2:4',t:"¿O menosprecias las riquezas de su benignidad, paciencia y longanimidad, ignorando que su benignidad te guía al arrepentimiento?"}],
+   qs:[
+    ["Según Éxodo 34:6, Jehová es tardo para…","La ira",["El perdón","La verdad","La misericordia"],"Éxodo 34:6"],
+    ["Según Salmo 103:8, Jehová es grande en…","Misericordia",["Ira","Castigo","Sacrificios"],"Salmo 103:8"],
+    ["Según Romanos 2:4, ¿qué te guía al arrepentimiento?","La benignidad de Dios",["El temor de los hombres","La ley sola","El castigo"],"Romanos 2:4"]]},
+  {title:'Fiel y veraz',verses:[
+    {r:'Deuteronomio 7:9',t:"Conoce, pues, que Jehová tu Dios es Dios, Dios fiel, que guarda el pacto y la misericordia a los que le aman y guardan sus mandamientos, hasta mil generaciones;"},
+    {r:'1 Corintios 1:9',t:"Fiel es Dios, por el cual fuisteis llamados a la comunión con su Hijo Jesucristo nuestro Señor."},
+    {r:'2 Timoteo 2:13',t:"Si fuéremos infieles, él permanece fiel; él no puede negarse a sí mismo."},
+    {r:'Tito 1:2',t:"en la esperanza de la vida eterna, la cual Dios, que no miente, prometió desde antes del principio de los siglos,"}],
+   qs:[
+    ["Según Deuteronomio 7:9, ¿qué guarda el Dios fiel?","El pacto y la misericordia",["El oro y la plata","El templo y el altar","Las leyes de los reyes"],"Deuteronomio 7:9"],
+    ["Según 2 Timoteo 2:13, ¿qué no puede hacer Dios?","Negarse a sí mismo",["Perdonar","Crear","Juzgar"],"2 Timoteo 2:13"],
+    ["Según Tito 1:2, ¿cómo es el Dios que prometió la vida eterna?","Un Dios que no miente",["Un Dios que cambia de parecer","Un Dios lejano","Un Dios que calla"],"Tito 1:2"]]},
+  {title:'Justicia e ira de Dios',verses:[
+    {r:'Génesis 18:25',t:"Lejos de ti el hacer tal, que hagas morir al justo con el impío, y que sea el justo tratado como el impío; nunca tal hagas. El Juez de toda la tierra, ¿no ha de hacer lo que es justo?"},
+    {r:'Salmo 89:14',t:"Justicia y juicio son el cimiento de tu trono; Misericordia y verdad van delante de tu rostro."},
+    {r:'Salmo 7:11',t:"Dios es juez justo, Y Dios está airado contra el impío todos los días."},
+    {r:'Romanos 1:18',t:"Porque la ira de Dios se revela desde el cielo contra toda impiedad e injusticia de los hombres que detienen con injusticia la verdad;"}],
+   qs:[
+    ["Según Génesis 18:25, ¿cómo se llama a Dios?","El Juez de toda la tierra",["El Rey de Sodoma","El Dios de los reyes","El guardián del desierto"],"Génesis 18:25"],
+    ["Según Salmo 89:14, ¿qué es el cimiento del trono de Dios?","Justicia y juicio",["Oro y marfil","Fuerza y temor","Paz y silencio"],"Salmo 89:14"],
+    ["Según Salmo 7:11, ¿con quién está airado Dios todos los días?","Con el impío",["Con el justo","Con los niños","Con los ángeles"],"Salmo 7:11"],
+    ["Según Romanos 1:18, ¿desde dónde se revela la ira de Dios?","Desde el cielo",["Desde el templo","Desde el desierto","Desde el mar"],"Romanos 1:18"]]},
+  {title:'Un Dios celoso',verses:[
+    {r:'Éxodo 34:14',t:"Porque no te has de inclinar a ningún otro dios, pues Jehová, cuyo nombre es Celoso, Dios celoso es."},
+    {r:'Deuteronomio 4:24',t:"Porque Jehová tu Dios es fuego consumidor, Dios celoso."},
+    {r:'Hebreos 12:29',t:"porque nuestro Dios es fuego consumidor."}],
+   qs:[
+    ["Según Éxodo 34:14, ¿cuál es el nombre de Jehová?","Celoso",["Fuerte","Cercano","Silencioso"],"Éxodo 34:14","Su celo es santo: Dios no comparte su gloria con otros, y su celo es distinto del de los hombres."],
+    ["Según Deuteronomio 4:24, ¿qué es Jehová tu Dios?","Fuego consumidor",["Luz apacible","Roca sin voz","Río de paz"],"Deuteronomio 4:24"],
+    ["Según Éxodo 34:14, ¿ante quién no se ha de inclinar el pueblo?","Ante ningún otro dios",["Ante los reyes","Ante los sacerdotes","Ante los profetas"],"Éxodo 34:14"]]},
+  {title:'El amor de Dios',verses:[
+    {r:'Jeremías 31:3',t:"Jehová se manifestó a mí hace ya mucho tiempo, diciendo: Con amor eterno te he amado; por tanto, te prolongué mi misericordia."},
+    {r:'1 Juan 4:10',t:"En esto consiste el amor: no en que nosotros hayamos amado a Dios, sino en que él nos amó a nosotros, y envió a su Hijo en propiciación por nuestros pecados."},
+    {r:'Sofonías 3:17',t:"Jehová está en medio de ti, poderoso, él salvará; se gozará sobre ti con alegría, callará de amor, se regocijará sobre ti con cánticos."}],
+   qs:[
+    ["Según Jeremías 31:3, ¿con qué amor amó Jehová?","Con amor eterno",["Con amor pasajero","Con amor a medias","Con amor de un día"],"Jeremías 31:3"],
+    ["Según 1 Juan 4:10, ¿quién amó primero?","Dios",["Nosotros","Los ángeles","Los profetas"],"1 Juan 4:10"],
+    ["Según Sofonías 3:17, ¿qué hace Jehová sobre su pueblo?","Se gozará sobre él con alegría",["Se alejará en silencio","Se enojará con furia","Se cansará de él"],"Sofonías 3:17"]]}
+ ]}
+ ,{title:'Doctrinas fundamentales',sub:'Lo esencial del evangelio',lessons:[
+  {title:'Pecado',intro:{t:'¿Qué es el pecado?',p:'Según la Biblia, el pecado es infracción de la ley de Dios (1 Juan 3:4). Todos nacen en Adán con una naturaleza inclinada al mal y, por sí mismos, no pueden volverse a Dios.'},
+   verses:[
+    {r:'1 Juan 3:4',t:"Todo aquel que comete pecado, infringe también la ley; pues el pecado es infracción de la ley."},
+    {r:'Romanos 5:12',t:"Por tanto, como el pecado entró en el mundo por un hombre, y por el pecado la muerte, así la muerte pasó a todos los hombres, por cuanto todos pecaron."},
+    {r:'Salmo 51:5',t:"He aquí, en maldad he sido formado, Y en pecado me concibió mi madre."},
+    {r:'Efesios 2:1',t:"Y él os dio vida a vosotros, cuando estabais muertos en vuestros delitos y pecados,"}],
+   qs:[
+    ["Según 1 Juan 3:4, ¿qué es el pecado?","Infracción de la ley",["Un error sin culpa","Una debilidad del cuerpo","Una idea equivocada"],"1 Juan 3:4"],
+    ["Según Romanos 5:12, ¿cómo entró el pecado en el mundo?","Por un hombre",["Por el mar","Por la ley de Moisés","Por los ángeles"],"Romanos 5:12","Ese hombre es Adán, cabeza de la humanidad: por su pecado entró la muerte a todos (Romanos 5:12-19)."],
+    ["Según Efesios 2:1, ¿cómo estaban los creyentes antes de que Dios les diera vida?","Muertos en delitos y pecados",["Enfermos, pero capaces de buscar a Dios","Dormidos en la fe","Ignorantes de la ley"],"Efesios 2:1","El pecado alcanza a toda la persona: mente, afectos y voluntad. Por eso la salvación comienza con Dios, que da vida al que está muerto."]]},
+  {title:'Gracia y misericordia',intro:{t:'Gracia y misericordia',p:'Gracia es el favor inmerecido de Dios hacia quien merece castigo. Misericordia es que Dios no nos da el castigo que merecemos. La salvación es toda por gracia: desde la vida nueva que Dios da al muerto en pecados (Efesios 2:5) hasta la fe misma (Efesios 2:8).'},
+   verses:[
+    {r:'Romanos 11:6',t:"Y si por gracia, ya no es por obras; de otra manera la gracia ya no es gracia."},
+    {r:'Efesios 2:4',t:"Pero Dios, que es rico en misericordia, por su gran amor con que nos amó,"},
+    {r:'Efesios 2:5',t:"aun estando nosotros muertos en pecados, nos dio vida juntamente con Cristo (por gracia sois salvos),"},
+    {r:'Lamentaciones 3:22-23',t:"Por la misericordia de Jehová no hemos sido consumidos, porque nunca decayeron sus misericordias. Nuevas son cada mañana; grande es tu fidelidad."},
+    {r:'Tito 3:5',t:"nos salvó, no por obras de justicia que nosotros hubiéramos hecho, sino por su misericordia, por el lavamiento de la regeneración y por la renovación en el Espíritu Santo,"}],
+   qs:[
+    ["Según Romanos 11:6, si la salvación es por gracia, ¿qué ya no es?","Por obras",["Por fe","Por amor","Por la cruz"],"Romanos 11:6"],
+    ["Según Tito 3:5, ¿por qué nos salvó Dios?","Por su misericordia",["Por nuestras obras de justicia","Por nuestra sabiduría","Por nuestra fidelidad"],"Tito 3:5"],
+    ["Según Efesios 2:5, ¿qué hizo Dios con nosotros estando muertos en pecados?","Nos dio vida juntamente con Cristo",["Nos dio una segunda oportunidad","Nos envió un maestro","Nos dio más tiempo"],"Efesios 2:5","Dios da vida nueva al pecador, y la fe es fruto de esa obra suya."],
+    ["¿Cuál es la diferencia entre gracia y misericordia?","Gracia: recibir lo que no merecemos. Misericordia: no recibir lo que merecemos",["Son exactamente lo mismo","Gracia es para los justos; misericordia, para los pecadores","Gracia es obra humana; misericordia es obra divina"],"Efesios 2:4"]]},
+  {title:'Redención',intro:{t:'¿Qué es la redención?',p:'Redimir es liberar mediante el pago de un precio. Las Escrituras dicen que el precio fue la sangre de Cristo.'},
+   verses:[
+    {r:'Efesios 1:7',t:"en quien tenemos redención por su sangre, el perdón de pecados según las riquezas de su gracia,"},
+    {r:'1 Pedro 1:18-19',t:"sabiendo que fuisteis rescatados de vuestra vana manera de vivir, la cual recibisteis de vuestros padres, no con cosas corruptibles, como oro o plata, sino con la sangre preciosa de Cristo, como de un cordero sin mancha y sin contaminación,"},
+    {r:'Marcos 10:45',t:"Porque el Hijo del Hombre no vino para ser servido, sino para servir, y para dar su vida en rescate por muchos."}],
+   qs:[
+    ["Según Efesios 1:7, ¿por medio de qué tenemos redención?","Por su sangre",["Por la ley","Por el templo","Por el ayuno"],"Efesios 1:7"],
+    ["Según 1 Pedro 1:18-19, ¿con qué fuimos rescatados?","Con la sangre preciosa de Cristo",["Con oro o plata","Con buenas obras","Con sacrificios de animales"],"1 Pedro 1:18-19"],
+    ["Según Marcos 10:45, ¿para qué dio su vida el Hijo del Hombre?","En rescate por muchos",["Como simple ejemplo","Para fundar una escuela","Para juzgar a las naciones"],"Marcos 10:45"]]},
+  {title:'Expiación y propiciación',intro:{t:'Expiación y propiciación',p:'Cristo llevó el castigo del pecado en lugar de los pecadores. «Propiciación» significa que satisfizo la justa ira de Dios. Murió para salvar con certeza a su pueblo, a sus ovejas (Mateo 1:21; Juan 10:15).'},
+   verses:[
+    {r:'Isaías 53:5',t:"Mas él herido fue por nuestras rebeliones, molido por nuestros pecados; el castigo de nuestra paz fue sobre él, y por su llaga fuimos nosotros curados."},
+    {r:'Romanos 3:25',t:"a quien Dios puso como propiciación por medio de la fe en su sangre, para manifestar su justicia, a causa de haber pasado por alto, en su paciencia, los pecados pasados,"},
+    {r:'Hebreos 9:22',t:"Y casi todo es purificado, según la ley, con sangre; y sin derramamiento de sangre no se hace remisión."},
+    {r:'Mateo 1:21',t:"Y dará a luz un hijo, y llamarás su nombre JESÚS, porque él salvará a su pueblo de sus pecados."},
+    {r:'Juan 10:15',t:"así como el Padre me conoce, y yo conozco al Padre; y pongo mi vida por las ovejas."}],
+   qs:[
+    ["Según Isaías 53:5, ¿por qué fue molido el Siervo?","Por nuestros pecados",["Por sus propios pecados","Por la ley de Moisés","Por los ángeles"],"Isaías 53:5"],
+    ["Según Hebreos 9:22, sin derramamiento de sangre no se hace…","Remisión",["Reposo","Alabanza","Templo"],"Hebreos 9:22"],
+    ["¿Qué significa que Cristo es «propiciación»?","Que satisface la justa ira de Dios contra el pecado",["Que es un buen maestro moral","Que revela el camino a Dios","Que anula toda ley"],"Romanos 3:25","Cristo cargó el castigo que merecíamos y satisfizo la justicia de Dios."],
+    ["Según Mateo 1:21, ¿a quiénes salvará Jesús de sus pecados?","A su pueblo",["A quienes lo merezcan","A los que guarden la ley","A las naciones que se esfuercen"],"Mateo 1:21","Jesús salva con certeza a «su pueblo» (Mt 1:21) y da su vida por «las ovejas» (Jn 10:15)."]]},
+  {title:'Predestinación y elección',intro:{t:'Predestinación y elección',p:'Predestinar es determinar de antemano. La Biblia dice que Dios escogió a los suyos antes de la fundación del mundo (Efesios 1:4-5). Esto no anula el llamado del evangelio a todos: quien viene a Cristo no es echado fuera (Juan 6:37).'},
+   verses:[
+    {r:'Efesios 1:4',t:"según nos escogió en él antes de la fundación del mundo, para que fuésemos santos y sin mancha delante de él,"},
+    {r:'Efesios 1:5',t:"en amor habiéndonos predestinado para ser adoptados hijos suyos por medio de Jesucristo, según el puro afecto de su voluntad,"},
+    {r:'Romanos 8:30',t:"Y a los que predestinó, a éstos también llamó; y a los que llamó, a éstos también justificó; y a los que justificó, a éstos también glorificó."},
+    {r:'Juan 6:37',t:"Todo lo que el Padre me da, vendrá a mí; y al que a mí viene, no le echo fuera."},
+    {r:'Hechos 13:48',t:"Los gentiles, oyendo esto, se regocijaban y glorificaban la palabra del Señor, y creyeron todos los que estaban ordenados para vida eterna."}],
+   qs:[
+    ["Según Efesios 1:4, ¿cuándo nos escogió Dios en Cristo?","Antes de la fundación del mundo",["Cuando creímos","Al nacer","En el día del juicio"],"Efesios 1:4"],
+    ["Según Efesios 1:5, ¿para qué nos predestinó Dios?","Para ser adoptados hijos suyos",["Para ser reyes en la tierra","Para librarnos del trabajo","Para conocer el futuro"],"Efesios 1:5"],
+    ["Según Hechos 13:48, ¿quiénes creyeron?","Todos los que estaban ordenados para vida eterna",["Todos los que oyeron el mensaje","Los que más se esforzaron","Solamente los judíos"],"Hechos 13:48"],
+    ["Según Efesios 1:5, ¿conforme a qué nos predestinó Dios?","Según el puro afecto de su voluntad",["Según nuestras obras","Según nuestra fe prevista","Según el mérito de nuestros padres"],"Efesios 1:5","Dios actúa por su propia voluntad, para alabanza de la gloria de su gracia (Efesios 1:5-6)."]]},
+  {title:'Infierno',intro:{t:'El infierno',p:'El infierno es el lugar del castigo eterno de quienes no están en Cristo. Jesús mismo habló de él (Mateo 25:46).'},
+   verses:[
+    {r:'Mateo 25:46',t:"E irán éstos al castigo eterno, y los justos a la vida eterna."},
+    {r:'Mateo 10:28',t:"Y no temáis a los que matan el cuerpo, mas el alma no pueden matar; temed más bien a aquel que puede destruir el alma y el cuerpo en el infierno."},
+    {r:'2 Tesalonicenses 1:9',t:"los cuales sufrirán pena de eterna perdición, excluidos de la presencia del Señor y de la gloria de su poder,"},
+    {r:'Apocalipsis 20:15',t:"Y el que no se halló inscrito en el libro de la vida fue lanzado al lago de fuego."}],
+   qs:[
+    ["Según Mateo 25:46, ¿a dónde irán los impíos?","Al castigo eterno",["Al olvido","A un reposo temporal","A la nada"],"Mateo 25:46","Jesús usa la misma palabra, «eterno», para el castigo y para la vida. Por eso el evangelio es urgente."],
+    ["Según Mateo 10:28, ¿a quién debemos temer más?","A aquel que puede destruir el alma y el cuerpo en el infierno",["A los que matan el cuerpo","A los gobernantes","A los falsos maestros"],"Mateo 10:28"],
+    ["Según 2 Tesalonicenses 1:9, ¿de qué serán excluidos los que sufran la eterna perdición?","De la presencia del Señor y de la gloria de su poder",["De la ley de Moisés","De la ciudad de Jerusalén","Del templo de Dios"],"2 Tesalonicenses 1:9"]]}
+ ]}
+ ,{title:'Personajes bíblicos',sub:'Quién es quién en la Escritura',lessons:[
+  {title:'Eva, Noé y la promesa',verses:[
+    {r:'Génesis 6:8',t:"Pero Noé halló gracia ante los ojos de Jehová."},
+    {r:'Génesis 9:13',t:"Mi arco he puesto en las nubes, el cual será por señal del pacto entre mí y la tierra."}],
+   qs:[
+    ["¿Cómo llamó Adán a su mujer?","Eva",["Sara","Rebeca","Ana"],"Génesis 3:20"],
+    ["¿Quién halló gracia ante los ojos de Jehová, según Génesis 6:8?","Noé",["Abraham","Moisés","Enoc"],"Génesis 6:8"],
+    ["¿Qué puso Dios en las nubes como señal del pacto?","Su arco",["Una estrella","Una columna de fuego","Una trompeta"],"Génesis 9:13"],
+    ["Según Génesis 3:15, ¿dónde herirá la simiente de la mujer al enemigo?","En la cabeza",["En el calcañar","En el corazón","En la mano"],"Génesis 3:15","Desde antiguo se ve aquí la primera promesa del evangelio: el Mesías vencería a la serpiente."]]},
+  {title:'Abram, Moisés y Josué',verses:[
+    {r:'Génesis 12:1',t:"Pero Jehová había dicho a Abram: Vete de tu tierra y de tu parentela, y de la casa de tu padre, a la tierra que te mostraré."},
+    {r:'Génesis 15:6',t:"Y creyó a Jehová, y le fue contado por justicia."},
+    {r:'Éxodo 3:14',t:"Y respondió Dios a Moisés: YO SOY EL QUE SOY. Y dijo: Así dirás a los hijos de Israel: YO SOY me envió a vosotros."},
+    {r:'Josué 1:9',t:"Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehová tu Dios estará contigo en dondequiera que vayas."}],
+   qs:[
+    ["¿A quién dijo Jehová: «Vete de tu tierra»?","A Abram",["A Isaac","A Jacob","A Lot"],"Génesis 12:1"],
+    ["Según Génesis 15:6, ¿qué le fue contado a Abram por justicia?","Que creyó a Jehová",["Su sacrificio de Isaac","Su circuncisión","Sus buenas obras"],"Génesis 15:6","Pablo cita este texto en Romanos 4:3 para explicar la justificación por la fe."],
+    ["¿A quién dijo Dios «YO SOY EL QUE SOY»?","A Moisés",["A Aarón","A Josué","A Elías"],"Éxodo 3:14"],
+    ["¿A quién mandó Jehová esforzarse y ser valiente porque estaría con él dondequiera que fuera?","A Josué",["A Gedeón","A David","A Caleb"],"Josué 1:9"]]},
+  {title:'David, Job y Daniel',verses:[
+    {r:'Hechos 13:22',t:"Quitado éste, les levantó por rey a David, de quien dio también testimonio diciendo: He hallado a David hijo de Isaí, varón conforme a mi corazón, quien hará todo lo que yo quiero."},
+    {r:'Salmo 51:1',t:"Ten piedad de mí, oh Dios, conforme a tu misericordia; Conforme a la multitud de tus piedades borra mis rebeliones."},
+    {r:'Job 19:25',t:"Yo sé que mi Redentor vive, Y al fin se levantará sobre el polvo;"},
+    {r:'Daniel 6:22',t:"Mi Dios envió su ángel, el cual cerró la boca de los leones, para que no me hiciesen daño, porque ante él fui hallado inocente; y aun delante de ti, oh rey, yo no he hecho nada malo."}],
+   qs:[
+    ["¿De quién dijo Dios: «varón conforme a mi corazón»?","David",["Saúl","Salomón","Samuel"],"Hechos 13:22"],
+    ["¿Quién dijo: «Yo sé que mi Redentor vive»?","Job",["Isaías","Jeremías","Abraham"],"Job 19:25"],
+    ["¿A quién protegió Dios cerrando la boca de los leones?","A Daniel",["A José","A Elías","A Jonás"],"Daniel 6:22"]]},
+  {title:'Personajes del Nuevo Testamento',verses:[
+    {r:'Lucas 1:38',t:"Entonces María dijo: He aquí la sierva del Señor; hágase conmigo conforme a tu palabra. Y el ángel se fue de su presencia."},
+    {r:'Juan 1:29',t:"El siguiente día vio Juan a Jesús que venía a él, y dijo: He aquí el Cordero de Dios, que quita el pecado del mundo."},
+    {r:'Mateo 16:16',t:"Respondiendo Simón Pedro, dijo: Tú eres el Cristo, el Hijo del Dios viviente."},
+    {r:'Filipenses 1:21',t:"Porque para mí el vivir es Cristo, y el morir es ganancia."}],
+   qs:[
+    ["¿Quién dijo: «He aquí la sierva del Señor»?","María",["Isabel","Ana","Marta"],"Lucas 1:38"],
+    ["¿Quién dijo de Jesús: «He aquí el Cordero de Dios, que quita el pecado del mundo»?","Juan el Bautista",["Pedro","Andrés","Pablo"],"Juan 1:29"],
+    ["¿Quién confesó: «Tú eres el Cristo, el Hijo del Dios viviente»?","Simón Pedro",["Tomás","Felipe","Judas"],"Mateo 16:16"],
+    ["¿Quién escribió: «Para mí el vivir es Cristo»?","Pablo",["Pedro","Juan","Santiago"],"Filipenses 1:21"]]}
+ ]}
+ ,{title:'Eventos bíblicos',sub:'De la caída a la misión',lessons:[
+  {title:'Diluvio y Moriah',verses:[
+    {r:'Génesis 7:12',t:"y hubo lluvia sobre la tierra cuarenta días y cuarenta noches."},
+    {r:'Génesis 22:8',t:"Y respondió Abraham: Dios se proveerá de cordero para el holocausto, hijo mío. E iban juntos."}],
+   qs:[
+    ["Según Génesis 3:6, ¿qué tomó la mujer y comió?","Del fruto del árbol",["Un pan sin levadura","Del maná","Un racimo de uvas"],"Génesis 3:6"],
+    ["¿Cuánto tiempo hubo lluvia sobre la tierra en el diluvio?","Cuarenta días y cuarenta noches",["Siete días","Un año","Cuarenta años"],"Génesis 7:12"],
+    ["Según Génesis 22:8, ¿de qué dijo Abraham que Dios se proveería?","De cordero para el holocausto",["De un altar de oro","De un heredero","De agua para el camino"],"Génesis 22:8"]]},
+  {title:'Pascua, pacto y Jonás',verses:[
+    {r:'Éxodo 12:13',t:"Y la sangre os será por señal en las casas donde vosotros estéis; y veré la sangre y pasaré de vosotros, y no habrá en vosotros plaga de mortandad cuando hiera la tierra de Egipto."},
+    {r:'Éxodo 20:1',t:"Y habló Dios todas estas palabras, diciendo:"},
+    {r:'2 Samuel 7:16',t:"Y será afirmada tu casa y tu reino para siempre delante de tu rostro, y tu trono será estable eternamente."},
+    {r:'Jonás 1:17',t:"Pero Jehová tenía preparado un gran pez que tragase a Jonás; y estuvo Jonás en el vientre del pez tres días y tres noches."}],
+   qs:[
+    ["Según Éxodo 12:13, ¿qué vería Jehová para pasar de largo?","La sangre",["El humo","La ofrenda","La oración"],"Éxodo 12:13"],
+    ["¿Cuánto tiempo estuvo Jonás en el vientre del pez?","Tres días y tres noches",["Un día y una noche","Siete días","Cuarenta días"],"Jonás 1:17"],
+    ["Según 2 Samuel 7:16, ¿cómo sería el trono de David?","Estable eternamente",["Pasajero","Dividido","Trasladado a otra casa"],"2 Samuel 7:16"]]},
+  {title:'Nacimiento, cruz y resurrección',verses:[
+    {r:'Lucas 2:11',t:"que os ha nacido hoy, en la ciudad de David, un Salvador, que es CRISTO el Señor."},
+    {r:'Lucas 23:33',t:"Y cuando llegaron al lugar llamado de la Calavera, le crucificaron allí, y a los malhechores, uno a la derecha y otro a la izquierda."},
+    {r:'Mateo 28:6',t:"No está aquí, pues ha resucitado, como dijo. Venid, ved el lugar donde fue puesto el Señor."},
+    {r:'1 Corintios 15:3-4',t:"Porque primeramente os he enseñado lo que asimismo recibí: Que Cristo murió por nuestros pecados, conforme a las Escrituras; y que fue sepultado, y que resucitó al tercer día, conforme a las Escrituras;"}],
+   qs:[
+    ["Según Lucas 2:11, ¿quién nació en la ciudad de David?","Un Salvador, que es Cristo el Señor",["Un rey de Israel","Un profeta como Moisés","Un sumo sacerdote"],"Lucas 2:11"],
+    ["Según Lucas 23:33, ¿cómo se llama el lugar donde crucificaron a Jesús?","De la Calavera",["Getsemaní","Betania","Monte de los Olivos"],"Lucas 23:33"],
+    ["Según Mateo 28:6, ¿por qué no estaba Jesús en el sepulcro?","Porque había resucitado",["Porque lo habían trasladado","Porque los discípulos lo llevaron","Porque había ascendido"],"Mateo 28:6"],
+    ["Según 1 Corintios 15:3-4, ¿cuándo resucitó Cristo?","Al tercer día",["Al primer día","Al séptimo día","A los cuarenta días"],"1 Corintios 15:3-4","La muerte de Cristo en lugar de los pecadores y su resurrección corporal son el centro del evangelio."]]},
+  {title:'Ascensión, Pentecostés y misión',verses:[
+    {r:'Hechos 1:9',t:"Y habiendo dicho estas cosas, viéndolo ellos, fue alzado, y le recibió una nube que le ocultó de sus ojos."},
+    {r:'Hechos 2:4',t:"Y fueron todos llenos del Espíritu Santo, y comenzaron a hablar en otras lenguas, según el Espíritu les daba que hablasen."},
+    {r:'Mateo 28:19',t:"Por tanto, id, y haced discípulos a todas las naciones, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo;"},
+    {r:'Hechos 8:12',t:"Pero cuando creyeron a Felipe, que anunciaba el evangelio del reino de Dios y el nombre de Jesucristo, se bautizaban hombres y mujeres."}],
+   qs:[
+    ["Según Hechos 1:9, ¿qué recibió a Jesús cuando fue alzado?","Una nube",["Un carro de fuego","Dos ángeles","Un torbellino"],"Hechos 1:9"],
+    ["Según Hechos 2:4, ¿de qué fueron llenos todos?","Del Espíritu Santo",["De gozo","De temor","De sabiduría"],"Hechos 2:4"],
+    ["Según Mateo 28:19, ¿en qué nombre se bautiza a los discípulos?","En el nombre del Padre, y del Hijo, y del Espíritu Santo",["En el nombre de Moisés","En el nombre de la iglesia","En el nombre de los apóstoles"],"Mateo 28:19"],
+    ["Según Hechos 8:12, ¿quiénes se bautizaban?","Hombres y mujeres que creyeron a Felipe",["Solo los sacerdotes","Únicamente los ancianos","Los que vivían en Jerusalén"],"Hechos 8:12"]]}
+ ]}
+];
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rnd=n=>Math.floor(Math.random()*n);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pad=n=>String(n).padStart(2,'0');
+const dstr=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>dstr(new Date());
+const addDays=(s,n)=>{const [y,m,d]=s.split('-').map(Number);return dstr(new Date(y,m-1,d+n));};
+const diffDays=(a,b)=>{const [y1,m1,d1]=a.split('-').map(Number),[y2,m2,d2]=b.split('-').map(Number);return Math.round((Date.UTC(y2,m2-1,d2)-Date.UTC(y1,m1-1,d1))/86400000);};
+const DOW=['D','L','M','X','J','V','S'];
+
+const IC={
+ flame:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c.6 3.6-3.2 5.6-3.2 9.6a3.6 3.6 0 0 0 7.2 0c0-1.8-.8-2.8-1-4.4 2.2 1.3 4.2 4.1 4.2 7.4a7.2 7.2 0 0 1-14.4 0c0-5.6 5.6-7.4 7.2-12.6z" fill="currentColor"/></svg>',
+ shield:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="currentColor"/></svg>',
+ check:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+ play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>',
+ lock:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>',
+ close:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+ path:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20c0-6 7-4 7-9S6 7 8 4M14 20c4-2 6-5 6-8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="8" cy="4" r="1.8" fill="currentColor"/><circle cx="20" cy="12" r="1.8" fill="currentColor"/></svg>',
+ review:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+ users:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M17 14.5c2.5.2 4 1.8 4 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+ trophy:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v6a5 5 0 0 1-10 0zM7 6H4c0 3 1 4 3 4.5M17 6h3c0 3-1 4-3 4.5M12 15v4M8 20h8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+ star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.9 6.6 19.7l1.1-6.1L3.2 9.4l6.1-.8z" fill="currentColor"/></svg>',
+ lamp:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 19c0-2.2 3.2-3.6 8.5-3.6h8c4.5 0 7.6 1.2 8.5 3.6-1 4.4-5.2 8.4-10.4 8.4h-4C8.400 27.400 4 23.400 3 19z" fill="currentColor"/><path d="M26.500 17c2.600-1 3.600-3.400 2.500-5.800" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"/><path d="M10.500 12.500c-1.600-2.300.6-3.700.9-6 2.500 1.400 3.900 4 2.700 6.100-.6 1.100-2.800 1.100-3.600-.1z" fill="var(--flame)"/></svg>'
+};
+
+/* ============================================================
+   DATOS DERIVADOS
+   ============================================================ */
+const ALLV=[];const ALLKEYS=[];
+const lk=(ui,li)=>UNITS[ui].lessons[li].title;
+UNITS.forEach((u,ui)=>u.lessons.forEach((l,li)=>{ALLKEYS.push(lk(ui,li));l.verses.forEach(v=>{v.u=ui;ALLV.push(v);});}));
+/* Versículos clave: solo estos generan la pregunta «¿Qué pasaje es este?» */
+const KEYREFS=['Génesis 1:1','Salmo 23:1','Mateo 5:3','Mateo 6:9','Juan 1:1','Juan 3:16','Juan 11:35','Juan 14:6','Romanos 3:23','Romanos 6:23','Romanos 8:28','Efesios 2:8','Génesis 3:15','Isaías 6:3','Isaías 53:5','Deuteronomio 6:4','Éxodo 3:14','Josué 1:9','Mateo 28:19','Apocalipsis 20:15','Mateo 5:16','Mateo 6:33'];
+ALLV.forEach(v=>{v.key=KEYREFS.includes(v.r);});
+const VBY=Object.fromEntries(ALLV.map(v=>[v.r,v]));
+const coreOf=w=>{const m=w.match(/^([^\p{L}]*)(.*?)([^\p{L}]*)$/u);return {pre:m[1],core:m[2],suf:m[3]};};
+const WORDPOOL=[];
+ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>=4)WORDPOOL.push({core:c,cap:/^\p{Lu}/u.test(c),u:v.u});}));
+
+/* ============================================================
+   ESTADO Y ALMACENAMIENTO (localStorage protegido)
+   ============================================================ */
+const KEY='lampara.rvr1960.v1';
+const defaults=()=>({g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0});
+let S=defaults();
+function load(){try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(defaults(),JSON.parse(r));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+function refreshStreak(){
+  if(!S.lastDay||S.streak===0)return;
+  const gap=diffDays(S.lastDay,today());
+  if(gap<=1)return;
+  const missed=gap-1;
+  if(S.freezes>=missed){S.freezes-=missed;S.froze=missed;S.lastDay=addDays(today(),-1);}
+  else{S.streak=0;}
+  save();
+}
+function recordDay(xp){
+  const t=today();let newDay=false,gotFreeze=false;
+  if(S.lastDay!==t){
+    newDay=true;
+    S.streak=(S.streak>0&&S.lastDay===addDays(t,-1))?S.streak+1:1;
+    S.lastDay=t;
+    if(S.streak>S.best)S.best=S.streak;
+    if(S.streak%7===0&&S.freezes<2){S.freezes++;gotFreeze=true;}
+  }
+  const before=S.days[t]||0;
+  S.days[t]=before+xp;S.xp+=xp;
+  return {newDay,gotFreeze,goalHit:before<S.goal&&S.days[t]>=S.goal};
+}
+
+const ACH=[
+ {id:'first',t:'Primera lección',d:'Completa tu primera lección',f:s=>s.lessons>=1},
+ {id:'s3',t:'Tres días seguidos',d:'Alcanza una racha de 3 días',f:s=>s.best>=3},
+ {id:'s7',t:'Una semana completa',d:'Alcanza una racha de 7 días',f:s=>s.best>=7},
+ {id:'s30',t:'Un mes fiel',d:'Alcanza una racha de 30 días',f:s=>s.best>=30},
+ {id:'perf',t:'Sin errores',d:'Completa una lección sin fallar',f:s=>s.perfect>=1},
+ {id:'x100',t:'100 XP',d:'Suma 100 puntos de experiencia',f:s=>s.xp>=100},
+ {id:'x500',t:'500 XP',d:'Suma 500 puntos de experiencia',f:s=>s.xp>=500},
+ {id:'v20',t:'Veinte versículos',d:'Practica 20 versículos distintos',f:s=>Object.keys(s.verses).length>=20},
+ {id:'unit',t:'Unidad completa',d:'Termina todas las lecciones de una unidad',f:s=>UNITS.some((u,ui)=>u.lessons.every((_,li)=>s.done[lk(ui,li)]))},
+ {id:'group',t:'Noche en familia',d:'Termina un juego en grupo',f:s=>(s.gplays||0)>=1},
+ {id:'rev',t:'Primer repaso',d:'Completa un repaso diario',f:s=>s.reviews>=1},
+ {id:'all',t:'Curso completo',d:'Termina todas las lecciones',f:s=>ALLKEYS.every(k=>s.done[k])}
+];
+
+/* ============================================================
+   HUECOS CURADOS: palabra a ocultar + 3 alternativas de la misma
+   clase gramatical y que caben en la frase (no sirven para otra cosa).
+   ============================================================ */
+const BLANKS={
+'Génesis 1:1':[['creó',['formó','hizo','separó']],['cielos',['mares','montes','ángeles']]],
+'Génesis 1:3':[['dijo',['mandó','habló','ordenó']]],
+'Génesis 1:5':[['tinieblas',['aguas','estrellas','nubes']],['tarde',['semana','estación','hora']]],
+'Génesis 1:27':[['hombre',['ángel','animal','hijo']],['hembra',['esposa','doncella','madre']]],
+'Génesis 1:31':[['mañana',['noche','semana','hora']],['sexto',['séptimo','quinto','tercero']],['bueno',['grande','santo','perfecto']]],
+'Génesis 2:2':[['acabó',['comenzó','preparó','bendijo']],['reposó',['trabajó','caminó','habló']]],
+'Génesis 2:7':[['polvo',['agua','fuego','aire']],['formó',['llamó','vio','bendijo']],['nariz',['boca','frente','mano']]],
+'Éxodo 20:2':[['Egipto',['Babilonia','Canaán','Asiria']]],
+'Éxodo 20:3':[['dioses',['reyes','señores','ángeles']],['delante',['detrás','cerca','lejos']]],
+'Éxodo 20:7':[['inocente',['culpable','justo','santo']]],
+'Éxodo 20:8':[['reposo',['ayuno','fiesta','trabajo']]],
+'Éxodo 20:12':[['Honra',['Obedece','Sirve','Ama']],['alarguen',['acorten','aumenten','cumplan']]],
+'Éxodo 20:13':[['matarás',['envidiarás','abandonarás','maldecirás']]],
+'Éxodo 20:14':[['adulterio',['homicidio','idolatría','codicia']]],
+'Éxodo 20:15':[['hurtarás',['engañarás','saquearás','defraudarás']]],
+'Éxodo 20:16':[['testimonio',['consejo','juicio','reproche']]],
+'Éxodo 20:17':[['buey',['caballo','camello','cordero']],['asno',['mulo','camello','caballo']]],
+'Salmo 23:1':[['pastor',['rey','juez','guardián']],['faltará',['dañará','turbará','vencerá']]],
+'Salmo 23:2':[['pastos',['huertos','valles','jardines']],['descansar',['dormir','caminar','habitar']],['reposo',['frescura','tormenta','abundancia']]],
+'Salmo 23:3':[['Confortará',['Levantará','Guardará','Sanará']],['justicia',['verdad','paz','santidad']]],
+'Salmo 23:4':[['valle',['monte','desierto','camino']],['temeré',['sufriré','veré','tendré']],['vara',['espada','corona','cuerda']]],
+'Salmo 23:5':[['mesa',['cama','tienda','corona']],['aceite',['agua','vino','perfume']],['copa',['fuente','tinaja','cisterna']]],
+'Salmo 23:6':[['misericordia',['bendición','gracia','justicia']],['largos',['cortos','pocos','escasos']]],
+'Mateo 5:3':[['pobres',['ricos','sabios','fuertes']],['reino',['tesoro','premio','gozo']]],
+'Mateo 5:4':[['lloran',['oran','ayunan','callan']],['consolación',['riqueza','alegría','descanso']]],
+'Mateo 5:5':[['mansos',['fuertes','valientes','sabios']]],
+'Mateo 5:6':[['justicia',['verdad','paz','santidad']],['saciados',['consolados','premiados','escuchados']]],
+'Mateo 5:7':[['misericordiosos',['pacientes','generosos','sinceros']]],
+'Mateo 5:8':[['limpio',['humilde','sincero','contrito']],['verán',['oirán','conocerán','seguirán']]],
+'Mateo 5:9':[['pacificadores',['mansos','misericordiosos','perseguidos']],['hijos',['siervos','amigos','herederos']]],
+'Mateo 6:9':[['oraréis',['viviréis','hablaréis','cantaréis']],['santificado',['exaltado','honrado','conocido']]],
+'Mateo 6:10':[['Venga',['Sea','Crezca','Permanezca']],['voluntad',['palabra','justicia','gloria']]],
+'Mateo 6:11':[['pan',['maná','vino','aceite']],['hoy',['mañana','siempre','pronto']]],
+'Mateo 6:12':[['deudores',['ofensores','enemigos','hermanos']]],
+'Juan 1:1':[['principio',['mundo','tiempo','cielo']]],
+'Juan 1:14':[['carne',['siervo','luz','ángel']],['unigénito',['primogénito','escogido','amado']],['verdad',['bondad','justicia','paz']]],
+'Juan 3:16':[['mundo',['pueblo','hombre','creyente']],['unigénito',['primogénito','amado','escogido']],['pierda',['condene','aparte','avergüence']],['eterna',['nueva','abundante','plena']]],
+'Juan 11:35':[['lloró',['oró','calló','suspiró']],['Jesús',['Lázaro','Marta','Pedro']]],
+'Juan 6:35':[['pan',['maná','vino','agua']]],
+'Juan 8:12':[['mundo',['cielo','templo','camino']],['tinieblas',['pecado','mentira','engaño']]],
+'Juan 10:11':[['ovejas',['hijos','amigos','siervos']],['vida',['sangre','alma','fuerza']]],
+'Juan 14:6':[['camino',['pastor','maestro','cordero']],['verdad',['justicia','gracia','paz']]],
+'Romanos 3:23':[['pecaron',['murieron','cayeron','dudaron']],['gloria',['presencia','ley','gracia']]],
+'Romanos 5:8':[['amor',['poder','perdón','consuelo']],['murió',['resucitó','intercedió','sufrió']]],
+'Romanos 6:23':[['muerte',['esclavitud','condenación','ruina']],['dádiva',['promesa','riqueza','recompensa']]],
+'Romanos 8:1':[['condenación',['acusación','tribulación','aflicción']],['carne',['ley','letra','tierra']]],
+'Romanos 8:28':[['aman',['temen','buscan','siguen']],['propósito',['pacto','palabra','promesa']]],
+'Romanos 10:9':[['corazón',['alma','mente','espíritu']],['salvo',['justo','libre','santo']]],
+'Efesios 2:8':[['gracia',['obras','ley','misericordia']],['salvos',['justos','libres','santos']],['don',['obra','mérito','premio']]],
+'Efesios 2:9':[['obras',['ley','méritos','esfuerzos']]],
+'Isaías 6:3':[['ejércitos',['cielos','montes','pueblos']],['gloria',['santidad','justicia','luz']]],
+'Juan 4:24':[['adoran',['sirven','buscan','temen']],['necesario',['posible','bueno','mejor']]],
+'Deuteronomio 6:4':[['Israel',['Jacob','Judá','Sion']],['uno',['santo','justo','fiel']]],
+'Juan 5:26':[['dado',['mostrado','enviado','prometido']]],
+'Hechos 17:25':[['honrado',['adorado','alabado','engrandecido']],['aliento',['gozo','luz','sustento']]],
+'Jeremías 10:10':[['verdadero',['único','santo','fiel']],['eterno',['santo','justo','poderoso']]],
+'Salmo 33:6':[['palabra',['mano','sabiduría','gracia']]],
+'Salmo 33:9':[['existió',['apareció','permaneció','nació']]],
+'Apocalipsis 4:11':[['honra',['alabanza','bendición','riqueza']],['voluntad',['palabra','gracia','sabiduría']]],
+'Hebreos 11:3':[['fe',['razón','ley','esperanza']],['palabra',['mano','sabiduría','voluntad']]],
+'Colosenses 1:16':[['cielos',['montes','mares','valles']]],
+'Salmo 147:5':[['infinito',['perfecto','santo','eterno']]],
+'Salmo 139:7':[['presencia',['casa','ley','templo']]],
+'Salmo 90:2':[['montes',['mares','cielos','ríos']],['mundo',['cielo','mar','polvo']]],
+'Salmo 139:1-2':[['examinado',['visto','guardado','probado']],['pensamientos',['caminos','palabras','obras']]],
+'Hebreos 4:13':[['cuenta',['gracias','gloria','honra']]],
+'1 Juan 3:20':[['sabe',['ve','oye','juzga']]],
+'Mateo 10:29-30':[['pajarillos',['ovejas','corderos','cuervos']],['cuarto',['denario','talento','siclo']],['cabellos',['pasos','días','años']]],
+'Jeremías 23:24':[['escondrijos',['cuevas','montes','cavernas']],['cielo',['mar','monte','templo']]],
+'Salmo 139:8':[['estrado',['morada','tienda','cama']],['hiciere',['pusiere','tuviere','levantare']]],
+'Salmo 139:9-10':[['alas',['nubes','sombras','luces']],['extremo',['centro','fondo','principio']]],
+'Isaías 46:9-10':[['consejo',['pacto','juicio','mandato']],['quiero',['puedo','mando','debo']]],
+'Hechos 2:23':[['conocimiento',['juicio','poder','permiso']],['crucificándole',['azotándole','condenándole','entregándole']]],
+'1 Pedro 1:2':[['presciencia',['misericordia','voluntad','bondad']],['santificación',['obediencia','justificación','comunión']],['rociados',['lavados','ungidos','redimidos']]],
+'Romanos 11:33':[['profundidad',['grandeza','bondad','majestad']],['ciencia',['bondad','justicia','gracia']]],
+'Romanos 16:27':[['gloria',['alabanza','honra','bendición']],['sabio',['justo','fiel','santo']]],
+'Proverbios 3:19':[['sabiduría',['justicia','poder','fuerza']],['inteligencia',['fuerza','justicia','poder']]],
+'Salmo 145:3':[['alabanza',['honra','gloria','adoración']],['grandeza',['justicia','bondad','sabiduría']]],
+'Isaías 55:8':[['Jehová',['Dios','Señor','Altísimo']]],
+'Isaías 55:9':[['cielos',['montes','astros','luceros']]],
+'Génesis 17:1':[['noventa',['ochenta','setenta','sesenta']],['Todopoderoso',['Altísimo','Santo','Eterno']],['perfecto',['fiel','santo','justo']]],
+'Job 42:2':[['puedes',['sabes','haces','quieres']]],
+'Lucas 1:37':[['imposible',['difícil','oculto','extraño']]],
+'Jeremías 32:17':[['difícil',['imposible','oculto','grande']]],
+'Salmo 115:3':[['quiso',['mandó','dijo','pensó']]],
+'Deuteronomio 32:4':[['Roca',['Fortaleza','Luz','Torre']],['obra',['palabra','ley','senda']],['iniquidad',['mentira','engaño','falsedad']]],
+'Daniel 4:35':[['voluntad',['palabra','ley','gloria']],['mano',['obra','palabra','ira']]],
+'Proverbios 21:1':[['corazón',['trono','espíritu','ánimo']],['rey',['juez','sabio','príncipe']]],
+'Salmo 103:19':[['trono',['templo','palacio','altar']]],
+'Isaías 14:27':[['impedirá',['vencerá','juzgará','acusará']]],
+'Salmo 33:11':[['consejo',['pacto','reino','trono']]],
+'Efesios 1:11':[['herencia',['salvación','redención','bendición']],['designio',['amor','poder','agrado']]],
+'Malaquías 3:6':[['cambio',['olvido','miento','duermo']],['consumidos',['olvidados','abandonados','castigados']]],
+'1 Juan 4:8':[['ama',['teme','obedece','cree']],['conocido',['visto','oído','temido']],['amor',['luz','santo','justo']]],
+'Números 23:19':[['mienta',['engañe','olvide','tiemble']]],
+'Salmo 145:9':[['Bueno',['Justo','Fiel','Santo']],['misericordias',['bendiciones','gracias','riquezas']]],
+'Nahúm 1:7':[['confían',['temen','aman','buscan']]],
+'Salmo 100:5':[['misericordia',['bondad','justicia','gracia']],['bueno',['justo','fiel','santo']]],
+'Éxodo 34:6':[['fuerte',['santo','justo','poderoso']],['ira',['venganza','condenación','reprensión']]],
+'Salmo 103:8':[['clemente',['justo','paciente','fiel']]],
+'Romanos 2:4':[['arrepentimiento',['conocimiento','perdón','descanso']],['riquezas',['obras','promesas','dádivas']]],
+'Deuteronomio 7:9':[['pacto',['camino','nombre','juicio']],['mil',['cien','cuarenta','siete']]],
+'1 Corintios 1:9':[['Fiel',['Justo','Santo','Bueno']],['comunión',['obediencia','paz','gloria']]],
+'2 Timoteo 2:13':[['infieles',['débiles','pecadores','negligentes']],['fiel',['justo','santo','firme']]],
+'Tito 1:2':[['miente',['engaña','cambia','olvida']],['prometió',['ordenó','preparó','anunció']]],
+'Génesis 18:25':[['Juez',['Rey','Señor','Creador']]],
+'Salmo 89:14':[['Justicia',['Bondad','Fuerza','Paz']],['cimiento',['escabel','sostén','adorno']]],
+'Salmo 7:11':[['juez',['rey','padre','señor']]],
+'Romanos 1:18':[['cielo',['trono','templo','monte']]],
+'Éxodo 34:14':[['nombre',['título','atributo','rostro']]],
+'Deuteronomio 4:24':[['consumidor',['eterno','poderoso','terrible']]],
+'Hebreos 12:29':[['consumidor',['eterno','poderoso','glorioso']]],
+'Jeremías 31:3':[['eterno',['fiel','grande','perfecto']],['manifestó',['acercó','presentó','mostró']]],
+'1 Juan 4:10':[['amor',['gozo','perdón','poder']]],
+'Sofonías 3:17':[['poderoso',['fuerte','fiel','santo']],['cánticos',['danzas','gritos','instrumentos']],['callará',['hablará','clamará','llorará']]],
+'1 Juan 3:4':[['comete',['oculta','confiesa','recuerda']]],
+'Romanos 5:12':[['mundo',['cielo','pueblo','jardín']],['entró',['vino','cayó','surgió']]],
+'Salmo 51:5':[['maldad',['dolor','tinieblas','angustia']],['concibió',['parió','crió','llevó']]],
+'Efesios 2:1':[['muertos',['ciegos','dormidos','perdidos']],['delitos',['caminos','deseos','errores']]],
+'Romanos 11:6':[['manera',['forma','cosa','parte']],['obras',['fe','ley','méritos']]],
+'Efesios 2:4':[['rico',['grande','fuerte','abundante']],['misericordia',['gracia','bondad','poder']]],
+'Efesios 2:5':[['muertos',['ciegos','dormidos','perdidos']]],
+'Lamentaciones 3:22-23':[['consumidos',['destruidos','abandonados','vencidos']],['fidelidad',['bondad','fuerza','gloria']]],
+'Tito 3:5':[['regeneración',['santificación','purificación','salvación']],['misericordia',['gracia','bondad','paciencia']]],
+'Efesios 1:7':[['redención',['salvación','paz','libertad']],['sangre',['muerte','cruz','palabra']]],
+'1 Pedro 1:18-19':[['plata',['bronce','hierro','plomo']],['cordero',['toro','becerro','carnero']]],
+'Marcos 10:45':[['servido',['honrado','alabado','obedecido']],['rescate',['ofrenda','ejemplo','testimonio']]],
+'Isaías 53:5':[['paz',['salvación','justicia','sanidad']],['llaga',['sangre','muerte','cruz']]],
+'Romanos 3:25':[['paciencia',['misericordia','gracia','bondad']],['justicia',['gracia','bondad','gloria']]],
+'Hebreos 9:22':[['ley',['alianza','tradición','costumbre']]],
+'Mateo 1:21':[['llamarás',['pondrás','darás','dirás']],['pueblo',['mundo','reino','linaje']]],
+'Juan 10:15':[['conoce',['ama','envía','ve']],['ovejas',['hijos','amigos','siervos']]],
+'Efesios 1:4':[['escogió',['llamó','amó','bendijo']],['mancha',['culpa','pecado','falta']]],
+'Efesios 1:5':[['predestinado',['llamado','bendecido','preparado']],['adoptados',['llamados','hechos','bendecidos']]],
+'Romanos 8:30':[['predestinó',['conoció','escogió','envió']],['glorificó',['santificó','redimió','salvó']]],
+'Juan 6:37':[['Padre',['Hijo','Señor','Espíritu']]],
+'Hechos 13:48':[['gentiles',['judíos','griegos','romanos']],['regocijaban',['asombraban','levantaban','callaban']]],
+'Mateo 25:46':[['castigo',['fuego','juicio','tormento']],['justos',['fieles','santos','elegidos']]],
+'Mateo 10:28':[['matan',['hieren','acusan','persiguen']],['infierno',['abismo','fuego','sepulcro']]],
+'2 Tesalonicenses 1:9':[['presencia',['ley','luz','casa']]],
+'Apocalipsis 20:15':[['lago',['mar','río','abismo']]],
+'Génesis 3:15':[['cabeza',['mano','frente','espalda']],['calcañar',['costado','pecho','cuello']],['enemistad',['guerra','división','discordia']]],
+'Génesis 3:20':[['Adán',['Noé','Abel','Set']],['madre',['reina','señora','hermana']]],
+'Génesis 6:8':[['Noé',['Lot','Enoc','Abel']],['gracia',['misericordia','bendición','justicia']]],
+'Génesis 9:13':[['arco',['luz','trono','fuego']],['nubes',['aguas','montañas','alturas']]],
+'Génesis 12:1':[['Vete',['Sal','Ven','Levántate']],['mostraré',['daré','diré','prometeré']]],
+'Génesis 15:6':[['creyó',['obedeció','esperó','adoró']],['justicia',['bendición','gracia','herencia']]],
+'Éxodo 3:14':[['Moisés',['Aarón','Josué','Abraham']]],
+'Josué 1:9':[['desmayes',['huyas','tropieces','dudes']]],
+'Hechos 13:22':[['rey',['juez','profeta','pastor']],['Isaí',['Jacob','Booz','Obed']]],
+'Salmo 51:1':[['multitud',['grandeza','riqueza','plenitud']],['rebeliones',['maldades','iniquidades','ofensas']]],
+'Job 19:25':[['Redentor',['Defensor','Juez','Pastor']],['polvo',['monte','mundo','sepulcro']]],
+'Daniel 6:22':[['ángel',['profeta','siervo','sacerdote']],['leones',['osos','lobos','tigres']]],
+'Lucas 1:38':[['sierva',['hija','madre','hermana']]],
+'Juan 1:29':[['Cordero',['León','Pastor','Rey']],['pecado',['mal','dolor','castigo']]],
+'Mateo 16:16':[['Cristo',['Profeta','Maestro','Rey']],['viviente',['verdadero','eterno','santo']]],
+'Filipenses 1:21':[['vivir',['sufrir','servir','esperar']],['ganancia',['descanso','gozo','victoria']]],
+'Génesis 3:6':[['fruto',['hoja','rama','semilla']],['sabiduría',['gloria','vida','grandeza']]],
+'Génesis 7:12':[['lluvia',['agua','tormenta','nieve']],['noches',['semanas','meses','años']]],
+'Génesis 22:8':[['cordero',['carnero','becerro','toro']],['Abraham',['Isaac','Jacob','Lot']]],
+'Éxodo 12:13':[['mortandad',['destrucción','hambre','enfermedad']]],
+'Éxodo 20:1':[['palabras',['cosas','leyes','promesas']]],
+'2 Samuel 7:16':[['trono',['nombre','linaje','cetro']],['estable',['fuerte','grande','santo']]],
+'Jonás 1:17':[['vientre',['corazón','seno','interior']],['tragase',['recibiese','llevase','guardase']]],
+'Lucas 2:11':[['Salvador',['Rey','Pastor','Profeta']],['ciudad',['aldea','casa','tierra']]],
+'Lucas 23:33':[['Calavera',['Cruz','Muerte','Sombra']],['crucificaron',['azotaron','condenaron','llevaron']]],
+'Mateo 28:6':[['resucitado',['ascendido','despertado','vencido']],['lugar',['sepulcro','cuerpo','lecho']]],
+'1 Corintios 15:3-4':[['tercer',['primer','séptimo','cuarto']],['sepultado',['llevado','levantado','juzgado']]],
+'Hechos 1:9':[['nube',['luz','sombra','tempestad']],['ocultó',['cubrió','alejó','apartó']]],
+'Hechos 2:4':[['llenos',['ungidos','bautizados','fortalecidos']],['hablar',['orar','cantar','profetizar']]],
+'Mateo 28:19':[['discípulos',['siervos','testigos','apóstoles']],['naciones',['ciudades','tierras','familias']]],
+'Hechos 8:12':[['Felipe',['Pedro','Pablo','Juan']],['bautizaban',['sanaban','alegraban','congregaban']]],
+'Mateo 5:13':[['desvaneciere',['acabare','perdiere','gastare']],['hollada',['guardada','vendida','recogida']]],
+'Mateo 5:14':[['ciudad',['casa','aldea','torre']],['monte',['valle','río','camino']]],
+'Mateo 5:15':[['almud',['lecho','cesto','cántaro']],['candelero',['altar','monte','techo']]],
+'Mateo 5:16':[['vean',['oigan','conozcan','imiten']],['glorifiquen',['teman','sirvan','obedezcan']]],
+'Mateo 5:18':[['jota',['letra','coma','línea']],['cumplido',['escrito','dicho','enseñado']]],
+'Mateo 5:20':[['escribas',['sacerdotes','levitas','profetas']],['mayor',['menor','igual','diferente']]],
+'Mateo 5:23-24':[['reconcíliate',['perdona','despídete','habla']],['presenta',['guarda','lleva','quema']]],
+'Mateo 5:38-39':[['resistáis',['sigáis','temáis','ayudéis']],['mejilla',['mano','frente','espalda']]],
+'Mateo 5:41':[['milla',['hora','legua','jornada']],['carga',['agua','cuenta','ofrenda']],['dos',['tres','diez','siete']]],
+'Mateo 5:43-44':[['aborrecerás',['temerás','evitarás','vencerás']],['bendecid',['servid','honrad','perdonad']]],
+'Mateo 5:45':[['sol',['viento','trigo','fruto']],['llover',['nevar','soplar','brillar']]],
+'Mateo 5:46':[['recompensa',['gracia','gloria','honra']],['publicanos',['fariseos','gentiles','escribas']]],
+'Mateo 5:48':[['Padre',['Señor','Dios','Rey']],['perfectos',['santos','fieles','justos']]],
+'Mateo 6:1':[['justicia',['ofrenda','obra','fe']],['recompensa',['gracia','honra','bendición']]],
+'Mateo 6:4':[['limosna',['ofrenda','oración','ayuda']],['público',['abundancia','gloria','paz']]],
+'Mateo 6:6':[['aposento',['casa','templo','huerto']],['ores',['ayunes','llores','duermas']]],
+'Mateo 6:7':[['vanas',['largas','muchas','bellas']],['gentiles',['fariseos','hipócritas','escribas']]],
+'Mateo 6:8':[['sabe',['ve','oye','recuerda']],['pidáis',['llaméis','busquéis','roguéis']]],
+'Mateo 6:14':[['perdonáis',['amáis','ayudáis','servís']],['celestial',['eterno','santo','bueno']]],
+'Mateo 6:15':[['tampoco',['también','nunca','siempre']],['perdonará',['olvidará','escuchará','recibirá']]],
+'Mateo 6:19':[['polilla',['lluvia','sequía','plaga']],['ladrones',['gusanos','enemigos','extraños']]],
+'Mateo 6:20':[['haceos',['guardad','buscad','dad']],['cielo',['mar','templo','monte']]],
+'Mateo 6:21':[['tesoro',['trabajo','hogar','camino']],['corazón',['espíritu','alma','pensamiento']]],
+'Mateo 6:24':[['señores',['reyes','maestros','jueces']],['riquezas',['obras','leyes','tradiciones']]],
+'Mateo 6:25':[['vestir',['calzar','guardar','comprar']],['alimento',['pan','dinero','trabajo']]],
+'Mateo 6:26':[['graneros',['casas','campos','cestos']],['alimenta',['viste','cuida','guarda']]],
+'Mateo 6:28-29':[['lirios',['rosas','árboles','ovejas']],['hilan',['cantan','siembran','corren']],['Salomón',['David','Moisés','Elías']]],
+'Mateo 6:31-32':[['gentiles',['fariseos','publicanos','escribas']],['comeremos',['haremos','diremos','ganaremos']]],
+'Mateo 6:33':[['primeramente',['solamente','siempre','también']],['añadidas',['quitadas','negadas','guardadas']]],
+'Mateo 6:34':[['traerá',['tendrá','llevará','quitará']],['Basta',['Falta','Sobra','Pesa']]],
+'1 Juan 3:15':[['aborrece',['ama','olvida','desprecia']],['permanente',['abundante','plena','duradera']]],
+'Génesis 1:2':[['abismo',['mar','monte','cielo']],['movía',['posaba','paseaba','detenía']]],
+'Génesis 1:4':[['separó',['juntó','llamó','mezcló']],['buena',['grande','santa','perfecta']]],
+'Génesis 1:6':[['expansión',['tierra','luz','oscuridad']],['separe',['junte','mezcle','cubra']]],
+'Génesis 1:8':[['Cielos',['Tierra','Mares','Aguas']],['segundo',['tercero','cuarto','quinto']]],
+'Génesis 1:9':[['debajo',['encima','lejos','dentro']],['seco',['oculto','profundo','alto']]],
+'Génesis 1:10':[['Tierra',['Cielos','Isla','Costa']],['Mares',['Ríos','Lagos','Abismos']]],
+'Génesis 1:11':[['Produzca',['Cubra','Llene','Forme']],['verde',['seca','amarilla','tierna']]],
+'Génesis 1:14':[['lumbreras',['estrellas','nubes','aves']],['separar',['juntar','medir','alumbrar']],['estaciones',['semanas','fiestas','cosechas']]],
+'Génesis 1:16':[['dos',['tres','cuatro','siete']],['estrellas',['nubes','aves','aguas']]],
+'Génesis 1:20':[['aguas',['nubes','tierras','islas']],['abierta',['ancha','alta','clara']]],
+'Génesis 1:21':[['monstruos',['peces','animales','gigantes']],['alada',['pequeña','grande','hermosa']]],
+'Génesis 1:22':[['bendijo',['mandó','llamó','miró']],['mares',['ríos','lagos','montes']]],
+'Génesis 1:26':[['hombre',['ángel','árbol','siervo']],['semejanza',['voluntad','palabra','gloria']],['arrastra',['mueve','levanta','esconde']]],
+'Génesis 1:28':[['sojuzgadla',['cultivadla','guardadla','conocedla']],['mueven',['arrastran','levantan','esconden']]],
+'Génesis 1:29':[['planta',['flor','raíz','hoja']],['comer',['sembrar','guardar','vender']]],
+'Génesis 2:3':[['bendijo',['llamó','miró','nombró']],['creación',['tierra','semana','labor']]],
+'Génesis 2:8':[['huerto',['bosque','viñedo','olivar']],['oriente',['occidente','norte','sur']]],
+'Génesis 2:9':[['delicioso',['hermoso','grande','frondoso']],['vida',['luz','paz','gozo']]],
+'Génesis 2:15':[['huerto',['monte','desierto','valle']],['Tomó',['Llevó','Envió','Llamó']]],
+'Génesis 2:16-17':[['mandó',['habló','llamó','bendijo']],['morirás',['caerás','huirás','sufrirás']]],
+'Génesis 2:18':[['solo',['triste','ocioso','cansado']],['idónea',['fiel','fuerte','sabia']]],
+'Génesis 2:22':[['costilla',['mano','carne','sombra']]],
+'Génesis 2:24':[['dejará',['honrará','servirá','buscará']],['carne',['casa','alma','familia']]],
+'Génesis 2:25':[['desnudos',['vestidos','cansados','dormidos']],['avergonzaban',['escondían','temían','quejaban']]],
+'Génesis 3:1':[['astuta',['sabia','fuerte','veloz']],['campo',['monte','desierto','bosque']],['comáis',['toquéis','probéis','cortéis']]],
+'Génesis 3:2-3':[['tocaréis',['miraréis','probaréis','cortaréis']],['muráis',['caigáis','sufráis','perdáis']]],
+'Génesis 3:4-5':[['moriréis',['caeréis','sufriréis','perderéis']],['abiertos',['iluminados','purificados','sanados']]],
+'Génesis 3:7':[['higuera',['parra','palmera','olivo']],['cosieron',['ataron','juntaron','pegaron']]],
+'Génesis 3:8':[['paseaba',['descansaba','hablaba','esperaba']],['escondieron',['alejaron','apartaron','retiraron']]],
+'Génesis 3:9':[['llamó',['miró','buscó','esperó']]],
+'Génesis 3:10':[['miedo',['vergüenza','frío','hambre']],['escondí',['alejé','callé','huí']]],
+'Génesis 3:11':[['enseñó',['mostró','avisó','contó']],['desnudo',['solo','perdido','débil']]],
+'Génesis 3:12':[['compañera',['guía','sierva','ayuda']]],
+'Génesis 3:13':[['hecho',['dicho','visto','oído']],['engañó',['tentó','venció','persuadió']]],
+'Génesis 3:14':[['maldita',['bendita','herida','sola']],['polvo',['hierba','barro','ceniza']]],
+'Génesis 3:16':[['deseo',['amor','corazón','honor']],['enseñoreará',['cuidará','protegerá','servirá']]],
+'Génesis 3:17':[['obedeciste',['escuchaste','seguiste','creíste']],['maldita',['bendita','vacía','herida']]],
+'Génesis 3:19':[['pan',['fruto','trigo','cereal']]],
+'Génesis 3:21':[['túnicas',['mantos','sandalias','delantales']],['pieles',['lino','lana','hojas']]],
+'Génesis 3:22':[['alargue',['levante','esconda','cierre']],['tome',['corte','guarde','plante']]],
+'Génesis 3:23':[['sacó',['llevó','envió','condujo']],['labrase',['poseyese','habitase','recorriese']]],
+'Génesis 3:24':[['oriente',['occidente','norte','sur']],['espada',['lanza','antorcha','llama']]],
+'Romanos 5:19':[['desobediencia',['ignorancia','debilidad','maldad']],['pecadores',['esclavos','culpables','muertos']],['justos',['libres','santos','salvos']]],
+'1 Corintios 15:22':[['Adán',['Moisés','Abraham','David']],['vivificados',['salvados','perdonados','bendecidos']]],
+'1 Corintios 15:45':[['alma',['cuerpo','carne','polvo']],['espíritu',['cuerpo','maestro','pastor']]],
+'Mateo 5:17':[['penséis',['digáis','temáis','olvidéis']],['cumplir',['cambiar','ampliar','enseñar']]],
+'Mateo 5:21':[['antiguos',['profetas','padres','sabios']],['juicio',['muerte','castigo','pena']]],
+'Mateo 5:22':[['enoje',['aparte','burle','olvide']],['concilio',['juez','rey','pueblo']]],
+'Mateo 5:27':[['adulterio',['homicidio','hurto','robo']],['cometerás',['tendrás','harás','buscarás']]],
+'Mateo 5:28':[['codiciarla',['servirla','ayudarla','protegerla']],['adulteró',['pecó','mintió','robó']]],
+'Mateo 5:29':[['ojo',['pie','brazo','oído']],['miembros',['días','bienes','amigos']]],
+'Mateo 15:19':[['corazón',['mundo','cuerpo','tiempo']],['blasfemias',['mentiras','envidias','burlas']]],
+'Mateo 22:37':[['Amarás',['Servirás','Temerás','Honrarás']],['mente',['fuerza','voluntad','vida']]],
+'Mateo 22:39':[['segundo',['tercero','último','menor']],['semejante',['diferente','mayor','menor']]],
+'Mateo 22:40':[['dos',['tres','diez','siete']],['profetas',['sacrificios','salmos','sabios']]],
+'Romanos 13:10':[['prójimo',['hermano','pobre','extraño']],['cumplimiento',['resumen','fundamento','sentido']]],
+'Gálatas 5:14':[['palabra',['promesa','señal','historia']]]
+
+};
+
+/* ============================================================
+   GENERADORES DE PREGUNTAS
+   ============================================================ */
+function mkMC(h){const opts=shuffle([h[1],...h[2]]);return {type:'mc',prompt:h[0],ref:h[3],opts,a:opts.indexOf(h[1]),tries:0,nota:h[4]||''};}
+function mkRef(v){
+  const same=ALLV.filter(x=>x.r!==v.r&&x.u===v.u),other=ALLV.filter(x=>x.u!==v.u);
+  const ds=[...shuffle(other),...shuffle(same)].slice(0,3).map(x=>x.r); /* prefiere otros libros: más fácil de distinguir */
+  const opts=shuffle([v.r,...ds]);
+  return {type:'ref',prompt:'¿Qué pasaje es este?',ref:v.r,opts,a:opts.indexOf(v.r),tries:0};
+}
+function pickBlank(v){
+  const bl=BLANKS[v.r];if(!bl||!bl.length)return null;
+  const toks=v.t.split(/\s+/);
+  const opts=shuffle(bl);
+  for(const [word,ds] of opts){
+    const idx=toks.findIndex(w=>coreOf(w).core===word);
+    if(idx>=0){const p=coreOf(toks[idx]);return {toks,idx,pre:p.pre,suf:p.suf,word,ds};}
+  }
+  return null;
+}
+function mkFill(v){
+  const b=pickBlank(v);
+  if(!b)return mkOrder(v,true);
+  const opts=shuffle([b.word,...b.ds]);
+  return {type:'fill',prompt:'Completa el versículo',ref:v.r,toks:b.toks,idx:b.idx,pre:b.pre,suf:b.suf,opts,a:opts.indexOf(b.word),tries:0};
+}
+function mkOrder(v,noFill){
+  const toks=v.t.split(/\s+/);
+  if(toks.length>16||toks.length<4)return noFill?mkRef(v):mkFill(v);
+  let bank=toks.map((w,i)=>({id:i,w})),n=0;
+  do{bank=shuffle(bank);n++;}while(bank.map(b=>b.w).join(' ')===v.t&&n<10);
+  return {type:'order',prompt:'Ordena las palabras del versículo',ref:v.r,toks,bank,tries:0};
+}
+const mk=(k,v)=>k==='fill'?mkFill(v):k==='ref'?mkRef(v):mkOrder(v);
+function buildQuestions(verses,hand,max=10){
+  const off=rnd(3);
+  const kindsFor=v=>v.key?['fill','order','ref']:['fill','order'];
+  const prim=verses.map((v,i)=>{const k=kindsFor(v);return mk(k[(i+off)%k.length],v);});
+  const extras=shuffle(verses.map((v,i)=>{const k=kindsFor(v),p=(i+off)%k.length;return mk(k[(p+1+rnd(k.length-1))%k.length],v);}));
+  const qs=[...prim,...hand.map(mkMC)];
+  while(qs.length<max&&extras.length)qs.push(extras.pop());
+  return shuffle(qs).slice(0,max);
+}
+
+/* ============================================================
+   PANTALLAS
+   ============================================================ */
+let TAB='path',resetArmed=false;
+function votd(){let h=0;for(const ch of today())h=(h*31+ch.charCodeAt(0))>>>0;return ALLV[h%ALLV.length];}
+function firstUndone(){const i=ALLKEYS.findIndex(k=>!S.done[k]);return i<0?ALLKEYS.length:i;}
+
+function renderTop(){
+  const t=today(),doneToday=S.lastDay===t,alive=S.streak>0;
+  $('#top').innerHTML=
+   '<div class="brand">'+IC.lamp+'<span>Lámpara</span></div>'+
+   '<div class="chips">'+
+   (S.freezes?'<span class="chip shield" title="Protectores de racha" aria-label="'+S.freezes+' protectores de racha">'+IC.shield+S.freezes+'</span>':'')+
+   '<span class="chip streak '+(doneToday?'on':alive?'risk':'off')+'" aria-label="Racha de '+S.streak+' días">'+IC.flame+S.streak+'</span>'+
+   '<span class="chip xp" aria-label="'+S.xp+' puntos de experiencia">'+S.xp+' XP</span></div>';
+}
+function renderTabs(){
+  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],['games','Juegos',IC.users],['me','Progreso',IC.trophy]];
+  $('#tabs').firstElementChild.innerHTML=tabs.map(t=>'<button class="tab '+(TAB===t[0]?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(TAB===t[0]?'aria-current="page"':'')+'>'+t[2]+'<span>'+t[1]+'</span></button>').join('');
+}
+function homeHTML(){
+  const t=today(),xpT=S.days[t]||0,pct=Math.min(1,xpT/S.goal),C=163.4;
+  let msg;
+  if(xpT>=S.goal)msg='Meta cumplida. Tu racha está a salvo por hoy.';
+  else if(S.streak>0&&S.lastDay!==t)msg='Practica hoy para mantener tu racha de '+S.streak+(S.streak===1?' día.':' días.');
+  else if(S.streak>0)msg='Racha de '+S.streak+' días. Te faltan '+(S.goal-xpT)+' XP para tu meta.';
+  else msg='Completa una lección para empezar tu racha.';
+  const week=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');week.push('<div class="day"><div class="dot '+((S.days[d]||0)>0?'on':'')+(i===0?' today':'')+'">'+IC.check+'</div>'+DOW[dt.getDay()]+'</div>');}
+  const v=votd();
+  const cur=firstUndone();let flat=0;
+  const offs=[0,46,0,-46];
+  const units=UNITS.map((u,ui)=>{
+    const dn=u.lessons.filter((_,li)=>S.done[lk(ui,li)]).length;
+    return '<section class="unit" style="--u:'+COLORS[ui%COLORS.length]+'"><div class="unit-h"><div><h2>'+esc(u.title)+'</h2><p>'+esc(u.sub)+'</p></div><span class="count">'+dn+'/'+u.lessons.length+'</span></div><div class="path">'+
+    u.lessons.map((l,li)=>{
+      const idx=flat++,isDone=!!S.done[lk(ui,li)],locked=idx>cur&&!isDone,isCur=idx===cur;
+      const icon=isDone?IC.check:locked?IC.lock:IC.play;
+      return '<div class="stop '+(isCur?'cur':'')+'" style="--off:'+offs[li%4]+'px">'+(isCur?'<div class="start-tip">Empieza aquí</div>':'')+
+      '<button class="node '+(locked?'locked':'')+(isCur?' current':'')+'" data-a="lesson" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+icon+'</button><span>'+esc(l.title)+'</span></div>';
+    }).join('')+'</div></section>';
+  }).join('');
+  return (S.froze?'<div class="banner">Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. Tu racha sigue viva.</div>':'')+
+  '<section class="card"><div class="goal"><div class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="rbg" cx="32" cy="32" r="26"/><circle class="rfg" cx="32" cy="32" r="26" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 32 32)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+msg+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
+  '<section class="card votd"><small>Versículo del día</small><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite></section>'+units+
+  '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.</p>';
+}
+function reviewHTML(){
+  const seen=Object.keys(S.verses).filter(r=>VBY[r]);
+  const ready=seen.length>=3;
+  const weak=seen.map(r=>({r,s:S.verses[r].c-S.verses[r].w*1.5})).sort((a,b)=>a.s-b.s).slice(0,5);
+  return '<h1 class="page">Repaso</h1><section class="card"><p style="margin:0 0 12px">El repaso reúne los versículos que has practicado, empezando por los que más te han costado.</p>'+
+   '<p class="muted" style="margin:0 0 14px">Versículos practicados: <b>'+seen.length+'</b> de '+ALLV.length+'</p>'+
+   '<button class="btn" data-a="review" '+(ready?'':'disabled')+'>'+(ready?'Empezar repaso':'Completa una lección para desbloquear')+'</button></section>'+
+   (ready?'<h3 style="margin:18px 0 8px">Para reforzar</h3><div class="list">'+weak.map(w=>'<div class="li"><cite>'+esc(w.r)+'</cite><p>'+esc(VBY[w.r].t)+'</p></div>').join('')+'</div>':'');
+}
+function meHTML(){
+  const seen=Object.keys(S.verses).length,ld=ALLKEYS.filter(k=>S.done[k]).length;
+  return '<h1 class="page">Progreso</h1><div class="stats">'+
+   '<div class="stat"><b>'+S.streak+'</b><span>Racha actual (días)</span></div>'+
+   '<div class="stat"><b>'+S.best+'</b><span>Mejor racha</span></div>'+
+   '<div class="stat"><b>'+S.xp+'</b><span>XP total</span></div>'+
+   '<div class="stat"><b>'+ld+'/'+ALLKEYS.length+'</b><span>Lecciones</span></div></div>'+
+   '<section class="card"><b>Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
+   [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
+   '<section class="card"><b>Protectores de racha</b><p class="muted" style="margin:2px 0 0;font-size:14px">Tienes '+S.freezes+' de 2. Ganas uno cada vez que llegas a un múltiplo de 7 días de racha; se usa solo si dejas pasar un día.</p></section>'+
+   '<h3 style="margin:18px 0 8px">Logros</h3><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'"><div class="ico">'+IC.star+'</div><div><b>'+a.t+'</b><small>'+a.d+'</small></div></div>').join('')+'</div>'+
+   '<div style="margin-top:22px"><button class="link-danger" data-a="reset">'+(resetArmed?'Toca de nuevo para borrar todo el progreso':'Borrar progreso')+'</button></div>'+
+   '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
+}
+function render(){
+  refreshStreak();renderTop();renderTabs();
+  $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='games'?gamesHTML():meHTML();
+}
+
+/* ============================================================
+   MOTOR DE LECCIÓN
+   ============================================================ */
+let L=null;
+function startLesson(meta,qs,intro){
+  refreshStreak();
+  L={meta,queue:qs.slice(),total:qs.length,done:0,firstTry:0,mistakes:0,xp:0,cur:null,ui:null,intro:intro||null};
+  $('#lesson').hidden=false;document.body.style.overflow='hidden';
+  if(L.intro)renderIntro();else nextQ();
+}
+function renderIntro(){
+  const i=L.intro;
+  $('#lesson').innerHTML=
+   '<div class="lh"><button class="x" data-a="close" aria-label="Salir de la lección">'+IC.close+'</button><div class="bar"><i style="width:0%"></i></div></div>'+
+   '<div class="lb"><div class="intro"><span class="tag">Antes de empezar</span><h2>'+esc(i.t)+'</h2><p>'+esc(i.p)+'</p></div></div>'+
+   '<div class="lf"><div class="in"><button class="btn" data-a="begin">Empezar</button></div></div>';
+}
+function nextQ(){
+  L.cur=L.queue.shift();
+  if(!L.cur){finishLesson();return;}
+  L.ui={sel:null,placed:[],checked:false,ok:null};
+  renderLesson();
+}
+function canCheck(){const q=L.cur,ui=L.ui;return !ui.checked&&(q.type==='order'?ui.placed.length===q.bank.length:ui.sel!=null);}
+function renderLesson(){
+  const q=L.cur,ui=L.ui,pct=Math.round(100*L.done/L.total);
+  let body='';
+  if(q.type==='mc'||q.type==='ref'){
+    body='<p class="prompt">'+esc(q.prompt)+'</p>'+(q.type==='ref'?'<blockquote class="verse">'+esc(VBY[q.ref].t)+'</blockquote>':'')+
+     '<div class="opts">'+q.opts.map((o,i)=>{
+       let c='';if(ui.checked){if(i===q.a)c='good';else if(i===ui.sel)c='bad';}else if(i===ui.sel)c='sel';
+       return '<button class="opt '+c+'" data-a="pick" data-i="'+i+'" '+(ui.checked?'disabled':'')+'><kbd>'+(i+1)+'</kbd><span>'+esc(o)+'</span></button>';
+     }).join('')+'</div>';
+  }else if(q.type==='fill'){
+    const parts=q.toks.map((w,i)=>{
+      if(i!==q.idx)return esc(w);
+      const chosen=ui.sel!=null?esc(q.opts[ui.sel]):'&nbsp;';
+      return esc(q.pre)+'<span class="blank">'+chosen+'</span>'+esc(q.suf);
+    }).join(' ');
+    body='<p class="prompt">'+esc(q.prompt)+'</p><blockquote class="verse">'+parts+'</blockquote>'+
+     '<div class="opts">'+q.opts.map((o,i)=>{
+       let c='';if(ui.checked){if(i===q.a)c='good';else if(i===ui.sel)c='bad';}else if(i===ui.sel)c='sel';
+       return '<button class="opt '+c+'" data-a="pick" data-i="'+i+'" '+(ui.checked?'disabled':'')+'><kbd>'+(i+1)+'</kbd><span>'+esc(o)+'</span></button>';
+     }).join('')+'</div>';
+  }else{
+    body='<p class="prompt">'+esc(q.prompt)+'</p><div class="answer '+(ui.checked?(ui.ok?'good':'bad'):'')+'" aria-label="Tu respuesta">'+
+     ui.placed.map(id=>{const b=q.bank.find(x=>x.id===id);return '<button class="w" data-a="unplace" data-id="'+id+'" '+(ui.checked?'disabled':'')+'>'+esc(b.w)+'</button>';}).join('')+'</div>'+
+     '<div class="bank">'+q.bank.map(b=>'<button class="w '+(ui.placed.includes(b.id)?'used':'')+'" data-a="place" data-id="'+b.id+'" '+(ui.checked||ui.placed.includes(b.id)?'disabled':'')+'>'+esc(b.w)+'</button>').join('')+'</div>';
+  }
+  if(q.tries>0)body='<div class="retry">'+IC.review+'Repaso: la fallaste antes y vuelve a aparecer</div>'+body;
+  let foot;
+  if(!ui.checked){
+    foot='<div class="lf"><div class="in"><button class="btn" data-a="check" '+(canCheck()?'':'disabled')+'>Comprobar</button></div></div>';
+  }else{
+    const v=VBY[q.ref];
+    let head,ans='';
+    if(ui.ok){head=['¡Correcto!','¡Bien hecho!','¡Exacto!','¡Así es!'][rnd(4)];}
+    else{
+      head='Respuesta correcta';
+      if(q.type==='mc')ans='<b>'+esc(q.opts[q.a])+'</b><br>';
+      else if(q.type==='fill')ans='<b>'+esc(q.opts[q.a])+'</b><br>';
+      else if(q.type==='ref')ans='<b>'+esc(q.opts[q.a])+'</b><br>';
+    }
+    foot='<div class="lf '+(ui.ok?'good':'bad')+'" role="status"><div class="in"><h4>'+head+'</h4><div class="fbox"><p class="fv">'+ans+'<em>'+esc(v.t)+'</em> <cite>'+esc(v.r)+'</cite></p>'+(q.nota?'<div class="nota"><b>Nota.</b> '+esc(q.nota)+'</div>':'')+(ui.ok?'':'<p class="fv" style="margin-top:8px"><b>Volverá a aparecer al final de la lección para repasarla.</b></p>')+'</div><button class="btn '+(ui.ok?'good':'bad')+'" data-a="next">Continuar</button></div></div>';
+  }
+  $('#lesson').innerHTML=
+   '<div class="lh"><button class="x" data-a="close" aria-label="Salir de la lección">'+IC.close+'</button><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div></div>'+
+   '<div class="lb">'+body+'</div>'+foot;
+}
+function check(){
+  if(!canCheck())return;
+  const q=L.cur,ui=L.ui;let ok;
+  if(q.type==='order')ok=ui.placed.map(id=>q.bank.find(b=>b.id===id).w).join(' ')===q.toks.join(' ');
+  else ok=ui.sel===q.a;
+  ui.checked=true;ui.ok=ok;
+  const st=S.verses[q.ref]||(S.verses[q.ref]={c:0,w:0});
+  if(ok){
+    if(q.tries===0){L.firstTry++;L.xp+=2;st.c++;}
+    L.done++;
+  }else{
+    if(q.tries===0)st.w++;
+    q.tries++;L.mistakes++;L.queue.push(q);
+  }
+  try{if(navigator.vibrate)navigator.vibrate(ok?15:[30,40,30]);}catch(e){}
+  save();renderLesson();
+}
+function finishLesson(){
+  const bonus=5+(L.mistakes===0?5:0);
+  const xp=L.xp+bonus;
+  const r=recordDay(xp);
+  const isReview=L.meta.type==='review';
+  if(isReview)S.reviews++;
+  else{const p=S.done[L.meta.key]||{n:0};S.done[L.meta.key]={n:p.n+1,acc:Math.max(p.acc||0,L.firstTry/L.total)};}
+  S.lessons++;if(L.mistakes===0)S.perfect++;
+  S.froze=0;
+  const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);
+  save();
+  const acc=Math.round(100*L.firstTry/L.total);
+  const vs=L.meta.verses||[];
+  $('#lesson').innerHTML=
+   '<div class="lb"><div class="res"><div class="big">'+IC.flame+'</div><h1>'+(isReview?'Repaso completado':'Lección completada')+'</h1>'+
+   '<p class="muted" style="margin:0">'+esc(L.meta.title||'')+'</p>'+
+   '<div class="rs"><div><b>+'+xp+'</b><span>XP</span></div><div><b>'+acc+'%</b><span>Al primer intento</span></div><div><b>'+S.streak+'</b><span>Días de racha</span></div></div>'+
+   (r.newDay?'<div class="note fl"><b>Racha de '+S.streak+(S.streak===1?' día':' días')+'.</b> Vuelve mañana para mantenerla.</div>':'<div class="note">Hoy tu racha ya estaba asegurada. Sigue sumando XP.</div>')+
+   (r.gotFreeze?'<div class="note fl"><b>Ganaste un protector de racha.</b> Cubre un día si no puedes practicar.</div>':'')+
+   (r.goalHit?'<div class="note"><b>Meta diaria cumplida.</b> '+S.days[today()]+' XP hoy.</div>':'')+
+   fresh.map(a=>'<div class="note"><b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join('')+
+   (vs.length?'<div class="vs"><h3>Versículos de esta lección</h3><div class="list">'+vs.map(v=>'<div class="li"><cite>'+esc(v.r)+'</cite><p>'+esc(v.t)+'</p></div>').join('')+'</div></div>':'')+
+   '</div></div><div class="lf"><div class="in"><button class="btn" data-a="finish">Continuar</button></div></div>';
+  L.finished=true;
+}
+function closeLesson(){$('#lesson').hidden=true;$('#lesson').innerHTML='';document.body.style.overflow='';L=null;render();}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+function showModal(html){const m=$('#modal');m.innerHTML='<div class="box" role="alertdialog" aria-modal="true">'+html+'</div>';m.hidden=false;}
+function hideModal(){$('#modal').hidden=true;$('#modal').innerHTML='';}
+
+/* ============================================================
+   JUEGOS EN GRUPO
+   ============================================================ */
+const BOOKS=['Génesis','Éxodo','Levítico','Números','Deuteronomio','Josué','Jueces','Rut','1 Samuel','2 Samuel','1 Reyes','2 Reyes','1 Crónicas','2 Crónicas','Esdras','Nehemías','Ester','Job','Salmos','Proverbios','Eclesiastés','Cantares','Isaías','Jeremías','Lamentaciones','Ezequiel','Daniel','Oseas','Joel','Amós','Abdías','Jonás','Miqueas','Nahúm','Habacuc','Sofonías','Hageo','Zacarías','Malaquías','Mateo','Marcos','Lucas','Juan','Hechos','Romanos','1 Corintios','2 Corintios','Gálatas','Efesios','Filipenses','Colosenses','1 Tesalonicenses','2 Tesalonicenses','1 Timoteo','2 Timoteo','Tito','Filemón','Hebreos','Santiago','1 Pedro','2 Pedro','1 Juan','2 Juan','3 Juan','Judas','Apocalipsis'];
+const GAMES=[
+ {id:'quien',t:'¿Quién lo dijo?',d:'Se lee una frase de la Biblia y el grupo adivina quién la dijo.',tag:'Carro y mesa',scored:true},
+ {id:'pers',t:'Adivina el personaje',d:'Hasta tres pistas por personaje: mientras menos pistas uses, más puntos ganas.',tag:'Carro y mesa',scored:true},
+ {id:'vf',t:'Verdadero o falso',d:'Afirmaciones bíblicas rápidas. Todos responden a la vez.',tag:'Carro y mesa',scored:true},
+ {id:'comp',t:'Completa el versículo',d:'Se lee un versículo al que le falta una palabra. Gana el punto quien la diga primero.',tag:'Carro y mesa',scored:true},
+ {id:'libros',t:'Libros de la Biblia',d:'¿Qué libro sigue? ¿Cuál va antes? ¿Es del Antiguo o del Nuevo Testamento?',tag:'Carro y mesa',scored:true},
+ {id:'conv',t:'Preguntas para conversar',d:'Un versículo y una pregunta abierta para compartir. Sin puntos ni respuestas correctas.',tag:'Ideal para la mesa',scored:false}
+];
+const GQUIEN=[
+ {q:"«Yo sé que mi Redentor vive»",a:"Job",ref:"Job 19:25"},
+ {q:"«He aquí la sierva del Señor; hágase conmigo conforme a tu palabra»",a:"María",ref:"Lucas 1:38"},
+ {q:"«Tú eres el Cristo, el Hijo del Dios viviente»",a:"Simón Pedro",ref:"Mateo 16:16"},
+ {q:"«Para mí el vivir es Cristo, y el morir es ganancia»",a:"Pablo",ref:"Filipenses 1:21"},
+ {q:"«He aquí el Cordero de Dios, que quita el pecado del mundo»",a:"Juan el Bautista",ref:"Juan 1:29"},
+ {q:"«Jehová es mi pastor; nada me faltará»",a:"David",ref:"Salmo 23:1"},
+ {q:"«Dios se proveerá de cordero para el holocausto, hijo mío»",a:"Abraham",ref:"Génesis 22:8"},
+ {q:"«Mi Dios envió su ángel, el cual cerró la boca de los leones»",a:"Daniel",ref:"Daniel 6:22"},
+ {q:"«YO SOY EL QUE SOY»",a:"Dios, hablando con Moisés",ref:"Éxodo 3:14"},
+ {q:"«Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes»",a:"Jehová, hablando con Josué",ref:"Josué 1:9"},
+ {q:"«Yo soy el camino, y la verdad, y la vida»",a:"Jesús",ref:"Juan 14:6"},
+ {q:"«Oye, Israel: Jehová nuestro Dios, Jehová uno es»",a:"Moisés",ref:"Deuteronomio 6:4"},
+ {q:"«Ten piedad de mí, oh Dios, conforme a tu misericordia»",a:"David",ref:"Salmo 51:1"},
+ {q:"«Y pondré enemistad entre ti y la mujer»",a:"Dios, hablando a la serpiente",ref:"Génesis 3:15"},
+ {q:"«Bienaventurados los pacificadores, porque ellos serán llamados hijos de Dios»",a:"Jesús",ref:"Mateo 5:9"},
+ {q:"«Vete de tu tierra y de tu parentela»",a:"Jehová, hablando con Abram",ref:"Génesis 12:1"},
+ {q:"«Mi arco he puesto en las nubes»",a:"Dios, hablando con Noé",ref:"Génesis 9:13"},
+ {q:"«Yo soy la luz del mundo»",a:"Jesús",ref:"Juan 8:12"}
+];
+const GFALSO=[
+ ["Dios formó al hombre del polvo de la tierra.",true,"Génesis 2:7","Jehová Dios formó al hombre del polvo de la tierra."],
+ ["Jonás estuvo siete días en el vientre del pez.",false,"Jonás 1:17","Fueron tres días y tres noches."],
+ ["Jesús lloró.",true,"Juan 11:35","Así lo dice Juan 11:35."],
+ ["Según Génesis 1:5, Dios llamó a la luz Noche.",false,"Génesis 1:5","Llamó a la luz Día, y a las tinieblas, Noche."],
+ ["Según Romanos 6:23, la paga del pecado es vida eterna.",false,"Romanos 6:23","La paga del pecado es muerte; la dádiva de Dios es vida eterna."],
+ ["Según Efesios 2:8, somos salvos por gracia, por medio de la fe.",true,"Efesios 2:8","Así lo dice el texto."],
+ ["La frase «He aquí el Cordero de Dios» la dijo Pedro.",false,"Juan 1:29","La dijo Juan el Bautista."],
+ ["Según Malaquías 3:6, Jehová dice que cambia.",false,"Malaquías 3:6","Dice: «Yo Jehová no cambio»."],
+ ["En el diluvio llovió cuarenta días y cuarenta noches.",true,"Génesis 7:12","Así lo dice Génesis 7:12."],
+ ["Según Mateo 5:5, los mansos recibirán la tierra por heredad.",true,"Mateo 5:5","Así lo dice el texto."],
+ ["Según Éxodo 20:15, el mandamiento dice: «No hurtarás».",true,"Éxodo 20:15","Así lo dice el texto."],
+ ["Según Génesis 2:2, Dios reposó el día séptimo.",true,"Génesis 2:2","Reposó el día séptimo de toda la obra que hizo."],
+ ["Según Lucas 23:33, a Jesús lo crucificaron en el lugar llamado de la Calavera.",true,"Lucas 23:33","Así lo dice el texto."],
+ ["Según Mateo 28:6, Jesús seguía en el sepulcro.",false,"Mateo 28:6","El ángel dijo: «No está aquí, pues ha resucitado»."],
+ ["Noé halló gracia ante los ojos de Jehová.",true,"Génesis 6:8","Así lo dice Génesis 6:8."],
+ ["Según 1 Juan 4:8, Dios es amor.",true,"1 Juan 4:8","Así lo dice el texto."],
+ ["Según Salmo 23:1, Jehová es mi pastor.",true,"Salmo 23:1","Así lo dice el texto."],
+ ["Según Éxodo 3:14, Dios dijo a Moisés: «YO SOY EL QUE SOY».",true,"Éxodo 3:14","Así lo dice el texto."],
+ ["Según Juan 3:16, Dios dio a su Hijo unigénito.",true,"Juan 3:16","Así lo dice el texto."],
+ ["Según Salmo 90:2, Dios existe desde el siglo y hasta el siglo.",true,"Salmo 90:2","Así lo dice el texto."],
+ ["Según Éxodo 20:8, hay que olvidar el día de reposo.",false,"Éxodo 20:8","Dice: «Acuérdate del día de reposo para santificarlo»."],
+ ["Según Jeremías 32:17, hay cosas difíciles para Dios.",false,"Jeremías 32:17","Dice que no hay nada difícil para él."]
+];
+const GPERS=[
+ {a:"Noé",c:[["Halló gracia ante los ojos de Jehová.","Génesis 6:8"],["Dios le mandó hacerse un arca de madera.","Génesis 6:14"],["Dios puso su arco en las nubes como señal del pacto.","Génesis 9:13"]]},
+ {a:"Abraham",c:[["Jehová le dijo: «Vete de tu tierra y de tu parentela».","Génesis 12:1"],["Creyó a Jehová, y le fue contado por justicia.","Génesis 15:6"],["Dijo a su hijo: «Dios se proveerá de cordero para el holocausto».","Génesis 22:8"]]},
+ {a:"Moisés",c:[["Dios le habló y le dijo: «YO SOY EL QUE SOY».","Éxodo 3:14"],["Extendió su mano sobre el mar y las aguas quedaron divididas.","Éxodo 14:21"],["Subió al monte Sinaí cuando Jehová lo llamó a la cumbre.","Éxodo 19:20"]]},
+ {a:"David",c:[["Era el menor de sus hermanos y apacentaba las ovejas.","1 Samuel 16:11"],["Dios dijo de él: «varón conforme a mi corazón».","Hechos 13:22"],["Escribió: «Ten piedad de mí, oh Dios, conforme a tu misericordia».","Salmo 51:1"]]},
+ {a:"Daniel",c:[["El rey le dijo: «El Dios tuyo, a quien tú continuamente sirves, él te libre».","Daniel 6:16"],["Fue echado al foso de los leones.","Daniel 6:16"],["Dijo: «Mi Dios envió su ángel, el cual cerró la boca de los leones».","Daniel 6:22"]]},
+ {a:"Jonás",c:[["Jehová le mandó ir a Nínive.","Jonás 1:2"],["Jehová tenía preparado un gran pez que lo tragase.","Jonás 1:17"],["Estuvo tres días y tres noches en el vientre del pez.","Jonás 1:17"]]},
+ {a:"María",c:[["Vivía en Nazaret, una ciudad de Galilea.","Lucas 1:26"],["Un ángel le anunció que daría a luz un hijo llamado JESÚS.","Lucas 1:31"],["Respondió: «He aquí la sierva del Señor».","Lucas 1:38"]]},
+ {a:"Pedro",c:[["Era pescador y se llamaba Simón.","Mateo 4:18"],["Confesó: «Tú eres el Cristo, el Hijo del Dios viviente».","Mateo 16:16"],["Antes de que cantara el gallo, negó tres veces a Jesús.","Lucas 22:61"]]},
+ {a:"Pablo",c:[["Antes se llamaba Saulo.","Hechos 13:9"],["Comenzó una de sus cartas: «Pablo, siervo de Jesucristo, llamado a ser apóstol».","Romanos 1:1"],["Escribió: «Para mí el vivir es Cristo, y el morir es ganancia».","Filipenses 1:21"]]},
+ {a:"Juan el Bautista",c:[["Predicaba en el desierto de Judea.","Mateo 3:1"],["Bautizó a Jesús en el Jordán.","Mateo 3:13"],["Dijo de Jesús: «He aquí el Cordero de Dios».","Juan 1:29"]]},
+ {a:"Eva",c:[["Fue llamada así por ser madre de todos los vivientes.","Génesis 3:20"],["Dios la formó de una costilla que tomó del hombre.","Génesis 2:22"],["Tomó del fruto del árbol y dio también a su marido.","Génesis 3:6"]]},
+ {a:"Job",c:[["Era un hombre de la tierra de Uz.","Job 1:1"],["Al perderlo todo, se postró en tierra y adoró.","Job 1:20"],["Dijo: «Yo sé que mi Redentor vive».","Job 19:25"]]}
+];
+const GCONV=[
+ {ref:'Salmo 23:4',q:'¿En qué momento difícil sentiste que no estabas solo?'},
+ {ref:'Filipenses 4:6',t:'Por nada estéis afanosos, sino sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias.',q:'¿Por qué cosas queremos orar hoy en familia?'},
+ {ref:'Proverbios 3:5-6',t:'Fíate de Jehová de todo tu corazón, Y no te apoyes en tu propia prudencia. Reconócelo en todos tus caminos, Y él enderezará tus veredas.',q:'¿Qué decisión tienes por delante en la que quieras pedir dirección a Dios?'},
+ {ref:'Salmo 119:105',t:'Lámpara es a mis pies tu palabra, Y lumbrera a mi camino.',q:'¿Qué versículo te ha servido como luz esta semana?'},
+ {ref:'Efesios 4:32',t:'Antes sed benignos unos con otros, misericordiosos, perdonándoos unos a otros, como Dios también os perdonó a vosotros en Cristo.',q:'¿Cómo podemos ser más bondadosos entre nosotros en casa?'},
+ {ref:'1 Tesalonicenses 5:18',t:'Dad gracias en todo, porque esta es la voluntad de Dios para con vosotros en Cristo Jesús.',q:'Cada uno diga tres cosas de hoy por las que da gracias.'},
+ {ref:'Gálatas 6:2',t:'Sobrellevad los unos las cargas de los otros, y cumplid así la ley de Cristo.',q:'¿Qué carga de alguien de la familia podríamos ayudar a llevar esta semana?'},
+ {ref:'Proverbios 15:1',t:'La blanda respuesta quita la ira; Mas la palabra áspera hace subir el furor.',q:'¿Cuándo una respuesta amable cambió una discusión?'},
+ {ref:'Éxodo 20:12',q:'¿Qué es lo que más admiras o agradeces de tus padres o abuelos?'},
+ {ref:'Mateo 5:9',q:'¿Cuándo te tocó ayudar a hacer las paces en una situación tensa?'},
+ {ref:'Salmo 139:7',q:'¿Dónde viste la mano de Dios esta semana?'},
+ {ref:'Mateo 6:11',q:'¿Qué necesitamos pedirle a Dios como familia hoy?'}
+];
+
+const canSpeak=()=>{try{return 'speechSynthesis' in window;}catch(e){return false;}};
+const sayClean=t=>String(t).replace(/[«»]/g,'').replace(/_{2,}/g,'...');
+const sayRef=r=>r.replace(':',' versículo ').replace('-',' al ');
+function speak(t){
+  if(!S.g.voice||!canSpeak()||!t)return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(sayClean(t));
+    const v=(speechSynthesis.getVoices()||[]).find(x=>/^es/i.test(x.lang));
+    if(v){u.voice=v;u.lang=v.lang;}else u.lang='es-ES';
+    u.rate=.95;speechSynthesis.speak(u);
+  }catch(e){}
+}
+const nameOf=i=>((S.g.names[i]||'').trim())||('Jugador '+(i+1));
+
+function mkItem(label,html,say,ansHtml,ansSay){return {label,html,say,ansHtml,ansSay};}
+function dQuien(n){return shuffle(GQUIEN).slice(0,n).map(x=>mkItem('¿Quién dijo esto?','<blockquote class="verse gbig">'+esc(x.q)+'</blockquote>','¿Quién dijo esto? '+x.q,'<b>'+esc(x.a)+'</b><span>'+esc(x.ref)+'</span>',x.a+'. '+sayRef(x.ref)));}
+function dVF(n){return shuffle(GFALSO).slice(0,n).map(x=>mkItem('¿Verdadero o falso?','<blockquote class="verse gbig">'+esc(x[0])+'</blockquote>','¿Verdadero o falso? '+x[0],'<b>'+(x[1]?'Verdadero':'Falso')+'</b><span>'+esc(x[2])+'</span><p>'+esc(x[3])+'</p>',(x[1]?'Verdadero. ':'Falso. ')+x[3]+' '+sayRef(x[2])));}
+function dPers(n){return shuffle(GPERS).slice(0,n).map(x=>{const it=mkItem('¿Quién es este personaje?','','','<b>'+esc(x.a)+'</b>',x.a);it.clues=x.c;return it;});}
+function dComp(n){
+  const vs=shuffle(ALLV.filter(v=>v.t.split(/\s+/).length<=26&&BLANKS[v.r])).slice(0,n);
+  return vs.map(v=>{
+    const b=pickBlank(v);
+    const disp=b.toks.map((w,i)=>i===b.idx?esc(b.pre)+'<span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'+esc(b.suf):esc(w)).join(' ');
+    const sayT=b.toks.map((w,i)=>i===b.idx?b.pre+' ... '+b.suf:w).join(' ');
+    return mkItem('Completa el versículo','<blockquote class="verse gbig">'+disp+'</blockquote>','Completa el versículo. '+sayT+' ¿Qué palabra falta?','<b>'+esc(b.word)+'</b><span>'+esc(v.r)+'</span><p>'+esc(v.t)+'</p>',b.word+'. '+sayRef(v.r));
+  });
+}
+function dLibros(n){
+  const out=[],used=new Set();let guard=0;
+  while(out.length<n&&guard++<300){
+    const t=rnd(3),i=t===0?rnd(65):t===1?1+rnd(65):rnd(66),key=t+'-'+i;
+    if(used.has(key))continue;used.add(key);
+    if(t===0)out.push(mkItem('Libros de la Biblia','<p class="gq">¿Qué libro sigue después de <b>'+esc(BOOKS[i])+'</b>?</p>','¿Qué libro sigue después de '+BOOKS[i]+'?','<b>'+esc(BOOKS[i+1])+'</b>',BOOKS[i+1]));
+    else if(t===1)out.push(mkItem('Libros de la Biblia','<p class="gq">¿Qué libro va justo antes de <b>'+esc(BOOKS[i])+'</b>?</p>','¿Qué libro va justo antes de '+BOOKS[i]+'?','<b>'+esc(BOOKS[i-1])+'</b>',BOOKS[i-1]));
+    else{const at=i<39?'Antiguo Testamento':'Nuevo Testamento';out.push(mkItem('Libros de la Biblia','<p class="gq">¿<b>'+esc(BOOKS[i])+'</b> es del Antiguo o del Nuevo Testamento?</p>','¿'+BOOKS[i]+' es del Antiguo o del Nuevo Testamento?','<b>'+at+'</b>',at));}
+  }
+  return out;
+}
+function dConv(n){
+  return shuffle(GCONV).slice(0,n).map(x=>{
+    const t=x.t||VBY[x.ref].t;
+    const it=mkItem('Para conversar','<blockquote class="verse gbig">'+esc(t)+'<cite class="vref">'+esc(x.ref)+'</cite></blockquote><p class="gq">'+esc(x.q)+'</p>',sayRef(x.ref)+'. '+t+' Pregunta: '+x.q,'','');
+    return it;
+  });
+}
+const DECKS={quien:dQuien,pers:dPers,vf:dVF,comp:dComp,libros:dLibros,conv:dConv};
+
+let G=null;
+function gamesHTML(){
+  return '<h1 class="page">Juegos en grupo</h1>'+
+   '<section class="card"><p style="margin:0 0 8px">Para jugar en familia, en el carro o en la mesa. Una persona hace de anfitrión y maneja la pantalla; los demás responden hablando.</p>'+
+   '<p class="muted" style="margin:0;font-size:14px"><b>Si vas manejando:</b> no mires la pantalla. Activa «Leer en voz alta» y que un pasajero toque los botones.</p></section>'+
+   '<div class="list">'+GAMES.map(g=>'<button class="gcard" data-a="g-open" data-g="'+g.id+'"><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span><em>'+esc(g.tag)+'</em></button>').join('')+'</div>';
+}
+function gShow(){$('#game').hidden=false;document.body.style.overflow='hidden';}
+function gClose(){if(canSpeak())try{speechSynthesis.cancel();}catch(e){}$('#game').hidden=true;$('#game').innerHTML='';document.body.style.overflow='';G=null;render();}
+function gSetup(id){G={id,game:GAMES.find(x=>x.id===id),deck:null};gRenderSetup();gShow();}
+function gRenderSetup(){
+  const g=G.game,c=S.g,sc=g.scored,canV=canSpeak();
+  const names=Array.from({length:c.n},(_,i)=>'<input class="inp" data-i="'+i+'" value="'+esc(c.names[i]||'')+'" placeholder="Jugador '+(i+1)+'" maxlength="14" aria-label="Nombre del jugador '+(i+1)+'">').join('');
+  $('#game').innerHTML=
+   '<div class="lh"><button class="x" data-a="g-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:0%"></i></div></div>'+
+   '<div class="lb"><h1 class="page" style="margin-top:4px">'+esc(g.t)+'</h1><p class="muted" style="margin:0 0 18px">'+esc(g.d)+'</p>'+
+   (sc?'<section class="sec"><h3>Jugadores</h3><div class="stepper"><button data-a="g-n" data-d="-1" aria-label="Menos jugadores">−</button><b>'+c.n+'</b><button data-a="g-n" data-d="1" aria-label="Más jugadores">+</button></div><div class="names">'+names+'</div></section>':'')+
+   '<section class="sec"><h3>'+(sc?'Rondas':'Preguntas')+'</h3><div class="seg">'+[5,10,15].map(r=>'<button class="'+(c.rounds===r?'on':'')+'" data-a="g-r" data-r="'+r+'">'+r+'</button>').join('')+'</div></section>'+
+   '<section class="sec"><h3>Leer en voz alta</h3>'+(canV?'<div class="seg"><button class="'+(c.voice?'on':'')+'" data-a="g-voice" data-v="1">Sí</button><button class="'+(!c.voice?'on':'')+'" data-a="g-voice" data-v="0">No</button></div><p class="muted" style="font-size:14px;margin:8px 0 0">Ideal en el carro: el teléfono lee cada pregunta y cada respuesta.</p>':'<p class="muted" style="font-size:14px;margin:0">Este navegador no ofrece lectura en voz alta.</p>')+'</section>'+
+   '<p class="muted" style="font-size:14px">Jugar en grupo también suma a tu racha (+10 XP al terminar).</p></div>'+
+   '<div class="lf"><div class="in"><button class="btn" data-a="g-start" data-primary>Empezar</button></div></div>';
+}
+function gStart(){
+  const c=S.g,deck=DECKS[G.id](c.rounds);
+  G={id:G.id,game:G.game,deck,i:0,cl:1,phase:'q',win:[],scores:Array(c.n).fill(0),total:deck.length};
+  gRender();gSpeakQ();
+}
+function gCur(){return G.deck[G.i];}
+function gSpeakQ(){const it=gCur();speak(it.clues?it.label+'. Pista 1. '+it.clues[0][0]:it.say);}
+function gRender(){
+  const it=gCur(),sc=G.game.scored,pct=Math.round(100*G.i/G.total),last=G.i===G.total-1;
+  const pts=it.clues?4-G.cl:1;
+  let body='<div class="lb">';
+  if(sc)body+='<div class="sb">'+G.scores.map((s,i)=>'<span class="sbp"><b>'+esc(nameOf(i))+'</b> '+s+'</span>').join('')+'</div>';
+  body+='<p class="glabel">'+esc(it.label)+' <span>· '+(G.i+1)+' de '+G.total+'</span></p>';
+  if(it.clues)body+='<ol class="clues">'+it.clues.slice(0,G.cl).map((c,k)=>'<li><span>Pista '+(k+1)+'</span>'+esc(c[0])+(G.phase==='a'?'<cite>'+esc(c[1])+'</cite>':'')+'</li>').join('')+'</ol>';
+  else body+=it.html;
+  if(G.phase==='a')body+='<div class="gans">'+it.ansHtml+'</div>';
+  body+='</div>';
+  let foot;
+  const rep=S.g.voice&&canSpeak()?'<button class="btn ghost" data-a="g-repeat">Repetir</button>':'';
+  if(!sc){
+    foot='<div class="lf"><div class="in"><div class="row2">'+rep+'<button class="btn" data-a="g-next" data-primary>'+(last?'Terminar':'Siguiente')+'</button></div></div></div>';
+  }else if(G.phase==='q'){
+    const more=it.clues&&G.cl<it.clues.length?'<button class="btn ghost" data-a="g-clue">Otra pista</button>':'';
+    foot='<div class="lf"><div class="in">'+((rep||more)?'<div class="row2">'+rep+more+'</div>':'')+'<button class="btn" data-a="g-reveal" data-primary>Ver respuesta</button></div></div>';
+  }else{
+    foot='<div class="lf"><div class="in"><p style="margin:0 0 8px;font-weight:800">¿Quién acertó? <span class="muted" style="font-weight:600">(+'+pts+')</span></p><div class="who">'+
+     G.scores.map((_,i)=>'<button class="pl '+(G.win.includes(i)?'on':'')+'" data-a="g-win" data-p="'+i+'" aria-pressed="'+G.win.includes(i)+'">'+esc(nameOf(i))+'</button>').join('')+
+     '</div><button class="btn" data-a="g-next" data-primary>'+(last?'Ver resultados':'Siguiente ronda')+'</button></div></div>';
+  }
+  $('#game').innerHTML=
+   '<div class="lh"><button class="x" data-a="g-close" aria-label="Salir del juego">'+IC.close+'</button><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div></div>'+body+foot;
+}
+function gNext(){
+  if(G.game.scored){const pts=gCur().clues?4-G.cl:1;G.win.forEach(i=>{G.scores[i]+=pts;});}
+  G.win=[];G.i++;G.cl=1;G.phase='q';
+  if(G.i>=G.total){gEnd();return;}
+  gRender();gSpeakQ();
+}
+function gEnd(){
+  const sc=G.game.scored;
+  const r=recordDay(10);S.gplays=(S.gplays||0)+1;
+  const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
+  if(canSpeak())try{speechSynthesis.cancel();}catch(e){}
+  let head='Fin de las preguntas',rank='';
+  if(sc){
+    const arr=G.scores.map((s,i)=>({s,n:nameOf(i)})).sort((a,b)=>b.s-a.s);
+    const top=arr.filter(x=>x.s===arr[0].s);
+    head=arr[0].s===0?'Partida terminada':top.length>1?'Empate':'Ganó '+arr[0].n;
+    rank='<div class="list" style="text-align:left;margin-top:14px">'+arr.map((x,k)=>'<div class="li rk"><b>'+(k+1)+'. '+esc(x.n)+'</b><b>'+x.s+'</b></div>').join('')+'</div>';
+  }
+  $('#game').innerHTML=
+   '<div class="lb"><div class="res"><div class="big">'+IC.flame+'</div><h1>'+esc(head)+'</h1><p class="muted" style="margin:0">'+esc(G.game.t)+'</p>'+rank+
+   '<div class="rs" style="grid-template-columns:1fr 1fr"><div><b>+10</b><span>XP</span></div><div><b>'+S.streak+'</b><span>Días de racha</span></div></div>'+
+   (r.newDay?'<div class="note fl"><b>Racha de '+S.streak+(S.streak===1?' día':' días')+'.</b> Jugar en familia también cuenta.</div>':'')+
+   (r.gotFreeze?'<div class="note fl"><b>Ganaste un protector de racha.</b></div>':'')+
+   fresh.map(a=>'<div class="note"><b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join('')+
+   '</div></div><div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="g-exit">Salir</button><button class="btn" data-a="g-again" data-primary>Jugar otra vez</button></div></div></div>';
+  G.finished=true;
+}
+function gAct(a,b){
+  const c=S.g;
+  if(a==='g-open')gSetup(b.dataset.g);
+  else if(!G)return;
+  else if(a==='g-n'){c.n=Math.max(2,Math.min(8,c.n+(+b.dataset.d)));save();gRenderSetup();}
+  else if(a==='g-r'){c.rounds=+b.dataset.r;save();gRenderSetup();}
+  else if(a==='g-voice'){c.voice=b.dataset.v==='1';save();gRenderSetup();if(c.voice)speak('Lectura en voz alta activada.');}
+  else if(a==='g-start')gStart();
+  else if(a==='g-reveal'){G.phase='a';gRender();speak(gCur().ansSay);}
+  else if(a==='g-clue'){G.cl++;gRender();speak('Pista '+G.cl+'. '+gCur().clues[G.cl-1][0]);}
+  else if(a==='g-win'){const p=+b.dataset.p,k=G.win.indexOf(p);if(k>=0)G.win.splice(k,1);else G.win.push(p);gRender();}
+  else if(a==='g-next')gNext();
+  else if(a==='g-repeat'){if(G.phase==='a')speak(gCur().ansSay);else gSpeakQ();}
+  else if(a==='g-close'){if(G.deck&&!G.finished)showModal('<h3>¿Salir del juego?</h3><p>Se perderá el marcador de esta partida.</p><button class="btn" data-a="stay">Seguir jugando</button><button class="btn ghost" data-a="g-leave">Salir</button>');else gClose();}
+  else if(a==='g-leave'){hideModal();gClose();}
+  else if(a==='g-again'){const id=G.id,game=G.game;G={id,game};gStart();}
+  else if(a==='g-exit')gClose();
+}
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.classList&&t.classList.contains('inp')){const i=+t.dataset.i;S.g.names[i]=t.value;save();}
+});
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+function pick(i){if(!L||L.ui.checked)return;const q=L.cur;if(q.type==='order'||i>=q.opts.length)return;L.ui.sel=i;renderLesson();}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b||b.disabled)return;
+  const a=b.dataset.a;
+  if(a.startsWith('g-')){gAct(a,b);return;}
+  if(a==='tab'){TAB=b.dataset.t;resetArmed=false;render();window.scrollTo(0,0);}
+  else if(a==='lesson'){
+    const ui=+b.dataset.u,li=+b.dataset.l,les=UNITS[ui].lessons[li];
+    startLesson({type:'lesson',key:lk(ui,li),title:les.title,verses:les.verses},buildQuestions(les.verses,les.qs,10),les.intro);
+  }
+  else if(a==='review'){
+    const seen=Object.keys(S.verses).filter(r=>VBY[r]);if(seen.length<3)return;
+    const pick5=seen.map(r=>({r,s:S.verses[r].c-S.verses[r].w*1.5+Math.random()})).sort((x,y)=>x.s-y.s).slice(0,5).map(x=>VBY[x.r]);
+    startLesson({type:'review',title:'Repaso diario',verses:pick5},buildQuestions(pick5,[],8));
+  }
+  else if(a==='begin'){if(L&&L.intro){L.intro=null;nextQ();}}
+  else if(a==='pick')pick(+b.dataset.i);
+  else if(a==='place'){if(L&&!L.ui.checked){L.ui.placed.push(+b.dataset.id);renderLesson();}}
+  else if(a==='unplace'){if(L&&!L.ui.checked){L.ui.placed=L.ui.placed.filter(id=>id!==+b.dataset.id);renderLesson();}}
+  else if(a==='check')check();
+  else if(a==='next')nextQ();
+  else if(a==='close'){showModal('<h3>¿Salir de la lección?</h3><p>Perderás el avance de esta lección.</p><button class="btn" data-a="stay">Seguir aprendiendo</button><button class="btn ghost" data-a="leave">Salir</button>');}
+  else if(a==='stay')hideModal();
+  else if(a==='leave'){hideModal();closeLesson();}
+  else if(a==='finish')closeLesson();
+  else if(a==='goal'){S.goal=+b.dataset.g;save();render();}
+  else if(a==='reset'){
+    if(!resetArmed){resetArmed=true;render();}
+    else{S=defaults();save();resetArmed=false;render();}
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(G&&e.key==='Enter'&&$('#modal').hidden&&e.target.tagName!=='INPUT'){const pb=document.querySelector('#game [data-primary]');if(pb){e.preventDefault();pb.click();}return;}
+  if(!L||!$('#modal').hidden)return;
+  if(L.intro){if(e.key==='Enter'){L.intro=null;nextQ();}return;}
+  if(e.key==='Enter'){
+    if(L.finished){closeLesson();return;}
+    if(L.ui&&L.ui.checked){e.preventDefault();nextQ();}
+    else if(canCheck()){e.preventDefault();check();}
+  }else if(/^[1-4]$/.test(e.key)&&!L.finished&&L.ui){pick(+e.key-1);}
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!L&&!G)render();});
+
+load();render();
+</script>
+</body>
+</html>
