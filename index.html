@@ -3228,8 +3228,13 @@ const GK_SAYFIX={kurios:'kirios',psuje:'psique'};
 function sayGk(pr){const t=String(pr).replace(/-/g,'').replace(/ē/g,'e').replace(/ō/g,'o').replace(/th/g,'t').replace(/dz/g,'z');return GK_SAYFIX[t]||t;}
 let SPK=0;
 function gkUtter(text,opt){
-  const u=new SpeechSynthesisUtterance(text);
   const voices=(speechSynthesis.getVoices&&speechSynthesis.getVoices())||[];
+  if(text&&typeof text==='object'){
+    const gv=text.lang==='el'?voices.find(x=>/^el/i.test(String(x.lang))):null;
+    if(gv){const g=new SpeechSynthesisUtterance(text.t);g.voice=gv;g.lang=gv.lang;g.rate=(opt&&opt.rate)||.8;return g;}
+    text=text.alt;
+  }
+  const u=new SpeechSynthesisUtterance(text);
   const want=(opt&&opt.lang)||'';
   const norm=l=>String(l).replace('_','-').toLowerCase();
   let v=want?voices.find(x=>norm(x.lang)===norm(want)):null;
@@ -3249,21 +3254,23 @@ function gkSpeakParts(parts,opt){
     try{
       const u=gkUtter(part,opt);u.onend=go;u.onerror=go;
       speechSynthesis.speak(u);
-      setTimeout(go,600+part.length*110);
+      setTimeout(go,600+String((part&&part.alt)||part).length*110);
     }catch(e){}
   };
   next();
 }
 function gkSpeak(text,opt){gkSpeakParts([text],opt);}
 const GK_TNAME={'xi':'eksi'};
-const GK_NOTE={17:'Al final de una palabra se escribe ς.',19:'Al transliterar se escribe «y».',21:'Al transliterar se escribe «ch».',5:'Se pronuncia como «dz»; también se le llama «zeta».',13:'Se lee «ksi». La voz del teléfono dice «eksi».',22:'Como en «psicología».'};
+const GK_NOTE={17:'Al final de una palabra se escribe ς.',19:'Al transliterar se escribe «y» (por ejemplo, hydōr), pero se lee como «u» (údor).',21:'Al transliterar se escribe «ch».',5:'Se pronuncia como «dz»; también se le llama «zeta».',13:'Se lee «ksi».',22:'Como en «psicología».'};
 const capw=w=>w.charAt(0).toUpperCase()+w.slice(1);
+const GK_GRNAME={13:['ξι','eksi'],19:['ύψιλον','íp silon'],22:['ψι','psi']};
 function letterParts(i){
   const s=GK_SND[i],L=GK_LET[i];
   const nm=GK_TNAME[L[2]]||L[2];
-  return [capw(nm),'suena '+String(L[4]).replace(/[«»]/g,'')+', como en la palabra griega '+s[4]+'.'];
+  const g=GK_GRNAME[i];
+  return [g?{t:g[0],lang:'el',alt:capw(g[1])}:capw(nm),'suena '+String(L[4]).replace(/[«»]/g,'')+', como en la palabra griega '+s[4]+'.'];
 }
-function letterSpeech(i){return letterParts(i).join(', ');}
+function letterSpeech(i){return letterParts(i).map(x=>typeof x==='object'?x.alt:x).join(', ');}
 function sayLetter(i){
   const s=GK_SND[i],L=GK_LET[i];
   gkSpeakParts(letterParts(i),{rate:.78,pause:420});
