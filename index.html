@@ -3037,7 +3037,7 @@ const GK_LET=[
  ['Υ','υ','ípsilon','u','como la «u» de «luz»'],
  ['Φ','φ','fi','f','como la «f» de «foto»'],
  ['Χ','χ','ji','j','como la «j» suave de «jamón»'],
- ['Ψ','ψ','psi','ps','como «ps» de «psicología»'],
+ ['Ψ','ψ','psi','ps','como la «p» y la «s» dichas juntas'],
  ['Ω','ω','omega','ō (o larga)','como la «o» de «solo», pero alargada']
 ];
 const GK_DIPH=[
@@ -3217,40 +3217,56 @@ function dicLevel(id){const g=S.gw&&S.gw[id];if(!g)return '';return g.c>=3&&g.c>
    ============================================================ */
 const GK_SND=[
  ['a','ἀγάπη','agapē','amor','agape'],['ba','βίβλος','biblos','libro','biblos'],['ga','γάρ','gar','porque','gar'],['da','δόξα','doxa','gloria','doksa'],
- ['e','ἐγώ','egō','yo','ego'],['dsa','ζωή','dzōē','vida','dsoe'],['e','ἡμέρα','hēmera','día','emera'],['ta','θεός','theos','Dios','teos'],
- ['i','ἰδού','idou','he aquí','idu'],['ka','κύριος','kyrios','Señor','kurios'],['la','λόγος','logos','palabra','logos'],['ma','μήτηρ','mētēr','madre','meter'],
- ['na','νόμος','nomos','ley','nomos'],['ksa','ξένος','xenos','extranjero','ksenos'],['o','ὁδός','hodos','camino','odos'],['pa','πατήρ','patēr','padre','pater'],
- ['ra','ῥῆμα','rhēma','palabra dicha','rema'],['sa','σάρξ','sarx','carne','sarks'],['ta','τέκνον','teknon','hijo','teknon'],['u','υἱός','huios','hijo','uios'],
- ['fa','φῶς','phōs','luz','fos'],['ja','χάρις','charis','gracia','jaris'],['psa','ψυχή','psychē','alma','psuje'],['o','ὠδή','ōdē','canto','ode']
+ ['e','ἐγώ','egō','yo','ego'],['dsa','ζωή','dzōē','vida','zoé'],['e','ἡμέρα','hēmera','día','emera'],['ta','θεός','theos','Dios','teos'],
+ ['i','ἰδού','idou','he aquí','idú'],['ka','κύριος','kyrios','Señor','kirios'],['la','λόγος','logos','palabra','logos'],['ma','μαθητής','mathētēs','discípulo','matetes'],
+ ['na','νόμος','nomos','ley','nomos'],['ksa','ἄξιος','axios','digno','aksios'],['o','ὁδός','hodos','camino','odos'],['pa','πατήρ','patēr','padre','pater'],
+ ['ra','ῥῆμα','rhēma','palabra dicha','rema'],['sa','σοφία','sophia','sabiduría','sofía'],['ta','τέκνον','teknon','hijo','teknon'],['u','ὕδωρ','hydōr','agua','údor'],
+ ['fa','φῶς','phōs','luz','fos'],['ja','χάρις','charis','gracia','jaris'],['psa','ψυχή','psychē','alma','psique'],['o','ὥρα','hōra','hora','ora']
 ];
 const GK_DSAY=['kai','eirene','oikos','uios','autos','euangelion','uranos'];
-function sayGk(pr){return String(pr).replace(/-/g,'').replace(/ē/g,'e').replace(/ō/g,'o').replace(/th/g,'t').replace(/dz/g,'ds');}
-function gkSpeak(text,opt){
-  if(!canSpeak()){toast('Este navegador no puede leer en voz alta.');return;}
-  try{
-    speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    const voices=speechSynthesis.getVoices()||[];
-    const want=(opt&&opt.lang)||'';
-    const norm=l=>String(l).replace('_','-').toLowerCase();
-    let v=want?voices.find(x=>norm(x.lang)===norm(want)):null;
-    v=v||voices.find(x=>/^es-(co|419|mx|us)/i.test(norm(x.lang)))||voices.find(x=>/^es/i.test(norm(x.lang)));
-    if(v){u.voice=v;u.lang=v.lang;}else u.lang=want||'es-ES';
-    u.rate=(opt&&opt.rate)||.8;
-    speechSynthesis.speak(u);
-  }catch(e){}
+const GK_SAYFIX={kurios:'kirios',psuje:'psique'};
+function sayGk(pr){const t=String(pr).replace(/-/g,'').replace(/ē/g,'e').replace(/ō/g,'o').replace(/th/g,'t').replace(/dz/g,'z');return GK_SAYFIX[t]||t;}
+let SPK=0;
+function gkUtter(text,opt){
+  const u=new SpeechSynthesisUtterance(text);
+  const voices=(speechSynthesis.getVoices&&speechSynthesis.getVoices())||[];
+  const want=(opt&&opt.lang)||'';
+  const norm=l=>String(l).replace('_','-').toLowerCase();
+  let v=want?voices.find(x=>norm(x.lang)===norm(want)):null;
+  v=v||voices.find(x=>/^es-(co|419|mx|us)/i.test(norm(x.lang)))||voices.find(x=>/^es/i.test(norm(x.lang)));
+  if(v){u.voice=v;u.lang=v.lang;}else u.lang=want||'es-ES';
+  u.rate=(opt&&opt.rate)||.8;
+  return u;
 }
-const GK_TNAME={'xi':'ksi'};
-const GK_NOTE={17:'Al final de una palabra se escribe ς.',19:'Al transliterar se escribe «y».',21:'Al transliterar se escribe «ch».',5:'Se pronuncia como «dz»; también se le llama «zeta».'};
+function gkSpeakParts(parts,opt){
+  if(!canSpeak()){toast('Este navegador no puede leer en voz alta.');return;}
+  try{speechSynthesis.cancel();}catch(e){}
+  const token=++SPK,pause=(opt&&opt.pause!=null)?opt.pause:420;let i=0;
+  const next=()=>{
+    if(token!==SPK||i>=parts.length)return;
+    const part=parts[i++];let moved=false;
+    const go=()=>{if(moved)return;moved=true;if(i<parts.length)setTimeout(next,pause);};
+    try{
+      const u=gkUtter(part,opt);u.onend=go;u.onerror=go;
+      speechSynthesis.speak(u);
+      setTimeout(go,600+part.length*110);
+    }catch(e){}
+  };
+  next();
+}
+function gkSpeak(text,opt){gkSpeakParts([text],opt);}
+const GK_TNAME={'xi':'eksi'};
+const GK_NOTE={17:'Al final de una palabra se escribe ς.',19:'Al transliterar se escribe «y».',21:'Al transliterar se escribe «ch».',5:'Se pronuncia como «dz»; también se le llama «zeta».',13:'Se lee «ksi». La voz del teléfono dice «eksi».',22:'Como en «psicología».'};
 const capw=w=>w.charAt(0).toUpperCase()+w.slice(1);
-function letterSpeech(i){
+function letterParts(i){
   const s=GK_SND[i],L=GK_LET[i];
   const nm=GK_TNAME[L[2]]||L[2];
-  return capw(nm)+' suena '+String(L[4]).replace(/[«»]/g,'')+', como en la palabra griega '+s[4]+'.';
+  return [capw(nm),'suena '+String(L[4]).replace(/[«»]/g,'')+', como en la palabra griega '+s[4]+'.'];
 }
+function letterSpeech(i){return letterParts(i).join(', ');}
 function sayLetter(i){
   const s=GK_SND[i],L=GK_LET[i];
-  gkSpeak(letterSpeech(i),{rate:.78});
+  gkSpeakParts(letterParts(i),{rate:.78,pause:420});
   const info=$('#abcinfo');
   if(info)info.innerHTML='<span class="gk">'+esc(L[0]+' '+L[1])+'</span> <b>'+esc(capw(L[2]))+'</b> suena '+esc(L[4])+', como en la palabra griega <span class="gk">'+esc(s[1])+'</span> ('+esc(s[2])+', «'+esc(s[3])+'»).'+(GK_NOTE[i]?'<br><span class="muted">'+esc(GK_NOTE[i])+'</span>':'');
   document.querySelectorAll('.atile').forEach((t,k)=>t.classList.toggle('on',k===i));
