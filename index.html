@@ -236,7 +236,7 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .lf.good h4{color:var(--green-ink)}
 .lf.bad h4{color:var(--red-ink)}
 .lf .sub{font-size:14px;font-weight:800;color:var(--muted)}
-.fbox{max-height:34vh;overflow:auto;margin-bottom:12px}
+.fbox{max-height:42vh;overflow:auto;margin-bottom:12px}
 .lf .fv{margin:0 0 8px;font-size:16px;line-height:1.5;font-weight:700}
 .lf .fv em{font-style:normal}
 .lf .fv cite{font-style:normal;font-weight:900}
@@ -379,6 +379,10 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .abcinfo{margin:12px 0 4px;padding:12px 14px;border-radius:16px;background:var(--blue-bg);border:2px solid var(--blue);font-size:16px;font-weight:800;line-height:1.4;position:sticky;bottom:78px}
 .abcinfo .gk{font-size:24px}
 .a.on{cursor:pointer}
+.letchips{display:flex;gap:10px;margin:2px 0 8px}
+.letchip{display:grid;justify-items:center;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:2px 16px 4px;min-width:74px}
+.letchip b{font-size:32px;line-height:1.1;color:var(--blue-ink)}
+.letchip small{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.04em}
 .fbbtns{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 8px}
 .listen{display:inline-flex;align-items:center;gap:6px}
 
@@ -3139,11 +3143,11 @@ function gkLetters(les){
   const cands=[];
   les.idx.forEach(i=>{
     const L=GK_LET[i],big=L[0]+' '+L[1]+(i===17?' ς':''),short=L[3].split(' ')[0];
-    const fb={t:L[0]+' '+L[1]+' se llama «'+L[2]+'» y suena '+L[4]+', como en la palabra griega '+GK_SND[i][1]+' ('+GK_SND[i][2]+').',sl:i};
+    const fb={gl:[[L[0],'mayúscula'],[L[1],'minúscula']].concat(i===17?[['ς','al final']]:[]),t:'Se llama «'+L[2]+'» y suena '+L[4]+', como en la palabra griega '+GK_SND[i][1]+' ('+GK_SND[i][2]+').',look:GK_LOOK[i],sl:i};
     cands.push([i,()=>mcq('¿Cómo se llama esta letra?',L[2],GK_LET.map(x=>x[2]),{big,fb})]);
     cands.push([i,()=>mcq('¿Qué sonido tiene esta letra?',L[3],GK_LET.map(x=>x[3]),{big:L[1],fb})]);
     cands.push([i,()=>mcq('¿Cuál letra suena «'+short+'»?',L[1],GK_LET.map(x=>x[1]),{fb,gko:true})]);
-    cands.push([i,()=>mcq('¿Cuál es la minúscula de «'+L[0]+'»?',L[1],GK_LET.map(x=>x[1]),{big:L[0],fb,gko:true})]);
+    cands.push([i,()=>mcq('¿Cuál es la minúscula de la letra griega «'+L[0]+'»?',L[1],GK_LET.map(x=>x[1]),{big:L[0],fb,gko:true})]);
   });
   return pickCover(cands,10);
 }
@@ -3260,6 +3264,7 @@ function gkSpeakParts(parts,opt){
   next();
 }
 function gkSpeak(text,opt){gkSpeakParts([text],opt);}
+const GK_LOOK={1:'La mayúscula Β se parece a nuestra B, y suena igual.',2:'La minúscula γ parece una «y», pero suena «g».',6:'La mayúscula Η parece una «H», pero suena «e» larga. La minúscula η parece una «n».',11:'La minúscula μ parece una «u» con cola, pero suena «m».',12:'La mayúscula Ν es como nuestra N, pero la minúscula ν parece una «v» y suena «n».',16:'Parece una «p», pero suena «r».',19:'La mayúscula Υ parece una «Y» y la minúscula υ parece una «v» o una «u», pero suena «u».',21:'Parece una «x», pero suena «j».',23:'Parece una «w», pero suena «o» larga.'};
 const GK_TNAME={'xi':'eksi'};
 const GK_NOTE={17:'Al final de una palabra se escribe ς.',19:'Al transliterar se escribe «y» (por ejemplo, hydōr), pero se lee como «u» (údor).',21:'Al transliterar se escribe «ch».',5:'Se pronuncia como «dz»; también se le llama «zeta».',13:'Se lee «ksi».',22:'Como en «psicología».'};
 const capw=w=>w.charAt(0).toUpperCase()+w.slice(1);
@@ -3275,13 +3280,13 @@ function sayLetter(i){
   const s=GK_SND[i],L=GK_LET[i];
   gkSpeakParts(letterParts(i),{rate:.78,pause:420});
   const info=$('#abcinfo');
-  if(info)info.innerHTML='<span class="gk">'+esc(L[0]+' '+L[1])+'</span> <b>'+esc(capw(L[2]))+'</b> suena '+esc(L[4])+', como en la palabra griega <span class="gk">'+esc(s[1])+'</span> ('+esc(s[2])+', «'+esc(s[3])+'»).'+(GK_NOTE[i]?'<br><span class="muted">'+esc(GK_NOTE[i])+'</span>':'');
+  if(info)info.innerHTML='<span class="gk">'+esc(L[0]+' '+L[1])+'</span> <b>'+esc(capw(L[2]))+'</b> suena '+esc(L[4])+', como en la palabra griega <span class="gk">'+esc(s[1])+'</span> ('+esc(s[2])+', «'+esc(s[3])+'»).'+(GK_NOTE[i]?'<br><span class="muted">'+esc(GK_NOTE[i])+'</span>':'')+(GK_LOOK[i]?'<br><span class="muted">👀 '+esc(GK_LOOK[i])+'</span>':'');
   document.querySelectorAll('.atile').forEach((t,k)=>t.classList.toggle('on',k===i));
 }
 function sayWord(id){const e=GK_BY[id];if(e)gkSpeak(sayGk(e.pr),{rate:.7});}
 let DICV='w';
 function abcHTML(){
-  return '<div class="abc">'+GK_LET.map((L,i)=>'<button class="atile" data-a="say-l" data-i="'+i+'" aria-label="'+esc(L[2])+'"><span class="al gk">'+esc(L[0]+L[1])+'</span><span class="an">'+esc(L[2])+'</span></button>').join('')+'</div>'+
+  return '<div class="abc">'+GK_LET.map((L,i)=>'<button class="atile" data-a="say-l" data-i="'+i+'" aria-label="'+esc(L[2])+'"><span class="al gk">'+esc(L[0]+' '+L[1])+'</span><span class="an">'+esc(L[2])+'</span></button>').join('')+'</div>'+
    '<div id="abcinfo" class="abcinfo">Toca una letra para escucharla.</div>'+
    '<p class="foot">La voz es la de tu teléfono, en español, así que la pronunciación es aproximada. Cada letra se dice así: «Alfa suena como la a de casa, como en la palabra griega agape».</p>';
 }
@@ -4075,6 +4080,7 @@ function optsHTML(q,ui){
 function fbHTML(q,v,fbk,ans){
   if(!fbk)return '<p class="fv">'+ans+'<em>'+esc(v.t)+'</em> <cite>'+esc(v.r)+'</cite></p>';
   let s='';
+  if(fbk.gl)s+='<div class="letchips" aria-label="Letra griega">'+fbk.gl.map(x=>'<div class="letchip"><b class="gk">'+esc(x[0])+'</b><small>'+esc(x[1])+'</small></div>').join('')+'</div>';
   if(fbk.g)s+='<p class="fv gk gkline">'+esc(fbk.g)+'</p>';
   if(fbk.t||ans)s+='<p class="fv">'+ans+esc(fbk.t||'')+'</p>';
   if(fbk.v)s+='<p class="fv"><em>'+esc(fbk.v)+'</em> <cite>'+esc(fbk.r)+'</cite></p>';
@@ -4083,6 +4089,7 @@ function fbHTML(q,v,fbk,ans){
   if(fbk.w)bt+='<button class="btn ghost sm listen" data-a="say-w" data-w="'+fbk.w+'">🔊 Escuchar</button> <button class="btn ghost sm" data-a="dic-peek" data-w="'+fbk.w+'">📚 Historia de la palabra</button>';
   if(fbk.say)bt+='<button class="btn ghost sm listen" data-a="say-t" data-t="'+esc(fbk.say)+'">🔊 Escuchar</button>';
   if(bt)s+='<div class="fbbtns">'+bt+'</div>';
+  if(fbk.look)s+='<div class="nota" style="margin-bottom:8px">👀 <b>Ojo:</b> '+esc(fbk.look)+'</div>';
   return s;
 }
 function renderLesson(){
