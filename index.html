@@ -382,6 +382,36 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .fbbtns{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 8px}
 .listen{display:inline-flex;align-items:center;gap:6px}
 
+/* ---------- grupo familiar ---------- */
+.famcard .famh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.frow{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:2px solid var(--line);font-size:15px}
+.frow:first-of-type{border-top:0}
+.fpos{width:26px;text-align:center;font-weight:900;color:var(--muted);flex:none}
+.fav{font-size:22px;line-height:1;flex:none}
+.fav.big{font-size:34px}
+.fnm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fst{color:var(--orange);font-weight:900}
+.fxp{color:var(--yellow-ink);font-weight:900}
+.cheerb{display:block;width:100%;text-align:left;cursor:pointer;animation:pop .35s ease-out;font-size:16px}
+.avs{display:flex;flex-wrap:wrap;gap:8px}
+.avb{width:50px;height:50px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:26px;line-height:1}
+.avb.on{border-color:var(--purple-d);background:var(--purple-bg)}
+.codebox{text-align:center;background:var(--purple-bg);border-color:var(--purple)}
+.gcodev{font-size:40px;font-weight:900;letter-spacing:.22em;margin:2px 0 10px;color:var(--purple-d);padding-left:.22em}
+.cheers{background:var(--orange-bg);border:2px solid var(--orange);border-radius:18px;padding:10px 14px;margin:0 0 14px}
+.cheerrow{padding:4px 0;font-size:16px}
+.mlist{display:grid;gap:10px}
+.mrow{background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;padding:12px 14px}
+.mrow.me{border-color:var(--blue);background:var(--blue-bg)}
+.mtop{display:flex;align-items:center;gap:10px}
+.minfo{display:grid;line-height:1.2}
+.minfo .muted{font-size:13px}
+.mstats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:15px}
+.chb{display:flex;gap:8px;margin-top:10px}
+.chbtn{flex:1;padding:8px 0;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:24px;line-height:1.2}
+.chbtn:active{transform:translateY(2px)}
+.chbtn.sent{background:var(--green-bg);border-color:var(--green)}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -394,9 +424,11 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 <div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
 <div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
 <div id="dic" class="overlay" role="dialog" aria-modal="true" aria-label="Diccionario" hidden></div>
+<div id="fam" class="overlay" role="dialog" aria-modal="true" aria-label="Grupo familiar" hidden></div>
 <div id="modal" class="modal" hidden></div>
 <div id="fx" aria-hidden="true"></div>
 
+<script src="config.js"></script>
 <script>
 /* ============================================================
    CONTENIDO — Texto bíblico: Reina-Valera 1960
@@ -3325,6 +3357,140 @@ async function doShare(kind,id){
     toast('Imagen guardada y mensaje copiado.');
   }
 }
+/* ============================================================
+   GRUPO FAMILIAR (Supabase) — configurable en config.js
+   ============================================================ */
+const CFG=window.LAMPARA_CFG||{};
+const famOn=()=>!!(CFG.url&&CFG.key&&/^https?:/.test(CFG.url));
+let FAM={data:null,cheers:[],last:0};
+function hexr(n){const a=new Uint8Array(n);try{crypto.getRandomValues(a);}catch(e){for(let i=0;i<n;i++)a[i]=Math.floor(Math.random()*256);}return Array.from(a,x=>x.toString(16).padStart(2,'0')).join('');}
+function uuid4(){const h=hexr(16);return h.slice(0,8)+'-'+h.slice(8,12)+'-4'+h.slice(13,16)+'-'+'89ab'[parseInt(h[16],16)%4]+h.slice(17,20)+'-'+h.slice(20,32);}
+function famState(){S.fam=S.fam||{};if(!S.fam.device){S.fam.device=uuid4();S.fam.secret=hexr(24);save();}return S.fam;}
+const famJoined=()=>!!(famOn()&&S.fam&&S.fam.joined);
+async function rpc(fn,args){
+  const h={'Content-Type':'application/json',apikey:CFG.key};
+  if(/^eyJ/.test(CFG.key))h.Authorization='Bearer '+CFG.key;
+  const r=await fetch(CFG.url.replace(/\/$/,'')+'/rest/v1/rpc/'+fn,{method:'POST',headers:h,body:JSON.stringify(args)});
+  if(!r.ok){let m='';try{m=(await r.json()).message||'';}catch(e){}throw new Error(m||('http '+r.status));}
+  return r.json();
+}
+const famArgs=x=>Object.assign({p_device:famState().device,p_secret:famState().secret},x||{});
+const FAM_ERR={codigo_no_existe:'Ese código no existe. Revisa las letras.',grupo_lleno:'El grupo ya está lleno (máximo 8 personas).',demasiados_intentos:'Demasiados intentos. Espera unos minutos.',espera:'Ya le mandaste ánimo hace poco. ¡Espera un rato!',ya_en_grupo:'Ya estás en un grupo.',no_autorizado:'No pudimos verificar tu cuenta en este teléfono.',secreto_invalido:'Hubo un problema con tu identificador. Reinicia la app.',destino_invalido:'No se pudo enviar el ánimo.',tipo_invalido:'No se pudo enviar el ánimo.'};
+const famMsg=e=>FAM_ERR[e]||'Algo salió mal. Inténtalo de nuevo.';
+function famStats(){const t=today();let wk=0;for(let i=0;i<7;i++)wk+=S.days[addDays(t,-i)]||0;return {p_streak:S.streak,p_best:S.best,p_xp:S.xp,p_week_xp:wk,p_lessons:lessonsDone(),p_last_day:S.lastDay||null};}
+async function famSync(){
+  if(!famJoined())return;
+  try{await rpc('fam_sync',famArgs(famStats()));S.fam.synced=Date.now();save();}catch(e){}
+}
+async function famPoll(force){
+  if(!famJoined())return;
+  if(!force&&Date.now()-FAM.last<60000)return;
+  FAM.last=Date.now();
+  try{
+    const d=await rpc('fam_get',famArgs({p_mark:false}));
+    if(d&&d.ok){FAM.data=d.family?d:null;FAM.cheers=d.cheers||[];if(!d.family){S.fam.joined=false;save();}
+      if(!$('#fam').hidden)return; if(TAB==='path'||TAB==='me')render();}
+  }catch(e){}
+}
+const KIND_E={animo:'💪',fuego:'🔥',oracion:'🙏'},KIND_T={animo:'¡Ánimo!',fuego:'¡Sigue así!',oracion:'Orando por ti'};
+const FAM_AV=['🙂','😄','🦁','🐑','🕊️','🌿','⭐','🌻','👩','👨','👵','👴'];
+function daysAgoText(d){if(!d)return 'aún sin practicar';const n=diffDays(d,today());return n<=0?'practicó hoy':n===1?'ayer':'hace '+n+' días';}
+function famCardHTML(){
+  if(!famOn())return '';
+  const cnt=FAM.data&&FAM.data.members?FAM.data.members.length:0;
+  if(!famJoined())return '<section class="card"><b>👨‍👩‍👧 Grupo familiar</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Practiquen juntos: vean la racha de cada uno y mándense ánimo.</p><button class="btn purple sm" data-a="fam-open">Crear o unirme a un grupo</button></section>';
+  return '<section class="card"><b>👨‍👩‍👧 '+esc(FAM.data?FAM.data.family.name:'Mi familia')+'</b><p class="muted" style="margin:2px 0 10px;font-size:14px">'+(cnt?cnt+(cnt===1?' persona':' personas')+' en el grupo.':'Toca para ver el grupo.')+'</p><button class="btn purple sm" data-a="fam-open">Ver mi familia</button></section>';
+}
+function famHomeHTML(){
+  if(!famJoined())return '';
+  let out='';
+  if(FAM.cheers.length){
+    const c=FAM.cheers[0],more=FAM.cheers.length-1;
+    out+='<button class="banner cheerb" data-a="fam-open">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> te mandó: '+esc(KIND_T[c.kind]||'¡Ánimo!')+(more>0?' (y '+more+' más)':'')+'</button>';
+  }
+  if(FAM.data&&FAM.data.members&&FAM.data.members.length>1){
+    const rows=FAM.data.members.slice(0,4).map((m,i)=>'<div class="frow"><span class="fpos">'+(i===0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><b class="fnm">'+esc(m.me?'Tú':m.name)+'</b><span class="fst">🔥 '+m.streak+'</span><span class="fxp">⚡ '+m.week_xp+'</span></div>').join('');
+    out+='<section class="card famcard"><div class="famh"><b>👨‍👩‍👧 '+esc(FAM.data.family.name)+'</b><span class="muted">esta semana</span></div>'+rows+'<button class="btn ghost sm" style="margin-top:10px" data-a="fam-open">Ver familia y animar</button></section>';
+  }
+  return out;
+}
+let famEdit={name:'',avatar:'🙂'};
+function famShell(inner){return '<div class="lh"><button class="x" data-a="fam-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:100%;background:var(--purple-d)"></i></div></div><div class="lb">'+inner+'</div>';}
+function famAvHTML(){return '<div class="avs">'+FAM_AV.map(a=>'<button class="avb '+(famEdit.avatar===a?'on':'')+'" data-a="fam-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+'</div>';}
+function famRender(msg){
+  const el=$('#fam');
+  if(!famJoined()){
+    el.innerHTML=famShell('<div class="gsetup"><span style="font-size:52px;line-height:1">👨‍👩‍👧</span><div><h1>Grupo familiar</h1><p>Practiquen juntos y anímense.</p></div></div>'+
+     (msg?'<div class="banner">'+esc(msg)+'</div>':'')+
+     '<section class="sec"><h3>¿Cómo te llamas en el grupo?</h3><input id="fname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(famEdit.name)+'" autocomplete="off"></section>'+
+     '<section class="sec"><h3>Elige tu emoji</h3>'+famAvHTML()+'</section>'+
+     '<section class="card"><b>➕ Crear un grupo nuevo</b><input id="gname" class="inp" style="margin:10px 0" maxlength="40" placeholder="Nombre del grupo (ej. Familia Velasco)" autocomplete="off"><button class="btn purple" data-a="fam-create">Crear grupo</button></section>'+
+     '<section class="card"><b>🔑 Unirme con un código</b><input id="gcode" class="inp" style="margin:10px 0;text-transform:uppercase;letter-spacing:.2em;text-align:center;font-size:22px" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters"><button class="btn blue" data-a="fam-join">Unirme</button></section>'+
+     '<p class="foot">Solo se guarda tu nombre, tu emoji, tu racha y tus XP. No se guardan correos ni teléfonos.</p>');
+    return;
+  }
+  const d=FAM.data;
+  if(!d){el.innerHTML=famShell('<div class="splash"><div class="spl">🕯️</div><b>Buscando a tu familia…</b></div>');return;}
+  const cheers=(d.cheers||[]).map(c=>'<div class="cheerrow">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> · '+esc(KIND_T[c.kind]||'¡Ánimo!')+'</div>').join('');
+  const rows=d.members.map((m,i)=>{
+    const cheerBtns=m.me?'':'<div class="chb">'+['animo','fuego','oracion'].map(k=>'<button class="chbtn" data-a="fam-cheer" data-to="'+esc(m.device)+'" data-k="'+k+'" aria-label="'+esc(KIND_T[k])+'" title="'+esc(KIND_T[k])+'">'+KIND_E[k]+'</button>').join('')+'</div>';
+    return '<div class="mrow '+(m.me?'me':'')+'"><div class="mtop"><span class="fpos">'+(i===0?'👑':(i+1))+'</span><span class="fav big">'+esc(m.avatar)+'</span><div class="minfo"><b>'+esc(m.me?m.name+' (tú)':m.name)+'</b><span class="muted">'+esc(daysAgoText(m.last_day))+'</span></div></div>'+
+      '<div class="mstats"><span>🔥 <b>'+m.streak+'</b> racha</span><span>⚡ <b>'+m.week_xp+'</b> esta semana</span><span>📚 <b>'+m.lessons+'</b></span></div>'+cheerBtns+'</div>';
+  }).join('');
+  el.innerHTML=famShell('<div class="gsetup"><span style="font-size:52px;line-height:1">👨‍👩‍👧</span><div><h1>'+esc(d.family.name)+'</h1><p>'+d.members.length+(d.members.length===1?' persona':' personas')+' · ranking de la semana</p></div></div>'+
+   (msg?'<div class="banner">'+esc(msg)+'</div>':'')+
+   (cheers?'<section class="cheers"><b>Te enviaron:</b>'+cheers+'</section>':'')+
+   '<section class="card codebox"><span class="muted">Código del grupo</span><div class="gcodev">'+esc(d.family.code)+'</div><button class="btn blue sm" data-a="fam-invite">📲 Invitar por WhatsApp</button></section>'+
+   '<div class="mlist">'+rows+'</div>'+
+   '<div class="row2" style="margin-top:14px"><button class="btn ghost sm" data-a="fam-refresh">🔄 Actualizar</button><button class="btn ghost sm" data-a="fam-leave">Salir del grupo</button></div>');
+}
+async function famOpen(){
+  if(!famOn())return;
+  famState();famEdit.name=famEdit.name||(S.fam.name||'');famEdit.avatar=S.fam.avatar||famEdit.avatar;
+  $('#fam').hidden=false;document.body.style.overflow='hidden';
+  famRender();
+  if(famJoined()){
+    try{const d=await rpc('fam_get',famArgs({p_mark:true}));
+      if(d&&d.ok&&d.family){FAM.data=d;FAM.cheers=[];S.fam.synced=0;}else if(d&&d.ok){S.fam.joined=false;save();}
+      else if(d&&d.error){famRender(famMsg(d.error));return;}
+      famRender();famSync().then(()=>{});
+    }catch(e){famRender('Sin conexión con el servidor. Inténtalo de nuevo.');}
+  }
+}
+function famClose(){$('#fam').hidden=true;$('#fam').innerHTML='';document.body.style.overflow='';render();}
+async function famDo(kind){
+  const nm=(($('#fname')||{}).value||'').trim()||famEdit.name||'Yo';famEdit.name=nm;
+  const base={p_name:nm,p_avatar:famEdit.avatar};
+  try{
+    let r;
+    if(kind==='create')r=await rpc('fam_create',famArgs(Object.assign({p_family:(($('#gname')||{}).value||'').trim()},base)));
+    else{const code=(($('#gcode')||{}).value||'').trim();if(code.length<4){famRender('Escribe el código de 6 letras.');return;}r=await rpc('fam_join',famArgs(Object.assign({p_code:code},base)));}
+    if(r&&r.ok){S.fam.joined=true;S.fam.code=r.code;S.fam.name=nm;S.fam.avatar=famEdit.avatar;save();
+      FAM.data=null;famRender();
+      const d=await rpc('fam_get',famArgs({p_mark:true}));if(d&&d.ok&&d.family){FAM.data=d;}
+      await famSync();
+      const d2=await rpc('fam_get',famArgs({p_mark:false}));if(d2&&d2.ok&&d2.family)FAM.data=d2;
+      famRender(kind==='create'?'¡Grupo creado! Comparte el código con tu familia.':'¡Listo, ya estás en el grupo!');confetti(60);beep('win');
+    }else famRender(famMsg(r&&r.error));
+  }catch(e){famRender('Sin conexión con el servidor. Inténtalo de nuevo.');}
+}
+async function famCheer(to,k,btn){
+  try{const r=await rpc('fam_cheer',famArgs({p_to:to,p_kind:k}));
+    if(r&&r.ok){toast(KIND_E[k]+' ¡Ánimo enviado!');beep('good');if(btn)btn.classList.add('sent');}
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
+}
+async function famInvite(){
+  const code=FAM.data&&FAM.data.family.code,link=appLink();
+  const text='👨‍👩‍👧 ¡Únete a mi grupo en Lámpara y practiquemos la Biblia juntos! Mi código es: '+code+(link?'\nEntra aquí: '+link:'');
+  try{if(navigator.share){await navigator.share({text});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+}
+async function famLeave(){
+  hideModal();
+  try{const r=await rpc('fam_leave',famArgs());if(r&&r.ok){S.fam.joined=false;S.fam.code=null;FAM.data=null;FAM.cheers=[];save();famRender('Saliste del grupo.');}else famRender(famMsg(r&&r.error));}
+  catch(e){famRender('Sin conexión con el servidor. Inténtalo de nuevo.');}
+}
 function dicList(q){
   q=(q||'').trim().toLowerCase();
   const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -3806,7 +3972,7 @@ function homeHTML(){
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+sw+
-  '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+
+  '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+famHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
@@ -3833,7 +3999,7 @@ function meHTML(){
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
    '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length)+'</b><span>Lecciones</span></div></div></div>'+
-   '<section class="card"><b>📣 Compartir y animar</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha o anima a alguien a hacer su lección. Se envía por WhatsApp o por donde quieras.</p><div class="row2" style="margin:0"><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button><button class="btn ghost sm" data-a="share" data-k="cheer">Animar a alguien</button></div></section>'+
+   famCardHTML()+'<section class="card"><b>📣 Compartir y animar</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha o anima a alguien a hacer su lección. Se envía por WhatsApp o por donde quieras.</p><div class="row2" style="margin:0"><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button><button class="btn ghost sm" data-a="share" data-k="cheer">Animar a alguien</button></div></section>'+
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
@@ -3846,6 +4012,7 @@ function meHTML(){
 }
 function render(){
   refreshStreak();renderTop();renderTabs();
+  if(famJoined())setTimeout(()=>famPoll(),60);
   if(TAB==='me')setTimeout(()=>{prepShare('streak').catch(()=>{});},150);
   $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():meHTML();
 }
@@ -3982,6 +4149,7 @@ function finishLesson(){
    '</div></div><div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="share" data-k="lesson">📣 Compartir</button><button class="btn" data-a="finish">Continuar</button></div></div></div>';
   L.finished=true;
   LASTRES={title:L.meta.title||'una lección',xp,acc,streak:S.streak,review:isReview};
+  setTimeout(famSync,400);
   setTimeout(()=>{prepShare('lesson').catch(()=>{});},200);
   beep('win');confetti(120);haptic([20,70,20,70,50]);
 }
@@ -4247,6 +4415,7 @@ function gEnd(){
    fresh.map(a=>'<div class="note">'+(ACH_E[a.id]||'⭐')+' <b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join('')+
    '</div></div><div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="g-exit">Salir</button><button class="btn" data-a="g-again" data-primary>Jugar otra vez</button></div></div></div>';
   G.finished=true;
+  setTimeout(famSync,400);
   beep('win');confetti(120);haptic([20,70,20,70,50]);
 }
 function gAct(a,b){
@@ -4308,6 +4477,16 @@ document.addEventListener('click',e=>{
   else if(a==='leave'){hideModal();closeLesson();}
   else if(a==='finish')closeLesson();
   else if(a==='share'){doShare(b.dataset.k,b.dataset.id);}
+  else if(a==='fam-open'){famOpen();}
+  else if(a==='fam-close'){famClose();}
+  else if(a==='fam-av'){famEdit.name=(($('#fname')||{}).value||famEdit.name);famEdit.avatar=b.dataset.v;famRender();}
+  else if(a==='fam-create'){famDo('create');}
+  else if(a==='fam-join'){famDo('join');}
+  else if(a==='fam-cheer'){famCheer(b.dataset.to,b.dataset.k,b);}
+  else if(a==='fam-invite'){famInvite();}
+  else if(a==='fam-refresh'){famOpen();}
+  else if(a==='fam-leave'){showModal('<h3>¿Salir del grupo?</h3><p>Dejarás de ver a tu familia y ellos dejarán de verte.</p><button class="btn" data-a="stay">Quedarme</button><button class="btn ghost" data-a="fam-leave-yes">Salir</button>');}
+  else if(a==='fam-leave-yes'){famLeave();}
   else if(a==='goal'){S.goal=+b.dataset.g;save();render();}
   else if(a==='course'){S.course=b.dataset.c;save();render();window.scrollTo(0,0);}
   else if(a==='dic-open'||a==='dic-peek'){dicOpen(b.dataset.w);}
@@ -4345,7 +4524,7 @@ document.addEventListener('keydown',e=>{
     else if(canCheck()){e.preventDefault();check();}
   }else if(/^[1-4]$/.test(e.key)&&!L.finished&&L.ui){pick(+e.key-1);}
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else if(!L&&!G)render();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{if(famJoined())famPoll(true);if(!L&&!G)render();}});
 window.addEventListener('pagehide',()=>{try{save();}catch(e){}});
 
 load();render();
