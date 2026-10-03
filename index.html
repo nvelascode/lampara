@@ -3224,7 +3224,7 @@ const GK_SND=[
  ['fa','φῶς','phōs','luz','fos'],['ja','χάρις','charis','gracia','jaris'],['psa','ψυχή','psychē','alma','psique'],['o','ὥρα','hōra','hora','ora']
 ];
 const GK_DSAY=['kai','eirene','oikos','uios','autos','euangelion','uranos'];
-const GK_SAYFIX={kurios:'kirios',psuje:'psique'};
+const GK_SAYFIX={kurios:'kirios',psuje:'psique',jristos:'kristos'};
 function sayGk(pr){const t=String(pr).replace(/-/g,'').replace(/ē/g,'e').replace(/ō/g,'o').replace(/th/g,'t').replace(/dz/g,'z');return GK_SAYFIX[t]||t;}
 let SPK=0;
 function gkUtter(text,opt){
