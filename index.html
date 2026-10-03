@@ -3015,30 +3015,30 @@ const GK_DICT=[
    CURSO DE GRIEGO BÍBLICO (pronunciación erasmiana)
    ============================================================ */
 const GK_LET=[
- ['Α','α','alfa','a','como la «a» de casa'],
- ['Β','β','beta','b','como la «b» de beso'],
- ['Γ','γ','gamma','g','como la «g» de gato'],
- ['Δ','δ','delta','d','como la «d» de dedo'],
- ['Ε','ε','épsilon','e','«e» corta, como en peso'],
- ['Ζ','ζ','dseta','dz','como «ds» (suena «dseta»)'],
- ['Η','η','eta','ē (e larga)','«e» larga, como en mesa pero alargada'],
- ['Θ','θ','theta','th','como la «z» de España; si no, una «t» suave'],
- ['Ι','ι','iota','i','como la «i» de piso'],
- ['Κ','κ','kappa','k','como la «c» de casa'],
- ['Λ','λ','lambda','l','como la «l» de luz'],
- ['Μ','μ','mi','m','como la «m» de mesa'],
- ['Ν','ν','ni','n','como la «n» de nube'],
- ['Ξ','ξ','xi','ks','como la «x» de taxi'],
- ['Ο','ο','ómicron','o','«o» corta, como en solo'],
- ['Π','π','pi','p','como la «p» de papá'],
- ['Ρ','ρ','ro','r','«r» suave, como en pero'],
- ['Σ','σ','sigma','s','como la «s» de sol (al final de palabra se escribe ς)'],
- ['Τ','τ','tau','t','como la «t» de tapa'],
- ['Υ','υ','ípsilon','u','como la «u» de luz (en transliteración se escribe «y»)'],
- ['Φ','φ','fi','f','como la «f» de foto'],
- ['Χ','χ','ji','j','como la «j» suave de jamón (en transliteración, «ch»)'],
- ['Ψ','ψ','psi','ps','como «ps» en psicología'],
- ['Ω','ω','omega','ō (o larga)','«o» larga, como en solo pero alargada']
+ ['Α','α','alfa','a','como la «a» de «casa»'],
+ ['Β','β','beta','b','como la «b» de «beso»'],
+ ['Γ','γ','gamma','g','como la «g» de «gato»'],
+ ['Δ','δ','delta','d','como la «d» de «dedo»'],
+ ['Ε','ε','épsilon','e','como la «e» corta de «peso»'],
+ ['Ζ','ζ','dseta','dz','como una «d» y una «s» dichas juntas'],
+ ['Η','η','eta','ē (e larga)','como la «e» de «mesa», pero alargada'],
+ ['Θ','θ','theta','th','como la «z» de España, o como una «t» suave'],
+ ['Ι','ι','iota','i','como la «i» de «piso»'],
+ ['Κ','κ','kappa','k','como la «k» de «kilo»'],
+ ['Λ','λ','lambda','l','como la «l» de «luz»'],
+ ['Μ','μ','mi','m','como la «m» de «mesa»'],
+ ['Ν','ν','ni','n','como la «n» de «nube»'],
+ ['Ξ','ξ','xi','ks','como la «x» de «taxi»'],
+ ['Ο','ο','ómicron','o','como la «o» corta de «solo»'],
+ ['Π','π','pi','p','como la «p» de «papá»'],
+ ['Ρ','ρ','ro','r','como la «r» suave de «pero»'],
+ ['Σ','σ','sigma','s','como la «s» de «sol»'],
+ ['Τ','τ','tau','t','como la «t» de «tapa»'],
+ ['Υ','υ','ípsilon','u','como la «u» de «luz»'],
+ ['Φ','φ','fi','f','como la «f» de «foto»'],
+ ['Χ','χ','ji','j','como la «j» suave de «jamón»'],
+ ['Ψ','ψ','psi','ps','como «ps» de «psicología»'],
+ ['Ω','ω','omega','ō (o larga)','como la «o» de «solo», pero alargada']
 ];
 const GK_DIPH=[
  ['αι','ai','como «hay»','καί (kai), «y»'],
@@ -3139,7 +3139,7 @@ function gkLetters(les){
   const cands=[];
   les.idx.forEach(i=>{
     const L=GK_LET[i],big=L[0]+' '+L[1]+(i===17?' ς':''),short=L[3].split(' ')[0];
-    const fb={t:L[0]+' '+L[1]+' se llama «'+L[2]+'». Suena '+L[4]+'.',sl:i};
+    const fb={t:L[0]+' '+L[1]+' se llama «'+L[2]+'» y suena '+L[4]+', como en la palabra griega '+GK_SND[i][1]+' ('+GK_SND[i][2]+').',sl:i};
     cands.push([i,()=>mcq('¿Cómo se llama esta letra?',L[2],GK_LET.map(x=>x[2]),{big,fb})]);
     cands.push([i,()=>mcq('¿Qué sonido tiene esta letra?',L[3],GK_LET.map(x=>x[3]),{big:L[1],fb})]);
     cands.push([i,()=>mcq('¿Cuál letra suena «'+short+'»?',L[1],GK_LET.map(x=>x[1]),{fb,gko:true})]);
@@ -3241,16 +3241,18 @@ function gkSpeak(text,opt){
   }catch(e){}
 }
 const GK_TNAME={'xi':'ksi'};
+const GK_NOTE={17:'Al final de una palabra se escribe ς.',19:'Al transliterar se escribe «y».',21:'Al transliterar se escribe «ch».',5:'Se pronuncia como «dz»; también se le llama «zeta».'};
+const capw=w=>w.charAt(0).toUpperCase()+w.slice(1);
 function letterSpeech(i){
   const s=GK_SND[i],L=GK_LET[i];
-  const snd=String(L[4]).replace(/\s*\([^)]*\)/g,'').replace(/[«»]/g,'');
-  return (GK_TNAME[L[2]]||L[2])+'. Suena '+snd+'. Como en '+s[4]+', '+s[3]+'.';
+  const nm=GK_TNAME[L[2]]||L[2];
+  return capw(nm)+' suena '+String(L[4]).replace(/[«»]/g,'')+', como en la palabra griega '+s[4]+'.';
 }
 function sayLetter(i){
   const s=GK_SND[i],L=GK_LET[i];
   gkSpeak(letterSpeech(i),{rate:.78});
   const info=$('#abcinfo');
-  if(info)info.innerHTML='<span class="gk">'+esc(L[0]+' '+L[1])+'</span> · <b>'+esc(L[2])+'</b> · suena '+esc(L[4])+'<br>Ejemplo: <span class="gk">'+esc(s[1])+'</span> ('+esc(s[2])+'), «'+esc(s[3])+'».';
+  if(info)info.innerHTML='<span class="gk">'+esc(L[0]+' '+L[1])+'</span> <b>'+esc(capw(L[2]))+'</b> suena '+esc(L[4])+', como en la palabra griega <span class="gk">'+esc(s[1])+'</span> ('+esc(s[2])+', «'+esc(s[3])+'»).'+(GK_NOTE[i]?'<br><span class="muted">'+esc(GK_NOTE[i])+'</span>':'');
   document.querySelectorAll('.atile').forEach((t,k)=>t.classList.toggle('on',k===i));
 }
 function sayWord(id){const e=GK_BY[id];if(e)gkSpeak(sayGk(e.pr),{rate:.7});}
@@ -3258,7 +3260,7 @@ let DICV='w';
 function abcHTML(){
   return '<div class="abc">'+GK_LET.map((L,i)=>'<button class="atile" data-a="say-l" data-i="'+i+'" aria-label="'+esc(L[2])+'"><span class="al gk">'+esc(L[0]+L[1])+'</span><span class="an">'+esc(L[2])+'</span></button>').join('')+'</div>'+
    '<div id="abcinfo" class="abcinfo">Toca una letra para escucharla.</div>'+
-   '<p class="foot">La voz es la de tu teléfono, en español, así que la pronunciación es aproximada. Cada letra se dice así: su nombre, su sonido y una palabra griega de ejemplo.</p>';
+   '<p class="foot">La voz es la de tu teléfono, en español, así que la pronunciación es aproximada. Cada letra se dice así: «Alfa suena como la a de casa, como en la palabra griega agape».</p>';
 }
 
 /* ============================================================
