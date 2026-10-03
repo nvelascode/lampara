@@ -3143,7 +3143,7 @@ function gkLetters(les){
   const cands=[];
   les.idx.forEach(i=>{
     const L=GK_LET[i],big=L[0]+' '+L[1]+(i===17?' ς':''),short=L[3].split(' ')[0];
-    const fb={gl:[[L[0],'mayúscula'],[L[1],'minúscula']].concat(i===17?[['ς','al final']]:[]),t:'Se llama «'+L[2]+'» y suena '+L[4]+', como en la palabra griega '+GK_SND[i][1]+' ('+GK_SND[i][2]+').',look:GK_LOOK[i],sl:i};
+    const fb={gl:[[L[0],'mayúscula'],[L[1],'minúscula']].concat(i===17?[['ς','final de palabra']]:[]),t:'Se llama «'+L[2]+'» y suena '+L[4]+', como en la palabra griega '+GK_SND[i][1]+' ('+GK_SND[i][2]+').'+(i===17?' Dentro de una palabra se escribe σ, y al final de una palabra se escribe ς. Es la misma letra.':''),sl:i};
     cands.push([i,()=>mcq('¿Cómo se llama esta letra?',L[2],GK_LET.map(x=>x[2]),{big,fb})]);
     cands.push([i,()=>mcq('¿Qué sonido tiene esta letra?',L[3],GK_LET.map(x=>x[3]),{big:L[1],fb})]);
     cands.push([i,()=>mcq('¿Cuál letra suena «'+short+'»?',L[1],GK_LET.map(x=>x[1]),{fb,gko:true})]);
@@ -3264,9 +3264,8 @@ function gkSpeakParts(parts,opt){
   next();
 }
 function gkSpeak(text,opt){gkSpeakParts([text],opt);}
-const GK_LOOK={1:'La mayúscula Β se parece a nuestra B, y suena igual.',2:'La minúscula γ parece una «y», pero suena «g».',6:'La mayúscula Η parece una «H», pero suena «e» larga. La minúscula η parece una «n».',11:'La minúscula μ parece una «u» con cola, pero suena «m».',12:'La mayúscula Ν es como nuestra N, pero la minúscula ν parece una «v» y suena «n».',16:'Parece una «p», pero suena «r».',19:'La mayúscula Υ parece una «Y» y la minúscula υ parece una «v» o una «u», pero suena «u».',21:'Parece una «x», pero suena «j».',23:'Parece una «w», pero suena «o» larga.'};
 const GK_TNAME={'xi':'eksi'};
-const GK_NOTE={17:'Al final de una palabra se escribe ς.',19:'Al transliterar se escribe «y» (por ejemplo, hydōr), pero se lee como «u» (údor).',21:'Al transliterar se escribe «ch».',5:'Se pronuncia como «dz»; también se le llama «zeta».',13:'Se lee «ksi».',22:'Como en «psicología».'};
+const GK_NOTE={17:'Dentro de una palabra se escribe σ; al final de una palabra se escribe ς. Es la misma letra.',19:'Al transliterar se escribe «y» (por ejemplo, hydōr), pero se lee como «u» (údor).',21:'Al transliterar se escribe «ch».',5:'Se pronuncia como «dz»; también se le llama «zeta».',13:'Se lee «ksi».',22:'Como en «psicología».'};
 const capw=w=>w.charAt(0).toUpperCase()+w.slice(1);
 const GK_GRNAME={13:['ξι','eksi'],19:['ύψιλον','íp silon'],22:['ψι','psi']};
 function letterParts(i){
@@ -3280,7 +3279,7 @@ function sayLetter(i){
   const s=GK_SND[i],L=GK_LET[i];
   gkSpeakParts(letterParts(i),{rate:.78,pause:420});
   const info=$('#abcinfo');
-  if(info)info.innerHTML='<span class="gk">'+esc(L[0]+' '+L[1])+'</span> <b>'+esc(capw(L[2]))+'</b> suena '+esc(L[4])+', como en la palabra griega <span class="gk">'+esc(s[1])+'</span> ('+esc(s[2])+', «'+esc(s[3])+'»).'+(GK_NOTE[i]?'<br><span class="muted">'+esc(GK_NOTE[i])+'</span>':'')+(GK_LOOK[i]?'<br><span class="muted">👀 '+esc(GK_LOOK[i])+'</span>':'');
+  if(info)info.innerHTML='<span class="gk">'+esc(L[0]+' '+L[1])+'</span> <b>'+esc(capw(L[2]))+'</b> suena '+esc(L[4])+', como en la palabra griega <span class="gk">'+esc(s[1])+'</span> ('+esc(s[2])+', «'+esc(s[3])+'»).'+(GK_NOTE[i]?'<br><span class="muted">'+esc(GK_NOTE[i])+'</span>':'');
   document.querySelectorAll('.atile').forEach((t,k)=>t.classList.toggle('on',k===i));
 }
 function sayWord(id){const e=GK_BY[id];if(e)gkSpeak(sayGk(e.pr),{rate:.7});}
@@ -4089,7 +4088,6 @@ function fbHTML(q,v,fbk,ans){
   if(fbk.w)bt+='<button class="btn ghost sm listen" data-a="say-w" data-w="'+fbk.w+'">🔊 Escuchar</button> <button class="btn ghost sm" data-a="dic-peek" data-w="'+fbk.w+'">📚 Historia de la palabra</button>';
   if(fbk.say)bt+='<button class="btn ghost sm listen" data-a="say-t" data-t="'+esc(fbk.say)+'">🔊 Escuchar</button>';
   if(bt)s+='<div class="fbbtns">'+bt+'</div>';
-  if(fbk.look)s+='<div class="nota" style="margin-bottom:8px">👀 <b>Ojo:</b> '+esc(fbk.look)+'</div>';
   return s;
 }
 function renderLesson(){
