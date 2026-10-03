@@ -15,7 +15,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Noto+Serif:wght@600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Serif:wght@600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Serif:wght@600;700&display=swap"></noscript>
 <style>
 :root{
   --bg:#FFFFFF; --surface:#FFFFFF; --surface2:#F7F7F7; --ink:#3C3C3C; --muted:#777777; --line:#E5E5E5;
@@ -364,13 +365,27 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .cogs{display:flex;flex-wrap:wrap;gap:6px}
 .cog{background:var(--yellow-bg);border:2px solid var(--yellow);border-radius:999px;padding:2px 12px;font-size:14px;font-weight:800}
 
+.splash{display:grid;justify-items:center;gap:10px;padding:90px 0;color:var(--green);font-size:20px}
+.splash .spl{font-size:64px;animation:pulse 1.2s ease-in-out infinite}
+.abcseg{display:flex;gap:8px;margin:0 0 12px}
+.abc{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.atile{display:grid;justify-items:center;gap:0;padding:8px 2px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);transition:transform .08s}
+.atile:active{transform:translateY(2px)}
+.atile.on{border-color:var(--blue);background:var(--blue-bg)}
+.atile .al{font-size:28px;line-height:1.2;color:var(--blue-ink)}
+.atile .an{font-size:12px;color:var(--muted);font-weight:800}
+.abcinfo{margin:12px 0 4px;padding:12px 14px;border-radius:16px;background:var(--blue-bg);border:2px solid var(--blue);font-size:16px;font-weight:800;line-height:1.4;position:sticky;bottom:78px}
+.abcinfo .gk{font-size:24px}
+.fbbtns{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 8px}
+.listen{display:inline-flex;align-items:center;gap:6px}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="top" id="top"></header>
-  <main id="main"></main>
+  <main id="main"><div class="splash"><div class="spl">🕯️</div><b>Cargando a Lampy…</b></div></main>
 </div>
 <nav class="tabs" id="tabs" aria-label="Secciones"><div></div></nav>
 <div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
@@ -1107,7 +1122,7 @@ function mascot(mood,size){
     :mood==='sad'?'<path d="M39 72q11-11 22 0" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>'
     :mood==='think'?'<ellipse cx="54" cy="69" rx="4.4" ry="3.6" fill="'+ink+'"/>'
     :'<path d="M38 64q12 12 24 0" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>';
-  const extra=mood==='sad'?'<path d="M27 62q-5 9 0 12q5-3 0-12z" fill="#1CB0F6"/>'
+  const extra=mood==='sad'?'<path d="M30 59C28.4 63.4 24.6 66.6 24.6 70.6A5.4 5.4 0 0 0 35.4 70.6C35.4 66.6 31.6 63.4 30 59Z" fill="#1CB0F6"/><circle cx="28.3" cy="70.2" r="1.5" fill="#fff" opacity=".85"/>'
     :mood==='think'?'<text x="76" y="24" font-size="24" font-weight="900" fill="#1CB0F6" font-family="Nunito,sans-serif">?</text>'
     :mood==='cheer'?'<g fill="#FFC800"><path d="M10 20l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path d="M88 10l2.5 5.5 5.5 2.5-5.5 2.5-2.5 5.5-2.5-5.5-5.5-2.5 5.5-2.5z"/></g>':'';
   const flame='<path d="M50 2C58 12 64 18 64 25C64 32 58 36 50 36C42 36 36 32 36 25C36 18 42 12 50 2Z" fill="#FF9600"/><path d="M50 15C54 21 57 24 57 28C57 32 54 34 50 34C46 34 43 32 43 28C43 24 46 21 50 15Z" fill="#FFD84D"/>';
@@ -1403,7 +1418,7 @@ const GK_DICT=[
 ],
 [
 "Biblia griega (LXX)",
-"Los traductores judíos lo eligieron para traducir «Elohim», el Dios único de Israel. Así una palabra del mundo pagano pasó a nombrar al Dios de la Biblia."
+"Los traductores judíos lo eligieron para traducir «Elohim», el Dios único de Israel."
 ],
 [
 "Nuevo Testamento",
@@ -3088,7 +3103,7 @@ function gkLetters(les){
   const cands=[];
   les.idx.forEach(i=>{
     const L=GK_LET[i],big=L[0]+' '+L[1]+(i===17?' ς':''),short=L[3].split(' ')[0];
-    const fb={t:L[0]+' '+L[1]+' se llama «'+L[2]+'». Suena '+L[4]+'.'};
+    const fb={t:L[0]+' '+L[1]+' se llama «'+L[2]+'». Suena '+L[4]+'.',sl:i};
     cands.push([i,()=>mcq('¿Cómo se llama esta letra?',L[2],GK_LET.map(x=>x[2]),{big,fb})]);
     cands.push([i,()=>mcq('¿Qué sonido tiene esta letra?',L[3],GK_LET.map(x=>x[3]),{big:L[1],fb})]);
     cands.push([i,()=>mcq('¿Cuál letra suena «'+short+'»?',L[1],GK_LET.map(x=>x[1]),{fb,gko:true})]);
@@ -3099,7 +3114,7 @@ function gkLetters(les){
 function gkDigraphs(){
   const cands=[];
   GK_DIPH.forEach((d,i)=>{
-    const fb={t:d[0]+' suena «'+d[1]+'», '+d[2]+'. Ejemplo: '+d[3]+'.'};
+    const fb={t:d[0]+' suena «'+d[1]+'», '+d[2]+'. Ejemplo: '+d[3]+'.',say:GK_DSAY[i]};
     cands.push([i,()=>mcq('¿Cómo suena esta combinación?',d[1],GK_DIPH.map(x=>x[1]),{big:d[0],fb})]);
     cands.push([i,()=>mcq('¿Qué combinación suena «'+d[1]+'»?',d[0],GK_DIPH.map(x=>x[0]),{fb,gko:true})]);
   });
@@ -3111,7 +3126,7 @@ function gkHand(les){
 function gkRead(){
   const pool=[...GK_READ,...['theos','kyrios','christos','pneuma','ekklesia','euangelion','hamartia','agape','ginosko'].map(id=>GK_BY[id])];
   const prs=pool.map(x=>x.pr);
-  return shuffle(pool).slice(0,10).map(w=>mcq('¿Cómo se lee esta palabra?',w.pr,prs,{big:w.g,wid:w.id||null,fb:{t:w.g+' ('+w.tr+') se lee «'+w.pr+'» y significa: '+w.es+'.',w:w.id||null}}));
+  return shuffle(pool).slice(0,10).map(w=>mcq('¿Cómo se lee esta palabra?',w.pr,prs,{big:w.g,wid:w.id||null,fb:{t:w.g+' ('+w.tr+') se lee «'+w.pr+'» y significa: '+w.es+'.',w:w.id||null,say:w.id?null:sayGk(w.pr)}}));
 }
 function gkWords(les){
   const mine=les.ids.map(id=>GK_BY[id]);
@@ -3160,6 +3175,49 @@ function wotd(){let h=0;for(const ch of today())h=(h*31+ch.charCodeAt(0))>>>7;re
    DICCIONARIO
    ============================================================ */
 function dicLevel(id){const g=S.gw&&S.gw[id];if(!g)return '';return g.c>=3&&g.c>g.w?'⭐':(g.c+g.w>0?'🌱':'');}
+
+/* ============================================================
+   AUDIO: pronunciación aproximada con la voz en español del teléfono
+   ============================================================ */
+const GK_SND=[
+ ['a','ἀγάπη','agapē','amor','agape'],['ba','βίβλος','biblos','libro','biblos'],['ga','γάρ','gar','porque','gar'],['da','δόξα','doxa','gloria','doksa'],
+ ['e','ἐγώ','egō','yo','ego'],['dsa','ζωή','dzōē','vida','dsoe'],['e','ἡμέρα','hēmera','día','emera'],['ta','θεός','theos','Dios','teos'],
+ ['i','ἰδού','idou','he aquí','idu'],['ka','κύριος','kyrios','Señor','kurios'],['la','λόγος','logos','palabra','logos'],['ma','μήτηρ','mētēr','madre','meter'],
+ ['na','νόμος','nomos','ley','nomos'],['ksa','ξένος','xenos','extranjero','ksenos'],['o','ὁδός','hodos','camino','odos'],['pa','πατήρ','patēr','padre','pater'],
+ ['ra','ῥῆμα','rhēma','palabra dicha','rema'],['sa','σάρξ','sarx','carne','sarks'],['ta','τέκνον','teknon','hijo','teknon'],['u','υἱός','huios','hijo','uios'],
+ ['fa','φῶς','phōs','luz','fos'],['ja','χάρις','charis','gracia','jaris'],['psa','ψυχή','psychē','alma','psuje'],['o','ὠδή','ōdē','canto','ode']
+];
+const GK_DSAY=['kai','eirene','oikos','uios','autos','euangelion','uranos'];
+function sayGk(pr){return String(pr).replace(/-/g,'').replace(/ē/g,'e').replace(/ō/g,'o').replace(/th/g,'t').replace(/dz/g,'ds');}
+function gkSpeak(text,opt){
+  if(!canSpeak()){toast('Este navegador no puede leer en voz alta.');return;}
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    const voices=speechSynthesis.getVoices()||[];
+    const want=(opt&&opt.lang)||'';
+    const norm=l=>String(l).replace('_','-').toLowerCase();
+    let v=want?voices.find(x=>norm(x.lang)===norm(want)):null;
+    v=v||voices.find(x=>/^es-(co|419|mx|us)/i.test(norm(x.lang)))||voices.find(x=>/^es/i.test(norm(x.lang)));
+    if(v){u.voice=v;u.lang=v.lang;}else u.lang=want||'es-ES';
+    u.rate=(opt&&opt.rate)||.8;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function sayLetter(i){
+  const s=GK_SND[i],L=GK_LET[i];
+  gkSpeak(s[0]+'. '+s[4],{lang:i===7?'es-ES':'',rate:(i===6||i===23)?.6:.75});
+  const info=$('#abcinfo');
+  if(info)info.innerHTML='<span class="gk">'+esc(L[0]+' '+L[1])+'</span> · <b>'+esc(L[2])+'</b> · suena '+esc(L[4])+'<br>Ejemplo: <span class="gk">'+esc(s[1])+'</span> ('+esc(s[2])+'), «'+esc(s[3])+'».';
+  document.querySelectorAll('.atile').forEach((t,k)=>t.classList.toggle('on',k===i));
+}
+function sayWord(id){const e=GK_BY[id];if(e)gkSpeak(sayGk(e.pr),{rate:.7});}
+let DICV='w';
+function abcHTML(){
+  return '<div class="abc">'+GK_LET.map((L,i)=>'<button class="atile" data-a="say-l" data-i="'+i+'" aria-label="'+esc(L[2])+'"><span class="al gk">'+esc(L[0]+L[1])+'</span><span class="an">'+esc(L[2])+'</span></button>').join('')+'</div>'+
+   '<div id="abcinfo" class="abcinfo">Toca una letra para escucharla.</div>'+
+   '<p class="foot">La voz es la de tu teléfono, en español, así que la pronunciación es aproximada. La θ (z de España) suena mejor con una voz de España. Los sonidos largos, como la η y la ω, se dicen más despacio.</p>';
+}
 function dicList(q){
   q=(q||'').trim().toLowerCase();
   const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -3169,7 +3227,9 @@ function dicList(q){
   return items.map(e=>'<button class="dentry" data-a="dic-open" data-w="'+e.id+'"><span class="dg gk">'+esc(e.g)+'</span><span class="dm"><b>'+esc(e.tr)+'</b> '+esc(e.es)+'</span><span class="dn">'+dicLevel(e.id)+'</span></button>').join('');
 }
 function dicHTML(){
-  return '<h1 class="page">Palabras</h1>'+
+  const seg='<div class="abcseg"><button class="cs '+(DICV==='w'?'on':'')+'" data-a="dicv" data-v="w">📚 Palabras</button><button class="cs '+(DICV==='a'?'on':'')+'" data-a="dicv" data-v="a">🔊 Alfabeto</button></div>';
+  if(DICV==='a')return '<h1 class="page">Alfabeto griego</h1>'+seg+abcHTML();
+  return '<h1 class="page">Palabras</h1>'+seg+
    '<div class="hero">'+mascot('think',76)+'<div class="bubble">Aquí está la historia de cada palabra griega: cómo se usaba y qué significa en la Biblia.</div></div>'+
    '<input id="dicq" class="inp dsearch" type="search" placeholder="Buscar: λόγος, logos, amor…" autocomplete="off" aria-label="Buscar palabra">'+
    '<div id="diclist" class="dlist">'+dicList('')+'</div>'+
@@ -3184,7 +3244,7 @@ function dicOpen(id){
   $('#dic').innerHTML=
    '<div class="lh"><button class="x" data-a="dic-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:100%;background:var(--blue)"></i></div></div>'+
    '<div class="lb"><div class="dhead"><div class="dbig gk">'+esc(e.g)+'</div><div class="dsub"><b>'+esc(e.tr)+'</b> · se lee «'+esc(e.pr)+'»</div>'+
-   '<div class="dchips"><span class="dchip">'+esc(e.pos)+'</span><span class="dchip">Strong G'+e.s+'</span><span class="dchip">≈ '+e.n+' veces en el NT</span></div></div>'+
+   '<button class="btn ghost sm listen" data-a="say-w" data-w="'+e.id+'">🔊 Escuchar</button><div class="dchips" style="margin-top:10px"><span class="dchip">'+esc(e.pos)+'</span><span class="dchip">Strong G'+e.s+'</span><span class="dchip">≈ '+e.n+' veces en el NT</span></div></div>'+
    '<h3>💬 Significado</h3><p class="dmean">'+esc(e.es)+'</p>'+
    '<h3>🕰️ Historia de la palabra</h3><div class="tl">'+stages+'</div>'+cog+
    '<h3>📖 En la Biblia (RVR1960)</h3><div class="list">'+verses+'</div>'+
@@ -3641,7 +3701,7 @@ function homeHTML(){
   return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+sw+
   '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
-  daily+units+
+  (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
 }
 function lvlOf(r){
@@ -3717,7 +3777,11 @@ function fbHTML(q,v,fbk,ans){
   if(fbk.g)s+='<p class="fv gk gkline">'+esc(fbk.g)+'</p>';
   if(fbk.t||ans)s+='<p class="fv">'+ans+esc(fbk.t||'')+'</p>';
   if(fbk.v)s+='<p class="fv"><em>'+esc(fbk.v)+'</em> <cite>'+esc(fbk.r)+'</cite></p>';
-  if(fbk.w)s+='<button class="btn ghost sm" data-a="dic-peek" data-w="'+fbk.w+'">📚 Historia de la palabra</button>';
+  let bt='';
+  if(fbk.sl!=null)bt+='<button class="btn ghost sm listen" data-a="say-l" data-i="'+fbk.sl+'">🔊 Escuchar</button> ';
+  if(fbk.w)bt+='<button class="btn ghost sm listen" data-a="say-w" data-w="'+fbk.w+'">🔊 Escuchar</button> <button class="btn ghost sm" data-a="dic-peek" data-w="'+fbk.w+'">📚 Historia de la palabra</button>';
+  if(fbk.say)bt+='<button class="btn ghost sm listen" data-a="say-t" data-t="'+esc(fbk.say)+'">🔊 Escuchar</button>';
+  if(bt)s+='<div class="fbbtns">'+bt+'</div>';
   return s;
 }
 function renderLesson(){
@@ -4136,6 +4200,11 @@ document.addEventListener('click',e=>{
   else if(a==='course'){S.course=b.dataset.c;save();render();window.scrollTo(0,0);}
   else if(a==='dic-open'||a==='dic-peek'){dicOpen(b.dataset.w);}
   else if(a==='dic-close'){dicClose();}
+  else if(a==='abc-go'){DICV='a';TAB='dic';render();window.scrollTo(0,0);}
+  else if(a==='dicv'){DICV=b.dataset.v;render();window.scrollTo(0,0);}
+  else if(a==='say-l'){sayLetter(+b.dataset.i);}
+  else if(a==='say-w'){sayWord(b.dataset.w);}
+  else if(a==='say-t'){gkSpeak(b.dataset.t,{rate:.75});}
   else if(a==='sound'){S.sound=b.dataset.v==='1';save();render();if(S.sound)beep('good');}
   else if(a==='haptic'){S.haptic=b.dataset.v==='1';save();render();if(S.haptic)haptic([30,40,30]);}
   else if(a==='tip'){S.tipHide=true;save();render();}
