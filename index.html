@@ -15,7 +15,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Noto+Serif:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#FFFFFF; --surface:#FFFFFF; --surface2:#F7F7F7; --ink:#3C3C3C; --muted:#777777; --line:#E5E5E5;
@@ -326,6 +326,44 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .cf{position:fixed;top:-16px;width:10px;height:14px;border-radius:2px;pointer-events:none;animation:fall linear forwards}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
 
+/* ---------- griego y diccionario ---------- */
+.gk{font-family:'Noto Serif','Gentium Plus','Times New Roman',Georgia,serif;font-weight:700}
+.cswitch{display:flex;gap:8px;margin:2px 0 14px}
+.cs{flex:1;padding:10px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;font-weight:900;background:var(--surface)}
+.cs.on{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-ink)}
+.gkbig{margin:0 0 16px;padding:14px 12px;text-align:center;font-size:30px;line-height:1.4;border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;background:var(--surface2);letter-spacing:.02em}
+.gko .opt span{font-family:'Noto Serif','Gentium Plus',Georgia,serif;font-size:21px;font-weight:700}
+.gkbig.xl{font-size:64px;line-height:1.15;padding:8px 12px}
+.gkline{font-size:19px;line-height:1.5}
+.wotd{background:var(--purple-bg);border-color:var(--purple)}
+.wotd .tagv{display:inline-block;background:var(--purple-d);color:#fff;font-weight:900;font-size:13px;border-radius:999px;padding:2px 12px;margin-bottom:8px}
+.wotd .wg{font-size:42px;line-height:1.2}
+.wotd .wm{font-size:17px;font-weight:800;margin:2px 0 10px}
+.dsearch{margin:6px 0 12px;font-size:17px}
+.dlist{display:grid;gap:8px}
+.dentry{display:flex;align-items:center;gap:12px;text-align:left;background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;padding:10px 14px}
+.dentry:active{transform:translateY(2px)}
+.dg{font-size:26px;min-width:96px;line-height:1.2;color:var(--blue-ink)}
+.dm{flex:1;font-size:15px;line-height:1.3;font-weight:700;color:var(--muted)}
+.dm b{color:var(--ink);font-weight:900;margin-right:2px}
+.dn{font-size:18px;flex:none}
+.dhead{text-align:center;padding:4px 0 8px}
+.dbig{font-size:54px;line-height:1.2;color:var(--blue-ink)}
+.dsub{font-size:17px;margin:2px 0 10px}
+.dchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.dchip{background:var(--blue-bg);color:var(--blue-ink);border-radius:999px;padding:2px 12px;font-size:13px;font-weight:900}
+#dic .lb h3{font-size:18px;margin:20px 0 8px}
+.dmean{font-size:20px;font-weight:900;margin:0}
+.tl{display:grid;gap:12px}
+.tl-item{display:flex;gap:12px;align-items:flex-start}
+.tl-item b{font-size:15px}
+.tl-item p{margin:2px 0 0;font-size:16px;line-height:1.5;font-weight:700}
+.tl-dot{width:16px;height:16px;border-radius:50%;margin-top:4px;flex:none;background:var(--orange)}
+.tl-dot.t1{background:var(--purple-d)}
+.tl-dot.t2{background:var(--green)}
+.cogs{display:flex;flex-wrap:wrap;gap:6px}
+.cog{background:var(--yellow-bg);border:2px solid var(--yellow);border-radius:999px;padding:2px 12px;font-size:14px;font-weight:800}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -337,6 +375,7 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 <nav class="tabs" id="tabs" aria-label="Secciones"><div></div></nav>
 <div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
 <div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
+<div id="dic" class="overlay" role="dialog" aria-modal="true" aria-label="Diccionario" hidden></div>
 <div id="modal" class="modal" hidden></div>
 <div id="fx" aria-hidden="true"></div>
 
@@ -1047,6 +1086,7 @@ const IC={
  review:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
  bolt:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2L4.5 13.5h6L9.5 22l10-12.5h-6.2z" fill="currentColor"/></svg>',
  users:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M17 14.5c2.5.2 4 1.8 4 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+ book:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v15H5.5C4.7 19 4 18.3 4 17.5zM20 5.5C20 4.7 19.3 4 18.5 4H13v15h5.5c.8 0 1.5-.7 1.5-1.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>',
  trophy:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v6a5 5 0 0 1-10 0zM7 6H4c0 3 1 4 3 4.5M17 6h3c0 3-1 4-3 4.5M12 15v4M8 20h8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
  star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.9 6.6 19.7l1.1-6.1L3.2 9.4l6.1-.8z" fill="currentColor"/></svg>',
  lamp:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 19c0-2.2 3.2-3.6 8.5-3.6h8c4.5 0 7.6 1.2 8.5 3.6-1 4.4-5.2 8.4-10.4 8.4h-4C8.400 27.400 4 23.400 3 19z" fill="currentColor"/><path d="M26.500 17c2.600-1 3.600-3.400 2.500-5.800" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"/><path d="M10.500 12.500c-1.600-2.300.6-3.700.9-6 2.500 1.400 3.900 4 2.700 6.100-.6 1.100-2.800 1.100-3.600-.1z" fill="var(--flame)"/></svg>'
@@ -1132,8 +1172,8 @@ function haptic(pat){
   }catch(e){}
 }
 const pickOne=a=>a[rnd(a.length)];
-const UNIT_EMO={'La creación':'🌍','La caída':'🐍','Los Diez Mandamientos':'📜','Jehová es mi pastor':'🐑','Sermón del Monte':'⛰️','El Evangelio de Juan':'📖','Salvación por gracia':'🎁','Atributos de Dios (1)':'👑','Atributos de Dios (2)':'✨','Doctrinas fundamentales':'🧭','Personajes bíblicos':'🧑‍🤝‍🧑','Eventos bíblicos':'🗺️'};
-const ACH_E={first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑'};
+const UNIT_EMO={'El alfabeto griego':'🔤','Sonidos y signos':'🔊','Primeras palabras':'📚','Leyendo el Nuevo Testamento':'📜','La creación':'🌍','La caída':'🐍','Los Diez Mandamientos':'📜','Jehová es mi pastor':'🐑','Sermón del Monte':'⛰️','El Evangelio de Juan':'📖','Salvación por gracia':'🎁','Atributos de Dios (1)':'👑','Atributos de Dios (2)':'✨','Doctrinas fundamentales':'🧭','Personajes bíblicos':'🧑‍🤝‍🧑','Eventos bíblicos':'🗺️'};
+const ACH_E={gk1:'🔤',gkabc:'🏛️',gkw:'📚',first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑'};
 const isStandalone=()=>{try{return !!(window.navigator.standalone||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches));}catch(e){return false;}};
 const isIOS=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent||'');
 
@@ -1341,6 +1381,1819 @@ const VOTD=[
 ];
 function votd(){let h=0;for(const ch of today())h=(h*31+ch.charCodeAt(0))>>>0;return VOTD[h%VOTD.length];}
 
+const GK_DICT=[
+{
+"id": "theos",
+"g": "θεός",
+"tr": "theos",
+"pr": "the-os",
+"pos": "sustantivo (m.)",
+"es": "Dios; dios",
+"s": 2316,
+"n": 1345,
+"cog": [
+"teología",
+"teísmo",
+"ateo"
+],
+"h": [
+[
+"Griego clásico",
+"Los griegos lo usaban para sus dioses, que eran muchos y con forma humana. También podía nombrar a una divinidad en general."
+],
+[
+"Biblia griega (LXX)",
+"Los traductores judíos lo eligieron para traducir «Elohim», el Dios único de Israel. Así una palabra del mundo pagano pasó a nombrar al Dios de la Biblia."
+],
+[
+"Nuevo Testamento",
+"Nombra al Dios único y verdadero, y el NT también lo aplica al Hijo (Juan 1:1; 20:28)."
+]
+],
+"v": [
+{
+"r": "Juan 1:1",
+"t": "En el principio era el Verbo, y el Verbo era con Dios, y el Verbo era Dios."
+},
+{
+"r": "Juan 3:16",
+"t": "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna."
+}
+]
+},
+{
+"id": "kyrios",
+"g": "κύριος",
+"tr": "kyrios",
+"pr": "ku-ri-os",
+"pos": "sustantivo (m.)",
+"es": "Señor; dueño",
+"s": 2962,
+"n": 748,
+"cog": [
+"«Kyrie eleison» (Señor, ten piedad)"
+],
+"h": [
+[
+"Griego clásico",
+"Significaba «señor» o «dueño»: quien tiene autoridad sobre una casa, esclavos o un asunto. Más tarde fue título de respeto y se dio también a los emperadores."
+],
+[
+"Biblia griega (LXX)",
+"Se usa de forma habitual para el nombre divino «Jehová» (YHWH)."
+],
+[
+"Nuevo Testamento",
+"Se aplica a Jesús. Confesar «Jesús es Señor» (Romanos 10:9) era declarar su autoridad en un mundo donde ese título también se daba al emperador."
+]
+],
+"v": [
+{
+"r": "Romanos 10:9",
+"t": "que si confesares con tu boca que Jesús es el Señor, y creyeres en tu corazón que Dios le levantó de los muertos, serás salvo."
+},
+{
+"r": "Mateo 22:37",
+"t": "Jesús le dijo: Amarás al Señor tu Dios con todo tu corazón, y con toda tu alma, y con toda tu mente."
+}
+]
+},
+{
+"id": "iesous",
+"g": "Ἰησοῦς",
+"tr": "Iēsous",
+"pr": "i-ē-sus",
+"pos": "nombre propio",
+"es": "Jesús",
+"s": 2424,
+"n": 976,
+"cog": [
+"Jesús",
+"Josué (el mismo nombre en hebreo)"
+],
+"h": [
+[
+"Origen",
+"Es la forma griega del nombre hebreo Yeshúa (Josué), que significa «Jehová salva»."
+],
+[
+"Biblia griega (LXX)",
+"La Biblia griega ya usaba Ἰησοῦς para Josué, el sucesor de Moisés."
+],
+[
+"Nuevo Testamento",
+"El ángel explica el nombre a José: «él salvará a su pueblo de sus pecados» (Mateo 1:21)."
+]
+],
+"v": [
+{
+"r": "Mateo 1:21",
+"t": "Y dará a luz un hijo, y llamarás su nombre JESÚS, porque él salvará a su pueblo de sus pecados."
+},
+{
+"r": "Juan 11:35",
+"t": "Jesús lloró."
+}
+]
+},
+{
+"id": "christos",
+"g": "Χριστός",
+"tr": "Christos",
+"pr": "jris-tos",
+"pos": "sustantivo / título",
+"es": "Cristo; Ungido; Mesías",
+"s": 5547,
+"n": 570,
+"cog": [
+"Cristo",
+"cristiano",
+"crisma"
+],
+"h": [
+[
+"Griego clásico",
+"Viene del verbo χρίω («untar, ungir»). Significaba «ungido». En el griego común no era un título."
+],
+[
+"Biblia griega (LXX)",
+"Traduce el hebreo «Mashíaj» (Mesías): el rey o sacerdote ungido con aceite para su servicio."
+],
+[
+"Nuevo Testamento",
+"Pasa de ser título («el Cristo», el Mesías esperado) a usarse casi como nombre: «Jesucristo»."
+]
+],
+"v": [
+{
+"r": "Mateo 16:16",
+"t": "Respondiendo Simón Pedro, dijo: Tú eres el Cristo, el Hijo del Dios viviente."
+},
+{
+"r": "Romanos 6:23",
+"t": "Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro."
+}
+]
+},
+{
+"id": "pneuma",
+"g": "πνεῦμα",
+"tr": "pneuma",
+"pr": "pneu-ma",
+"pos": "sustantivo (n.)",
+"es": "espíritu; viento; aliento",
+"s": 4151,
+"n": 386,
+"cog": [
+"neumático"
+],
+"h": [
+[
+"Griego clásico",
+"Significaba soplo, aire en movimiento y aliento de vida."
+],
+[
+"Biblia griega (LXX)",
+"Traduce el hebreo «rúaj» (viento, aliento, espíritu), incluido el Espíritu de Dios."
+],
+[
+"Nuevo Testamento",
+"Se usa para el Espíritu Santo y también para el espíritu humano. Juan 3:8 juega con la relación entre viento y Espíritu."
+]
+],
+"v": [
+{
+"r": "Juan 4:24",
+"t": "Dios es Espíritu; y los que le adoran, en espíritu y en verdad es necesario que adoren."
+},
+{
+"r": "Hechos 2:4",
+"t": "Y fueron todos llenos del Espíritu Santo, y comenzaron a hablar en otras lenguas, según el Espíritu les daba que hablasen."
+}
+]
+},
+{
+"id": "pater",
+"g": "πατήρ",
+"tr": "patēr",
+"pr": "pa-tēr",
+"pos": "sustantivo (m.)",
+"es": "padre",
+"s": 3962,
+"n": 419,
+"cog": [
+"patriarca"
+],
+"h": [
+[
+"Griego clásico",
+"Padre y antepasado; también título de respeto. A Zeus se le llamaba «padre de dioses y de hombres»."
+],
+[
+"Biblia griega (LXX)",
+"Se usa del padre de familia y, más raramente, de Dios como padre de su pueblo."
+],
+[
+"Nuevo Testamento",
+"Jesús llama «Padre» a Dios de forma constante y enseña a orar «Padre nuestro» (Mateo 6:9)."
+]
+],
+"v": [
+{
+"r": "Mateo 6:9",
+"t": "Vosotros, pues, oraréis así: Padre nuestro que estás en los cielos, santificado sea tu nombre."
+},
+{
+"r": "Juan 14:6",
+"t": "Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí."
+}
+]
+},
+{
+"id": "logos",
+"g": "λόγος",
+"tr": "logos",
+"pr": "lo-gos",
+"pos": "sustantivo (m.)",
+"es": "palabra; razón; Verbo",
+"s": 3056,
+"n": 330,
+"cog": [
+"lógica",
+"teología",
+"diálogo",
+"prólogo"
+],
+"h": [
+[
+"Griego clásico",
+"Palabra, razón, cuenta, argumento. El filósofo Heráclito (siglo VI a. C.) habló de un «logos» que ordena el universo, y los estoicos lo desarrollaron como la razón que gobierna todo."
+],
+[
+"Biblia griega (LXX)",
+"Traduce el hebreo «dabar»: la palabra de Dios que crea y que se dirige a los profetas."
+],
+[
+"Nuevo Testamento",
+"Juan lo usa para presentar a Cristo: el Verbo que estaba con Dios, era Dios y «fue hecho carne» (Juan 1:1,14). Era una palabra que resonaba con lectores judíos y griegos."
+]
+],
+"v": [
+{
+"r": "Juan 1:1",
+"t": "En el principio era el Verbo, y el Verbo era con Dios, y el Verbo era Dios."
+},
+{
+"r": "Juan 1:14",
+"t": "Y aquel Verbo fue hecho carne, y habitó entre nosotros (y vimos su gloria, gloria como del unigénito del Padre), lleno de gracia y de verdad."
+}
+]
+},
+{
+"id": "zoe",
+"g": "ζωή",
+"tr": "zōē",
+"pr": "dzō-ē",
+"pos": "sustantivo (f.)",
+"es": "vida",
+"s": 2222,
+"n": 134,
+"cog": [
+"zoología (misma familia de palabras)"
+],
+"h": [
+[
+"Griego clásico",
+"Vida en general, lo que tienen todos los seres vivos. Se distinguía de βίος, la manera de vivir o los medios de vida (de ahí «biografía»)."
+],
+[
+"Biblia griega (LXX)",
+"Traduce el hebreo «jayim»: la vida que viene de Dios."
+],
+[
+"Nuevo Testamento",
+"Es la palabra para la vida eterna: la vida de Dios dada a quien cree (Juan 3:16; 14:6)."
+]
+],
+"v": [
+{
+"r": "Juan 14:6",
+"t": "Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí."
+},
+{
+"r": "Romanos 6:23",
+"t": "Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro."
+}
+]
+},
+{
+"id": "phos",
+"g": "φῶς",
+"tr": "phōs",
+"pr": "fōs",
+"pos": "sustantivo (n.)",
+"es": "luz",
+"s": 5457,
+"n": 70,
+"cog": [
+"fotografía",
+"fósforo",
+"fotón"
+],
+"h": [
+[
+"Griego clásico",
+"Luz y claridad. «Ver la luz» era una forma de decir «estar vivo»."
+],
+[
+"Biblia griega (LXX)",
+"Traduce el hebreo «or»: la primera obra de Dios (Génesis 1:3) e imagen de su presencia y su guía."
+],
+[
+"Nuevo Testamento",
+"Jesús dice «Yo soy la luz del mundo» (Juan 8:12) y llama a sus discípulos «luz del mundo» (Mateo 5:14)."
+]
+],
+"v": [
+{
+"r": "Juan 8:12",
+"t": "Otra vez Jesús les habló, diciendo: Yo soy la luz del mundo; el que me sigue, no andará en tinieblas, sino que tendrá la luz de la vida."
+},
+{
+"r": "Mateo 5:14",
+"t": "Vosotros sois la luz del mundo; una ciudad asentada sobre un monte no se puede esconder."
+}
+]
+},
+{
+"id": "aletheia",
+"g": "ἀλήθεια",
+"tr": "alētheia",
+"pr": "a-lē-thei-a",
+"pos": "sustantivo (f.)",
+"es": "verdad",
+"s": 225,
+"n": 110,
+"cog": [],
+"h": [
+[
+"Griego clásico",
+"Verdad y realidad: lo que corresponde a los hechos."
+],
+[
+"Biblia griega (LXX)",
+"Traduce el hebreo «emet»: verdad, pero también fidelidad y firmeza; lo que es digno de confianza."
+],
+[
+"Nuevo Testamento",
+"Incluye lo verdadero en sentido pleno. En Juan se presenta en una persona: «Yo soy… la verdad» (14:6)."
+]
+],
+"v": [
+{
+"r": "Juan 14:6",
+"t": "Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí."
+},
+{
+"r": "Juan 1:14",
+"t": "Y aquel Verbo fue hecho carne, y habitó entre nosotros (y vimos su gloria, gloria como del unigénito del Padre), lleno de gracia y de verdad."
+}
+]
+},
+{
+"id": "arche",
+"g": "ἀρχή",
+"tr": "archē",
+"pr": "ar-jē",
+"pos": "sustantivo (f.)",
+"es": "principio; comienzo; autoridad",
+"s": 746,
+"n": 58,
+"cog": [
+"arquitecto",
+"monarquía",
+"anarquía",
+"arcángel"
+],
+"h": [
+[
+"Griego clásico",
+"Comienzo, y también primer lugar, mando y autoridad (de ahí «monarquía» y «anarquía»)."
+],
+[
+"Biblia griega (LXX)",
+"Abre la Biblia griega: «Ἐν ἀρχῇ…» (Génesis 1:1)."
+],
+[
+"Nuevo Testamento",
+"Juan 1:1 empieza con las mismas palabras, «Ἐν ἀρχῇ», y deja oír el eco del primer versículo de la Biblia."
+]
+],
+"v": [
+{
+"r": "Juan 1:1",
+"t": "En el principio era el Verbo, y el Verbo era con Dios, y el Verbo era Dios."
+},
+{
+"r": "Marcos 1:1",
+"t": "Principio del evangelio de Jesucristo, Hijo de Dios."
+}
+]
+},
+{
+"id": "kosmos",
+"g": "κόσμος",
+"tr": "kosmos",
+"pr": "kos-mos",
+"pos": "sustantivo (m.)",
+"es": "mundo; orden; adorno",
+"s": 2889,
+"n": 187,
+"cog": [
+"cosmos",
+"cosmético",
+"cosmopolita"
+],
+"h": [
+[
+"Griego clásico",
+"Orden, adorno y belleza (de ahí «cosmético»). Los filósofos lo aplicaron al universo como un conjunto ordenado."
+],
+[
+"Biblia griega (LXX)",
+"Se usa menos, y más para hablar de «adorno»."
+],
+[
+"Nuevo Testamento",
+"Puede ser el universo creado, la humanidad o el sistema humano alejado de Dios. El contexto decide: «de tal manera amó Dios al mundo» (Juan 3:16)."
+]
+],
+"v": [
+{
+"r": "Juan 3:16",
+"t": "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna."
+},
+{
+"r": "Mateo 5:14",
+"t": "Vosotros sois la luz del mundo; una ciudad asentada sobre un monte no se puede esconder."
+}
+]
+},
+{
+"id": "charis",
+"g": "χάρις",
+"tr": "charis",
+"pr": "ja-ris",
+"pos": "sustantivo (f.)",
+"es": "gracia; favor; gratitud",
+"s": 5485,
+"n": 156,
+"cog": [
+"carisma",
+"eucaristía"
+],
+"h": [
+[
+"Griego clásico",
+"Favor, encanto y gratitud. En la cultura griega un favor creaba la obligación de devolverlo."
+],
+[
+"Biblia griega (LXX)",
+"Traduce el hebreo «jen»: hallar gracia ante los ojos de alguien (Noé, Génesis 6:8)."
+],
+[
+"Nuevo Testamento",
+"Pablo la usa para el favor de Dios que no se gana ni se paga: «por gracia sois salvos» (Efesios 2:8)."
+]
+],
+"v": [
+{
+"r": "Efesios 2:8",
+"t": "Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios;"
+},
+{
+"r": "Juan 1:14",
+"t": "Y aquel Verbo fue hecho carne, y habitó entre nosotros (y vimos su gloria, gloria como del unigénito del Padre), lleno de gracia y de verdad."
+}
+]
+},
+{
+"id": "pistis",
+"g": "πίστις",
+"tr": "pistis",
+"pr": "pis-tis",
+"pos": "sustantivo (f.)",
+"es": "fe; confianza; fidelidad",
+"s": 4102,
+"n": 244,
+"cog": [],
+"h": [
+[
+"Griego clásico",
+"Confianza, garantía y prueba. En retórica era un argumento que convence."
+],
+[
+"Biblia griega (LXX)",
+"Expresa fidelidad y firmeza («emunáh»): alguien o algo en quien se puede confiar."
+],
+[
+"Nuevo Testamento",
+"Es confiar en Dios y en Cristo, y vivir de acuerdo con esa confianza (Hebreos 11:1)."
+]
+],
+"v": [
+{
+"r": "Efesios 2:8",
+"t": "Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios;"
+},
+{
+"r": "Hebreos 11:1",
+"t": "Es, pues, la fe la certeza de lo que se espera, la convicción de lo que no se ve."
+}
+]
+},
+{
+"id": "agape",
+"g": "ἀγάπη",
+"tr": "agapē",
+"pr": "a-ga-pē",
+"pos": "sustantivo (f.)",
+"es": "amor",
+"s": 26,
+"n": 116,
+"cog": [
+"ágape"
+],
+"h": [
+[
+"Griego clásico",
+"El sustantivo se usaba muy poco. Sí existía el verbo ἀγαπάω («querer, estimar»)."
+],
+[
+"Biblia griega (LXX)",
+"Los traductores la usan para el amor, por ejemplo en Cantares y en 2 Samuel 13:15."
+],
+[
+"Nuevo Testamento",
+"Se vuelve la palabra central para el amor de Dios y entre los creyentes (1 Juan 4:8). A veces se contrasta con φιλέω, pero en el NT ambas pueden solaparse (Juan 21)."
+]
+],
+"v": [
+{
+"r": "Romanos 5:8",
+"t": "Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros."
+},
+{
+"r": "1 Juan 4:8",
+"t": "El que no ama, no ha conocido a Dios; porque Dios es amor."
+}
+]
+},
+{
+"id": "eirene",
+"g": "εἰρήνη",
+"tr": "eirēnē",
+"pr": "ei-rē-nē",
+"pos": "sustantivo (f.)",
+"es": "paz",
+"s": 1515,
+"n": 92,
+"cog": [
+"Irene (nombre)"
+],
+"h": [
+[
+"Griego clásico",
+"Ausencia de guerra, tiempo de paz y de orden."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «shalom»: bienestar completo, salud y relaciones sanas."
+],
+[
+"Nuevo Testamento",
+"Recoge ese sentido amplio: paz con Dios y bienestar. Muchas cartas saludan «gracia y paz»."
+]
+],
+"v": [
+{
+"r": "Juan 14:27",
+"t": "La paz os dejo, mi paz os doy; yo no os la doy como el mundo la da. No se turbe vuestro corazón, ni tenga miedo."
+},
+{
+"r": "Filipenses 4:7",
+"t": "Y la paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones y vuestros pensamientos en Cristo Jesús."
+}
+]
+},
+{
+"id": "elpis",
+"g": "ἐλπίς",
+"tr": "elpis",
+"pr": "el-pis",
+"pos": "sustantivo (f.)",
+"es": "esperanza",
+"s": 1680,
+"n": 54,
+"cog": [],
+"h": [
+[
+"Griego clásico",
+"Expectativa de algo futuro, bueno o malo."
+],
+[
+"Biblia griega (LXX)",
+"Traduce varias palabras hebreas de espera y confianza en Dios."
+],
+[
+"Nuevo Testamento",
+"Esperanza firme, basada en las promesas de Dios y no en un simple deseo (Tito 1:2)."
+]
+],
+"v": [
+{
+"r": "Tito 1:2",
+"t": "en la esperanza de la vida eterna, la cual Dios, que no miente, prometió desde antes del principio de los siglos,"
+},
+{
+"r": "Romanos 15:13",
+"t": "Y el Dios de esperanza os llene de todo gozo y paz en el creer, para que abundéis en esperanza por el poder del Espíritu Santo."
+}
+]
+},
+{
+"id": "eleos",
+"g": "ἔλεος",
+"tr": "eleos",
+"pr": "e-le-os",
+"pos": "sustantivo (n.)",
+"es": "misericordia; compasión",
+"s": 1656,
+"n": 28,
+"cog": [
+"limosna",
+"«Kyrie eleison»"
+],
+"h": [
+[
+"Griego clásico",
+"Compasión ante el sufrimiento de otro. Para Aristóteles era una emoción de pena por quien sufre sin merecerlo."
+],
+[
+"Biblia griega (LXX)",
+"Es la traducción habitual de «jésed»: el amor fiel y leal de Dios con su pacto."
+],
+[
+"Nuevo Testamento",
+"Dios es «rico en misericordia» (Efesios 2:4): una compasión activa que rescata."
+]
+],
+"v": [
+{
+"r": "Tito 3:5",
+"t": "nos salvó, no por obras de justicia que nosotros hubiéramos hecho, sino por su misericordia, por el lavamiento de la regeneración y por la renovación en el Espíritu Santo,"
+},
+{
+"r": "Efesios 2:4",
+"t": "Pero Dios, que es rico en misericordia, por su gran amor con que nos amó,"
+}
+]
+},
+{
+"id": "anthropos",
+"g": "ἄνθρωπος",
+"tr": "anthrōpos",
+"pr": "an-thrō-pos",
+"pos": "sustantivo (m.)",
+"es": "ser humano; hombre",
+"s": 444,
+"n": 559,
+"cog": [
+"antropología",
+"filántropo",
+"misántropo"
+],
+"h": [
+[
+"Griego clásico",
+"Ser humano, persona. Se distingue de ἀνήρ, el varón."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «adam»: la humanidad hecha por Dios (Génesis 1:26-27)."
+],
+[
+"Nuevo Testamento",
+"Persona o humanidad en general. Jesús es verdaderamente «hombre» (1 Timoteo 2:5)."
+]
+],
+"v": [
+{
+"r": "Mateo 4:4",
+"t": "Él respondió y dijo: Escrito está: No sólo de pan vivirá el hombre, sino de toda palabra que sale de la boca de Dios."
+},
+{
+"r": "1 Timoteo 2:5",
+"t": "Porque hay un solo Dios, y un solo mediador entre Dios y los hombres, Jesucristo hombre,"
+}
+]
+},
+{
+"id": "huios",
+"g": "υἱός",
+"tr": "huios",
+"pr": "ui-os",
+"pos": "sustantivo (m.)",
+"es": "hijo",
+"s": 5207,
+"n": 382,
+"cog": [],
+"h": [
+[
+"Griego clásico",
+"Hijo varón; también descendiente o miembro de un grupo."
+],
+[
+"Biblia griega (LXX)",
+"Se usa de Israel como «hijo» de Dios (Éxodo 4:22)."
+],
+[
+"Nuevo Testamento",
+"Cristo es «el Hijo» de Dios de manera única (Juan 3:16), y los creyentes son hechos hijos por adopción (Efesios 1:5)."
+]
+],
+"v": [
+{
+"r": "Juan 3:16",
+"t": "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna."
+},
+{
+"r": "Mateo 16:16",
+"t": "Respondiendo Simón Pedro, dijo: Tú eres el Cristo, el Hijo del Dios viviente."
+}
+]
+},
+{
+"id": "doulos",
+"g": "δοῦλος",
+"tr": "doulos",
+"pr": "du-los",
+"pos": "sustantivo (m.)",
+"es": "siervo; esclavo",
+"s": 1401,
+"n": 127,
+"cog": [],
+"h": [
+[
+"Griego clásico",
+"Esclavo: propiedad de otra persona, sin libertad. Era una realidad social muy extendida."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «ébed»: siervo. Llamarse «siervo de Jehová» (Moisés, David) era un honor."
+],
+[
+"Nuevo Testamento",
+"Pablo se presenta como «siervo» (literalmente «esclavo») de Jesucristo (Romanos 1:1): pertenece por entero a su Señor."
+]
+],
+"v": [
+{
+"r": "Romanos 1:1",
+"t": "Pablo, siervo de Jesucristo, llamado a ser apóstol, apartado para el evangelio de Dios,"
+},
+{
+"r": "Filipenses 2:7",
+"t": "sino que se despojó a sí mismo, tomando forma de siervo, hecho semejante a los hombres;"
+}
+]
+},
+{
+"id": "mathetes",
+"g": "μαθητής",
+"tr": "mathētēs",
+"pr": "ma-thē-tēs",
+"pos": "sustantivo (m.)",
+"es": "discípulo",
+"s": 3101,
+"n": 270,
+"cog": [
+"matemáticas (misma familia)"
+],
+"h": [
+[
+"Griego clásico",
+"Alumno o aprendiz, del verbo «aprender». Los filósofos tenían discípulos."
+],
+[
+"Biblia griega (LXX)",
+"Aparece muy poco."
+],
+[
+"Nuevo Testamento",
+"Seguidor de Jesús: alguien que aprende de él y lo sigue. Después se aplica a los creyentes en general (Hechos 11:26)."
+]
+],
+"v": [
+{
+"r": "Juan 13:35",
+"t": "En esto conocerán todos que sois mis discípulos, si tuviereis amor los unos con los otros."
+},
+{
+"r": "Hechos 11:26",
+"t": "Y se congregaron allí todo un año con la iglesia, y enseñaron a mucha gente; y a los discípulos se les llamó cristianos por primera vez en Antioquía."
+}
+]
+},
+{
+"id": "apostolos",
+"g": "ἀπόστολος",
+"tr": "apostolos",
+"pr": "a-pos-to-los",
+"pos": "sustantivo (m.)",
+"es": "apóstol; enviado",
+"s": 652,
+"n": 81,
+"cog": [
+"apóstol"
+],
+"h": [
+[
+"Griego clásico",
+"Viene del verbo «enviar». Se usaba sobre todo para una expedición enviada, y también para un enviado."
+],
+[
+"Biblia griega (LXX)",
+"Aparece muy pocas veces."
+],
+[
+"Nuevo Testamento",
+"Un enviado con la autoridad de quien lo envía. Se aplica a los Doce, a Pablo y a otros (Romanos 1:1)."
+]
+],
+"v": [
+{
+"r": "Romanos 1:1",
+"t": "Pablo, siervo de Jesucristo, llamado a ser apóstol, apartado para el evangelio de Dios,"
+},
+{
+"r": "Efesios 1:1",
+"t": "Pablo, apóstol de Jesucristo por la voluntad de Dios, a los santos y fieles en Cristo Jesús que están en Efeso:"
+}
+]
+},
+{
+"id": "prophetes",
+"g": "προφήτης",
+"tr": "prophētēs",
+"pr": "pro-fē-tēs",
+"pos": "sustantivo (m.)",
+"es": "profeta",
+"s": 4396,
+"n": 149,
+"cog": [
+"profeta",
+"profecía"
+],
+"h": [
+[
+"Griego clásico",
+"«El que habla en nombre de otro»: el intérprete de lo que decía un dios en un santuario, como el de Delfos."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «navi»: el portavoz de Dios que anuncia su mensaje."
+],
+[
+"Nuevo Testamento",
+"Los profetas del Antiguo Testamento, Juan el Bautista y quienes hablan por el Espíritu en la iglesia. Su tarea es hablar de parte de Dios, no solo predecir."
+]
+],
+"v": [
+{
+"r": "Mateo 5:17",
+"t": "No penséis que he venido para abrogar la ley o los profetas; no he venido para abrogar, sino para cumplir."
+},
+{
+"r": "Lucas 24:27",
+"t": "Y comenzando desde Moisés, y siguiendo por todos los profetas, les declaraba en todas las Escrituras lo que de él decían."
+}
+]
+},
+{
+"id": "ekklesia",
+"g": "ἐκκλησία",
+"tr": "ekklēsia",
+"pr": "ek-klē-si-a",
+"pos": "sustantivo (f.)",
+"es": "iglesia; asamblea",
+"s": 1577,
+"n": 118,
+"cog": [
+"iglesia",
+"eclesiástico"
+],
+"h": [
+[
+"Griego clásico",
+"La asamblea de los ciudadanos, convocada en una ciudad como Atenas para decidir asuntos públicos."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «qahal»: la asamblea del pueblo de Israel reunida delante de Dios."
+],
+[
+"Nuevo Testamento",
+"La reunión de los creyentes de un lugar y, en conjunto, el pueblo de Dios (Mateo 16:18). La explicación «los llamados fuera» viene de su raíz, pero pesa más el uso que la etimología."
+]
+],
+"v": [
+{
+"r": "Mateo 16:18",
+"t": "Y yo también te digo, que tú eres Pedro, y sobre esta roca edificaré mi iglesia; y las puertas del Hades no prevalecerán contra ella."
+},
+{
+"r": "Hechos 2:47",
+"t": "alabando a Dios, y teniendo favor con todo el pueblo. Y el Señor añadía cada día a la iglesia los que habían de ser salvos."
+}
+]
+},
+{
+"id": "euangelion",
+"g": "εὐαγγέλιον",
+"tr": "euangelion",
+"pr": "eu-an-gue-li-on",
+"pos": "sustantivo (n.)",
+"es": "evangelio; buena noticia",
+"s": 2098,
+"n": 77,
+"cog": [
+"evangelio",
+"evangelizar",
+"evangelista"
+],
+"h": [
+[
+"Griego clásico",
+"Buena noticia y el premio que se daba a quien la traía, sobre todo noticia de victoria."
+],
+[
+"Biblia griega (LXX)",
+"El verbo εὐαγγελίζω anuncia la salvación de Dios (Isaías 40:9; 52:7)."
+],
+[
+"Nuevo Testamento",
+"Es el mensaje de Jesús: su vida, muerte y resurrección (Marcos 1:1; Romanos 1:16). Una inscripción de Priene (9 a. C.) llama «evangelios» al nacimiento del emperador Augusto; el NT usa la palabra con otro contenido."
+]
+],
+"v": [
+{
+"r": "Marcos 1:1",
+"t": "Principio del evangelio de Jesucristo, Hijo de Dios."
+},
+{
+"r": "Romanos 1:16",
+"t": "Porque no me avergüenzo del evangelio, porque es poder de Dios para salvación a todo aquel que cree; al judío primeramente, y también al griego."
+}
+]
+},
+{
+"id": "nomos",
+"g": "νόμος",
+"tr": "nomos",
+"pr": "no-mos",
+"pos": "sustantivo (m.)",
+"es": "ley",
+"s": 3551,
+"n": 197,
+"cog": [
+"economía",
+"astronomía",
+"autonomía"
+],
+"h": [
+[
+"Griego clásico",
+"Costumbre y ley de una ciudad; lo establecido por el uso."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «Torá»: la instrucción dada por Dios por medio de Moisés."
+],
+[
+"Nuevo Testamento",
+"Puede ser la ley de Moisés, los cinco primeros libros o un principio general. El contexto decide (Mateo 22:40; Romanos 13:10)."
+]
+],
+"v": [
+{
+"r": "Mateo 22:40",
+"t": "De estos dos mandamientos depende toda la ley y los profetas."
+},
+{
+"r": "Romanos 13:10",
+"t": "El amor no hace mal al prójimo; así que el cumplimiento de la ley es el amor."
+}
+]
+},
+{
+"id": "basileia",
+"g": "βασιλεία",
+"tr": "basileia",
+"pr": "ba-si-lei-a",
+"pos": "sustantivo (f.)",
+"es": "reino; reinado",
+"s": 932,
+"n": 162,
+"cog": [
+"basílica",
+"Basilio"
+],
+"h": [
+[
+"Griego clásico",
+"Monarquía, poder del rey y el territorio que gobierna."
+],
+[
+"Biblia griega (LXX)",
+"El reino de Israel y los reinos de la tierra; Dios es Rey sobre todos."
+],
+[
+"Nuevo Testamento",
+"Tema central de la predicación de Jesús: el reino (el reinado) de Dios, que llega con él (Mateo 6:33). Es más «reinado» que territorio."
+]
+],
+"v": [
+{
+"r": "Mateo 6:33",
+"t": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas."
+},
+{
+"r": "Mateo 5:3",
+"t": "Bienaventurados los pobres en espíritu, porque de ellos es el reino de los cielos."
+}
+]
+},
+{
+"id": "doxa",
+"g": "δόξα",
+"tr": "doxa",
+"pr": "dok-sa",
+"pos": "sustantivo (f.)",
+"es": "gloria; honra",
+"s": 1391,
+"n": 168,
+"cog": [
+"ortodoxia",
+"doxología",
+"paradoja"
+],
+"h": [
+[
+"Griego clásico",
+"Opinión, fama y reputación."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «kabod»: la gloria visible de Dios, que llenó el tabernáculo."
+],
+[
+"Nuevo Testamento",
+"La gloria de Dios revelada, sobre todo en Cristo (Juan 1:14). «Ortodoxia» y «doxología» conservan la palabra."
+]
+],
+"v": [
+{
+"r": "Juan 1:14",
+"t": "Y aquel Verbo fue hecho carne, y habitó entre nosotros (y vimos su gloria, gloria como del unigénito del Padre), lleno de gracia y de verdad."
+},
+{
+"r": "Romanos 3:23",
+"t": "por cuanto todos pecaron, y están destituidos de la gloria de Dios,"
+}
+]
+},
+{
+"id": "dikaiosyne",
+"g": "δικαιοσύνη",
+"tr": "dikaiosynē",
+"pr": "di-kai-o-su-nē",
+"pos": "sustantivo (f.)",
+"es": "justicia; rectitud",
+"s": 1343,
+"n": 92,
+"cog": [],
+"h": [
+[
+"Griego clásico",
+"La justicia como virtud: dar a cada uno lo que le corresponde (Platón la trata en La República)."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «tsedaká»: rectitud y fidelidad en las relaciones, sobre todo la de Dios con su pueblo."
+],
+[
+"Nuevo Testamento",
+"Rectitud delante de Dios. Pablo habla de la «justicia de Dios» que se recibe por la fe (Romanos 3:22)."
+]
+],
+"v": [
+{
+"r": "Mateo 6:33",
+"t": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas."
+},
+{
+"r": "Romanos 3:22",
+"t": "la justicia de Dios por medio de la fe en Jesucristo, para todos los que creen en él. Porque no hay diferencia,"
+}
+]
+},
+{
+"id": "hamartia",
+"g": "ἁμαρτία",
+"tr": "hamartia",
+"pr": "ha-mar-ti-a",
+"pos": "sustantivo (f.)",
+"es": "pecado",
+"s": 266,
+"n": 174,
+"cog": [],
+"h": [
+[
+"Griego clásico",
+"Fallo o error. El verbo ἁμαρτάνω, en Homero, es «errar el blanco» al lanzar una lanza; Aristóteles habla de ἁμαρτία como error de juicio."
+],
+[
+"Biblia griega (LXX)",
+"Traduce palabras hebreas de pecado que describen romper la relación con Dios."
+],
+[
+"Nuevo Testamento",
+"Pecado: desobediencia y rebelión contra Dios, no solo un error. No conviene reducir su sentido bíblico a la imagen de «fallar el blanco»."
+]
+],
+"v": [
+{
+"r": "Juan 1:29",
+"t": "El siguiente día vio Juan a Jesús que venía a él, y dijo: He aquí el Cordero de Dios, que quita el pecado del mundo."
+},
+{
+"r": "Romanos 6:23",
+"t": "Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro."
+}
+]
+},
+{
+"id": "soteria",
+"g": "σωτηρία",
+"tr": "sōtēria",
+"pr": "sō-tē-ri-a",
+"pos": "sustantivo (f.)",
+"es": "salvación",
+"s": 4991,
+"n": 45,
+"cog": [
+"soteriología"
+],
+"h": [
+[
+"Griego clásico",
+"Rescate, seguridad y salud: librarse de un peligro como un naufragio o una guerra."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «yeshúa»: la liberación que Dios da a su pueblo."
+],
+[
+"Nuevo Testamento",
+"Salvación del pecado y de la condenación, ya comenzada y que se completará (Romanos 10:10). El título «Salvador» (σωτήρ) también se daba a dioses y emperadores."
+]
+],
+"v": [
+{
+"r": "Romanos 10:10",
+"t": "Porque con el corazón se cree para justicia, pero con la boca se confiesa para salvación."
+},
+{
+"r": "Lucas 19:9",
+"t": "Jesús le dijo: Hoy ha venido la salvación a esta casa; por cuanto él también es hijo de Abraham."
+}
+]
+},
+{
+"id": "haima",
+"g": "αἷμα",
+"tr": "haima",
+"pr": "hai-ma",
+"pos": "sustantivo (n.)",
+"es": "sangre",
+"s": 129,
+"n": 99,
+"cog": [
+"hemorragia",
+"hemoglobina",
+"anemia"
+],
+"h": [
+[
+"Griego clásico",
+"Sangre; también linaje o parentesco."
+],
+[
+"Biblia griega (LXX)",
+"La sangre como vida (Levítico 17:11) y como sacrificio."
+],
+[
+"Nuevo Testamento",
+"La sangre de Cristo: su muerte sacrificial para el perdón (Efesios 1:7; Hebreos 9:22)."
+]
+],
+"v": [
+{
+"r": "Efesios 1:7",
+"t": "en quien tenemos redención por su sangre, el perdón de pecados según las riquezas de su gracia,"
+},
+{
+"r": "Hebreos 9:22",
+"t": "Y casi todo es purificado, según la ley, con sangre; y sin derramamiento de sangre no se hace remisión."
+}
+]
+},
+{
+"id": "thanatos",
+"g": "θάνατος",
+"tr": "thanatos",
+"pr": "tha-na-tos",
+"pos": "sustantivo (m.)",
+"es": "muerte",
+"s": 2288,
+"n": 119,
+"cog": [
+"eutanasia",
+"tanatología"
+],
+"h": [
+[
+"Griego clásico",
+"Muerte. Los griegos hablaban de Tánatos como una divinidad."
+],
+[
+"Biblia griega (LXX)",
+"La muerte entra por la desobediencia (Génesis 2:17)."
+],
+[
+"Nuevo Testamento",
+"Muerte física y también separación de Dios; Cristo la venció (Romanos 6:23)."
+]
+],
+"v": [
+{
+"r": "Romanos 6:23",
+"t": "Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro."
+},
+{
+"r": "Juan 5:24",
+"t": "De cierto, de cierto os digo: El que oye mi palabra, y cree al que me envió, tiene vida eterna; y no vendrá a condenación, mas ha pasado de muerte a vida."
+}
+]
+},
+{
+"id": "sarx",
+"g": "σάρξ",
+"tr": "sarx",
+"pr": "sarks",
+"pos": "sustantivo (f.)",
+"es": "carne; cuerpo",
+"s": 4561,
+"n": 151,
+"cog": [
+"sarcófago",
+"sarcasmo"
+],
+"h": [
+[
+"Griego clásico",
+"Carne, la parte blanda del cuerpo; el cuerpo en contraste con el alma."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «basár»: carne, cuerpo y ser humano frágil."
+],
+[
+"Nuevo Testamento",
+"Cuerpo humano (Juan 1:14, «fue hecho carne») y, en Pablo, a veces la naturaleza humana débil bajo el pecado (Romanos 8:1). El contexto decide."
+]
+],
+"v": [
+{
+"r": "Juan 1:14",
+"t": "Y aquel Verbo fue hecho carne, y habitó entre nosotros (y vimos su gloria, gloria como del unigénito del Padre), lleno de gracia y de verdad."
+},
+{
+"r": "Romanos 8:1",
+"t": "Ahora, pues, ninguna condenación hay para los que están en Cristo Jesús, los que no andan conforme a la carne, sino conforme al Espíritu."
+}
+]
+},
+{
+"id": "psyche",
+"g": "ψυχή",
+"tr": "psychē",
+"pr": "psu-jē",
+"pos": "sustantivo (f.)",
+"es": "alma; vida; persona",
+"s": 5590,
+"n": 105,
+"cog": [
+"psicología",
+"psiquiatra"
+],
+"h": [
+[
+"Griego clásico",
+"El aliento de vida que sale al morir; después, el yo o el alma, en filósofos como Platón."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «néfesh»: la persona viva, con sus deseos y su vida."
+],
+[
+"Nuevo Testamento",
+"Vida, persona o ser interior (Mateo 10:28; Marcos 8:36)."
+]
+],
+"v": [
+{
+"r": "Mateo 10:28",
+"t": "Y no temáis a los que matan el cuerpo, mas el alma no pueden matar; temed más bien a aquel que puede destruir el alma y el cuerpo en el infierno."
+},
+{
+"r": "Marcos 8:36",
+"t": "Porque ¿qué aprovechará al hombre si ganare todo el mundo, y perdiere su alma?"
+}
+]
+},
+{
+"id": "pisteuo",
+"g": "πιστεύω",
+"tr": "pisteuō",
+"pr": "pis-teu-ō",
+"pos": "verbo",
+"es": "creer; confiar",
+"s": 4100,
+"n": 248,
+"cog": [],
+"h": [
+[
+"Griego clásico",
+"Confiar, creer algo, dar crédito."
+],
+[
+"Biblia griega (LXX)",
+"«Creer» a Dios: confiar en su palabra (Génesis 15:6)."
+],
+[
+"Nuevo Testamento",
+"Confiar en Jesús y en su obra, y no solo aceptar datos (Juan 3:16; Romanos 10:9)."
+]
+],
+"v": [
+{
+"r": "Juan 3:16",
+"t": "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna."
+},
+{
+"r": "Romanos 10:9",
+"t": "que si confesares con tu boca que Jesús es el Señor, y creyeres en tu corazón que Dios le levantó de los muertos, serás salvo."
+}
+]
+},
+{
+"id": "agapao",
+"g": "ἀγαπάω",
+"tr": "agapaō",
+"pr": "a-ga-pa-ō",
+"pos": "verbo",
+"es": "amar",
+"s": 25,
+"n": 142,
+"cog": [
+"ágape"
+],
+"h": [
+[
+"Griego clásico",
+"Querer, estimar, contentarse con algo."
+],
+[
+"Biblia griega (LXX)",
+"Amar, también el amor al prójimo (Levítico 19:18)."
+],
+[
+"Nuevo Testamento",
+"Amar con decisión y entrega: Dios ama al mundo (Juan 3:16) y manda amar a Dios y al prójimo (Mateo 22:37-39)."
+]
+],
+"v": [
+{
+"r": "Juan 3:16",
+"t": "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna."
+},
+{
+"r": "1 Juan 4:10",
+"t": "En esto consiste el amor: no en que nosotros hayamos amado a Dios, sino en que él nos amó a nosotros, y envió a su Hijo en propiciación por nuestros pecados."
+}
+]
+},
+{
+"id": "lego",
+"g": "λέγω",
+"tr": "legō",
+"pr": "le-gō",
+"pos": "verbo",
+"es": "decir; hablar",
+"s": 3004,
+"n": 2321,
+"cog": [
+"léxico",
+"diálogo",
+"lógico"
+],
+"h": [
+[
+"Griego clásico",
+"En su origen «reunir, contar»; después «decir, hablar». Es la raíz de λόγος."
+],
+[
+"Biblia griega (LXX)",
+"Decir; con «λέγει κύριος» introduce la palabra de Dios en los profetas."
+],
+[
+"Nuevo Testamento",
+"Es el verbo más frecuente del NT. Jesús lo usa en su fórmula «yo os digo» (Mateo 5:22)."
+]
+],
+"v": [
+{
+"r": "Juan 14:6",
+"t": "Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí."
+},
+{
+"r": "Mateo 5:22",
+"t": "Pero yo os digo que cualquiera que se enoje contra su hermano, será culpable de juicio; y cualquiera que diga: Necio, a su hermano, será culpable ante el concilio; y cualquiera que le diga: Fatuo, quedará expuesto al infierno de fuego."
+}
+]
+},
+{
+"id": "ginosko",
+"g": "γινώσκω",
+"tr": "ginōskō",
+"pr": "gui-nōs-kō",
+"pos": "verbo",
+"es": "conocer",
+"s": 1097,
+"n": 223,
+"cog": [
+"diagnóstico",
+"agnóstico",
+"gnóstico"
+],
+"h": [
+[
+"Griego clásico",
+"Llegar a conocer o reconocer; conocimiento por experiencia."
+],
+[
+"Biblia griega (LXX)",
+"Traduce «yadá»: conocer, también en la relación íntima (Génesis 4:1)."
+],
+[
+"Nuevo Testamento",
+"Conocer de verdad, con relación personal: «conoceréis la verdad» (Juan 8:32); «el que no ama no ha conocido a Dios» (1 Juan 4:8)."
+]
+],
+"v": [
+{
+"r": "Juan 8:32",
+"t": "y conoceréis la verdad, y la verdad os hará libres."
+},
+{
+"r": "1 Juan 4:8",
+"t": "El que no ama, no ha conocido a Dios; porque Dios es amor."
+}
+]
+},
+{
+"id": "baptizo",
+"g": "βαπτίζω",
+"tr": "baptizō",
+"pr": "bap-ti-dzō",
+"pos": "verbo",
+"es": "bautizar; sumergir",
+"s": 907,
+"n": 80,
+"cog": [
+"bautizar",
+"bautismo",
+"bautista"
+],
+"h": [
+[
+"Griego clásico",
+"Sumergir o hundir (por ejemplo, un barco) y teñir mojando una tela."
+],
+[
+"Biblia griega (LXX)",
+"Aparece poco, con el sentido de mojarse o sumergirse: Naamán se «bañó» siete veces en el Jordán (2 Reyes 5:14)."
+],
+[
+"Nuevo Testamento",
+"Sumergir y, por extensión, el rito del bautismo en nombre de Cristo (Mateo 28:19; Hechos 2:38). El sentido básico de «sumergir» es el que reconocen la mayoría de los léxicos."
+]
+],
+"v": [
+{
+"r": "Mateo 28:19",
+"t": "Por tanto, id, y haced discípulos a todas las naciones, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo;"
+},
+{
+"r": "Hechos 2:38",
+"t": "Pedro les dijo: Arrepentíos, y bautícese cada uno de vosotros en el nombre de Jesucristo para perdón de los pecados; y recibiréis el don del Espíritu Santo."
+}
+]
+},
+{
+"id": "sozo",
+"g": "σώζω",
+"tr": "sōzō",
+"pr": "sō-dzō",
+"pos": "verbo",
+"es": "salvar; sanar",
+"s": 4982,
+"n": 110,
+"cog": [
+"soteriología"
+],
+"h": [
+[
+"Griego clásico",
+"Salvar, mantener a salvo; rescatar de un peligro o de una enfermedad."
+],
+[
+"Biblia griega (LXX)",
+"Dios salva a su pueblo de enemigos y peligros."
+],
+[
+"Nuevo Testamento",
+"Salvar del pecado y del juicio (Efesios 2:8; Romanos 10:9); también sanar (Marcos 5:34)."
+]
+],
+"v": [
+{
+"r": "Efesios 2:8",
+"t": "Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios;"
+},
+{
+"r": "Romanos 10:9",
+"t": "que si confesares con tu boca que Jesús es el Señor, y creyeres en tu corazón que Dios le levantó de los muertos, serás salvo."
+}
+]
+}
+];
+
+/* ============================================================
+   CURSO DE GRIEGO BÍBLICO (pronunciación erasmiana)
+   ============================================================ */
+const GK_LET=[
+ ['Α','α','alfa','a','como la «a» de casa'],
+ ['Β','β','beta','b','como la «b» de beso'],
+ ['Γ','γ','gamma','g','como la «g» de gato'],
+ ['Δ','δ','delta','d','como la «d» de dedo'],
+ ['Ε','ε','épsilon','e','«e» corta, como en peso'],
+ ['Ζ','ζ','dseta','dz','como «ds» (suena «dseta»)'],
+ ['Η','η','eta','ē (e larga)','«e» larga, como en mesa pero alargada'],
+ ['Θ','θ','theta','th','como la «z» de España; si no, una «t» suave'],
+ ['Ι','ι','iota','i','como la «i» de piso'],
+ ['Κ','κ','kappa','k','como la «c» de casa'],
+ ['Λ','λ','lambda','l','como la «l» de luz'],
+ ['Μ','μ','mi','m','como la «m» de mesa'],
+ ['Ν','ν','ni','n','como la «n» de nube'],
+ ['Ξ','ξ','xi','ks','como la «x» de taxi'],
+ ['Ο','ο','ómicron','o','«o» corta, como en solo'],
+ ['Π','π','pi','p','como la «p» de papá'],
+ ['Ρ','ρ','ro','r','«r» suave, como en pero'],
+ ['Σ','σ','sigma','s','como la «s» de sol (al final de palabra se escribe ς)'],
+ ['Τ','τ','tau','t','como la «t» de tapa'],
+ ['Υ','υ','ípsilon','u','como la «u» de luz (en transliteración se escribe «y»)'],
+ ['Φ','φ','fi','f','como la «f» de foto'],
+ ['Χ','χ','ji','j','como la «j» suave de jamón (en transliteración, «ch»)'],
+ ['Ψ','ψ','psi','ps','como «ps» en psicología'],
+ ['Ω','ω','omega','ō (o larga)','«o» larga, como en solo pero alargada']
+];
+const GK_DIPH=[
+ ['αι','ai','como «hay»','καί (kai), «y»'],
+ ['ει','ei','como «rey»','εἰρήνη (eirēnē), «paz»'],
+ ['οι','oi','como «hoy»','οἶκος (oikos), «casa»'],
+ ['υι','ui','como «muy»','υἱός (huios), «hijo»'],
+ ['αυ','au','como «causa»','αὐτός (autos), «él mismo»'],
+ ['ευ','eu','como «Europa»','εὐαγγέλιον (euangelion), «evangelio»'],
+ ['ου','u','como la «u» de luz (¡no se lee «ou»!)','οὐρανός (ouranos), «cielo»']
+];
+const GK_READ=[
+ {g:'ἄγγελος',tr:'angelos',pr:'an-gue-los',es:'ángel; mensajero'},
+ {g:'ἅγιος',tr:'hagios',pr:'ha-gui-os',es:'santo'},
+ {g:'οὐρανός',tr:'ouranos',pr:'u-ra-nos',es:'cielo'},
+ {g:'ἔργον',tr:'ergon',pr:'er-gon',es:'obra'},
+ {g:'ὥρα',tr:'hōra',pr:'hō-ra',es:'hora'}
+];
+const GK_BY=Object.fromEntries(GK_DICT.map(e=>[e.id,e]));
+const GK_V={
+ jn1_1:{ref:'Juan 1:1',gk:'Ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν, καὶ θεὸς ἦν ὁ λόγος.',rvr:'En el principio era el Verbo, y el Verbo era con Dios, y el Verbo era Dios.',
+  w:[['ἀρχῇ','principio','arche'],['ἦν','era',null],['λόγος','Verbo (palabra)','logos'],['καὶ','y',null],['πρὸς','con (junto a)',null],['θεόν','Dios','theos']],
+  x:[['¿Con qué dos palabras griegas empieza también Génesis 1:1 en la Biblia griega?','Ἐν ἀρχῇ',['Ὁ λόγος','Καὶ εἶπεν','Ἐγώ εἰμι'],'Sí: Génesis 1:1 en la Biblia griega empieza «Ἐν ἀρχῇ ἐποίησεν ὁ θεός…». Juan 1:1 deja oír ese eco.'],
+     ['¿Cuántas veces aparece la palabra «λόγος» en este versículo?','Tres veces',['Una vez','Dos veces','Cuatro veces'],'«ὁ λόγος» aparece tres veces en Juan 1:1.']]},
+ jn11_35:{ref:'Juan 11:35',gk:'Ἐδάκρυσεν ὁ Ἰησοῦς.',rvr:'Jesús lloró.',
+  w:[['Ἐδάκρυσεν','lloró',null],['Ἰησοῦς','Jesús','iesous'],['ὁ','el (artículo)',null]],
+  x:[['¿Cuántas palabras tiene Juan 11:35 en griego?','Tres',['Dos','Cuatro','Cinco'],'«Ἐδάκρυσεν ὁ Ἰησοῦς»: tres palabras.'],['¿Cuál de estas palabras es el verbo, «lloró»?','Ἐδάκρυσεν',['ὁ','Ἰησοῦς','καὶ'],'Ἐδάκρυσεν es el verbo: «lloró».'],['¿Quién llora en este versículo?','Ἰησοῦς (Jesús)',['ὁ (el)','Ἐδάκρυσεν','λόγος (Verbo)'],'El que llora es Ἰησοῦς: Jesús.']]},
+ jn14_6:{ref:'Juan 14:6',gk:'λέγει αὐτῷ ὁ Ἰησοῦς, Ἐγώ εἰμι ἡ ὁδὸς καὶ ἡ ἀλήθεια καὶ ἡ ζωή· οὐδεὶς ἔρχεται πρὸς τὸν πατέρα, εἰ μὴ δι᾿ ἐμοῦ.',rvr:'Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí.',
+  w:[['λέγει','dice','lego'],['Ἐγώ εἰμι','Yo soy',null],['ὁδὸς','camino',null],['ἀλήθεια','verdad','aletheia'],['ζωή','vida','zoe'],['οὐδεὶς','nadie',null],['ἔρχεται','viene',null],['πατέρα','Padre','pater']],
+  x:[['¿Qué palabra se repite delante de «camino», «verdad» y «vida»?','ἡ (la)',['ὁ (el)','καὶ (y)','τὸν (al)'],'«ἡ ὁδὸς… ἡ ἀλήθεια… ἡ ζωή»: el artículo «ἡ» se repite tres veces y señala cada palabra como única.']]},
+ jn3_16:{ref:'Juan 3:16',gk:'Οὕτως γὰρ ἠγάπησεν ὁ θεὸς τὸν κόσμον, ὥστε τὸν υἱὸν αὐτοῦ τὸν μονογενῆ ἔδωκεν, ἵνα πᾶς ὁ πιστεύων εἰς αὐτὸν μὴ ἀπόληται, ἀλλ᾿ ἔχῃ ζωὴν αἰώνιον.',rvr:'Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.',
+  w:[['ἠγάπησεν','amó','agapao'],['κόσμον','mundo','kosmos'],['υἱὸν','Hijo','huios'],['μονογενῆ','unigénito (único)',null],['ἔδωκεν','dio',null],['πιστεύων','el que cree','pisteuo'],['ἀπόληται','se pierda',null],['ζωὴν','vida','zoe'],['αἰώνιον','eterna',null]],
+  x:[]}
+};
+const GK_UNITS=[
+ {title:'El alfabeto griego',sub:'24 letras, pronunciación erasmiana',lessons:[
+  {title:'Primeras letras (α–ζ)',kind:'letters',idx:[0,1,2,3,4,5],intro:{t:'Bienvenido al griego del Nuevo Testamento',p:'El Nuevo Testamento se escribió en griego. Aquí aprendes a leerlo con la pronunciación erasmiana, la que se usa para estudiar: cada letra tiene un sonido propio. Los griegos de hoy pronuncian algunas letras distinto, pero eso no cambia el significado del texto. Empezamos con las primeras letras.'}},
+  {title:'Siguientes letras (η–μ)',kind:'letters',idx:[6,7,8,9,10,11]},
+  {title:'Más letras (ν–σ)',kind:'letters',idx:[12,13,14,15,16,17]},
+  {title:'Últimas letras (τ–ω)',kind:'letters',idx:[18,19,20,21,22,23]},
+  {title:'Letras que engañan',kind:'hand',intro:{t:'Letras que parecen otras',p:'Algunas letras griegas se parecen a letras que conoces, pero suenan distinto. Por ejemplo, la ρ parece una «p» y suena «r». Esta lección te ayuda a no confundirte.'},qs:[
+   ['La letra ρ parece una «p». ¿Qué sonido tiene?','r',['p','d','b'],'ρ (ro) suena «r». La «p» griega es π.','ρ'],
+   ['La letra ν parece una «v». ¿Qué sonido tiene?','n',['v','u','b'],'ν (ni) suena «n». La «v» no existe en griego antiguo.','ν'],
+   ['La letra η parece una «n». ¿Qué sonido tiene?','ē (e larga)',['n','i','a'],'η (eta) es una «e» larga.','η'],
+   ['La letra χ parece una «x». ¿Qué sonido tiene?','j',['ks','x','ch inglesa'],'χ (ji) suena como una «j» suave. La «x» sonora (ks) es ξ.','χ'],
+   ['La letra ω parece una «w». ¿Qué sonido tiene?','ō (o larga)',['w','u','v'],'ω (omega) es una «o» larga.','ω'],
+   ['La letra υ parece una «u» o una «v». ¿Qué sonido tiene?','u',['v','b','f'],'υ (ípsilon) suena «u». En transliteración se escribe «y».','υ'],
+   ['¿Qué letra suena «ks», como la «x» de taxi?','ξ',['χ','ζ','ψ'],'ξ (xi) suena «ks».','ξ']]},
+ ]},
+ {title:'Sonidos y signos',sub:'Diptongos, espíritus y reglas',lessons:[
+  {title:'Vocales dobles',kind:'digraphs',intro:{t:'Dos vocales, un solo sonido',p:'Cuando dos vocales van juntas se leen como un sonido (diptongo). Los más comunes son αι, ει, οι, υι, αυ, ευ y ου. Ojo con ου: se lee «u», no «ou».'}},
+  {title:'Signos y reglas',kind:'hand',intro:{t:'Los pequeños signos',p:'Sobre las vocales verás pequeños signos. Los espíritus (῾ ᾿) y los acentos no cambian las letras, pero el espíritu áspero (῾) añade una «h» al inicio. No te preocupes por los acentos por ahora.'},qs:[
+   ['El signo ῾ sobre una vocal inicial (espíritu áspero) añade el sonido…','h',['k','s','n'],'Ejemplo: ἅγιος se lee «hagios» (santo).'],
+   ['El signo ᾿ sobre una vocal inicial (espíritu suave)…','No se pronuncia',['Añade una h','Alarga la vocal','Cambia la letra por una s'],'Ejemplo: ἀρχή se lee «arjē» (principio), sin h.'],
+   ['¿Cómo se lee ἅγιος?','ha-gui-os',['a-gui-os','ha-ji-os','sa-gui-os'],'ἅγιος (hagios) significa «santo». La γ suena fuerte, como en «gato», y el espíritu áspero añade la h.','ἅγιος'],
+   ['La sigma se escribe de dos formas: σ y ς. ¿Cuándo se usa ς?','Al final de una palabra',['Al inicio de una palabra','Antes de una vocal','Solo en mayúsculas'],'Ejemplo: λόγος termina en ς.'],
+   ['En ἄγγελος, la doble γγ suena como…','ng',['gg','jj','nn'],'ἄγγελος se lee «an-gue-los». De ahí viene «ángel».','ἄγγελος'],
+   ['¿Qué letra inicial lleva siempre espíritu áspero (῾)?','ρ',['λ','μ','ν'],'Una ρ al inicio de palabra se escribe ῥ y se lee «rh».'],
+   ['En este curso, los acentos (´ ` ῀)…','No cambian el sonido de las letras',['Cambian la letra','Añaden una h','Indican mayúsculas'],'Los acentos marcan la sílaba fuerte en el griego moderno; para empezar los ignoramos.'],
+   ['La iota suscrita (ᾳ, ῃ, ῳ)…','No se pronuncia',['Se lee como una s','Añade una h','Alarga la consonante'],'Es una pequeña iota debajo de la vocal; para leer, la puedes ignorar.'],
+   ['γκ suena como…','nk',['gk','ng','kk'],'Ejemplo: ἐγκράτεια se lee «en-kra-tei-a» (dominio propio).']]},
+  {title:'Leyendo palabras',kind:'read'}
+ ]},
+ {title:'Primeras palabras',sub:'42 palabras clave del Nuevo Testamento',lessons:[
+  {title:'Dios y Cristo',kind:'words',ids:['theos','kyrios','iesous','christos','pneuma','pater'],intro:{t:'Aprende palabras, y su historia',p:'Cada palabra que aprendas tiene su historia: cómo se usaba entre los griegos, en la Biblia griega y en el Nuevo Testamento. Después de cada respuesta puedes abrir su ficha, y todas están en la pestaña «Palabras».'}},
+  {title:'La Palabra y la vida',kind:'words',ids:['logos','zoe','phos','aletheia','arche','kosmos']},
+  {title:'La buena noticia',kind:'words',ids:['charis','pistis','agape','eirene','elpis','eleos']},
+  {title:'Personas',kind:'words',ids:['anthropos','huios','doulos','mathetes','apostolos','prophetes']},
+  {title:'Iglesia y reino',kind:'words',ids:['ekklesia','euangelion','nomos','basileia','doxa','dikaiosyne']},
+  {title:'Pecado y salvación',kind:'words',ids:['hamartia','soteria','haima','thanatos','sarx','psyche']},
+  {title:'Verbos esenciales',kind:'words',ids:['pisteuo','agapao','lego','ginosko','baptizo','sozo']}
+ ]},
+ {title:'Leyendo el Nuevo Testamento',sub:'Versículos en griego, palabra por palabra',lessons:[
+  {title:'Juan 1:1 en griego',kind:'verse',vid:'jn1_1',intro:{t:'Tu primer versículo en griego',p:'Vas a leer versículos del Nuevo Testamento en griego (Texto Recibido, la base de la Reina-Valera). Cada pregunta te muestra el texto y te pide el significado de una palabra.'}},
+  {title:'Juan 11:35 en griego',kind:'verse',vid:'jn11_35'},
+  {title:'Juan 14:6 en griego',kind:'verse',vid:'jn14_6'},
+  {title:'Juan 3:16 en griego',kind:'verse',vid:'jn3_16'}
+ ]}
+];
+GK_UNITS.forEach(u=>u.lessons.forEach(l=>{if(l.kind==='words')l.wordIds=l.ids;}));
+const GKKEYS=[];GK_UNITS.forEach(u=>u.lessons.forEach(l=>GKKEYS.push(l.title)));
+
+function mcq(prompt,correct,pool,extra){
+  const uniq=Array.from(new Set(pool.filter(x=>x!==correct)));
+  const wrong=((extra&&extra.keep)?uniq:shuffle(uniq)).slice(0,3);
+  const opts=shuffle([correct,...wrong]);
+  return Object.assign({type:'mc',prompt,opts,a:opts.indexOf(correct),tries:0,nota:''},extra||{});
+}
+function pickCover(cands,n){
+  /* al menos una pregunta por elemento y luego completa al azar hasta n */
+  const by={};cands.forEach(c=>{(by[c[0]]=by[c[0]]||[]).push(c[1]);});
+  const out=[];Object.keys(by).forEach(k=>{const f=pickOne(by[k]);out.push(f);by[k]=by[k].filter(x=>x!==f);});
+  const rest=shuffle(Object.keys(by).flatMap(k=>by[k]));
+  while(out.length<n&&rest.length)out.push(rest.pop());
+  return shuffle(out).slice(0,n).map(f=>f());
+}
+function gkLetters(les){
+  const cands=[];
+  les.idx.forEach(i=>{
+    const L=GK_LET[i],big=L[0]+' '+L[1]+(i===17?' ς':''),short=L[3].split(' ')[0];
+    const fb={t:L[0]+' '+L[1]+' se llama «'+L[2]+'». Suena '+L[4]+'.'};
+    cands.push([i,()=>mcq('¿Cómo se llama esta letra?',L[2],GK_LET.map(x=>x[2]),{big,fb})]);
+    cands.push([i,()=>mcq('¿Qué sonido tiene esta letra?',L[3],GK_LET.map(x=>x[3]),{big:L[1],fb})]);
+    cands.push([i,()=>mcq('¿Cuál letra suena «'+short+'»?',L[1],GK_LET.map(x=>x[1]),{fb,gko:true})]);
+    cands.push([i,()=>mcq('¿Cuál es la minúscula de «'+L[0]+'»?',L[1],GK_LET.map(x=>x[1]),{big:L[0],fb,gko:true})]);
+  });
+  return pickCover(cands,10);
+}
+function gkDigraphs(){
+  const cands=[];
+  GK_DIPH.forEach((d,i)=>{
+    const fb={t:d[0]+' suena «'+d[1]+'», '+d[2]+'. Ejemplo: '+d[3]+'.'};
+    cands.push([i,()=>mcq('¿Cómo suena esta combinación?',d[1],GK_DIPH.map(x=>x[1]),{big:d[0],fb})]);
+    cands.push([i,()=>mcq('¿Qué combinación suena «'+d[1]+'»?',d[0],GK_DIPH.map(x=>x[0]),{fb,gko:true})]);
+  });
+  return pickCover(cands,10);
+}
+function gkHand(les){
+  return les.qs.map(h=>mcq(h[0],h[1],h[1]===h[1]?[h[1],...h[2]]:[],{big:h[4]||null,fb:{t:h[3]},gko:/[Ͱ-Ͽἀ-῿]/.test(h[1])}));
+}
+function gkRead(){
+  const pool=[...GK_READ,...['theos','kyrios','christos','pneuma','ekklesia','euangelion','hamartia','agape','ginosko'].map(id=>GK_BY[id])];
+  const prs=pool.map(x=>x.pr);
+  return shuffle(pool).slice(0,10).map(w=>mcq('¿Cómo se lee esta palabra?',w.pr,prs,{big:w.g,wid:w.id||null,fb:{t:w.g+' ('+w.tr+') se lee «'+w.pr+'» y significa: '+w.es+'.',w:w.id||null}}));
+}
+function gkWords(les){
+  const mine=les.ids.map(id=>GK_BY[id]);
+  const allEs=GK_DICT.map(e=>e.es), allG=GK_DICT.map(e=>e.g+' ('+e.tr+')');
+  const near=(e)=>mine.filter(x=>x!==e);
+  const cands=[];
+  mine.forEach(e=>{
+    const label=e.g+' ('+e.tr+')';
+    const fb={t:e.g+' ('+e.tr+') — '+e.es+'.',w:e.id};
+    const poolEs=[...near(e).map(x=>x.es),...allEs], poolG=[...near(e).map(x=>x.g+' ('+x.tr+')'),...allG];
+    const pickPool=(first,rest)=>{const f=shuffle(first).slice(0,3);return [...f,...rest];};
+    cands.push([e.id,()=>mcq('¿Qué significa esta palabra?',e.es,pickPool(near(e).map(x=>x.es),allEs),{big:e.g,wid:e.id,fb,gko:false,keep:true})]);
+    cands.push([e.id,()=>mcq('¿Cuál palabra griega significa «'+e.es.split(';')[0]+'»?',label,pickPool(near(e).map(x=>x.g+' ('+x.tr+')'),allG),{wid:e.id,fb,gko:true,keep:true})]);
+    cands.push([e.id,()=>mcq('¿Cuál palabra se escribe «'+e.tr+'» en letras latinas?',label,pickPool(near(e).map(x=>x.g+' ('+x.tr+')'),allG),{wid:e.id,fb,gko:true,keep:true})]);
+    const c=e.cog.find(x=>!/[«(]/.test(x)&&!e.es.toLowerCase().includes(x.toLowerCase()));
+    if(c)cands.push([e.id,()=>mcq('¿De cuál palabra griega viene «'+c+'»?',label,pickPool(near(e).map(x=>x.g+' ('+x.tr+')'),allG),{wid:e.id,fb,gko:true,keep:true})]);
+  });
+  return pickCover(cands,10);
+}
+const GKT={'ἀρχῇ':'n','ἦν':'v','λόγος':'n','καὶ':'f','πρὸς':'f','θεόν':'n','Ἐδάκρυσεν':'v','Ἰησοῦς':'n','ὁ':'f','λέγει':'v','Ἐγώ εἰμι':'f','ὁδὸς':'n','ἀλήθεια':'n','ζωή':'n','οὐδεὶς':'f','ἔρχεται':'v','πατέρα':'n','ἠγάπησεν':'v','κόσμον':'n','υἱὸν':'n','μονογενῆ':'a','ἔδωκεν':'v','πιστεύων':'v','ἀπόληται':'v','ζωὴν':'n','αἰώνιον':'a'};
+const GKP={
+ v:['era','dice','viene','amó','dio','lloró','dijo','vio','oyó','tiene','sabe'],
+ n:['principio','Verbo (palabra)','Dios','camino','verdad','vida','Padre','mundo','Hijo','Jesús','luz','nombre','casa','día'],
+ f:['y','con (junto a)','el (artículo)','nadie','Yo soy','en','pero','porque','no'],
+ a:['eterna','unigénito (único)','santa','buena','verdadera','grande','nueva']
+};
+function gkVerse(les){
+  const v=GK_V[les.vid];
+  const fb=(extra)=>({g:v.gk,v:v.rvr,r:v.ref,t:extra||''});
+  const pool=(w)=>{const t=GKT[w[0]]||'n';const same=shuffle(GKP[t].filter(x=>x!==w[1])).slice(0,3);const rest=shuffle(Object.values(GKP).flat()).filter(x=>x!==w[1]);return [...same,...rest];};
+  const qs=v.w.map(w=>mcq('En '+v.ref+', ¿qué significa «'+w[0]+'»?',w[1],pool(w),{big:v.gk,wid:w[2]?GK_BY[w[2]].id:null,keep:true,fb:Object.assign(fb(),w[2]?{w:w[2]}:{})}));
+  v.x.forEach(h=>qs.push(mcq(h[0],h[1],[h[1],...h[2]],{big:v.gk,fb:fb(h[3]),gko:/[Ͱ-Ͽἀ-῿]/.test(h[1])})));
+  return shuffle(qs).slice(0,10);
+}
+function gkBuild(les){
+  if(les.kind==='letters')return gkLetters(les);
+  if(les.kind==='digraphs')return gkDigraphs();
+  if(les.kind==='hand')return gkHand(les);
+  if(les.kind==='read')return gkRead();
+  if(les.kind==='words')return gkWords(les);
+  return gkVerse(les);
+}
+function wotd(){let h=0;for(const ch of today())h=(h*31+ch.charCodeAt(0))>>>7;return GK_DICT[h%GK_DICT.length];}
+
+/* ============================================================
+   DICCIONARIO
+   ============================================================ */
+function dicLevel(id){const g=S.gw&&S.gw[id];if(!g)return '';return g.c>=3&&g.c>g.w?'⭐':(g.c+g.w>0?'🌱':'');}
+function dicList(q){
+  q=(q||'').trim().toLowerCase();
+  const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const nq=norm(q);
+  const items=GK_DICT.filter(e=>!nq||norm(e.g).includes(nq)||norm(e.tr).includes(nq)||norm(e.es).includes(nq)||norm(e.cog.join(' ')).includes(nq));
+  if(!items.length)return '<p class="muted" style="text-align:center;padding:20px 0">No encontré esa palabra. Prueba con otra, en español o en griego.</p>';
+  return items.map(e=>'<button class="dentry" data-a="dic-open" data-w="'+e.id+'"><span class="dg gk">'+esc(e.g)+'</span><span class="dm"><b>'+esc(e.tr)+'</b> '+esc(e.es)+'</span><span class="dn">'+dicLevel(e.id)+'</span></button>').join('');
+}
+function dicHTML(){
+  return '<h1 class="page">Palabras</h1>'+
+   '<div class="hero">'+mascot('think',76)+'<div class="bubble">Aquí está la historia de cada palabra griega: cómo se usaba y qué significa en la Biblia.</div></div>'+
+   '<input id="dicq" class="inp dsearch" type="search" placeholder="Buscar: λόγος, logos, amor…" autocomplete="off" aria-label="Buscar palabra">'+
+   '<div id="diclist" class="dlist">'+dicList('')+'</div>'+
+   '<p class="foot">'+GK_DICT.length+' palabras. La frecuencia sale del Texto Recibido (Robinson, dominio público) y del diccionario de Strong. Los resúmenes históricos son una introducción para estudiar: para profundizar, consulta un léxico de griego bíblico.</p>';
+}
+function dicOpen(id){
+  const e=GK_BY[id];if(!e)return;
+  const stages=e.h.map((s,i)=>'<div class="tl-item"><span class="tl-dot t'+i+'"></span><div><b>'+esc(s[0])+'</b><p>'+esc(s[1])+'</p></div></div>').join('');
+  const cog=e.cog.length?'<h3>🔗 Primos en español</h3><div class="cogs">'+e.cog.map(c=>'<span class="cog">'+esc(c)+'</span>').join('')+'</div>':'';
+  const verses=e.v.map(v=>'<div class="li"><cite>'+esc(v.r)+'</cite><p>'+esc(v.t)+'</p></div>').join('');
+  S.dicSeen=S.dicSeen||{};S.dicSeen[id]=1;save();
+  $('#dic').innerHTML=
+   '<div class="lh"><button class="x" data-a="dic-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:100%;background:var(--blue)"></i></div></div>'+
+   '<div class="lb"><div class="dhead"><div class="dbig gk">'+esc(e.g)+'</div><div class="dsub"><b>'+esc(e.tr)+'</b> · se lee «'+esc(e.pr)+'»</div>'+
+   '<div class="dchips"><span class="dchip">'+esc(e.pos)+'</span><span class="dchip">Strong G'+e.s+'</span><span class="dchip">≈ '+e.n+' veces en el NT</span></div></div>'+
+   '<h3>💬 Significado</h3><p class="dmean">'+esc(e.es)+'</p>'+
+   '<h3>🕰️ Historia de la palabra</h3><div class="tl">'+stages+'</div>'+cog+
+   '<h3>📖 En la Biblia (RVR1960)</h3><div class="list">'+verses+'</div>'+
+   '<p class="foot">Frecuencia en el Texto Recibido. Resumen histórico introductorio.</p></div>';
+  $('#dic').hidden=false;
+  const lb=document.querySelector('#dic .lb');if(lb)lb.scrollTop=0;
+}
+function dicClose(){$('#dic').hidden=true;$('#dic').innerHTML='';}
+
 /* ============================================================
    DATOS DERIVADOS
    ============================================================ */
@@ -1359,7 +3212,7 @@ ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>
    ESTADO Y ALMACENAMIENTO (localStorage protegido)
    ============================================================ */
 const KEY='lampara.rvr1960.v1';
-const defaults=()=>({sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0});
+const defaults=()=>({course:'bib',gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0});
 let S=defaults();
 function idbOpen(cb){
   try{
@@ -1418,6 +3271,9 @@ const ACH=[
  {id:'v20',t:'Veinte versículos',d:'Practica 20 versículos distintos',f:s=>Object.keys(s.verses).length>=20},
  {id:'unit',t:'Unidad completa',d:'Termina todas las lecciones de una unidad',f:s=>UNITS.some((u,ui)=>u.lessons.every((_,li)=>s.done[lk(ui,li)]))},
  {id:'group',t:'Noche en familia',d:'Termina un juego en grupo',f:s=>(s.gplays||0)>=1},
+ {id:'gk1',t:'Alfa',d:'Completa tu primera lección de griego',f:s=>GKKEYS.some(k=>s.done[k])},
+ {id:'gkabc',t:'De alfa a omega',d:'Termina las lecciones del alfabeto griego',f:s=>GK_UNITS[0].lessons.every(l=>s.done[l.title])},
+ {id:'gkw',t:'Vocabulario griego',d:'Termina las 7 lecciones de palabras',f:s=>GK_UNITS[2].lessons.every(l=>s.done[l.title])},
  {id:'rev',t:'Primer repaso',d:'Completa un repaso diario',f:s=>s.reviews>=1},
  {id:'all',t:'Curso completo',d:'Termina todas las lecciones',f:s=>ALLKEYS.every(k=>s.done[k])}
 ];
@@ -1739,7 +3595,8 @@ function buildQuestions(verses,hand,max=10){
    ============================================================ */
 let TAB='path',resetArmed=false;
 
-function firstUndone(){const i=ALLKEYS.findIndex(k=>!S.done[k]);return i<0?ALLKEYS.length:i;}
+const curUnits=()=>S.course==='gk'?GK_UNITS:UNITS;
+function firstUndone(U){const keys=U.flatMap(u=>u.lessons.map(l=>l.title));const i=keys.findIndex(k=>!S.done[k]);return i<0?keys.length:i;}
 const PCOL=['#1CB0F6','#FF9600','#58CC02','#A560E8','#FF4B4B','#00B894','#E91E8C','#2B70C9'];
 
 function renderTop(){
@@ -1752,37 +3609,40 @@ function renderTop(){
    '<span class="chip xp" aria-label="'+S.xp+' puntos de experiencia">'+IC.bolt+S.xp+'</span></div>';
 }
 function renderTabs(){
-  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],['games','Juegos',IC.users],['me','Perfil',IC.trophy]];
+  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],['dic','Palabras',IC.book],['games','Juegos',IC.users],['me','Perfil',IC.trophy]];
   $('#tabs').firstElementChild.innerHTML=tabs.map(t=>'<button class="tab '+(TAB===t[0]?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(TAB===t[0]?'aria-current="page"':'')+'>'+t[2]+'<span>'+t[1]+'</span></button>').join('');
 }
 function homeHTML(){
-  const t=today(),xpT=S.days[t]||0,pct=Math.min(1,xpT/S.goal),C=175.9;
+  const gk=S.course==='gk',U=curUnits(),t=today(),xpT=S.days[t]||0,pct=Math.min(1,xpT/S.goal),C=175.9;
   let msg,mood='happy';
   if(xpT>=S.goal){msg='¡Meta cumplida! Tu racha está a salvo por hoy.';mood='cheer';}
   else if(S.streak>0&&S.lastDay!==t){msg='¡No pierdas tu racha de '+S.streak+(S.streak===1?' día':' días')+'! Haz una lección hoy.';mood='think';}
   else if(S.streak>0)msg='Llevas '+S.streak+' días seguidos. Te faltan '+(S.goal-xpT)+' XP para tu meta.';
-  else msg='¡Hola! Haz tu primera lección y empieza tu racha.';
+  else msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':'¡Hola! Haz tu primera lección y empieza tu racha.';
   const week=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');week.push('<div class="day"><div class="dot '+((S.days[d]||0)>0?'on':'')+(i===0?' today':'')+'">'+IC.check+'</div>'+DOW[dt.getDay()]+'</div>');}
-  const v=votd();
-  const cur=firstUndone();let flat=0;
+  const cur=firstUndone(U);let flat=0;
   const offs=[0,46,0,-46];
-  const units=UNITS.map((u,ui)=>{
-    const dn=u.lessons.filter((_,li)=>S.done[lk(ui,li)]).length;
+  const units=U.map((u,ui)=>{
+    const dn=u.lessons.filter(l=>S.done[l.title]).length;
     const emo=UNIT_EMO[u.title]||'📖';
-    return '<section class="unit" style="--u:'+COLORS[ui%COLORS.length]+'"><div class="unit-h"><div><h2>'+esc(u.title)+'</h2><p>'+esc(u.sub)+'</p><span class="count">'+dn+' de '+u.lessons.length+'</span></div><div class="uemo" aria-hidden="true">'+emo+'</div></div><div class="path">'+
+    return '<section class="unit" style="--u:'+COLORS[(gk?ui+4:ui)%COLORS.length]+'"><div class="unit-h"><div><h2>'+esc(u.title)+'</h2><p>'+esc(u.sub)+'</p><span class="count">'+dn+' de '+u.lessons.length+'</span></div><div class="uemo" aria-hidden="true">'+emo+'</div></div><div class="path">'+
     u.lessons.map((l,li)=>{
-      const idx=flat++,isDone=!!S.done[lk(ui,li)],locked=idx>cur&&!isDone,isCur=idx===cur;
+      const idx=flat++,isDone=!!S.done[l.title],locked=idx>cur&&!isDone,isCur=idx===cur;
       const inner=isDone?IC.check:locked?IC.lock:'<span class="e">'+emo+'</span>';
       return '<div class="stop '+(isCur?'cur':'')+'" style="--off:'+offs[li%4]+'px">'+(isCur?'<div class="start-tip">¡EMPIEZA!</div>':'')+
-      '<button class="node '+(isDone?'done ':'')+(locked?'locked':'')+(isCur?' current':'')+'" data-a="lesson" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+inner+'</button><span>'+esc(l.title)+'</span></div>';
+      '<button class="node '+(isDone?'done ':'')+(locked?'locked':'')+(isCur?' current':'')+'" data-a="lesson" data-c="'+(gk?'gk':'bib')+'" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+inner+'</button><span>'+esc(l.title)+'</span></div>';
     }).join('')+'</div></section>';
   }).join('');
   const tip=(!isStandalone()&&!S.tipHide)?'<div class="install"><b>📲 Instala Lámpara en tu teléfono</b><br>'+(isIOS()?'En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Úsala siempre desde ese ícono para que no se borre tu progreso.':'Abre el menú del navegador y elige <b>Añadir a pantalla de inicio</b> o <b>Instalar app</b>. Así se abre como una app y guarda tu progreso.')+'<br><button class="btn sm purple" data-a="tip">Entendido</button></div>':'';
-  return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+
+  const sw='<div class="cswitch"><button class="cs '+(!gk?'on':'')+'" data-a="course" data-c="bib">📖 Biblia</button><button class="cs '+(gk?'on':'')+'" data-a="course" data-c="gk">🔤 Griego</button></div>';
+  let daily;
+  if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
+  else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
+  return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+sw+
   '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
-  '<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>'+units+
-  '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.</p>';
+  daily+units+
+  '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
 }
 function lvlOf(r){
   const s=S.verses[r].c-S.verses[r].w*1.5;
@@ -1800,12 +3660,12 @@ function reviewHTML(){
    (ready?'<h3 style="margin:18px 0 8px">Los que más te cuestan</h3><div class="list">'+weak.map(w=>{const l=lvlOf(w.r);return '<div class="li"><cite>'+esc(w.r)+'</cite> <span class="lvl" style="background:'+l.c+'">'+l.t+'</span><p>'+esc(VBY[w.r].t)+'</p><div class="meter"><i style="width:'+l.w+'%;background:'+l.c+'"></i></div></div>';}).join('')+'</div>':'');
 }
 function meHTML(){
-  const ld=ALLKEYS.filter(k=>S.done[k]).length;
+  const ld=ALLKEYS.concat(GKKEYS).filter(k=>S.done[k]).length;
   return '<h1 class="page">Tu perfil</h1><div class="stats">'+
    '<div class="stat s1"><span class="se">🔥</span><div><b>'+S.streak+'</b><span>Racha actual</span></div></div>'+
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
-   '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+ALLKEYS.length+'</b><span>Lecciones</span></div></div></div>'+
+   '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length)+'</b><span>Lecciones</span></div></div></div>'+
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
@@ -1818,7 +3678,7 @@ function meHTML(){
 }
 function render(){
   refreshStreak();renderTop();renderTabs();
-  $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='games'?gamesHTML():meHTML();
+  $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():meHTML();
 }
 
 /* ============================================================
@@ -1846,10 +3706,19 @@ function nextQ(){
 }
 function canCheck(){const q=L.cur,ui=L.ui;return !ui.checked&&(q.type==='order'?ui.placed.length===q.bank.length:ui.sel!=null);}
 function optsHTML(q,ui){
-  return '<div class="opts">'+q.opts.map((o,i)=>{
+  return '<div class="opts'+(q.gko?' gko':'')+'">'+q.opts.map((o,i)=>{
     let c='';if(ui.checked){if(i===q.a)c='good';else if(i===ui.sel)c='bad';}else if(i===ui.sel)c='sel';
     return '<button class="opt '+c+'" data-a="pick" data-i="'+i+'" '+(ui.checked?'disabled':'')+'><kbd>'+(i+1)+'</kbd><span>'+esc(o)+'</span></button>';
   }).join('')+'</div>';
+}
+function fbHTML(q,v,fbk,ans){
+  if(!fbk)return '<p class="fv">'+ans+'<em>'+esc(v.t)+'</em> <cite>'+esc(v.r)+'</cite></p>';
+  let s='';
+  if(fbk.g)s+='<p class="fv gk gkline">'+esc(fbk.g)+'</p>';
+  if(fbk.t||ans)s+='<p class="fv">'+ans+esc(fbk.t||'')+'</p>';
+  if(fbk.v)s+='<p class="fv"><em>'+esc(fbk.v)+'</em> <cite>'+esc(fbk.r)+'</cite></p>';
+  if(fbk.w)s+='<button class="btn ghost sm" data-a="dic-peek" data-w="'+fbk.w+'">📚 Historia de la palabra</button>';
+  return s;
 }
 function renderLesson(){
   const q=L.cur,ui=L.ui,pct=Math.round(100*L.done/L.total);
@@ -1857,7 +3726,7 @@ function renderLesson(){
   const say='<div class="say">'+mascot(mood,76)+'<div class="bubble"><p class="prompt">'+esc(q.prompt)+'</p></div></div>';
   let body='';
   if(q.tries>0&&!ui.checked)body+='<div class="retry">'+mascot('think',42)+'<span>¡Repaso! Esta te salió mal antes. Ahora sí.</span></div>';
-  if(q.type==='mc')body+=say+optsHTML(q,ui);
+  if(q.type==='mc')body+=say+(q.big?'<div class="gkbig gk'+(q.big.length<=6?' xl':'')+'">'+esc(q.big)+'</div>':'')+optsHTML(q,ui);
   else if(q.type==='ref')body+=say+'<blockquote class="verse">'+esc(VBY[q.ref].t)+'</blockquote>'+optsHTML(q,ui);
   else if(q.type==='fill'){
     const parts=q.toks.map((w,i)=>{
@@ -1876,13 +3745,13 @@ function renderLesson(){
   if(!ui.checked){
     foot='<div class="lf"><div class="in"><button class="btn" data-a="check" '+(canCheck()?'':'disabled')+'>Comprobar</button></div></div>';
   }else{
-    const v=VBY[q.ref];
+    const v=q.ref?VBY[q.ref]:null,fbk=q.fb||null;
     let ans='';
     if(!ui.ok&&q.type!=='order')ans='Respuesta correcta: <b>'+esc(q.opts[q.a])+'</b><br>';
     const sub=ui.ok?(ui.fresh?'+2 XP':(q.tries>0?'¡Repasada! Ya la tienes':'')):'Volverá a salir al final para repasarla';
     foot='<div class="lf '+(ui.ok?'good':'bad')+'" role="status"><div class="in">'+(ui.fresh?'<div class="xpfloat">+2 XP</div>':'')+
      '<div class="fbhead">'+mascot(ui.ok?'cheer':'sad',58)+'<div><h4>'+esc(ui.head||'')+'</h4>'+(sub?'<div class="sub">'+esc(sub)+'</div>':'')+'</div></div>'+
-     '<div class="fbox"><p class="fv">'+ans+'<em>'+esc(v.t)+'</em> <cite>'+esc(v.r)+'</cite></p>'+(q.nota?'<div class="nota"><b>Nota:</b> '+esc(q.nota)+'</div>':'')+'</div>'+
+     '<div class="fbox">'+fbHTML(q,v,fbk,ans)+(q.nota?'<div class="nota"><b>Nota:</b> '+esc(q.nota)+'</div>':'')+'</div>'+
      '<button class="btn '+(ui.ok?'good':'bad')+'" data-a="next">Continuar</button></div></div>';
   }
   $('#lesson').innerHTML=
@@ -1895,15 +3764,16 @@ function check(){
   if(q.type==='order')ok=ui.placed.map(id=>q.bank.find(b=>b.id===id).w).join(' ')===q.toks.join(' ');
   else ok=ui.sel===q.a;
   ui.checked=true;ui.ok=ok;ui.fresh=false;
-  const st=S.verses[q.ref]||(S.verses[q.ref]={c:0,w:0});
+  const st=q.ref?(S.verses[q.ref]||(S.verses[q.ref]={c:0,w:0})):{c:0,w:0};
+  const gw=q.wid?((S.gw=S.gw||{})[q.wid]||(S.gw[q.wid]={c:0,w:0})):null;
   if(ok){
-    if(q.tries===0){L.firstTry++;L.xp+=2;st.c++;L.combo++;ui.fresh=true;}
+    if(q.tries===0){L.firstTry++;L.xp+=2;st.c++;if(gw)gw.c++;L.combo++;ui.fresh=true;}
     L.done++;
     ui.head=L.combo>=3&&q.tries===0?'¡'+L.combo+' seguidas!':pickOne(['¡Eso es!','¡Perfecto!','¡Muy bien!','¡Así se hace!','¡Genial!','¡Excelente!']);
     beep('good');
     if(q.tries===0&&L.combo>0&&L.combo%5===0)confetti(50);
   }else{
-    if(q.tries===0)st.w++;
+    if(q.tries===0){st.w++;if(gw)gw.w++;}
     q.tries++;L.mistakes++;L.queue.push(q);L.combo=0;
     ui.head=pickOne(['¡Casi!','¡Uy, esa no!','¡Ups!','Se te escapó']);
     beep('bad');
@@ -1924,6 +3794,7 @@ function finishLesson(){
   save();
   const acc=Math.round(100*L.firstTry/L.total);
   const vs=L.meta.verses||[];
+  const gws=(L.meta.words||[]).map(id=>GK_BY[id]).filter(Boolean);
   $('#lesson').innerHTML=
    '<div class="lb"><div class="res"><div style="display:flex;justify-content:center">'+mascot('cheer',140)+'</div><h1>'+(isReview?'¡Repaso listo!':'¡Lección completada!')+'</h1>'+
    '<p class="muted" style="margin:0">'+esc(L.meta.title||'')+'</p>'+
@@ -1933,6 +3804,7 @@ function finishLesson(){
    (r.gotFreeze?'<div class="note fl">🛡️ <b>¡Ganaste un protector de racha!</b> Cubre un día si no puedes practicar.</div>':'')+
    (r.goalHit?'<div class="note">🎯 <b>¡Meta diaria cumplida!</b> '+S.days[today()]+' XP hoy.</div>':'')+
    fresh.map(a=>'<div class="note">'+(ACH_E[a.id]||'⭐')+' <b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join('')+
+   (gws.length?'<div class="vs"><h3>Palabras de esta lección</h3><div class="dlist">'+gws.map(e=>'<button class="dentry" data-a="dic-peek" data-w="'+e.id+'"><span class="dg gk">'+esc(e.g)+'</span><span class="dm"><b>'+esc(e.tr)+'</b> '+esc(e.es)+'</span></button>').join('')+'</div></div>':'')+
    (vs.length?'<div class="vs"><h3>Versículos de esta lección</h3><div class="list">'+vs.map(v=>'<div class="li"><cite>'+esc(v.r)+'</cite><p>'+esc(v.t)+'</p></div>').join('')+'</div></div>':'')+
    '</div></div><div class="lf"><div class="in"><button class="btn" data-a="finish">Continuar</button></div></div>';
   L.finished=true;
@@ -2222,6 +4094,7 @@ function gAct(a,b){
 }
 document.addEventListener('input',e=>{
   const t=e.target;
+  if(t&&t.id==='dicq'){const l=$('#diclist');if(l)l.innerHTML=dicList(t.value);return;}
   if(t.classList&&t.classList.contains('inp')){const i=+t.dataset.i;S.g.names[i]=t.value;save();}
 });
 
@@ -2235,8 +4108,14 @@ document.addEventListener('click',e=>{
   if(a.startsWith('g-')){gAct(a,b);return;}
   if(a==='tab'){TAB=b.dataset.t;resetArmed=false;render();window.scrollTo(0,0);}
   else if(a==='lesson'){
-    const ui=+b.dataset.u,li=+b.dataset.l,les=UNITS[ui].lessons[li];
-    startLesson({type:'lesson',key:lk(ui,li),title:les.title,verses:les.verses},buildQuestions(les.verses,les.qs,10),les.intro);
+    const ui=+b.dataset.u,li=+b.dataset.l;
+    if(b.dataset.c==='gk'){
+      const les=GK_UNITS[ui].lessons[li];
+      startLesson({type:'lesson',key:les.title,title:les.title,verses:[],words:les.wordIds||[],course:'gk'},gkBuild(les),les.intro);
+    }else{
+      const les=UNITS[ui].lessons[li];
+      startLesson({type:'lesson',key:lk(ui,li),title:les.title,verses:les.verses},buildQuestions(les.verses,les.qs,10),les.intro);
+    }
   }
   else if(a==='review'){
     const seen=Object.keys(S.verses).filter(r=>VBY[r]);if(seen.length<3)return;
@@ -2254,6 +4133,9 @@ document.addEventListener('click',e=>{
   else if(a==='leave'){hideModal();closeLesson();}
   else if(a==='finish')closeLesson();
   else if(a==='goal'){S.goal=+b.dataset.g;save();render();}
+  else if(a==='course'){S.course=b.dataset.c;save();render();window.scrollTo(0,0);}
+  else if(a==='dic-open'||a==='dic-peek'){dicOpen(b.dataset.w);}
+  else if(a==='dic-close'){dicClose();}
   else if(a==='sound'){S.sound=b.dataset.v==='1';save();render();if(S.sound)beep('good');}
   else if(a==='haptic'){S.haptic=b.dataset.v==='1';save();render();if(S.haptic)haptic([30,40,30]);}
   else if(a==='tip'){S.tipHide=true;save();render();}
