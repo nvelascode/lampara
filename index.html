@@ -331,6 +331,8 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .gk{font-family:'Noto Serif','Gentium Plus','Times New Roman',Georgia,serif;font-weight:700}
 .cswitch{display:flex;gap:8px;margin:2px 0 14px}
 .cs{flex:1;padding:10px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;font-weight:900;background:var(--surface)}
+.cs{display:flex;align-items:center;justify-content:center;gap:8px}
+.cs .flag{width:26px;height:17px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.18);flex:none}
 .cs.on{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-ink)}
 .gkbig{margin:0 0 16px;padding:14px 12px;text-align:center;font-size:30px;line-height:1.4;border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;background:var(--surface2);letter-spacing:.02em}
 .gko .opt span{font-family:'Noto Serif','Gentium Plus',Georgia,serif;font-size:21px;font-weight:700}
@@ -376,6 +378,7 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .atile .an{font-size:12px;color:var(--muted);font-weight:800}
 .abcinfo{margin:12px 0 4px;padding:12px 14px;border-radius:16px;background:var(--blue-bg);border:2px solid var(--blue);font-size:16px;font-weight:800;line-height:1.4;position:sticky;bottom:78px}
 .abcinfo .gk{font-size:24px}
+.a.on{cursor:pointer}
 .fbbtns{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 8px}
 .listen{display:inline-flex;align-items:center;gap:6px}
 
@@ -3021,6 +3024,7 @@ const GK_READ=[
  {g:'ἔργον',tr:'ergon',pr:'er-gon',es:'obra'},
  {g:'ὥρα',tr:'hōra',pr:'hō-ra',es:'hora'}
 ];
+function flagGR(){return '<svg class="flag" viewBox="0 0 27 18" aria-hidden="true"><rect width="27" height="18" fill="#0D5EAF"/><g fill="#fff"><rect y="2" width="27" height="2"/><rect y="6" width="27" height="2"/><rect y="10" width="27" height="2"/><rect y="14" width="27" height="2"/></g><rect width="10" height="10" fill="#0D5EAF"/><rect x="4" width="2" height="10" fill="#fff"/><rect y="4" width="10" height="2" fill="#fff"/></svg>';}
 const GK_BY=Object.fromEntries(GK_DICT.map(e=>[e.id,e]));
 const GK_V={
  jn1_1:{ref:'Juan 1:1',gk:'Ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν, καὶ θεὸς ἦν ὁ λόγος.',rvr:'En el principio era el Verbo, y el Verbo era con Dios, y el Verbo era Dios.',
@@ -3204,9 +3208,15 @@ function gkSpeak(text,opt){
     speechSynthesis.speak(u);
   }catch(e){}
 }
+const GK_TNAME={'xi':'ksi'};
+function letterSpeech(i){
+  const s=GK_SND[i],L=GK_LET[i];
+  const snd=String(L[4]).replace(/\s*\([^)]*\)/g,'').replace(/[«»]/g,'');
+  return (GK_TNAME[L[2]]||L[2])+'. Suena '+snd+'. Como en '+s[4]+', '+s[3]+'.';
+}
 function sayLetter(i){
   const s=GK_SND[i],L=GK_LET[i];
-  gkSpeak(s[0]+'. '+s[4],{lang:i===7?'es-ES':'',rate:(i===6||i===23)?.6:.75});
+  gkSpeak(letterSpeech(i),{rate:.78});
   const info=$('#abcinfo');
   if(info)info.innerHTML='<span class="gk">'+esc(L[0]+' '+L[1])+'</span> · <b>'+esc(L[2])+'</b> · suena '+esc(L[4])+'<br>Ejemplo: <span class="gk">'+esc(s[1])+'</span> ('+esc(s[2])+'), «'+esc(s[3])+'».';
   document.querySelectorAll('.atile').forEach((t,k)=>t.classList.toggle('on',k===i));
@@ -3216,7 +3226,104 @@ let DICV='w';
 function abcHTML(){
   return '<div class="abc">'+GK_LET.map((L,i)=>'<button class="atile" data-a="say-l" data-i="'+i+'" aria-label="'+esc(L[2])+'"><span class="al gk">'+esc(L[0]+L[1])+'</span><span class="an">'+esc(L[2])+'</span></button>').join('')+'</div>'+
    '<div id="abcinfo" class="abcinfo">Toca una letra para escucharla.</div>'+
-   '<p class="foot">La voz es la de tu teléfono, en español, así que la pronunciación es aproximada. La θ (z de España) suena mejor con una voz de España. Los sonidos largos, como la η y la ω, se dicen más despacio.</p>';
+   '<p class="foot">La voz es la de tu teléfono, en español, así que la pronunciación es aproximada. Cada letra se dice así: su nombre, su sonido y una palabra griega de ejemplo.</p>';
+}
+
+/* ============================================================
+   COMPARTIR LOGROS Y ANIMAR (tarjeta con imagen + mensaje)
+   ============================================================ */
+let LASTRES=null;const SHC={};
+const lessonsDone=()=>ALLKEYS.concat(GKKEYS).filter(k=>S.done[k]).length;
+function appLink(){try{return /^https?:/.test(location.protocol)?location.origin+location.pathname:'';}catch(e){return '';}}
+function shareData(kind,id){
+  const link=appLink(),sp=link?' '+link:'';
+  if(kind==='streak'){
+    const n=S.streak;
+    return {key:'s:'+n+':'+S.xp,title:'¡Llevo '+n+(n===1?' día':' días')+' de racha!',sub:'aprendiendo la Biblia con Lampy',
+      stats:[['🔥',n,'días de racha','#FFEFD0','#FF9600'],['⚡',S.xp,'XP','#FFF6CC','#FFC800'],['📚',lessonsDone(),'lecciones','#D7FFB8','#58CC02']],
+      text:'🔥 ¡Llevo '+n+(n===1?' día':' días')+' seguidos aprendiendo la Biblia en Lámpara! ¿Te animas a hacerlo conmigo?'+sp};
+  }
+  if(kind==='ach'){
+    const a=ACH.find(x=>x.id===id)||ACH[0];
+    return {key:'a:'+a.id,title:'¡Nuevo logro!',big:ACH_E[a.id]||'⭐',sub:a.t,sub2:a.d,
+      text:(ACH_E[a.id]||'⭐')+' ¡Gané el logro «'+a.t+'» en Lámpara! '+a.d+'.'+sp};
+  }
+  if(kind==='lesson'){
+    const r=LASTRES||{title:'una lección',xp:0,acc:0,streak:S.streak};
+    return {key:'l:'+r.title+':'+r.xp,title:r.review?'¡Repaso listo!':'¡Lección completada!',sub:r.title,
+      stats:[['⚡','+'+r.xp,'XP','#FFF6CC','#FFC800'],['🎯',r.acc+'%','al primer intento','#D7FFB8','#58CC02'],['🔥',r.streak,'días de racha','#FFEFD0','#FF9600']],
+      text:'✅ Completé «'+r.title+'» en Lámpara y gané '+r.xp+' XP. ¿Te animas a hacer la tuya?'+sp};
+  }
+  const msgs=[
+    '¡Hoy toca Lámpara! 🕯️ Llevo '+S.streak+' días de racha. ¿Hacemos una lección juntos?',
+    '¡Ánimo! Con una lección de unos minutos mantenemos la racha 🔥',
+    '¿Ya hiciste tu lección de hoy? Yo ya sumé '+(S.days[today()]||0)+' XP 💪',
+    'Un versículo al día cambia el ánimo. Te espero en Lámpara 🕯️'
+  ];
+  return {key:'c',text:pickOne(msgs)+sp,noImage:true};
+}
+function rrect(x,X,Y,W,H,R,fill){x.beginPath();x.moveTo(X+R,Y);x.arcTo(X+W,Y,X+W,Y+H,R);x.arcTo(X+W,Y+H,X,Y+H,R);x.arcTo(X,Y+H,X,Y,R);x.arcTo(X,Y,X+W,Y,R);x.closePath();if(fill){x.fillStyle=fill;x.fill();}}
+function wrapText(x,text,cx,y,maxW,lh){
+  const words=String(text).split(' ');let line='',yy=y,lines=[];
+  words.forEach(w=>{const t=line?line+' '+w:w;if(x.measureText(t).width>maxW&&line){lines.push(line);line=w;}else line=t;});
+  lines.push(line);lines.forEach((l,i)=>x.fillText(l,cx,y+i*lh));return y+lines.length*lh;
+}
+function svgToImage(svg){return new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);});}
+async function makeShareCanvas(d){
+  try{if(document.fonts&&document.fonts.load){await Promise.race([document.fonts.load('900 60px Nunito'),new Promise(r=>setTimeout(r,800))]);}}catch(e){}
+  const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  const F='Nunito, system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#6BD70A');g.addColorStop(.55,'#4CB800');g.addColorStop(1,'#2F7A00');x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle='rgba(255,255,255,.10)';[[120,180,150],[960,260,110],[900,1080,170],[130,1000,100]].forEach(o=>{x.beginPath();x.arc(o[0],o[1],o[2],0,7);x.fill();});
+  x.textAlign='center';x.textBaseline='alphabetic';
+  x.fillStyle='#fff';x.font='900 56px '+F;x.fillText('Lámpara',W/2,110);
+  x.font='800 30px '+F;x.fillStyle='rgba(255,255,255,.9)';x.fillText('Aprende la Biblia cada día',W/2,156);
+  rrect(x,70,430,W-140,720,64,'rgba(0,0,0,.14)');rrect(x,70,418,W-140,720,64,'#fff');
+  const sv=(mascot('cheer',420).match(/<svg[\s\S]*<\/svg>/)||[''])[0].replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" ');
+  const im=await svgToImage(sv);if(im)x.drawImage(im,W/2-210,170,420,420);
+  x.fillStyle='#3C3C3C';x.font='900 76px '+F;
+  let y=wrapText(x,d.title,W/2,660,W-240,86);
+  x.fillStyle='#777';x.font='800 40px '+F;
+  y=wrapText(x,d.sub||'',W/2,y+10,W-240,52);
+  if(d.big){x.font='160px '+F;x.fillStyle='#000';x.fillText(d.big,W/2,y+170);
+    if(d.sub2){x.font='800 34px '+F;x.fillStyle='#777';wrapText(x,d.sub2,W/2,y+240,W-260,44);}}
+  else if(d.stats){
+    const tw=290,gap=30,x0=(W-(tw*3+gap*2))/2,ty=Math.max(y+20,880);
+    d.stats.forEach((s,i)=>{const X=x0+i*(tw+gap);rrect(x,X,ty,tw,200,32,s[3]);x.lineWidth=5;x.strokeStyle=s[4];rrect(x,X,ty,tw,200,32,null);x.stroke();
+      x.fillStyle='#3C3C3C';x.font='56px '+F;x.fillText(s[0],X+tw/2,ty+62);x.font='900 62px '+F;x.fillText(String(s[1]),X+tw/2,ty+130);
+      x.fillStyle='#777';x.font='800 26px '+F;x.fillText(s[2],X+tw/2,ty+175);});
+  }
+  x.fillStyle='#fff';x.font='900 44px '+F;x.fillText('¡Únete y aprendamos juntos!',W/2,1235);
+  const link=appLink();if(link){x.font='800 32px '+F;x.fillStyle='rgba(255,255,255,.92)';x.fillText(link.replace(/^https?:\/\//,''),W/2,1290);}
+  return c;
+}
+async function prepShare(kind,id){
+  const d=shareData(kind,id);if(d.noImage||SHC[d.key])return SHC[d.key];
+  const c=await makeShareCanvas(d);
+  const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+  if(!blob)return null;
+  let file=null;try{file=new File([blob],'lampara.png',{type:'image/png'});}catch(e){}
+  SHC[d.key]={blob,file,text:d.text};return SHC[d.key];
+}
+function downloadBlob(blob){try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lampara.png';document.body.appendChild(a);a.click();setTimeout(()=>{try{a.remove();URL.revokeObjectURL(a.href);}catch(e){}},500);}catch(e){}}
+async function doShare(kind,id){
+  const d=shareData(kind,id);
+  try{
+    if(d.noImage){
+      if(navigator.share){await navigator.share({text:d.text});return;}
+      window.open('https://wa.me/?text='+encodeURIComponent(d.text),'_blank');return;
+    }
+    const pre=SHC[d.key]||await prepShare(kind,id);
+    if(pre&&pre.file&&navigator.canShare&&navigator.canShare({files:[pre.file]})){await navigator.share({files:[pre.file],text:d.text,title:'Lámpara'});return;}
+    if(navigator.share){await navigator.share({text:d.text,title:'Lámpara'});return;}
+    if(pre)downloadBlob(pre.blob);
+    try{await navigator.clipboard.writeText(d.text);}catch(e){}
+    toast('Imagen guardada y mensaje copiado. ¡Pégalo donde quieras!');
+  }catch(e){
+    if(e&&e.name==='AbortError')return;
+    try{const pre=SHC[d.key];if(pre)downloadBlob(pre.blob);await navigator.clipboard.writeText(d.text);}catch(x){}
+    toast('Imagen guardada y mensaje copiado.');
+  }
 }
 function dicList(q){
   q=(q||'').trim().toLowerCase();
@@ -3694,7 +3801,7 @@ function homeHTML(){
     }).join('')+'</div></section>';
   }).join('');
   const tip=(!isStandalone()&&!S.tipHide)?'<div class="install"><b>📲 Instala Lámpara en tu teléfono</b><br>'+(isIOS()?'En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Úsala siempre desde ese ícono para que no se borre tu progreso.':'Abre el menú del navegador y elige <b>Añadir a pantalla de inicio</b> o <b>Instalar app</b>. Así se abre como una app y guarda tu progreso.')+'<br><button class="btn sm purple" data-a="tip">Entendido</button></div>':'';
-  const sw='<div class="cswitch"><button class="cs '+(!gk?'on':'')+'" data-a="course" data-c="bib">📖 Biblia</button><button class="cs '+(gk?'on':'')+'" data-a="course" data-c="gk">🔤 Griego</button></div>';
+  const sw='<div class="cswitch"><button class="cs '+(!gk?'on':'')+'" data-a="course" data-c="bib">📖 Biblia</button><button class="cs '+(gk?'on':'')+'" data-a="course" data-c="gk">'+flagGR()+' Griego</button></div>';
   let daily;
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
@@ -3726,11 +3833,12 @@ function meHTML(){
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
    '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length)+'</b><span>Lecciones</span></div></div></div>'+
+   '<section class="card"><b>📣 Compartir y animar</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha o anima a alguien a hacer su lección. Se envía por WhatsApp o por donde quieras.</p><div class="row2" style="margin:0"><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button><button class="btn ghost sm" data-a="share" data-k="cheer">Animar a alguien</button></div></section>'+
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    '<section class="card"><b>🛡️ Protectores de racha</b><p class="muted" style="margin:2px 0 0;font-size:14px">Tienes '+S.freezes+' de 2. Ganas uno cada 7 días de racha y se usa solo si un día no alcanzas a practicar.</p></section>'+
-   '<h3 style="margin:18px 0 8px">Logros</h3><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'"><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
+   '<h3 style="margin:18px 0 2px">Logros</h3><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
    '<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
    '<textarea id="bk" class="code" placeholder="Aquí aparece tu código. Para restaurar, pégalo aquí."></textarea><div class="row2" style="margin:10px 0 0"><button class="btn blue sm" data-a="bk-copy">Copiar código</button><button class="btn ghost sm" data-a="bk-restore">Restaurar</button></div></section>'+
    '<div style="margin-top:14px"><button class="link-danger" data-a="reset">'+(resetArmed?'Toca otra vez para borrar todo el progreso':'Borrar progreso')+'</button></div>'+
@@ -3738,6 +3846,7 @@ function meHTML(){
 }
 function render(){
   refreshStreak();renderTop();renderTabs();
+  if(TAB==='me')setTimeout(()=>{prepShare('streak').catch(()=>{});},150);
   $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():meHTML();
 }
 
@@ -3870,8 +3979,10 @@ function finishLesson(){
    fresh.map(a=>'<div class="note">'+(ACH_E[a.id]||'⭐')+' <b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join('')+
    (gws.length?'<div class="vs"><h3>Palabras de esta lección</h3><div class="dlist">'+gws.map(e=>'<button class="dentry" data-a="dic-peek" data-w="'+e.id+'"><span class="dg gk">'+esc(e.g)+'</span><span class="dm"><b>'+esc(e.tr)+'</b> '+esc(e.es)+'</span></button>').join('')+'</div></div>':'')+
    (vs.length?'<div class="vs"><h3>Versículos de esta lección</h3><div class="list">'+vs.map(v=>'<div class="li"><cite>'+esc(v.r)+'</cite><p>'+esc(v.t)+'</p></div>').join('')+'</div></div>':'')+
-   '</div></div><div class="lf"><div class="in"><button class="btn" data-a="finish">Continuar</button></div></div>';
+   '</div></div><div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="share" data-k="lesson">📣 Compartir</button><button class="btn" data-a="finish">Continuar</button></div></div></div>';
   L.finished=true;
+  LASTRES={title:L.meta.title||'una lección',xp,acc,streak:S.streak,review:isReview};
+  setTimeout(()=>{prepShare('lesson').catch(()=>{});},200);
   beep('win');confetti(120);haptic([20,70,20,70,50]);
 }
 function closeLesson(){$('#lesson').hidden=true;$('#lesson').innerHTML='';document.body.style.overflow='';L=null;render();}
@@ -4196,6 +4307,7 @@ document.addEventListener('click',e=>{
   else if(a==='stay')hideModal();
   else if(a==='leave'){hideModal();closeLesson();}
   else if(a==='finish')closeLesson();
+  else if(a==='share'){doShare(b.dataset.k,b.dataset.id);}
   else if(a==='goal'){S.goal=+b.dataset.g;save();render();}
   else if(a==='course'){S.course=b.dataset.c;save();render();window.scrollTo(0,0);}
   else if(a==='dic-open'||a==='dic-peek'){dicOpen(b.dataset.w);}
