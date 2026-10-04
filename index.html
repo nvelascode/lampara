@@ -136,9 +136,11 @@ h1,h2,h3,h4{font-weight:900}
 
 /* ---------- pestañas ---------- */
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:2px solid var(--line);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:6}
-.tabs>div{display:flex;width:100%;max-width:560px;gap:6px}
-.tab{flex:1;display:grid;justify-items:center;gap:1px;padding:6px 4px;border-radius:14px;font-size:12px;font-weight:900;color:var(--muted);border:2px solid transparent}
-.tab svg{width:28px;height:28px}
+.tabs>div{display:flex;width:100%;max-width:560px;gap:2px}
+.tab{flex:1;min-width:0;display:grid;justify-items:center;gap:1px;padding:6px 1px;border-radius:14px;font-size:11px;font-weight:900;color:var(--muted);border:2px solid transparent}
+.tab svg{width:26px;height:26px}
+.tab span{white-space:nowrap}
+@media (max-width:380px){.tab{font-size:10px;padding:6px 0}.tab svg{width:24px;height:24px}}
 .tab.on{color:var(--blue);background:var(--blue-bg);border-color:var(--blue)}
 
 /* ---------- botones ---------- */
@@ -415,6 +417,65 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .chbtn{flex:1;padding:8px 0;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:24px;line-height:1.2}
 .chbtn:active{transform:translateY(2px)}
 .chbtn.sent{background:var(--green-bg);border-color:var(--green)}
+
+/* ---------- plan de lectura ---------- */
+.rdopts{display:grid;gap:10px}
+.rdopt{display:flex;gap:12px;align-items:flex-start;text-align:left;padding:12px 14px;border-radius:18px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface)}
+.rdopt .ri{font-size:28px;line-height:1.1}
+.rdopt b{display:block;font-size:17px}
+.rdopt .rd-d{display:block;font-size:14px;color:var(--muted);font-weight:700;line-height:1.35}
+.rdopt.on{border-color:var(--blue);background:var(--blue-bg)}
+.rdpills{display:flex;gap:8px;flex-wrap:wrap}
+.rdpill{flex:1;min-width:104px;padding:10px 8px;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;font-weight:900;background:var(--surface);line-height:1.25}
+.rdpill small{display:block;font-size:12px;color:var(--muted);font-weight:800}
+.rdpill.on{border-color:var(--blue);color:var(--blue-ink);background:var(--blue-bg)}
+.rdinp{width:100%;font:inherit;font-weight:800;padding:11px 12px;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink);margin-top:10px}
+.rdsum{background:var(--green-bg);border:2px solid var(--green);border-radius:16px;padding:12px 14px;font-weight:800;font-size:15px;line-height:1.5;margin:4px 0 14px}
+.rdmeta{margin:-6px 0 14px;color:var(--muted);font-weight:800;font-size:14px;line-height:1.4}
+.rdstreak .rdsrow{display:flex;align-items:center;gap:12px}
+.rdstreak .rdbig{font-size:40px;line-height:1}
+.rdstreak .rdsn b{display:block;font-size:32px;line-height:1;color:var(--blue-ink)}
+.rdstreak .rdsn span{color:var(--muted);font-weight:800;font-size:14px}
+.rdstreak .rdbest{margin-left:auto;text-align:center;font-weight:900;font-size:18px;color:var(--purple-d)}
+.rdstreak .rdbest small{display:block;font-size:11px;color:var(--muted);font-weight:800}
+.dot.rd.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.dot.rd.today{border-color:var(--blue)}
+.rdtoday{border-color:var(--blue);background:var(--blue-bg)}
+.rdtag{display:inline-block;background:var(--blue);color:#fff;font-weight:900;font-size:13px;border-radius:999px;padding:2px 12px;margin-bottom:8px}
+.rdp{margin:6px 0 8px}
+.rdp small{display:block;font-size:12px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.rdp b{display:block;font-size:20px;line-height:1.3}
+a.btn{text-decoration:none;text-align:center}
+.rdbarrow{display:flex;justify-content:space-between;align-items:baseline;margin:10px 0 4px;font-size:15px}
+.rdbarrow span{color:var(--muted);font-weight:800}
+.rdbw{display:flex}.rdbw .bar{width:100%}
+.rdmon{border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;margin:0 0 10px;background:var(--surface);overflow:hidden}
+.rdmon summary{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;cursor:pointer;list-style:none;font-size:16px}
+.rdmon summary::-webkit-details-marker{display:none}
+.rdmon summary span{color:var(--muted);font-weight:800;font-size:14px;margin-left:auto}
+.rdmon summary::after{content:'›';font-size:22px;line-height:1;color:var(--muted);transition:transform .15s}
+.rdmon[open] summary::after{transform:rotate(90deg)}
+.rdrow{display:flex;align-items:stretch;border-top:2px solid var(--line)}
+.rdmain{flex:1;display:flex;gap:12px;align-items:center;text-align:left;padding:10px 4px 10px 12px;min-width:0}
+.rdd{width:38px;text-align:center;flex:none;line-height:1.1}
+.rdd b{display:block;font-size:18px}
+.rdd small{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase}
+.rdt{font-size:14px;font-weight:800;line-height:1.3;color:var(--ink)}
+.rdrow.fut .rdt,.rdrow.fut .rdd{opacity:.55}
+.rdrow.today{background:var(--blue-bg)}
+.rdrow.done .rdt{color:var(--muted)}
+.rdck{width:58px;flex:none;display:grid;place-items:center}
+.rdbox{width:30px;height:30px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;color:transparent}
+.rdbox svg{width:16px;height:16px}
+.rdrow.done .rdbox{background:var(--blue);border-color:var(--blue);color:#fff}
+.rdck:disabled{opacity:.35}
+.bks{display:flex;flex-wrap:wrap;gap:6px;padding:4px 12px 12px}
+.bk{font-size:12px;font-weight:900;padding:4px 8px;border-radius:10px;border:2px solid var(--line);color:var(--muted);background:var(--surface)}
+.bk.part{border-color:var(--blue);color:var(--blue-ink);background:var(--blue-bg)}
+.bk.full{border-color:var(--green);background:var(--green);color:#fff}
+.rdhome .famh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.stat.s5{background:var(--blue-bg);border-color:var(--blue)}
+.stat.s6{background:var(--purple-bg);border-color:var(--purple)}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -1140,6 +1201,7 @@ const IC={
  review:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
  bolt:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2L4.5 13.5h6L9.5 22l10-12.5h-6.2z" fill="currentColor"/></svg>',
  users:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M17 14.5c2.5.2 4 1.8 4 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+ read:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M4 10h16M9 3.5V7M15 3.5V7M9 15l2.2 2.2L15.5 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
  book:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v15H5.5C4.7 19 4 18.3 4 17.5zM20 5.5C20 4.7 19.3 4 18.5 4H13v15h5.5c.8 0 1.5-.7 1.5-1.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>',
  trophy:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v6a5 5 0 0 1-10 0zM7 6H4c0 3 1 4 3 4.5M17 6h3c0 3-1 4-3 4.5M12 15v4M8 20h8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
  star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.9 6.6 19.7l1.1-6.1L3.2 9.4l6.1-.8z" fill="currentColor"/></svg>',
@@ -1227,7 +1289,7 @@ function haptic(pat){
 }
 const pickOne=a=>a[rnd(a.length)];
 const UNIT_EMO={'El alfabeto griego':'🔤','Sonidos y signos':'🔊','Primeras palabras':'📚','Leyendo el Nuevo Testamento':'📜','La creación':'🌍','La caída':'🐍','Los Diez Mandamientos':'📜','Jehová es mi pastor':'🐑','Sermón del Monte':'⛰️','El Evangelio de Juan':'📖','Salvación por gracia':'🎁','Atributos de Dios (1)':'👑','Atributos de Dios (2)':'✨','Doctrinas fundamentales':'🧭','Personajes bíblicos':'🧑‍🤝‍🧑','Eventos bíblicos':'🗺️'};
-const ACH_E={gk1:'🔤',gkabc:'🏛️',gkw:'📚',first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑'};
+const ACH_E={gk1:'🔤',gkabc:'🏛️',gkw:'📚',first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑',rd1:'📖',rd7:'🔖',rd30:'🌅',rdall:'📜'};
 const isStandalone=()=>{try{return !!(window.navigator.standalone||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches));}catch(e){return false;}};
 const isIOS=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent||'');
 
@@ -3315,6 +3377,13 @@ function shareData(kind,id){
       stats:[['⚡','+'+r.xp,'XP','#FFF6CC','#FFC800'],['🎯',r.acc+'%','al primer intento','#D7FFB8','#58CC02'],['🔥',r.streak,'días de racha','#FFEFD0','#FF9600']],
       text:'✅ Completé «'+r.title+'» en Lámpara y gané '+r.xp+' XP. ¿Te animas a hacer la tuya?'+sp};
   }
+  if(kind==='read'){
+    const n=rdStreak(),best=Math.max(S.rdbest||0,n),R=S.rd;let pct=0;
+    if(R){const P=rdPlan(R.plan,R.n);pct=Math.round(100*Object.keys(R.done).reduce((a,i)=>a+(P.vs[i]||0),0)/rdFlat().T);}
+    return {key:'r:'+n+':'+pct,title:'¡Llevo '+n+(n===1?' día':' días')+' leyendo la Biblia!',sub:'con mi plan de lectura',
+      stats:[['📖',n,'días seguidos','#E1F3FF','#1CB0F6'],['🏆',best,'mejor racha','#F3E3FF','#CE82FF'],['📜',pct+'%','de la Biblia','#D7FFB8','#58CC02']],
+      text:'📖 ¡Llevo '+n+(n===1?' día':' días')+' seguidos leyendo la Biblia en Lámpara! ¿Leemos juntos?'+sp};
+  }
   const msgs=[
     '¡Hoy toca Lámpara! 🕯️ Llevo '+S.streak+' días de racha. ¿Hacemos una lección juntos?',
     '¡Ánimo! Con una lección de unos minutos mantenemos la racha 🔥',
@@ -3520,6 +3589,330 @@ async function famLeave(){
   try{const r=await rpc('fam_leave',famArgs());if(r&&r.ok){S.fam.joined=false;S.fam.code=null;FAM.data=null;FAM.cheers=[];save();famRender('Saliste del grupo.');}else famRender(famMsg(r&&r.error));}
   catch(e){famRender('Sin conexión con el servidor. Inténtalo de nuevo.');}
 }
+
+/* ============================================================
+   PLANES DE LECTURA — datos de la Biblia (versículos por capítulo, RVR1960)
+   ============================================================ */
+const RD_B=[
+['Génesis','Gn',[31,25,24,26,32,22,24,22,29,32,32,20,18,24,21,16,27,33,38,18,34,24,20,67,34,35,46,22,35,43,55,32,19,31,29,43,36,30,23,23,57,38,34,34,28,34,31,22,33,26]],
+['Éxodo','Ex',[22,25,22,31,23,30,25,32,35,29,10,51,22,31,27,36,16,27,25,26,36,31,33,18,40,37,21,43,46,38,18,35,23,35,35,38,29,31,43,38]],
+['Levítico','Lv',[17,16,17,35,19,30,38,36,24,20,47,8,59,57,33,34,16,30,37,27,24,33,44,23,55,46,34]],
+['Números','Nm',[54,34,51,49,31,27,89,26,23,36,35,16,33,45,41,50,13,32,22,29,35,41,30,25,18,65,23,31,40,16,54,42,56,29,34,13]],
+['Deuteronomio','Dt',[46,37,29,49,33,25,26,20,29,22,32,32,18,29,23,22,20,22,21,20,23,30,25,22,19,19,26,68,29,20,30,52,29,12]],
+['Josué','Jos',[18,24,17,24,15,27,26,35,27,43,23,24,33,15,63,10,18,28,51,9,45,34,16,33]],
+['Jueces','Jue',[36,23,31,24,31,40,25,35,57,18,40,15,25,20,20,31,13,31,30,48,25]],
+['Rut','Rt',[22,23,18,22]],
+['1 Samuel','1S',[28,36,21,22,12,21,17,22,27,27,15,25,23,52,35,23,58,30,24,42,15,23,29,22,44,25,12,25,11,31,13]],
+['2 Samuel','2S',[27,32,39,12,25,23,29,18,13,19,27,31,39,33,37,23,29,33,43,26,22,51,39,25]],
+['1 Reyes','1R',[53,46,28,34,18,38,51,66,28,29,43,33,34,31,34,34,24,46,21,43,29,53]],
+['2 Reyes','2R',[18,25,27,44,27,33,20,29,37,36,21,21,25,29,38,20,41,37,37,21,26,20,37,20,30]],
+['1 Crónicas','1Cr',[54,55,24,43,26,81,40,40,44,14,47,40,14,17,29,43,27,17,19,8,30,19,32,31,31,32,34,21,30]],
+['2 Crónicas','2Cr',[17,18,17,22,14,42,22,18,31,19,23,16,22,15,19,14,19,34,11,37,20,12,21,27,28,23,9,27,36,27,21,33,25,33,27,23]],
+['Esdras','Esd',[11,70,13,24,17,22,28,36,15,44]],
+['Nehemías','Neh',[11,20,32,23,19,19,73,18,38,39,36,47,31]],
+['Ester','Est',[22,23,15,17,14,14,10,17,32,3]],
+['Job','Job',[22,13,26,21,27,30,21,22,35,22,20,25,28,22,35,22,16,21,29,29,34,30,17,25,6,14,23,28,25,31,40,22,33,37,16,33,24,41,30,24,34,17]],
+['Salmos','Sal',[6,12,8,8,12,10,17,9,20,18,7,8,6,7,5,11,15,50,14,9,13,31,6,10,22,12,14,9,11,12,24,11,22,22,28,12,40,22,13,17,13,11,5,26,17,11,10,14,20,23,19,9,6,7,23,13,11,11,17,12,8,12,11,10,13,20,7,35,36,5,24,20,28,23,10,12,20,72,13,19,16,8,18,12,13,17,7,18,52,17,16,15,5,23,11,13,12,9,9,5,8,28,22,35,45,48,43,13,31,7,10,10,9,8,18,19,2,29,176,7,8,9,4,8,5,6,5,6,8,8,3,18,3,3,21,26,9,8,24,13,10,7,12,15,21,10,20,14,9,6]],
+['Proverbios','Pr',[33,22,35,27,23,35,27,36,18,32,31,28,25,35,33,33,28,24,29,30,31,29,35,34,28,28,27,28,27,33,31]],
+['Eclesiastés','Ec',[18,26,22,16,20,12,29,17,18,20,10,14]],
+['Cantares','Cnt',[17,17,11,16,16,13,13,14]],
+['Isaías','Is',[31,22,26,6,30,13,25,22,21,34,16,6,22,32,9,14,14,7,25,6,17,25,18,23,12,21,13,29,24,33,9,20,24,17,10,22,38,22,8,31,29,25,28,28,25,13,15,22,26,11,23,15,12,17,13,12,21,14,21,22,11,12,19,12,25,24]],
+['Jeremías','Jer',[19,37,25,31,31,30,34,22,26,25,23,17,27,22,21,21,27,23,15,18,14,30,40,10,38,24,22,17,32,24,40,44,26,22,19,32,21,28,18,16,18,22,13,30,5,28,7,47,39,46,64,34]],
+['Lamentaciones','Lm',[22,22,66,22,22]],
+['Ezequiel','Ez',[28,10,27,17,17,14,27,18,11,22,25,28,23,23,8,63,24,32,14,49,32,31,49,27,17,21,36,26,21,26,18,32,33,31,15,38,28,23,29,49,26,20,27,31,25,24,23,35]],
+['Daniel','Dn',[21,49,30,37,31,28,28,27,27,21,45,13]],
+['Oseas','Os',[11,23,5,19,15,11,16,14,17,15,12,14,16,9]],
+['Joel','Jl',[20,32,21]],
+['Amós','Am',[15,16,15,13,27,14,17,14,15]],
+['Abdías','Abd',[21]],
+['Jonás','Jon',[17,10,10,11]],
+['Miqueas','Miq',[16,13,12,13,15,16,20]],
+['Nahúm','Nah',[15,13,19]],
+['Habacuc','Hab',[17,20,19]],
+['Sofonías','Sof',[18,15,20]],
+['Hageo','Hg',[15,23]],
+['Zacarías','Zac',[21,13,10,14,11,15,14,23,17,12,17,14,9,21]],
+['Malaquías','Mal',[14,17,18,6]],
+['Mateo','Mt',[25,23,17,25,48,34,29,34,38,42,30,50,58,36,39,28,27,35,30,34,46,46,39,51,46,75,66,20]],
+['Marcos','Mc',[45,28,35,41,43,56,37,38,50,52,33,44,37,72,47,20]],
+['Lucas','Lc',[80,52,38,44,39,49,50,56,62,42,54,59,35,35,32,31,37,43,48,47,38,71,56,53]],
+['Juan','Jn',[51,25,36,54,47,71,53,59,41,42,57,50,38,31,27,33,26,40,42,31,25]],
+['Hechos','Hch',[26,47,26,37,42,15,60,40,43,48,30,25,52,28,41,40,34,28,41,38,40,30,35,27,27,32,44,31]],
+['Romanos','Ro',[32,29,31,25,21,23,25,39,33,21,36,21,14,23,33,27]],
+['1 Corintios','1Co',[31,16,23,21,13,20,40,13,27,33,34,31,13,40,58,24]],
+['2 Corintios','2Co',[24,17,18,18,21,18,16,24,15,18,33,21,14]],
+['Gálatas','Gl',[24,21,29,31,26,18]],
+['Efesios','Ef',[23,22,21,32,33,24]],
+['Filipenses','Flp',[30,30,21,23]],
+['Colosenses','Col',[29,23,25,18]],
+['1 Tesalonicenses','1Ts',[10,20,13,18,28]],
+['2 Tesalonicenses','2Ts',[12,17,18]],
+['1 Timoteo','1Ti',[20,15,16,16,25,21]],
+['2 Timoteo','2Ti',[18,26,17,22]],
+['Tito','Tit',[16,15,15]],
+['Filemón','Flm',[25]],
+['Hebreos','Heb',[14,18,19,16,14,20,28,13,28,39,40,29,25]],
+['Santiago','Stg',[27,26,18,17,20]],
+['1 Pedro','1P',[25,25,22,19,14]],
+['2 Pedro','2P',[21,22,18]],
+['1 Juan','1Jn',[10,29,24,21,21]],
+['2 Juan','2Jn',[13]],
+['3 Juan','3Jn',[15]],
+['Judas','Jud',[25]],
+['Apocalipsis','Ap',[20,29,22,11,14,17,17,13,21,11,19,17,18,20,8,21,18,24,21,15,27,21]]
+];
+/* ============================================================
+   PLANES DE LECTURA — núcleo (datos + reparto en días)
+   ============================================================ */
+const RD_OT=39;                                   // libros 0–38 = Antiguo Testamento; 39–65 = Nuevo
+const RD_ATOM={'0:32':1,'18:46':1,'63:0':1};      // capítulos que no se parten (Gn 33, Sal 47, 3 Jn): su conteo difiere entre ediciones
+const RD_PLANS={
+  a:{id:'a',name:'De tapa a tapa',icon:'📖',desc:'Del Génesis al Apocalipsis, en orden. Un solo pasaje cada día.'},
+  b:{id:'b',name:'Antiguo y Nuevo Testamento',icon:'⚖️',desc:'Cada día lees un pasaje del Antiguo y uno del Nuevo Testamento.'}
+};
+let RD_FLAT=null;
+function rdFlat(){
+  if(RD_FLAT)return RD_FLAT;
+  const ch=[];let cum=0;
+  RD_B.forEach((b,bi)=>b[2].forEach((len,ci)=>{ch.push({bi,c:ci+1,len,s:cum,e:cum+len,at:!!RD_ATOM[bi+':'+ci]});cum+=len;}));
+  RD_FLAT={ch,T:cum};return RD_FLAT;
+}
+function rdStreamDef(kind){          // kind: 'all' | 'ot' | 'nt'
+  const F=rdFlat();
+  const list=F.ch.filter(c=>kind==='all'||(kind==='ot'?c.bi<RD_OT:c.bi>=RD_OT));
+  const off=list[0].s,T=list[list.length-1].e-off;
+  return {list,off,T};
+}
+/* Divide un flujo de lectura en n días: porciones casi iguales (en versículos),
+   terminando en final de capítulo cuando es posible. Cada versículo cae en un solo día. */
+function rdEnds(def,n){
+  const {list,off,T}=def,t=T/n,bounds=list.map(c=>c.e-off),ends=[];let prev=0;
+  const lb=(a,x)=>{let lo=0,hi=a.length;while(lo<hi){const m=(lo+hi)>>1;if(a[m]<x)lo=m+1;else hi=m;}return lo;};
+  for(let d=0;d<n;d++){
+    let e;
+    if(d===n-1)e=T;
+    else{
+      const ideal=Math.round((d+1)*T/n),i=lb(bounds,ideal);let best=null;
+      [bounds[i],i>0?bounds[i-1]:null].forEach(x=>{if(x!=null&&x>prev&&Math.abs(x-ideal)<=0.5*t&&(best===null||Math.abs(x-ideal)<Math.abs(best-ideal)))best=x;});
+      e=best!==null?best:ideal;
+      const ci=lb(bounds,e+1);                       // capítulo que contiene el versículo e (índice base 0)
+      const c=list[ci];
+      if(c&&c.at&&e>c.s-off&&e<c.e-off){            // no partir capítulos «atómicos»
+        const a=c.s-off,b=c.e-off;
+        e=(a>prev&&Math.abs(a-ideal)<=Math.abs(b-ideal))?a:b;
+      }
+      e=Math.max(prev+1,Math.min(e,T-(n-1-d)));
+    }
+    ends.push(e);prev=e;
+  }
+  return ends;
+}
+const RD_CACHE={};
+function rdPlan(plan,n){
+  const key=plan+':'+n;if(RD_CACHE[key])return RD_CACHE[key];
+  let days;
+  if(plan==='a'){
+    const def=rdStreamDef('all'),ends=rdEnds(def,n);let p=0;
+    days=ends.map(e=>{const r={a:[def.off+p,def.off+e]};p=e;return r;});
+  }else{
+    const o=rdStreamDef('ot'),t=rdStreamDef('nt'),eo=rdEnds(o,n),et=rdEnds(t,n);let po=0,pt=0;
+    days=eo.map((e,i)=>{const r={ot:[o.off+po,o.off+e],nt:[t.off+pt,t.off+et[i]]};po=e;pt=et[i];return r;});
+  }
+  const vs=days.map(d=>rdDayParts(plan,d).reduce((a,p)=>a+(p[1][1]-p[1][0]),0));
+  return RD_CACHE[key]={days,n,plan,vs};
+}
+/* Convierte un rango de versículos [s,e) en texto: «Génesis 3:10–24; 4–5; 6:1–12» */
+function rdChIdx(v){const F=rdFlat();let lo=0,hi=F.ch.length;while(lo<hi){const m=(lo+hi)>>1;if(F.ch[m].e<=v)lo=m+1;else hi=m;}return lo;}
+function rdPartRefs(part){
+  const F=rdFlat(),s=part[0],e=part[1],items=[];
+  for(let i=rdChIdx(s);i<F.ch.length&&F.ch[i].s<e;i++){
+    const c=F.ch[i],a=Math.max(s,c.s)-c.s+1,b=Math.min(e,c.e)-c.s;
+    items.push({bi:c.bi,c:c.c,a,b,whole:a===1&&b===c.len});
+  }
+  const out=[];let cur=null;
+  items.forEach(it=>{
+    if(!cur||cur.bi!==it.bi){cur={bi:it.bi,segs:[]};out.push(cur);}
+    const last=cur.segs[cur.segs.length-1];
+    if(it.whole&&last&&last.whole&&last.to===it.c-1)last.to=it.c;
+    else cur.segs.push({whole:it.whole,from:it.c,to:it.c,a:it.a,b:it.b});
+  });
+  return out.map(g=>({bi:g.bi,name:RD_B[g.bi][0],txt:g.segs.map(sg=>sg.whole?(sg.from===sg.to?''+sg.from:sg.from+'–'+sg.to):(sg.a===sg.b?sg.from+':'+sg.a:sg.from+':'+sg.a+'–'+sg.b)).join('; ')}));
+}
+function rdPartText(part){return rdPartRefs(part).map(g=>g.name+' '+g.txt).join('; ');}
+function rdPartVerses(part){return part[1]-part[0];}
+function rdPartBooks(part){const F=rdFlat(),set=[];for(let i=rdChIdx(part[0]);i<F.ch.length&&F.ch[i].s<part[1];i++){if(set.indexOf(F.ch[i].bi)<0)set.push(F.ch[i].bi);}return set;}
+function rdDayParts(plan,day){return plan==='a'?[['',day.a]]:[['Antiguo Testamento',day.ot],['Nuevo Testamento',day.nt]];}
+/* Duración real del plan: 1 o 2 años de calendario desde la fecha de inicio (365/366 y 730/731 días) */
+function rdSpan(start,yrs){
+  const [y,m,d]=start.split('-').map(Number);
+  const endD=new Date(y+yrs,m-1,d);                        // el 29 de febrero pasa al 1 de marzo si el año destino no es bisiesto
+  const endS=dstr(endD),n=diffDays(start,endS),leaps=[];
+  for(let yy=y;yy<=y+yrs;yy++){
+    if((yy%4===0&&yy%100!==0)||yy%400===0){const f=yy+'-02-29';if(diffDays(start,f)>=0&&diffDays(f,endS)>0)leaps.push(f);}
+  }
+  return {n,end:addDays(start,n-1),leaps};
+}
+
+/* ============================================================
+   PLANES DE LECTURA — pantalla, marcas y racha propia
+   ============================================================ */
+const RD_MON=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const RD_MONF=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const RD_DOW=['dom','lun','mar','mié','jue','vie','sáb'];
+const rdDt=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const rdDate=s=>{const d=rdDt(s);return RD_DOW[d.getDay()]+' '+d.getDate()+' '+RD_MON[d.getMonth()]+' '+d.getFullYear();};
+const rdShort=s=>{const d=rdDt(s);return d.getDate()+' '+RD_MON[d.getMonth()];};
+const rdShortY=s=>{const d=rdDt(s);return d.getDate()+' '+RD_MON[d.getMonth()]+' '+d.getFullYear();};
+const rdNum=x=>String(Math.round(x*10)/10).replace('.',',');
+const rdNd=n=>n+(n===1?' día':' días');
+let RDSET={plan:'a',yrs:1,mode:'today',other:''},RD_OPEN={};
+function rdStartFor(mode,other){
+  const t=today();
+  if(mode==='jan1')return t.slice(5)==='01-01'?t:(+t.slice(0,4)+1)+'-01-01';
+  if(mode==='other'&&/^\d{4}-\d{2}-\d{2}$/.test(other||''))return other;
+  return t;
+}
+/* Racha propia de lectura: días seguidos en los que marcaste alguna lectura (no toca la racha de los cursos) */
+function rdStreak(){
+  const D=S.rdDays||{},t=today();
+  let d=D[t]?t:(D[addDays(t,-1)]?addDays(t,-1):null),n=0;
+  while(d&&D[d]){n++;d=addDays(d,-1);}
+  return n;
+}
+function rdPending(R,idx){let n=0,first=-1;const lim=Math.min(idx,R.n);for(let i=0;i<lim;i++)if(!R.done[i]){n++;if(first<0)first=i;}return {n,first};}
+function rdLinkFor(plan,day){
+  const txt=rdDayParts(plan,day).map(p=>rdPartText(p[1])).join('; ').replace(/–/g,'-');
+  return 'https://www.biblegateway.com/passage/?search='+encodeURIComponent(txt)+'&version=RVR1960';
+}
+function rdPassagesHTML(plan,day){
+  return rdDayParts(plan,day).map(p=>'<div class="rdp">'+(p[0]?'<small>'+p[0]+'</small>':'')+'<b>'+esc(rdPartText(p[1]))+'</b></div>').join('');
+}
+function rdStreakCardHTML(){
+  const cur=rdStreak(),best=Math.max(S.rdbest||0,cur),t=today(),D=S.rdDays||{},wk=[];
+  for(let i=6;i>=0;i--){const d=addDays(t,-i);wk.push('<div class="day"><div class="dot rd'+(D[d]?' on':'')+(i===0?' today':'')+'">'+IC.check+'</div>'+DOW[rdDt(d).getDay()]+'</div>');}
+  return '<section class="card rdstreak"><div class="rdsrow"><span class="rdbig">📖</span><div class="rdsn"><b>'+cur+'</b><span>'+(cur===1?'día seguido':'días seguidos')+'</span></div><div class="rdbest">🏆 '+best+'<small>mejor</small></div></div><div class="week">'+wk.join('')+'</div></section>';
+}
+function readSetupHTML(){
+  const t=today(),st=rdStartFor(RDSET.mode,RDSET.other),sp1=rdSpan(st,1),sp2=rdSpan(st,2),sp=RDSET.yrs===2?sp2:sp1;
+  const jan1=rdStartFor('jan1');
+  const perDay=RDSET.plan==='a'?'Unos '+rdNum(1189/sp.n)+' capítulos al día.':'Unos '+rdNum(929/sp.n)+' capítulos del Antiguo y '+rdNum(260/sp.n)+' del Nuevo Testamento al día.';
+  const leap=sp.leaps.length?'Este periodo incluye el 29 de febrero de '+sp.leaps.map(x=>x.slice(0,4)).join(' y ')+', por eso dura '+sp.n+' días.':'Este periodo no incluye un 29 de febrero, así que dura '+sp.n+' días.';
+  const opts=Object.values(RD_PLANS).map(p=>'<button class="rdopt '+(RDSET.plan===p.id?'on':'')+'" data-a="rd-plan" data-p="'+p.id+'"><span class="ri">'+p.icon+'</span><span><b>'+esc(p.name)+'</b><span class="rd-d">'+esc(p.desc)+'</span></span></button>').join('');
+  const pills=[1,2].map(y=>{const s=y===1?sp1:sp2;return '<button class="rdpill '+(RDSET.yrs===y?'on':'')+'" data-a="rd-yrs" data-y="'+y+'">'+(y===1?'1 año':'2 años')+'<small>'+s.n+' días</small></button>';}).join('');
+  const modes=[['today','Hoy ('+rdShort(t)+')'],['jan1','1 de enero de '+jan1.slice(0,4)],['other','Otra fecha']].map(m=>'<button class="rdpill '+(RDSET.mode===m[0]?'on':'')+'" data-a="rd-mode" data-m="'+m[0]+'">'+m[1]+'</button>').join('');
+  return '<h1 class="page">Lectura de la Biblia</h1>'+
+   '<div class="hero">'+mascot('happy',84)+'<div class="bubble">Lee toda la Biblia, un día a la vez, sin repetir ningún libro. Tú marcas cada lectura.</div></div>'+
+   '<section class="sec"><h3>1. Elige tu plan</h3><div class="rdopts">'+opts+'</div></section>'+
+   '<section class="sec"><h3>2. ¿En cuánto tiempo?</h3><div class="rdpills">'+pills+'</div></section>'+
+   '<section class="sec"><h3>3. ¿Cuándo empiezas?</h3><div class="rdpills">'+modes+'</div>'+
+   (RDSET.mode==='other'?'<input type="date" id="rdother" class="rdinp" value="'+esc(RDSET.other||t)+'" min="'+addDays(t,-365)+'" max="'+addDays(t,730)+'" aria-label="Fecha de inicio">':'')+'</section>'+
+   '<div class="rdsum"><b>'+esc(rdDate(st))+'</b> → <b>'+esc(rdDate(sp.end))+'</b><br>'+rdNd(sp.n)+'. '+esc(perDay)+'<br><span class="muted">🗓️ '+esc(leap)+'</span>'+(diffDays(t,st)>0?'<br><span class="muted">Empiezas en '+rdNd(diffDays(t,st))+'.</span>':'')+(diffDays(t,st)<0?'<br><span class="muted">Empezaste hace '+rdNd(-diffDays(t,st))+': podrás marcar las lecturas que ya hiciste.</span>':'')+'</div>'+
+   '<button class="btn" data-a="rd-start">Comenzar mi plan</button>'+
+   '<p class="foot">Cada plan lee los 66 libros una sola vez, de Génesis a Apocalipsis, sin repetir ningún capítulo. Esta racha es aparte de la de tus lecciones.</p>';
+}
+function rdRowHTML(R,P,i,idx){
+  const d=addDays(R.start,i),dt=rdDt(d),done=!!R.done[i],fut=i>idx;
+  const txt=rdDayParts(R.plan,P.days[i]).map(p=>rdPartText(p[1])).join(' · ');
+  return '<div class="rdrow'+(done?' done':'')+(i===idx?' today':'')+(fut?' fut':'')+'"><button class="rdmain" data-a="rd-day" data-i="'+i+'" aria-label="Día '+(i+1)+': '+esc(txt)+'"><span class="rdd"><b>'+dt.getDate()+'</b><small>'+RD_DOW[dt.getDay()]+'</small></span><span class="rdt">'+esc(txt)+'</span></button>'+
+   '<button class="rdck" data-a="rd-toggle" data-i="'+i+'" aria-label="'+(done?'Desmarcar':'Marcar')+' lectura del día '+(i+1)+'" '+(fut?'disabled':'')+'><span class="rdbox">'+IC.check+'</span></button></div>';
+}
+function rdCalHTML(R,P,idx){
+  const months=[],focus=Math.min(Math.max(idx,0),R.n-1);let cur=null;
+  for(let i=0;i<R.n;i++){
+    const k=addDays(R.start,i).slice(0,7);
+    if(!cur||cur.k!==k){cur={k,items:[],done:0,focus:false};months.push(cur);}
+    cur.items.push(i);if(R.done[i])cur.done++;if(i===focus)cur.focus=true;
+  }
+  return months.map(m=>{
+    const y=+m.k.slice(0,4),mo=+m.k.slice(5);
+    const open=RD_OPEN[m.k]!==undefined?RD_OPEN[m.k]:m.focus;
+    return '<details class="rdmon" data-k="'+m.k+'"'+(open?' open':'')+'><summary><b>'+RD_MONF[mo-1]+' '+y+'</b><span>'+m.done+' / '+m.items.length+'</span></summary>'+m.items.map(i=>rdRowHTML(R,P,i,idx)).join('')+'</details>';
+  }).join('');
+}
+function rdBooksHTML(R,P){
+  const st={};
+  P.days.forEach((d,i)=>{const bs=[];rdDayParts(R.plan,d).forEach(p=>rdPartBooks(p[1]).forEach(b=>{if(bs.indexOf(b)<0)bs.push(b);}));bs.forEach(b=>{const x=st[b]||(st[b]={t:0,d:0});x.t++;if(R.done[i])x.d++;});});
+  let full=0;
+  const chips=RD_B.map((b,bi)=>{const x=st[bi]||{t:1,d:0},c=x.d>=x.t?'full':x.d>0?'part':'';if(c==='full')full++;return '<span class="bk '+c+'" title="'+esc(b[0])+'">'+esc(b[1])+'</span>';}).join('');
+  return '<details class="rdmon" data-k="libros"'+(RD_OPEN.libros?' open':'')+'><summary><b>🗺️ Mis 66 libros</b><span>'+full+' de 66</span></summary><div class="bks">'+chips+'</div><p class="foot" style="margin:0;padding:0 12px 12px">Verde: libro terminado. Azul: libro en proceso.</p></details>';
+}
+function readHTML(){
+  const R=S.rd;if(!R)return readSetupHTML();
+  const P=rdPlan(R.plan,R.n),t=today(),idx=diffDays(R.start,t),F=rdFlat(),plan=RD_PLANS[R.plan];
+  const dn=Object.keys(R.done).length,pend=rdPending(R,idx);
+  const readV=Object.keys(R.done).reduce((a,i)=>a+(P.vs[i]||0),0),pctV=Math.round(100*readV/F.T),pctD=Math.round(100*dn/R.n);
+  const leaps=rdSpan(R.start,R.yrs).leaps;
+  let card;
+  if(dn>=R.n){
+    card='<section class="card rdtoday"><div style="display:flex;justify-content:center">'+mascot('cheer',120)+'</div><h2 style="text-align:center;margin:6px 0">¡Terminaste la Biblia!</h2><p style="text-align:center;margin:0 0 12px">Leíste los 66 libros, de Génesis a Apocalipsis, sin repetir ninguno.</p><button class="btn" data-a="rd-reset">Empezar otro plan</button></section>';
+  }else if(idx<0){
+    card='<section class="card rdtoday"><span class="rdtag">⏳ Tu plan empieza pronto</span><p style="margin:6px 0 10px;font-size:17px;font-weight:800">Empieza el <b>'+esc(rdDate(R.start))+'</b>, en '+rdNd(-idx)+'. Así será el primer día:</p>'+rdPassagesHTML(R.plan,P.days[0])+'</section>';
+  }else if(idx>=R.n){
+    card='<section class="card rdtoday"><span class="rdtag">📅 Terminó el tiempo de tu plan</span><p style="margin:6px 0 10px;font-size:17px;font-weight:800">Aún te quedan '+rdNd(R.n-dn)+' por leer. ¡Puedes ponerte al día cuando quieras!</p>'+(pend.first>=0?'<button class="btn" data-a="rd-day" data-i="'+pend.first+'">Ir a la primera pendiente</button>':'')+'</section>';
+  }else{
+    const day=P.days[idx],done=!!R.done[idx];
+    card='<section class="card rdtoday"><span class="rdtag">📖 Lectura de hoy · día '+(idx+1)+' de '+R.n+'</span><p class="muted" style="margin:0 0 4px;font-weight:800">'+esc(rdDate(t))+'</p>'+rdPassagesHTML(R.plan,day)+
+     '<div class="row2" style="margin:12px 0 0"><a class="btn ghost" href="'+rdLinkFor(R.plan,day)+'" target="_blank" rel="noopener">Abrir pasaje</a><button class="btn '+(done?'good':'blue')+'" data-a="rd-toggle" data-i="'+idx+'">'+(done?'✔ Leído':'Marcar leído')+'</button></div>'+(done?'<p class="muted" style="margin:8px 0 0;font-size:13px">Toca «Leído» si quieres desmarcarlo.</p>':'')+'</section>';
+  }
+  const late=(pend.n>0&&dn<R.n&&idx>=0&&idx<R.n)?'<section class="card"><b>📚 Tienes '+pend.n+(pend.n===1?' lectura atrasada':' lecturas atrasadas')+'</b><p class="muted" style="margin:4px 0 10px;font-size:14px">No pasa nada: puedes ponerte al día cuando quieras.</p><button class="btn ghost sm" data-a="rd-day" data-i="'+pend.first+'">Ver la más antigua</button></section>':'';
+  const st=rdStreak();
+  return '<h1 class="page">Lectura</h1><p class="rdmeta">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+' · '+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+
+   rdStreakCardHTML()+card+late+
+   '<section class="card"><b>Tu avance</b><div class="rdbarrow"><span>Días leídos</span><b>'+dn+' de '+R.n+'</b></div><div class="rdbw"><div class="bar" style="--gcol:var(--blue)"><i style="width:'+pctD+'%"></i></div></div>'+
+   '<div class="rdbarrow" style="margin-top:12px"><span>Biblia leída</span><b>'+pctV+'%</b></div><div class="rdbw"><div class="bar"><i style="width:'+pctV+'%"></i></div></div></section>'+
+   rdBooksHTML(R,P)+
+   '<h3 style="margin:18px 0 8px">Calendario</h3>'+rdCalHTML(R,P,idx)+
+   '<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">'+(st>0?'<button class="btn ghost sm" data-a="share" data-k="read">📣 Compartir mi racha</button>':'')+'<button class="link-danger" data-a="rd-reset">Cambiar o reiniciar mi plan</button></div>'+
+   '<p class="foot">Para leer, usa tu Biblia de siempre o toca «Abrir pasaje». Cada día que marques una lectura suma a tu racha de lectura.</p>';
+}
+function rdHomeHTML(){
+  const R=S.rd;if(!R)return '';
+  const idx=diffDays(R.start,today());
+  if(idx<0||idx>=R.n||Object.keys(R.done).length>=R.n)return '';
+  const P=rdPlan(R.plan,R.n),done=!!R.done[idx],cur=rdStreak();
+  return '<section class="card rdhome"><div class="famh"><b>📖 Lectura de hoy</b><span class="muted">'+cur+(cur===1?' día':' días')+' de racha</span></div>'+rdPassagesHTML(R.plan,P.days[idx])+
+   '<div class="row2" style="margin:8px 0 0"><button class="btn ghost sm" data-a="tab" data-t="read">Ver plan</button><button class="btn sm '+(done?'good':'blue')+'" data-a="rd-toggle" data-i="'+idx+'">'+(done?'✔ Leído':'Marcar leído')+'</button></div></section>';
+}
+function rdStatsHTML(){
+  if(!S.rd&&!(S.rdbest>0))return '';
+  const cur=rdStreak();
+  return '<div class="stat s5"><span class="se">📖</span><div><b>'+cur+'</b><span>Racha de lectura</span></div></div><div class="stat s6"><span class="se">🔖</span><div><b>'+Math.max(S.rdbest||0,cur)+'</b><span>Mejor racha lectura</span></div></div>';
+}
+function rdStartPlan(){
+  const st=rdStartFor(RDSET.mode,RDSET.other),sp=rdSpan(st,RDSET.yrs);
+  S.rd={plan:RDSET.plan,yrs:RDSET.yrs,start:st,n:sp.n,done:{}};
+  save();render();window.scrollTo(0,0);confetti(60);beep('win');
+}
+function rdToggle(i){
+  const R=S.rd;if(!R||!(i>=0&&i<R.n))return;
+  const t=today();
+  if(diffDays(R.start,t)<i){toast('Todavía no llega ese día.');return;}
+  S.rdDays=S.rdDays||{};
+  if(R.done[i]){
+    const d=R.done[i];delete R.done[i];
+    S.rdDays[d]=(S.rdDays[d]||1)-1;if(S.rdDays[d]<=0)delete S.rdDays[d];
+    save();render();return;
+  }
+  R.done[i]=t;S.rdDays[t]=(S.rdDays[t]||0)+1;
+  const st=rdStreak();if(st>(S.rdbest||0))S.rdbest=st;
+  let finished=false;
+  if(Object.keys(R.done).length>=R.n&&!S.rdDone){S.rdDone=true;finished=true;}
+  const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);
+  save();
+  beep(finished?'win':'good');haptic([15]);confetti(finished?180:30);
+  toast(finished?'📜 ¡Terminaste la Biblia!':fresh.length?'🏅 Logro: '+fresh[0].t:(st>1?'📖 ¡Racha de lectura: '+st+' días!':'📖 ¡Lectura marcada!'));
+  render();
+}
+function rdDayModal(i){
+  const R=S.rd;if(!R)return;
+  const P=rdPlan(R.plan,R.n),day=P.days[i];if(!day)return;
+  const idx=diffDays(R.start,today()),done=!!R.done[i],fut=i>idx;
+  showModal('<h3>Día '+(i+1)+' de '+R.n+'</h3><p class="muted" style="margin:0 0 8px;font-weight:800">'+esc(rdDate(addDays(R.start,i)))+'</p>'+rdPassagesHTML(R.plan,day)+
+   '<a class="btn blue" href="'+rdLinkFor(R.plan,day)+'" target="_blank" rel="noopener">Abrir pasaje</a>'+
+   (fut?'<p class="muted" style="margin:10px 0">Todavía no llega este día.</p>':'<button class="btn '+(done?'ghost':'')+'" data-a="rd-tog-close" data-i="'+i+'">'+(done?'Desmarcar lectura':'Marcar como leído')+'</button>')+
+   '<button class="btn ghost" data-a="stay">Cerrar</button>');
+}
+
 function dicList(q){
   q=(q||'').trim().toLowerCase();
   const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -3574,7 +3967,7 @@ ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>
    ESTADO Y ALMACENAMIENTO (localStorage protegido)
    ============================================================ */
 const KEY='lampara.rvr1960.v1';
-const defaults=()=>({course:'bib',gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0});
+const defaults=()=>({course:'bib',gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false});
 let S=defaults();
 function idbOpen(cb){
   try{
@@ -3637,7 +4030,11 @@ const ACH=[
  {id:'gkabc',t:'De alfa a omega',d:'Termina las lecciones del alfabeto griego',f:s=>GK_UNITS[0].lessons.every(l=>s.done[l.title])},
  {id:'gkw',t:'Vocabulario griego',d:'Termina las 7 lecciones de palabras',f:s=>GK_UNITS[2].lessons.every(l=>s.done[l.title])},
  {id:'rev',t:'Primer repaso',d:'Completa un repaso diario',f:s=>s.reviews>=1},
- {id:'all',t:'Curso completo',d:'Termina todas las lecciones',f:s=>ALLKEYS.every(k=>s.done[k])}
+ {id:'all',t:'Curso completo',d:'Termina todas las lecciones',f:s=>ALLKEYS.every(k=>s.done[k])},
+ {id:'rd1',t:'Primera lectura',d:'Marca tu primera lectura del plan',f:s=>Object.keys(s.rdDays||{}).length>=1},
+ {id:'rd7',t:'Siete días en la Palabra',d:'Lee 7 días seguidos en tu plan de lectura',f:s=>(s.rdbest||0)>=7},
+ {id:'rd30',t:'Un mes en la Palabra',d:'Lee 30 días seguidos en tu plan de lectura',f:s=>(s.rdbest||0)>=30},
+ {id:'rdall',t:'Toda la Biblia',d:'Termina un plan de lectura de la Biblia',f:s=>!!s.rdDone}
 ];
 
 /* ============================================================
@@ -3971,7 +4368,7 @@ function renderTop(){
    '<span class="chip xp" aria-label="'+S.xp+' puntos de experiencia">'+IC.bolt+S.xp+'</span></div>';
 }
 function renderTabs(){
-  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],['dic','Palabras',IC.book],['games','Juegos',IC.users],['me','Perfil',IC.trophy]];
+  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],['read','Lectura',IC.read],['dic','Palabras',IC.book],['games','Juegos',IC.users],['me','Perfil',IC.trophy]];
   $('#tabs').firstElementChild.innerHTML=tabs.map(t=>'<button class="tab '+(TAB===t[0]?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(TAB===t[0]?'aria-current="page"':'')+'>'+t[2]+'<span>'+t[1]+'</span></button>').join('');
 }
 function homeHTML(){
@@ -4001,7 +4398,7 @@ function homeHTML(){
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+sw+
-  '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+famHomeHTML()+
+  '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+famHomeHTML()+rdHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
@@ -4027,7 +4424,7 @@ function meHTML(){
    '<div class="stat s1"><span class="se">🔥</span><div><b>'+S.streak+'</b><span>Racha actual</span></div></div>'+
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
-   '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length)+'</b><span>Lecciones</span></div></div></div>'+
+   '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+
    famCardHTML()+'<section class="card"><b>📣 Compartir y animar</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha o anima a alguien a hacer su lección. Se envía por WhatsApp o por donde quieras.</p><div class="row2" style="margin:0"><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button><button class="btn ghost sm" data-a="share" data-k="cheer">Animar a alguien</button></div></section>'+
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
@@ -4043,7 +4440,7 @@ function render(){
   refreshStreak();renderTop();renderTabs();
   if(famJoined())setTimeout(()=>famPoll(),60);
   if(TAB==='me')setTimeout(()=>{prepShare('streak').catch(()=>{});},150);
-  $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():meHTML();
+  $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='read'?readHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():meHTML();
 }
 
 /* ============================================================
@@ -4466,7 +4863,9 @@ function gAct(a,b){
   else if(a==='g-again'){const id=G.id,game=G.game;G={id,game};gStart();}
   else if(a==='g-exit')gClose();
 }
-document.addEventListener('input',e=>{
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rdother'){RDSET.other=t.value;render();}});
+  document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('rdmon')&&t.dataset.k)RD_OPEN[t.dataset.k]=t.open;},true);
+  document.addEventListener('input',e=>{
   const t=e.target;
   if(t&&t.id==='dicq'){const l=$('#diclist');if(l)l.innerHTML=dicList(t.value);return;}
   if(t.classList&&t.classList.contains('inp')){const i=+t.dataset.i;S.g.names[i]=t.value;save();}
@@ -4507,6 +4906,15 @@ document.addEventListener('click',e=>{
   else if(a==='leave'){hideModal();closeLesson();}
   else if(a==='finish')closeLesson();
   else if(a==='share'){doShare(b.dataset.k,b.dataset.id);}
+  else if(a==='rd-plan'){RDSET.plan=b.dataset.p;render();}
+  else if(a==='rd-yrs'){RDSET.yrs=+b.dataset.y;render();}
+  else if(a==='rd-mode'){RDSET.mode=b.dataset.m;if(RDSET.mode==='other'&&!RDSET.other)RDSET.other=today();render();}
+  else if(a==='rd-start'){rdStartPlan();}
+  else if(a==='rd-toggle'){rdToggle(+b.dataset.i);}
+  else if(a==='rd-day'){rdDayModal(+b.dataset.i);}
+  else if(a==='rd-tog-close'){hideModal();rdToggle(+b.dataset.i);}
+  else if(a==='rd-reset'){showModal('<h3>¿Empezar un plan nuevo?</h3><p>Se borrarán las lecturas que marcaste en este plan. Tu racha de lectura y tus logros se conservan.</p><button class="btn" data-a="stay">Seguir con mi plan</button><button class="btn ghost" data-a="rd-reset-yes">Sí, empezar de nuevo</button>');}
+  else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
   else if(a==='fam-open'){famOpen();}
   else if(a==='fam-close'){famClose();}
   else if(a==='fam-av'){famEdit.name=(($('#fname')||{}).value||famEdit.name);famEdit.avatar=b.dataset.v;famRender();}
