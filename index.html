@@ -136,6 +136,10 @@ h1,h2,h3,h4{font-weight:900}
 
 /* ---------- pestañas ---------- */
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:2px solid var(--line);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:6}
+.goto{position:fixed;right:14px;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:7;display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;background:var(--blue);color:#fff;font-weight:900;font-size:15px;border:0;border-bottom:4px solid rgba(0,0,0,.22);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.goto:active{transform:translateY(2px);border-bottom-width:2px}
+.goto[hidden]{display:none}
+.stop.ping .node{animation:pulse .5s ease-in-out 3}
 .tabs>div{display:flex;width:100%;max-width:560px;gap:2px}
 .tab{flex:1;min-width:0;display:grid;justify-items:center;gap:1px;padding:6px 1px;border-radius:14px;font-size:11px;font-weight:900;color:var(--muted);border:2px solid transparent}
 .tab svg{width:26px;height:26px}
@@ -553,6 +557,7 @@ a.btn{text-decoration:none;text-align:center}
   <main id="main"><div class="splash"><div class="spl">🕯️</div><b>Cargando a Lampy…</b></div></main>
 </div>
 <nav class="tabs" id="tabs" aria-label="Secciones"><div></div></nav>
+<button id="goto" class="goto" data-a="goto" hidden aria-label="Ir a mi lección"></button>
 <div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
 <div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
 <div id="dic" class="overlay" role="dialog" aria-modal="true" aria-label="Diccionario" hidden></div>
@@ -4412,7 +4417,7 @@ ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>
    ESTADO Y ALMACENAMIENTO (localStorage protegido)
    ============================================================ */
 const KEY='lampara.rvr1960.v1';
-const defaults=()=>({course:'bib',gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0});
+const defaults=()=>({course:'bib',theme:'auto',gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0});
 let S=defaults();
 function idbOpen(cb){
   try{
@@ -4425,11 +4430,21 @@ function idbOpen(cb){
 function idbSet(val){idbOpen(db=>{if(!db)return;try{db.transaction('kv','readwrite').objectStore('kv').put(val,'S');}catch(e){}});}
 function idbGet(cb){idbOpen(db=>{if(!db)return cb(null);try{const g=db.transaction('kv').objectStore('kv').get('S');g.onsuccess=()=>cb(g.result||null);g.onerror=()=>cb(null);}catch(e){cb(null);}});}
 function save(){const j=JSON.stringify(S);try{localStorage.setItem(KEY,j);}catch(e){}idbSet(j);}
+function applyTheme(){
+  try{
+    const t=(S&&S.theme)||'auto',r=document.documentElement;
+    if(t==='dark'||t==='light')r.setAttribute('data-theme',t);else r.removeAttribute('data-theme');
+    const dark=t==='dark'||(t!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+    const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',dark?'#131F24':'#58CC02');
+  }catch(e){}
+}
+try{if(window.matchMedia)window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>applyTheme());}catch(e){}
 function load(){
   let found=false;
   try{const r=localStorage.getItem(KEY);if(r){S=Object.assign(defaults(),JSON.parse(r));found=true;}}catch(e){}
   if(!found)idbGet(v=>{if(v){try{S=Object.assign(defaults(),JSON.parse(v));render();}catch(e){}}});
   try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
+  applyTheme();
 }
 function exportCode(){return 'LAMP1.'+btoa(unescape(encodeURIComponent(JSON.stringify(S))));}
 function importCode(c){
@@ -5297,6 +5312,7 @@ function meHTML(){
    famCardHTML()+giftsCardHTML()+'<section class="card"><b>📣 Compartir y animar</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha o anima a alguien a hacer su lección. Se envía por WhatsApp o por donde quieras.</p><div class="row2" style="margin:0"><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button><button class="btn ghost sm" data-a="share" data-k="cheer">Animar a alguien</button></div></section>'+
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
+   '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lámpara. «Automático» sigue el modo de tu teléfono.</p><div class="seg">'+[['auto','Automático'],['light','Claro'],['dark','Oscuro']].map(o=>'<button class="'+((S.theme||'auto')===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    '<section class="card"><b>🛡️ Protectores de racha</b><p class="muted" style="margin:2px 0 0;font-size:14px">Tienes '+S.freezes+' de 2. Ganas uno cada 7 días de racha y se usa solo si un día no alcanzas a practicar.</p></section>'+
    '<h3 style="margin:18px 0 2px">Logros</h3><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
@@ -5305,11 +5321,34 @@ function meHTML(){
    '<div style="margin-top:14px"><button class="link-danger" data-a="reset">'+(resetArmed?'Toca otra vez para borrar todo el progreso':'Borrar progreso')+'</button></div>'+
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
+/* «Ir a mi lección»: lleva a la primera lección sin hacer (la que la ruta marca con ¡EMPIEZA!).
+   Aunque el avance esté en dos grupos (lecciones antiguas ya hechas y lecciones nuevas), las lecciones
+   sin hacer solo se desbloquean en orden, así que esa es siempre la que toca. */
+function myLessonNode(){return document.querySelector('.node.current');}
+function updateGoto(){
+  const b=document.getElementById('goto');if(!b)return;
+  const n=(typeof TAB!=='undefined'&&TAB==='path')?myLessonNode():null;
+  const open=(L&&!document.getElementById('lesson').hidden)||(document.getElementById('game')&&!document.getElementById('game').hidden);
+  if(!n||open){b.hidden=true;return;}
+  const r=n.getBoundingClientRect(),vh=window.innerHeight||800;
+  if(r.bottom<90||r.top>vh-130){b.hidden=false;b.innerHTML='<span aria-hidden="true">'+(r.top>vh-130?'⬇️':'⬆️')+'</span> Ir a mi lección';}
+  else b.hidden=true;
+}
+function gotoMyLesson(){
+  const n=myLessonNode();if(!n){toast('Ya terminaste todas las lecciones de este curso.');return;}
+  try{n.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){n.scrollIntoView();}
+  const stop=n.closest('.stop');if(stop){stop.classList.add('ping');setTimeout(()=>stop.classList.remove('ping'),1800);}
+  setTimeout(updateGoto,700);
+}
+let _gtRaf=0;
+window.addEventListener('scroll',()=>{if(_gtRaf)return;_gtRaf=requestAnimationFrame(()=>{_gtRaf=0;updateGoto();});},{passive:true});
+window.addEventListener('resize',()=>updateGoto());
 function render(){
-  refreshStreak();renderTop();renderTabs();
+  applyTheme();refreshStreak();renderTop();renderTabs();
   if(famJoined())setTimeout(()=>famPoll(),60);
   if(TAB==='me')setTimeout(()=>{prepShare('streak').catch(()=>{});},150);
   $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='read'?readHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():meHTML();
+  setTimeout(updateGoto,50);
 }
 
 /* ============================================================
@@ -5646,14 +5685,26 @@ const GCONV=[
 const canSpeak=()=>{try{return 'speechSynthesis' in window;}catch(e){return false;}};
 const sayClean=t=>String(t).replace(/[«»]/g,'').replace(/_{2,}/g,'...');
 const sayRef=r=>r.replace(':',' versículo ').replace('-',' al ');
+/* La voz lee el texto en trozos, con una pausa entre ellos. Se cortan en el guion largo (—) y en «||».
+   Así, en «Según Proverbios…, ¿con qué fundó Jehová la tierra? — «Con fuerza»» hace una pausa antes de la respuesta propuesta. */
+let SPK_TOKEN=0,SPK_PAUSE=700;
+function stopSpeak(){SPK_TOKEN++;try{if(canSpeak())speechSynthesis.cancel();}catch(e){}}
 function speak(t){
   if(!S.g.voice||!canSpeak()||!t)return;
   try{
     speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(sayClean(t));
+    const token=++SPK_TOKEN;
+    const parts=String(t).split(/\s*(?:\u2014|\|\|)\s*/).map(x=>x.trim()).filter(Boolean);
     const v=(speechSynthesis.getVoices()||[]).find(x=>/^es/i.test(x.lang));
-    if(v){u.voice=v;u.lang=v.lang;}else u.lang='es-ES';
-    u.rate=.95;speechSynthesis.speak(u);
+    const next=i=>{
+      if(token!==SPK_TOKEN||i>=parts.length)return;
+      const u=new SpeechSynthesisUtterance(sayClean(parts[i]));
+      if(v){u.voice=v;u.lang=v.lang;}else u.lang='es-ES';
+      u.rate=.95;
+      u.onend=()=>{if(i+1<parts.length)setTimeout(()=>next(i+1),SPK_PAUSE);};
+      speechSynthesis.speak(u);
+    };
+    next(0);
   }catch(e){}
 }
 const nameOf=i=>((S.g.names[i]||'').trim())||('Jugador '+(i+1));
@@ -5687,7 +5738,7 @@ function vfItem(p){
 }
 function mkItem(label,html,say,ansHtml,ansSay){return {label,html,say,ansHtml,ansSay};}
 function dQuien(n){return gTake('quien',GQUIEN,x=>x.q,n).map(x=>mkItem('¿Quién dijo esto?','<blockquote class="verse gbig">'+esc(x.q)+'</blockquote>','¿Quién dijo esto? '+x.q,'<b>'+esc(x.a)+'</b><span>'+esc(x.ref)+'</span>',x.a+'. '+sayRef(x.ref)));}
-function dVF(n){return vfTake(n).map(p=>{const x=vfItem(p);return mkItem('¿Verdadero o falso?','<blockquote class="verse gbig">'+esc(x.c)+'</blockquote>','¿Verdadero o falso? '+x.c,'<b>'+(x.truth?'Verdadero':'Falso')+'</b><span>'+esc(x.ref)+'</span><p>'+esc(x.why)+'</p>',(x.truth?'Verdadero. ':'Falso. ')+x.why+' '+sayRef(x.ref));});}
+function dVF(n){return vfTake(n).map(p=>{const x=vfItem(p);return mkItem('¿Verdadero o falso?','<blockquote class="verse gbig">'+esc(x.c)+'</blockquote>','¿Verdadero o falso? || '+x.c,'<b>'+(x.truth?'Verdadero':'Falso')+'</b><span>'+esc(x.ref)+'</span><p>'+esc(x.why)+'</p>',(x.truth?'Verdadero. ':'Falso. ')+x.why+' '+sayRef(x.ref));});}
 function dPers(n){return gTake('pers',GPERS,x=>x.a,n).map(x=>{const it=mkItem('¿Quién es este personaje?','','','<b>'+esc(x.a)+'</b>',x.a);it.clues=x.c;return it;});}
 function dComp(n){
   const vs=gTake('comp',ALLV.filter(v=>v.t.split(/\s+/).length<=26&&BLANKS[v.r]),v=>v.r,n);
@@ -5719,7 +5770,7 @@ function gamesHTML(){
 }
 function gShow(){$('#game').hidden=false;document.body.style.overflow='hidden';}
 function gTheme(){const el=$('#game');el.className='overlay gamed';if(G&&G.game){el.style.setProperty('--gc',G.game.c);el.style.setProperty('--gcol',G.game.c);}}
-function gClose(){if(canSpeak())try{speechSynthesis.cancel();}catch(e){}$('#game').hidden=true;$('#game').innerHTML='';$('#game').className='overlay';document.body.style.overflow='';G=null;render();}
+function gClose(){stopSpeak();$('#game').hidden=true;$('#game').innerHTML='';$('#game').className='overlay';document.body.style.overflow='';G=null;render();}
 function gSetup(id){G={id,game:GAMES.find(x=>x.id===id),deck:null};gTheme();gRenderSetup();gShow();}
 function gRenderSetup(){
   const g=G.game,c=S.g,sc=g.scored,canV=canSpeak();
@@ -5775,7 +5826,7 @@ function gEnd(){
   const sc=G.game.scored;
   const r=recordDay(10);S.gplays=(S.gplays||0)+1;
   const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
-  if(canSpeak())try{speechSynthesis.cancel();}catch(e){}
+  stopSpeak();
   let head='¡Se acabaron las preguntas!',rank='';
   if(sc){
     const arr=G.scores.map((s,i)=>({s,n:nameOf(i),i})).sort((a,b)=>b.s-a.s);
@@ -5829,6 +5880,7 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');if(!b||b.disabled)return;
   const a=b.dataset.a;
   if(a.startsWith('g-')){gAct(a,b);return;}
+  if(a==='goto'){gotoMyLesson();return;}
   if(a==='tab'){TAB=b.dataset.t;resetArmed=false;render();window.scrollTo(0,0);}
   else if(a==='lesson'){
     const ui=+b.dataset.u,li=+b.dataset.l;
@@ -5908,6 +5960,7 @@ document.addEventListener('click',e=>{
   else if(a==='say-l'){sayLetter(+b.dataset.i);}
   else if(a==='say-w'){sayWord(b.dataset.w);}
   else if(a==='say-t'){gkSpeak(b.dataset.t,{rate:.75});}
+  else if(a==='theme'){S.theme=b.dataset.v;save();applyTheme();render();}
   else if(a==='sound'){S.sound=b.dataset.v==='1';save();render();if(S.sound)beep('good');}
   else if(a==='haptic'){S.haptic=b.dataset.v==='1';save();render();if(S.haptic)haptic([30,40,30]);}
   else if(a==='tip'){S.tipHide=true;save();render();}
