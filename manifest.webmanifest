@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Lámpara · Curso bíblico",
-  "short_name": "Lámpara",
+  "name": "Lampy · Curso bíblico",
+  "short_name": "Lampy",
   "description": "Aprende la Biblia cada día con preguntas, rachas y juegos en familia.",
   "start_url": "./",
   "scope": "./",
@@ -10,11 +10,29 @@
   "lang": "es",
   "background_color": "#FFFFFF",
   "theme_color": "#58CC02",
-  "categories": ["education", "books"],
+  "categories": [
+    "education",
+    "books"
+  ],
   "prefer_related_applications": false,
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
