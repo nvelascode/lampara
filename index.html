@@ -542,6 +542,16 @@ a.btn{text-decoration:none;text-align:center}
 
 /* ---------- regalos y salas en vivo ---------- */
 .rmh{margin:6px 0 10px;font-size:17px}
+.joinrow{margin:0 0 6px;padding:14px;border-radius:20px;border:2.5px dashed #A560E8;background:color-mix(in srgb,#A560E8 11%,var(--surface));display:grid;gap:12px}
+.jr-t{display:flex;align-items:center;gap:12px}
+.jr-e{font-size:32px;line-height:1}
+.jr-t b{display:block;font-size:17px}
+.jr-t small{display:block;color:var(--muted);font-weight:800;font-size:13px;line-height:1.3}
+.jr-t .lnk{color:#A560E8;font-weight:900;text-decoration:underline;padding:0}
+.jr-in{display:flex;gap:10px;align-items:stretch}
+.jr-in .inp{flex:1;min-width:0;text-align:center;letter-spacing:.28em;font-size:22px;font-weight:900;text-transform:uppercase}
+.jr-in .btn{width:auto;flex:none;padding:0 22px;background:#A560E8}
+.rmsub{margin:14px 0 10px;color:var(--muted);font-weight:900;font-size:14px}
 .giftopt{text-align:left;margin-bottom:10px;padding:12px 14px;text-transform:none;letter-spacing:0;font-size:17px;color:var(--ink)}
 .giftopt small{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-top:2px}
 .giftopt:disabled{opacity:.5}
@@ -4157,10 +4167,30 @@ const RM_MODES={
 const RM_TEAM=[null,{n:'Azul',c:'#1CB0F6',e:'🔵'},{n:'Naranja',c:'#FF9600',e:'🟠'}];
 let RM={code:null,st:null,t0:0,rem0:0,sig:'',sel:null,my:null,loop:0,fails:0,cfg:{mode:'race',total:10},screen:'menu',rewarded:'',av:'🙂'};
 function rmIdent(){const f=famState();return {name:((f.name||famEdit.name||'')+'').trim()||'Jugador',avatar:f.avatar||famEdit.avatar||'🙂'};}
+function rmKnownName(){return ((famState().name||famEdit.name||'')+'').trim();}
+function rmJoinRowHTML(){
+  const id=rmIdent(),known=!!rmKnownName();
+  return '<div class="joinrow"><div class="jr-t"><span class="jr-e" aria-hidden="true">🔑</span><div><b>Unirme con código</b><small>'+
+    (known?'Entrarás como '+esc(id.avatar)+' <b style="display:inline;font-size:13px">'+esc(id.name)+'</b> · <button class="lnk" data-a="rm-join-open">cambiar</button>':'La primera vez eliges tu nombre y tu emoji.')+
+    '</small></div></div><div class="jr-in"><input id="rmquick" class="inp" maxlength="5" placeholder="ABC23" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de la sala"><button class="btn" data-a="rm-quick">Entrar</button></div></div>';
+}
+async function rmQuickJoin(){
+  const el=$('#rmquick'),code=((el||{}).value||'').trim().toUpperCase();
+  if(code.length<4){toast('Escribe el código de la sala.');if(el)el.focus();return;}
+  if(!rmKnownName()){
+    /* primera vez: se pide el nombre y el emoji una sola vez, con el código ya escrito */
+    rmOpenMenu('join');const c=$('#rmcode');if(c)c.value=code;toast('Elige tu nombre y tu emoji. Solo esta vez.');return;
+  }
+  const f=famState(),id=rmIdent();
+  try{
+    const r=await rpc('rm_join',famArgs({p_code:code,p_name:id.name,p_avatar:id.avatar}));
+    if(r&&r.ok){RM.av=id.avatar;RM.screen='join';rmOpenOverlay();rmEnter(r.code);}else toast(famMsg(r&&r.error));
+  }catch(e){toast(rpcMsg(e));}
+}
 function rmTilesHTML(){
   if(!famOn())return '';
-  return '<h3 class="rmh">🌐 En vivo, cada quien en su celular</h3><div class="gtiles">'+Object.values(RM_MODES).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+
-   '<button class="gcard" style="--gc:#A560E8" data-a="rm-join-open"><span class="gemo" aria-hidden="true">🔑</span><b>Unirme con código</b><span>Escribe el código de la sala</span></button></div><h3 class="rmh" style="margin-top:24px">📱 En un solo celular</h3>';
+  return '<h3 class="rmh">🌐 En vivo, cada quien en su celular</h3>'+rmJoinRowHTML()+'<p class="rmsub">…o crea una sala nueva:</p><div class="gtiles">'+Object.values(RM_MODES).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+
+   '</div><h3 class="rmh" style="margin-top:24px">📱 En un solo celular</h3>';
 }
 /* ----- preguntas ----- */
 function rmQBlank(used){
@@ -6007,6 +6037,7 @@ document.addEventListener('click',e=>{
   if(a.startsWith('g-')){gAct(a,b);return;}
   if(a==='goto'){gotoMyLesson();return;}
   if(a==='uc-go'){ucGo();return;}
+  if(a==='rm-quick'){rmQuickJoin();return;}
   if(a==='tab'){TAB=b.dataset.t;resetArmed=false;render();window.scrollTo(0,0);}
   else if(a==='lesson'){
     const ui=+b.dataset.u,li=+b.dataset.l;
@@ -6113,6 +6144,7 @@ document.addEventListener('click',e=>{
   }
 });
 document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target&&e.target.id==='rmquick'){e.preventDefault();rmQuickJoin();return;}
   if(G&&e.key==='Enter'&&$('#modal').hidden&&e.target.tagName!=='INPUT'){const pb=document.querySelector('#game [data-primary]');if(pb){e.preventDefault();pb.click();}return;}
   if(!L||!$('#modal').hidden)return;
   if(L.intro){if(e.key==='Enter'){L.intro=null;nextQ();}return;}
