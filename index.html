@@ -643,6 +643,29 @@ a.btn{text-decoration:none;text-align:center}
 .rmhelp{margin:10px 0 6px;color:var(--muted);font-size:13px;font-weight:700;line-height:1.4}
 .giftbtn{flex:none;padding:8px 12px;border-radius:14px;border:2px solid var(--purple);border-bottom-width:4px;background:var(--purple-bg);font-weight:900;font-size:14px;color:var(--purple-d)}
 
+/* ---------- seguir a alguien ---------- */
+.frsec{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 8px}
+.frsec h3{margin:0;font-size:18px}
+.frpill{display:inline-block;flex:none;font-size:12px;font-weight:900;color:#fff;background:var(--green);border-radius:999px;padding:2px 10px}
+.frpill.new{background:var(--orange)}
+.mtop .frpill{margin-left:auto}
+.frempty{display:flex;gap:12px;align-items:center}
+.frempty p{margin:0;font-size:15px;font-weight:800;line-height:1.4}
+.frbtn{flex:none;padding:6px 12px;border-radius:12px;border:2px solid var(--blue);border-bottom-width:3px;background:var(--blue-bg);color:var(--blue-ink);font-weight:900;font-size:13px}
+.frbtn:active{transform:translateY(2px)}
+.frx{flex:none;width:34px;height:34px;border-radius:10px;color:var(--muted);font-size:16px;display:grid;place-items:center}
+.frun{display:block;margin:10px 0 0;padding:4px 0;color:var(--muted);font-weight:900;font-size:13px;text-decoration:underline}
+.frlist{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:10px}
+.frlist li{display:flex;gap:12px;align-items:center;font-size:15px;font-weight:800;line-height:1.35}
+.frlist li span{font-size:24px;line-height:1;flex:none}
+.frhow p{margin:4px 0 0;font-size:15px;line-height:1.45}
+.frlist li span{width:28px;text-align:center}
+.frf .minfo{flex:1;min-width:0}
+.frf .minfo b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.minfo .frpill{justify-self:start;margin-top:2px}
+.codebox .row2 .btn{padding:10px 8px;white-space:nowrap}
+#modal .box .avs{justify-content:center}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -1479,7 +1502,7 @@ function haptic(pat){
 }
 const pickOne=a=>a[rnd(a.length)];
 const UNIT_EMO={'El alfabeto griego':'🔤','Sonidos y signos':'🔊','Primeras palabras':'📚','Leyendo el Nuevo Testamento':'📜','La creación':'🌍','La caída':'🐍','Los Diez Mandamientos':'📜','Jehová es mi pastor':'🐑','Sermón del Monte':'⛰️','El Evangelio de Juan':'📖','Salvación por gracia':'🎁','Atributos de Dios (1)':'👑','Atributos de Dios (2)':'✨','Doctrinas fundamentales':'🧭','Personajes bíblicos':'🧔','Eventos bíblicos':'🗺️',"Temas y lecturas: Nuevo Testamento":"📖","Historia Sagrada: el Nuevo Testamento":"⛪","Temas y lecturas: Génesis a Ester":"📚","Temas y lecturas: Job a Malaquías":"🔥","Historia Sagrada: el Antiguo Testamento (1)":"🏺","Historia Sagrada: el Antiguo Testamento (2)":"👑","Conoce tu Biblia":"📖","La historia y el mensaje de la Biblia":"🧭","De Caín a Babel":"🏗️","Salmos conocidos":"🎶","El Evangelio de Marcos":"🌅"};
-const ACH_E={gk1:'🔤',gkabc:'🏛️',gkw:'📚',first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑',rd1:'📖',rd7:'🔖',rd30:'🌅',rdall:'📜',gift1:'💝',gift2:'🎁',live1:'🎮'};
+const ACH_E={gk1:'🔤',gkabc:'🏛️',gkw:'📚',first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑',rd1:'📖',rd7:'🔖',rd30:'🌅',rdall:'📜',gift1:'💝',gift2:'🎁',live1:'🎮',fr1:'🤝',fr2:'🌟'};
 const isStandalone=()=>{try{return !!(window.navigator.standalone||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches));}catch(e){return false;}};
 const isIOS=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent||'');
 
@@ -3667,6 +3690,7 @@ const FAM_ERR={codigo_no_existe:'Ese código no existe. Revisa las letras.',grup
 const famMsg=e=>FAM_ERR[e]||'Algo salió mal. Inténtalo de nuevo.';
 function famStats(){const t=today();let wk=0;for(let i=0;i<7;i++)wk+=S.days[addDays(t,-i)]||0;return {p_streak:S.streak,p_best:S.best,p_xp:S.xp,p_week_xp:wk,p_lessons:lessonsDone(),p_last_day:S.lastDay||null};}
 async function famSync(){
+  frSync();
   if(!famJoined())return;
   try{await rpc('fam_sync',famArgs(famStats()));S.fam.synced=Date.now();save();}catch(e){}
 }
@@ -4526,6 +4550,299 @@ function dicOpen(id){
 function dicClose(){$('#dic').hidden=true;$('#dic').innerHTML='';}
 
 /* ============================================================
+   SEGUIR A ALGUIEN (amigos por código)
+   Cada persona crea un perfil con un código de amigo. Quien escriba ese código la sigue
+   (en una sola dirección) y ve su racha, sus XP de la semana y si practicó hoy.
+   Todo pasa por las funciones fr_* de Supabase (ver supabase-amigos.sql).
+   ============================================================ */
+Object.assign(FAM_ERR,{
+  perfil_no_existe:'Primero crea tu perfil de amigos.',
+  eres_tu:'Ese código es el tuyo. Compártelo con otra persona.',
+  ya_sigues:'Ya sigues a esa persona.',
+  limite_siguiendo:'Ya sigues a 50 personas. Deja de seguir a alguien para añadir otra.',
+  no_sigues:'Primero tienes que seguir a esa persona.',
+  perfil_oculto:'Esa persona no está aceptando seguidores por ahora.',
+  no_te_sigue:'Esa persona ya no te sigue.',
+  intenta_otra_vez:'Algo salió mal. Inténtalo otra vez.'
+});
+const FR={data:null,last:0,sig:'',err:'',recv:[],recvNew:[]};
+const FRE={name:'',avatar:'🙂',init:false};
+const FRM={name:'',avatar:'🙂'};
+let FRV='fr';
+const frActive=()=>!!(famOn()&&S.fr&&S.fr.on);
+function frState(){S.fr=S.fr||{};if(!S.fr.device){S.fr.device=uuid4();S.fr.secret=hexr(24);save();}return S.fr;}
+const frArgs=x=>Object.assign({p_device:frState().device,p_secret:frState().secret},x||{});
+function frMsg(e){const m=String((e&&e.message)||'');return /Could not find the function|schema cache|PGRST202/i.test(m)?'Falta instalar en Supabase el SQL de amigos (supabase-amigos.sql).':rpcMsg(e);}
+/* Los números de cada persona llegan tal como los guardó su teléfono; aquí se ajustan al día de hoy */
+const frLost=m=>!(m.last_day&&diffDays(m.last_day,today())<=1);
+const frStreak=m=>frLost(m)?0:(m.streak||0);
+const frWeek=m=>(m.last_day&&diffDays(m.last_day,today())<=6)?(m.week_xp||0):0;
+const frToday=m=>m.last_day===today();
+function frWhen(d){
+  if(!d)return 'aún sin practicar';
+  const n=diffDays(d,today());
+  return n<=0?'practicó hoy':n===1?'practicó ayer':'practicó hace '+n+' días';
+}
+function frPend(){
+  if(!frActive()||TAB==='fr'||!FR.data)return 0;
+  return (FR.data.cheers||[]).length+(FR.data.new_followers||0);
+}
+async function frSync(){
+  if(!frActive())return;
+  try{
+    const r=await rpc('fr_sync',frArgs(Object.assign(famStats(),{p_badge:S.badge||''})));
+    if(r&&r.ok)FR.synced=Date.now();
+    else if(r&&r.error==='perfil_no_existe'){S.fr.on=false;S.fr.code=null;FR.data=null;save();frRefresh();}
+  }catch(e){}
+}
+function frRefresh(){
+  if(L||G||RM.code||!$('#fam').hidden||!$('#room').hidden)return;
+  if(TAB==='fr'||TAB==='path')render();else renderTabs();
+}
+function frAchCheck(d){
+  let ch=false;
+  if(d.followers&&d.followers.length&&!S.frGot){S.frGot=1;ch=true;}
+  if(d.following&&d.following.length&&!S.frFollowed){S.frFollowed=1;ch=true;}
+  if(!ch)return;
+  const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
+  if(fresh.length){toast('🏅 Logro: '+fresh[0].t);confetti(40);beep('good');}
+}
+/* mark=true: se está mirando la pestaña, así que los ánimos y seguidores nuevos se dan por vistos */
+async function frPoll(force,mark){
+  if(!frActive())return;
+  if(!force&&Date.now()-FR.last<60000)return;
+  FR.last=Date.now();
+  try{
+    const d=await rpc('fr_list',frArgs({p_today:today(),p_mark:!!mark}));
+    if(d&&d.ok){
+      FR.err='';
+      const raw=JSON.stringify(d);
+      if(mark){
+        if((d.cheers||[]).length)FR.recv=FR.recv.concat(d.cheers);
+        (d.followers||[]).forEach(f=>{if(f.new&&FR.recvNew.indexOf(f.device)<0)FR.recvNew.push(f.device);});
+        d.cheers=[];d.new_followers=0;
+      }
+      const sig=raw+'|'+FR.recv.length+'|'+FR.recvNew.length;
+      const changed=sig!==FR.sig;
+      FR.data=d;FR.sig=sig;
+      if(d.me&&S.fr.code!==d.me.code){S.fr.code=d.me.code;S.fr.name=d.me.name;S.fr.avatar=d.me.avatar;save();}
+      frAchCheck(d);
+      if(changed||force)frRefresh();
+    }else if(d&&d.error==='perfil_no_existe'){S.fr.on=false;S.fr.code=null;save();FR.data=null;FR.sig='';frRefresh();}
+    else if(d&&d.error){FR.err=famMsg(d.error);if(!FR.data)frRefresh();}
+  }catch(e){FR.err=frMsg(e);if(!FR.data)frRefresh();}
+}
+function frOpened(){
+  if(!frActive())return;
+  FR.recv=[];FR.recvNew=[];
+  frSync();
+  frPoll(true,true);
+}
+/* ----- acciones ----- */
+async function frCreate(){
+  const nm=(($('#frname')||{}).value||'').trim();
+  if(!nm){toast('Escribe tu nombre para que te reconozcan.');const i=$('#frname');if(i)i.focus();return;}
+  FRE.name=nm;
+  const st=frState();
+  try{
+    const r=await rpc('fr_me',frArgs({p_name:nm,p_avatar:FRE.avatar}));
+    if(r&&r.ok){
+      st.on=true;st.code=r.code;st.name=r.name;st.avatar=r.avatar;save();
+      FR.data=null;FR.sig='';FR.recv=[];FR.recvNew=[];
+      await frSync();
+      await frPoll(true,true);
+      render();confetti(70);beep('win');toast('¡Perfil creado! Comparte tu código.');
+    }else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+function frFollowedOk(name){
+  S.frFollowed=1;
+  const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
+  beep('good');confetti(40);haptic(15);
+  toast('✅ Ahora sigues a '+name+'.'+(fresh.length?'  🏅 Logro: '+fresh[0].t:''));
+}
+async function frFollow(code){
+  code=String(code||'').trim().toUpperCase();
+  if(code.length<4){toast('Escribe el código de amigo.');const i=$('#frcode');if(i)i.focus();return;}
+  try{
+    const r=await rpc('fr_follow',frArgs({p_code:code}));
+    if(r&&r.ok){
+      const i=$('#frcode');if(i)i.value='';
+      frFollowedOk(r.name);
+      await frPoll(true,true);
+    }else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+async function frFollowBack(to){
+  try{
+    const r=await rpc('fr_follow_back',frArgs({p_to:to}));
+    if(r&&r.ok){frFollowedOk(r.name);await frPoll(true,true);}
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+async function frCheer(to,k,btn){
+  try{
+    const r=await rpc('fr_cheer',frArgs({p_to:to,p_kind:k}));
+    if(r&&r.ok){toast(KIND_E[k]+' ¡Ánimo enviado!');beep('good');haptic(15);if(btn)btn.classList.add('sent');}
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+function frAskUnf(to,n){
+  showModal('<h3>¿Dejar de seguir a '+esc(n)+'?</h3><p>Ya no verás su racha. Puedes volver a seguirla con su código.</p><button class="btn bad" data-a="fr-unf-yes" data-to="'+esc(to)+'">Dejar de seguir</button><button class="btn ghost" data-a="stay">Cancelar</button>');
+}
+async function frUnfollow(to){
+  hideModal();
+  try{
+    const r=await rpc('fr_unfollow',frArgs({p_to:to}));
+    if(r&&r.ok){toast('Dejaste de seguirla.');await frPoll(true,true);}else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+function frAskRem(to,n){
+  showModal('<h3>¿Quitar a '+esc(n)+' de tus seguidores?</h3><p>Dejará de ver tu racha. No se entera. Si tiene tu código, puede volver a seguirte.</p><button class="btn bad" data-a="fr-rem-yes" data-to="'+esc(to)+'">Quitar seguidor</button><button class="btn ghost" data-a="stay">Cancelar</button>');
+}
+async function frRemove(to){
+  hideModal();
+  try{
+    const r=await rpc('fr_remove_follower',frArgs({p_from:to}));
+    if(r&&r.ok){toast('Listo, ya no te sigue.');await frPoll(true,true);}else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+async function frVisible(v){
+  try{
+    const r=await rpc('fr_visible',frArgs({p_visible:!!v}));
+    if(r&&r.ok){toast(v?'Ahora pueden seguirte con tu código.':'Nadie nuevo podrá seguirte con tu código.');await frPoll(true,true);}
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+function frEditOpen(){FRM.name=(FR.data&&FR.data.me&&FR.data.me.name)||S.fr.name||'';FRM.avatar=(FR.data&&FR.data.me&&FR.data.me.avatar)||S.fr.avatar||'🙂';frEditModal();}
+function frEditModal(){
+  showModal('<h3>Mi perfil de amigos</h3><input id="frmname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRM.name)+'" autocomplete="off" aria-label="Tu nombre"><div class="avs">'+
+    FAM_AV.map(a=>'<button class="avb '+(FRM.avatar===a?'on':'')+'" data-a="fr-medit-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+
+    '</div><button class="btn" data-a="fr-edit-save">Guardar</button><button class="btn ghost" data-a="stay">Cancelar</button>');
+}
+async function frEditSave(){
+  const nm=(($('#frmname')||{}).value||'').trim();
+  if(!nm){toast('Escribe tu nombre.');return;}
+  try{
+    const r=await rpc('fr_me',frArgs({p_name:nm,p_avatar:FRM.avatar}));
+    if(r&&r.ok){hideModal();S.fr.name=r.name;S.fr.avatar=r.avatar;save();toast('Perfil actualizado.');await frPoll(true,true);}
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+async function frDelete(){
+  hideModal();
+  try{
+    const r=await rpc('fr_delete',frArgs());
+    if(r&&r.ok){S.fr.on=false;S.fr.code=null;save();FR.data=null;FR.sig='';FR.recv=[];FR.recvNew=[];toast('Perfil eliminado.');render();}
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+function frInviteText(){
+  const link=appLink(),c=S.fr&&S.fr.code;
+  return '👥 ¡Sígueme en Lampy! Mi código de amigo es: '+c+'\nEntra a Amigos → Siguiendo, escribe el código en «Seguir a alguien» y verás mi racha.'+(link?'\nEntra aquí: '+link:'');
+}
+async function frInvite(){
+  const text=frInviteText();
+  try{if(navigator.share){await navigator.share({text});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+}
+function frCopy(){
+  const c=S.fr&&S.fr.code;if(!c)return;
+  let ok=false;
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(c);ok=true;}}catch(e){}
+  toast(ok?'Código copiado: '+c:'Tu código es '+c);
+}
+/* ----- pantallas ----- */
+function frHeroMsg(){
+  if(!frActive())return '¡Mira cómo van los tuyos! Crea tu perfil y sigue a tu familia y amigos.';
+  const d=FR.data;
+  if(!d)return 'Buscando a tus amigos…';
+  const f=d.following;
+  if(!f.length)return d.followers.length?'Ya te siguen. Escribe el código de alguien para seguirlo tú también.':'Empieza siguiendo a alguien: escribe su código, o comparte el tuyo.';
+  const t=f.filter(frToday).map(m=>m.name),me=S.lastDay===today();
+  if(t.length===f.length)return t.length===1?(t[0]+' ya practicó hoy'+(me?' y tú también. ¡Qué bien!':'. ¿Y tú?')):('¡Todos practicaron hoy'+(me?', tú también!':'! ¿Y tú?'));
+  if(t.length){
+    const who=t.length<=2?t.join(' y '):t[0]+', '+t[1]+' y '+(t.length-2)+' más';
+    return who+(t.length===1?' ya practicó':' ya practicaron')+' hoy.'+(me?'':' ¿Y tú?');
+  }
+  return me?'Hoy practicaste primero. ¡Anima a los demás!':'Nadie ha practicado hoy todavía. ¡Sé el primero!';
+}
+function frIntroHTML(){
+  if(!FRE.init){FRE.init=true;FRE.name=FRE.name||(S.fam&&S.fam.name)||'';FRE.avatar=(S.fam&&S.fam.avatar)||FRE.avatar||'🙂';}
+  return '<section class="card frhow"><b>Así funciona</b><p>Crea tu perfil y recibe un código de amigo. Quien lo escriba podrá seguirte, y tú podrás seguir a quien quieras.</p>'+
+    '<ul class="frlist"><li><span aria-hidden="true">🔥</span>Ves su racha y si ya practicaron hoy.</li><li><span aria-hidden="true">⚡</span>Comparan los XP de la semana.</li><li><span aria-hidden="true">💪</span>Se mandan ánimo cuando hace falta.</li></ul></section>'+
+    '<section class="sec"><h3>¿Cómo te llamas?</h3><input id="frname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRE.name)+'" autocomplete="off"></section>'+
+    '<section class="sec"><h3>Elige tu emoji</h3><div class="avs">'+FAM_AV.map(a=>'<button class="avb '+(FRE.avatar===a?'on':'')+'" data-a="fr-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+'</div></section>'+
+    '<button class="btn purple" data-a="fr-create">Crear mi perfil de amigos</button>'+
+    '<p class="foot">Quien te sigue ve tu nombre, tu emoji, tu racha, tus XP de la semana y si practicaste hoy. Nada más: no se comparte tu correo ni tu teléfono. Tú decides quién te sigue y puedes quitar seguidores cuando quieras.</p>';
+}
+function frBoardHTML(d){
+  const mine=famStats();
+  const rows=[{name:'Tú',avatar:(d.me&&d.me.avatar)||'🙂',wk:mine.p_week_xp,st:S.streak,badge:S.badge||'',me:true}]
+    .concat(d.following.map(m=>({name:m.name,avatar:m.avatar,wk:frWeek(m),st:frStreak(m),badge:m.badge,me:false})));
+  rows.sort((a,b)=>b.wk-a.wk||b.st-a.st);
+  return '<section class="card famcard"><div class="famh"><b>🏆 Esta semana</b><span class="muted">XP</span></div>'+
+    rows.map((r,i)=>'<div class="frow"><span class="fpos">'+(i===0&&r.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc(r.avatar)+'</span><b class="fnm">'+esc(r.name)+(r.badge?' '+badgeE(r.badge):'')+'</b><span class="fst">🔥 '+r.st+'</span><span class="fxp">⚡ '+r.wk+'</span></div>').join('')+'</section>';
+}
+function frFollowingHTML(m){
+  return '<div class="mrow"><div class="mtop"><span class="fav big">'+esc(m.avatar)+'</span><div class="minfo"><b>'+esc(m.name)+(m.badge?' '+badgeE(m.badge):'')+'</b><span class="muted">'+esc(frWhen(m.last_day))+'</span></div>'+(frToday(m)?'<span class="frpill">hoy ✔</span>':'')+'</div>'+
+    '<div class="mstats"><span>🔥 <b>'+frStreak(m)+'</b> racha</span><span>⚡ <b>'+frWeek(m)+'</b> esta semana</span><span>📚 <b>'+(m.lessons||0)+'</b></span></div>'+
+    '<div class="chb">'+['animo','fuego','oracion'].map(k=>'<button class="chbtn" data-a="fr-cheer" data-to="'+esc(m.device)+'" data-k="'+k+'" aria-label="'+esc(KIND_T[k])+' a '+esc(m.name)+'" title="'+esc(KIND_T[k])+'">'+KIND_E[k]+'</button>').join('')+'</div>'+
+    '<button class="frun" data-a="fr-unf" data-to="'+esc(m.device)+'" data-n="'+esc(m.name)+'">Dejar de seguir</button></div>';
+}
+function frFollowerHTML(f){
+  const isNew=FR.recvNew.indexOf(f.device)>=0;
+  const sub=isNew?'<span class="frpill new">Nuevo</span>':(f.mutual?'':'<span class="muted" style="font-size:13px">Te sigue</span>');
+  return '<div class="frow frf"><span class="fav">'+esc(f.avatar)+'</span><div class="minfo"><b>'+esc(f.name)+(f.badge?' '+badgeE(f.badge):'')+'</b>'+sub+'</div>'+
+    (f.mutual?'<span class="muted" style="font-size:13px;flex:none;font-weight:900">Se siguen</span>':'<button class="frbtn" data-a="fr-back" data-to="'+esc(f.device)+'" aria-label="Seguir también a '+esc(f.name)+'">Seguir también</button>')+
+    '<button class="frx" data-a="fr-rem" data-to="'+esc(f.device)+'" data-n="'+esc(f.name)+'" aria-label="Quitar a '+esc(f.name)+' de mis seguidores">✕</button></div>';
+}
+function frHTML(){
+  if(!frActive())return frIntroHTML();
+  const d=FR.data;
+  if(!d)return '<div class="splash"><div class="spl">🕯️</div><b>'+(FR.err?esc(FR.err):'Buscando a tus amigos…')+'</b>'+(FR.err?'<button class="btn ghost sm" data-a="fr-reload" style="margin-top:6px">Reintentar</button>':'')+'</div>';
+  const me=d.me,fol=d.following.slice().sort((a,b)=>frStreak(b)-frStreak(a)||String(a.name).localeCompare(String(b.name))),fws=d.followers;
+  let out='';
+  if(FR.err)out+='<div class="banner">'+esc(FR.err)+'</div>';
+  if(FR.recv.length)out+='<section class="cheers"><b>Te enviaron:</b>'+FR.recv.map(c=>'<div class="cheerrow">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> · '+esc(KIND_T[c.kind]||'¡Ánimo!')+'</div>').join('')+'</section>';
+  const nn=fws.filter(f=>FR.recvNew.indexOf(f.device)>=0).map(f=>f.name);
+  if(nn.length)out+='<div class="banner">👋 <b>'+esc(nn.length===1?nn[0]:nn.slice(0,-1).join(', ')+' y '+nn[nn.length-1])+'</b> '+(nn.length===1?'empezó a seguirte':'empezaron a seguirte')+'.</div>';
+  out+='<section class="card codebox"><span class="muted">Tu código de amigo</span><div class="gcodev">'+esc(me.code)+'</div><div class="row2" style="margin:0"><button class="btn blue sm" data-a="fr-invite">📲 Compartir</button><button class="btn ghost sm" data-a="fr-copy">Copiar</button></div></section>';
+  out+='<div class="joinrow"><div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de amigo que te pasó.</small></div></div><div class="jr-in"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de amigo"><button class="btn" data-a="fr-follow">Seguir</button></div></div>';
+  out+='<div class="frsec"><h3>Siguiendo</h3><span class="muted">'+fol.length+'</span></div>';
+  if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<p>Aún no sigues a nadie. Pídele su código de amigo a alguien de tu familia y escríbelo arriba.</p></section>';
+  else out+=frBoardHTML(d)+'<div class="mlist">'+fol.map(frFollowingHTML).join('')+'</div>';
+  out+='<div class="frsec"><h3>Te siguen</h3><span class="muted">'+fws.length+'</span></div>';
+  out+=fws.length?'<section class="card" style="padding:6px 14px">'+fws.map(frFollowerHTML).join('')+'</section>':'<p class="muted" style="margin:0;font-size:14px;font-weight:800">Cuando alguien escriba tu código, aparecerá aquí.</p>';
+  out+='<section class="card" style="margin-top:18px"><b>⚙️ Mi perfil de amigos</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Quien te sigue ve tu nombre, tu emoji, tu racha, tus XP de la semana y si practicaste hoy. Nada más.</p>'+
+    '<b style="display:block;font-size:15px">Permitir que me sigan con mi código</b><div class="seg"><button class="'+(me.visible?'on':'')+'" data-a="fr-vis" data-v="1">Sí</button><button class="'+(!me.visible?'on':'')+'" data-a="fr-vis" data-v="0">No</button></div>'+
+    '<div class="row2" style="margin-top:12px"><button class="btn ghost sm" data-a="fr-edit">Cambiar nombre o emoji</button></div><button class="link-danger" data-a="fr-del">Eliminar mi perfil de amigos</button></section>';
+  return out;
+}
+function frHomeHTML(){
+  if(!frActive()||!FR.data)return '';
+  const d=FR.data;let out='';
+  if((d.cheers||[]).length){
+    const c=d.cheers[0],more=d.cheers.length-1;
+    out+='<button class="banner cheerb" data-a="fr-go">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> te mandó: '+esc(KIND_T[c.kind]||'¡Ánimo!')+(more>0?' (y '+more+' más)':'')+'</button>';
+  }
+  if((d.new_followers||0)>0){
+    const nn=d.followers.filter(f=>f.new).map(f=>f.name),k=d.new_followers;
+    out+='<button class="banner cheerb" data-a="fr-go">👋 <b>'+esc(nn[0]||'Alguien')+'</b>'+(k>1?' y '+(k-1)+(k-1===1?' persona más':' más'):'')+(k>1?' empezaron a seguirte':' empezó a seguirte')+'</button>';
+  }
+  return out;
+}
+function amigosHTML(){
+  if(!famOn())return '<h1 class="page">Amigos</h1><div class="hero">'+mascot('think',76)+'<div class="bubble">Los amigos no están disponibles en esta versión.</div></div>';
+  const fc=FR.data&&FR.data.following?FR.data.following.length:0;
+  const seg='<div class="abcseg"><button class="cs '+(FRV==='fr'?'on':'')+'" data-a="frv" data-v="fr" aria-pressed="'+(FRV==='fr')+'">👥 Siguiendo'+(fc?' · '+fc:'')+'</button><button class="cs '+(FRV==='fam'?'on':'')+'" data-a="frv" data-v="fam" aria-pressed="'+(FRV==='fam')+'">👨‍👩‍👧 Familia</button></div>';
+  if(FRV==='fam')return '<h1 class="page">Amigos</h1>'+seg+amigosFamHTML();
+  const me=frActive()&&FR.data&&FR.data.following.length&&S.lastDay===today()&&FR.data.following.some(frToday);
+  return '<h1 class="page">Amigos</h1>'+seg+'<div class="hero">'+mascot(me?'cheer':'wink',84)+'<div class="bubble">'+esc(frHeroMsg())+'</div></div>'+frHTML();
+}
+
+
+/* ============================================================
    DATOS DERIVADOS
    ============================================================ */
 const ALLV=[];const ALLKEYS=[];
@@ -4543,7 +4860,7 @@ ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>
    ESTADO Y ALMACENAMIENTO (localStorage protegido)
    ============================================================ */
 const KEY='lampara.rvr1960.v1';
-const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0});
+const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0});
 let S=defaults();
 function idbOpen(cb){
   try{
@@ -4660,6 +4977,7 @@ function mergeProgress(loc,rem){
   const lj=loc.fam&&loc.fam.joined,rj=rem.fam&&rem.fam.joined;
   m.fam=lj?loc.fam:rj?rem.fam:(loc.fam||rem.fam);
   m.rd=loc.rd||rem.rd||null;
+  m.fr=(loc.fr&&loc.fr.on)?loc.fr:(rem.fr&&rem.fr.on)?rem.fr:(loc.fr||rem.fr||null);
   return m;
 }
 const doneCount=s=>Object.keys((s&&s.done)||{}).length;
@@ -4896,7 +5214,9 @@ const ACH=[
  {id:'rdall',t:'Toda la Biblia',d:'Termina un plan de lectura de la Biblia',f:s=>!!s.rdDone},
  {id:'gift1',t:'Corazón generoso',d:'Envía un regalo a alguien de tu familia',f:s=>(s.giftsSent||0)>=1},
  {id:'gift2',t:'¡Un regalo para ti!',d:'Abre tu primer regalo',f:s=>(s.giftsGot||0)>=1},
- {id:'live1',t:'A jugar en vivo',d:'Termina una partida en vivo con otros celulares',f:s=>(s.rmplays||0)>=1}
+ {id:'live1',t:'A jugar en vivo',d:'Termina una partida en vivo con otros celulares',f:s=>(s.rmplays||0)>=1},
+ {id:'fr1',t:'Mejor acompañado',d:'Sigue a alguien en Lampy',f:s=>(s.frFollowed||0)>=1},
+ {id:'fr2',t:'Alguien te sigue',d:'Que una persona empiece a seguirte',f:s=>(s.frGot||0)>=1}
 ];
 
 /* ============================================================
@@ -5669,9 +5989,9 @@ function renderTabs(){
   const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],gk?['dic','Palabras',IC.book]:['read','Lectura',IC.read],['games','Juegos',IC.users]];
   if(famOn())tabs.push(['fr','Amigos',IC.heart]);
   tabs.push(['me','Perfil',IC.trophy]);
-  const pend=(typeof giftN==='function'?giftN():0)+((FAM&&FAM.cheers)?FAM.cheers.length:0);
+  const pend=(typeof giftN==='function'?giftN():0)+((FAM&&FAM.cheers)?FAM.cheers.length:0)+(typeof frPend==='function'?frPend():0);
   $('#tabs').firstElementChild.innerHTML=tabs.map(t=>{const on=TAB===t[0]||(t[0]==='me'&&TAB==='set');
-    return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(t[0]==='fr'&&pend&&famJoined()?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
+    return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(t[0]==='fr'&&pend&&(famJoined()||frActive())?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
 }
 function homeHTML(){
   const gk=S.course==='gk',U=curUnits(),t=today(),xpT=S.days[t]||0,pct=Math.min(1,xpT/S.goal),C=175.9;
@@ -5700,7 +6020,7 @@ function homeHTML(){
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
-  '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+famHomeHTML()+rdHomeHTML()+
+  '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+famHomeHTML()+frHomeHTML()+rdHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
@@ -5757,10 +6077,10 @@ function settingsHTML(){
    '<textarea id="bk" class="code" placeholder="Aquí aparece tu código. Para restaurar, pégalo aquí."></textarea><div class="row2" style="margin:10px 0 0"><button class="btn blue sm" data-a="bk-copy">Copiar código</button><button class="btn ghost sm" data-a="bk-restore">Restaurar</button></div></section>'+
    '<div style="margin-top:22px"><button class="link-danger" data-a="reset">'+(resetArmed?(signedIn()?'Toca otra vez para borrar también el progreso de tu cuenta':'Toca otra vez para borrar todo el progreso'):'Borrar progreso')+'</button></div>';
 }
-function amigosHTML(){
+function amigosFamHTML(){
   if(!famOn())return '<h1 class="page">Amigos</h1><div class="hero">'+mascot('think',76)+'<div class="bubble">Los amigos no están disponibles en esta versión.</div></div>';
   const joined=famJoined(),fh=famHomeHTML();
-  return '<h1 class="page">Amigos</h1><div class="hero">'+mascot('wink',84)+'<div class="bubble">'+(joined?'Practiquen juntos y anímense unos a otros.':'Crea un grupo con tu familia para practicar juntos.')+'</div></div>'+
+  return '<div class="hero">'+mascot('wink',84)+'<div class="bubble">'+(joined?'Practiquen juntos y anímense unos a otros.':'Crea un grupo con tu familia para practicar juntos.')+'</div></div>'+
    fh+(fh.indexOf('famcard')<0?famCardHTML():'')+giftsCardHTML()+
    '<section class="card"><b>📣 Animar a alguien</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Anima a alguien a hacer su lección. Se envía por WhatsApp o por donde quieras.</p><button class="btn ghost sm" data-a="share" data-k="cheer">Animar a alguien</button></section>';
 }
@@ -5792,8 +6112,11 @@ function render(){
   if(S.course!=='gk'&&TAB==='dic')TAB='path';
   applyTheme();refreshStreak();renderTop();renderTabs();
   if(famJoined())setTimeout(()=>famPoll(),60);
+  if(frActive())setTimeout(()=>frPoll(false,TAB==='fr'&&FRV==='fr'),80);
   if(TAB==='me')setTimeout(()=>{prepShare('streak').catch(()=>{});},150);
+  const _kc=document.getElementById('frcode'),_kv=_kc?_kc.value:null,_kf=_kc&&document.activeElement===_kc;
   $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='read'?readHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():TAB==='fr'?amigosHTML():TAB==='set'?settingsHTML():meHTML();
+  if(_kv){const _k2=document.getElementById('frcode');if(_k2){_k2.value=_kv;if(_kf){try{_k2.focus();}catch(e){}}}}
   setTimeout(updateGoto,50);
   renderCmenu();
 }
@@ -6448,7 +6771,7 @@ document.addEventListener('click',e=>{
   if(a==='settings'){TAB='set';resetArmed=false;render();window.scrollTo(0,0);return;}
   if(a==='settings-back'){TAB='me';render();window.scrollTo(0,0);return;}
   if(a==='rm-quick'){rmQuickJoin();return;}
-  if(a==='tab'){TAB=b.dataset.t;resetArmed=false;render();window.scrollTo(0,0);}
+  if(a==='tab'){const _prev=TAB;TAB=b.dataset.t;resetArmed=false;if(_prev==='fr'&&TAB!=='fr'){FR.recv=[];FR.recvNew=[];}render();window.scrollTo(0,0);if(TAB==='fr'&&FRV==='fr')frOpened();}
   else if(a==='lesson'){
     const ui=+b.dataset.u,li=+b.dataset.l;
     if(b.dataset.c==='gk'){
@@ -6516,6 +6839,26 @@ document.addEventListener('click',e=>{
   else if(a==='gift-mine'){giftMine();}
   else if(a==='gift-equip'){giftEquip(b.dataset.k);}
   else if(a==='fam-open'){famOpen();}
+  else if(a==='frv'){FRV=b.dataset.v;render();window.scrollTo(0,0);if(FRV==='fr')frOpened();}
+  else if(a==='fr-go'){TAB='fr';FRV='fr';render();window.scrollTo(0,0);frOpened();}
+  else if(a==='fr-av'){FRE.name=(($('#frname')||{}).value||FRE.name);FRE.avatar=b.dataset.v;render();}
+  else if(a==='fr-create'){frCreate();}
+  else if(a==='fr-follow'){frFollow((($('#frcode')||{}).value||''));}
+  else if(a==='fr-back'){frFollowBack(b.dataset.to);}
+  else if(a==='fr-cheer'){frCheer(b.dataset.to,b.dataset.k,b);}
+  else if(a==='fr-unf'){frAskUnf(b.dataset.to,b.dataset.n);}
+  else if(a==='fr-unf-yes'){frUnfollow(b.dataset.to);}
+  else if(a==='fr-rem'){frAskRem(b.dataset.to,b.dataset.n);}
+  else if(a==='fr-rem-yes'){frRemove(b.dataset.to);}
+  else if(a==='fr-invite'){frInvite();}
+  else if(a==='fr-copy'){frCopy();}
+  else if(a==='fr-reload'){FR.err='';frPoll(true,TAB==='fr'&&FRV==='fr');}
+  else if(a==='fr-vis'){frVisible(b.dataset.v==='1');}
+  else if(a==='fr-edit'){frEditOpen();}
+  else if(a==='fr-medit-av'){FRM.name=(($('#frmname')||{}).value||FRM.name);FRM.avatar=b.dataset.v;frEditModal();}
+  else if(a==='fr-edit-save'){frEditSave();}
+  else if(a==='fr-del'){showModal('<h3>¿Eliminar tu perfil de amigos?</h3><p>Dejarás de seguir a todos y te dejarán de seguir. Tu progreso en Lampy no se toca.</p><button class="btn bad" data-a="fr-del-yes">Eliminar perfil</button><button class="btn ghost" data-a="stay">Cancelar</button>');}
+  else if(a==='fr-del-yes'){frDelete();}
   else if(a==='fam-close'){famClose();}
   else if(a==='fam-av'){famEdit.name=(($('#fname')||{}).value||famEdit.name);famEdit.avatar=b.dataset.v;famRender();}
   else if(a==='fam-create'){famDo('create');}
@@ -6554,7 +6897,7 @@ document.addEventListener('click',e=>{
     if(!resetArmed){resetArmed=true;render();}
     else{
       const was=signedIn();
-      S=defaults();if(was)S.cloudUid=AU.uid;
+      const keepFr=S.fr;S=defaults();S.fr=keepFr||null;if(was)S.cloudUid=AU.uid;
       if(was){CLOUD.applying=true;}
       save();resetArmed=false;
       if(was){CLOUD.applying=false;cloudReq('DELETE','lampara_progress?user_id=eq.'+AU.uid).then(()=>{AU.seen=null;authSave();cloudSync({render:false});}).catch(()=>{CLOUD.state='err';updateCloudUI();});}
@@ -6566,6 +6909,8 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target&&e.target.id==='auth-email'){e.preventDefault();authSend();return;}
   if(e.key==='Enter'&&e.target&&e.target.id==='auth-code'){e.preventDefault();authVerify();return;}
   if(e.key==='Enter'&&e.target&&e.target.id==='rmquick'){e.preventDefault();rmQuickJoin();return;}
+  if(e.key==='Enter'&&e.target&&e.target.id==='frcode'){e.preventDefault();frFollow(e.target.value);return;}
+  if(e.key==='Enter'&&e.target&&e.target.id==='frname'){e.preventDefault();frCreate();return;}
   if(G&&e.key==='Enter'&&$('#modal').hidden&&e.target.tagName!=='INPUT'){const pb=document.querySelector('#game [data-primary]');if(pb){e.preventDefault();pb.click();}return;}
   if(!L||!$('#modal').hidden)return;
   if(L.intro){if(e.key==='Enter'||e.key==='ArrowRight'){e.preventDefault();introGo(1);}else if(e.key==='ArrowLeft'){e.preventDefault();introGo(-1);}return;}
@@ -6575,10 +6920,11 @@ document.addEventListener('keydown',e=>{
     else if(canCheck()){e.preventDefault();check();}
   }else if(/^[1-4]$/.test(e.key)&&!L.finished&&L.ui){pick(+e.key-1);}
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{if(famJoined())famPoll(true);if(RM.code)rmPoll();if(!L&&!G&&!RM.code)render();}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{if(famJoined())famPoll(true);if(frActive()){frSync();frPoll(false,TAB==='fr'&&FRV==='fr');}if(RM.code)rmPoll();if(!L&&!G&&!RM.code)render();}});
 window.addEventListener('pagehide',()=>{try{save();}catch(e){}});
 
 load();render();cloudBoot();pwaBoot();
+if(frActive())setTimeout(frSync,2500);
 </script>
 </body>
 </html>
