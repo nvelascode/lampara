@@ -190,7 +190,12 @@ h1,h2,h3,h4{font-weight:900}
 .stop.ping .node{animation:pulse .5s ease-in-out 3}
 .tabs>div{display:flex;width:100%;max-width:560px;gap:2px}
 .tab{flex:1;min-width:0;display:grid;justify-items:center;gap:1px;padding:6px 1px;border-radius:14px;font-size:11px;font-weight:900;color:var(--muted);border:2px solid transparent}
+.tab{position:relative}
 .tab svg{width:26px;height:26px}
+.tab .dot{position:absolute;top:3px;left:calc(50% + 6px);width:11px;height:11px;border-radius:50%;background:var(--red);border:2px solid var(--surface)}
+.phead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.gear{width:46px;height:46px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:22px;display:grid;place-items:center}
+.back{display:flex;align-items:center;gap:8px;color:var(--blue);font-weight:900;font-size:16px;padding:8px 0}
 .tab span{white-space:nowrap}
 @media (max-width:380px){.tab{font-size:10px;padding:6px 0}.tab svg{width:24px;height:24px}}
 .tab.on{color:var(--blue);background:var(--blue-bg);border-color:var(--blue)}
@@ -1347,6 +1352,7 @@ const IC={
  users:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M17 14.5c2.5.2 4 1.8 4 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
  read:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M4 10h16M9 3.5V7M15 3.5V7M9 15l2.2 2.2L15.5 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
  book:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v15H5.5C4.7 19 4 18.3 4 17.5zM20 5.5C20 4.7 19.3 4 18.5 4H13v15h5.5c.8 0 1.5-.7 1.5-1.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>',
+ heart:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.500-4.600-9.300-9.400C1.500 7.800 3.700 4.800 6.800 4.800c2 0 3.600 1 5.200 3 1.600-2 3.200-3 5.200-3 3.100 0 5.300 3 4.100 6.300-1.800 4.800-9.300 9.400-9.300 9.400z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>',
  trophy:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v6a5 5 0 0 1-10 0zM7 6H4c0 3 1 4 3 4.5M17 6h3c0 3-1 4-3 4.5M12 15v4M8 20h8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
  star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.9 6.6 19.7l1.1-6.1L3.2 9.4l6.1-.8z" fill="currentColor"/></svg>',
  lamp:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 19c0-2.2 3.2-3.6 8.5-3.6h8c4.5 0 7.6 1.2 8.5 3.6-1 4.4-5.2 8.4-10.4 8.4h-4C8.400 27.400 4 23.400 3 19z" fill="currentColor"/><path d="M26.500 17c2.600-1 3.600-3.400 2.500-5.800" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"/><path d="M10.500 12.500c-1.600-2.300.6-3.700.9-6 2.500 1.400 3.900 4 2.700 6.100-.6 1.100-2.800 1.100-3.600-.1z" fill="var(--flame)"/></svg>'
@@ -3636,7 +3642,7 @@ async function famPoll(force){
   try{
     const d=await rpc('fam_get',famArgs({p_mark:false}));
     if(d&&d.ok){FAM.data=d.family?d:null;FAM.cheers=d.cheers||[];if(!d.family){S.fam.joined=false;save();}
-      if(!$('#fam').hidden)return; if(TAB==='path'||TAB==='me')render();}
+      if(!$('#fam').hidden)return; if(TAB==='path'||TAB==='me'||TAB==='fr')render();else renderTabs();}
   }catch(e){}
 }
 const KIND_E={animo:'💪',fuego:'🔥',oracion:'🙏'},KIND_T={animo:'¡Ánimo!',fuego:'¡Sigue así!',oracion:'Orando por ti'};
@@ -4133,7 +4139,7 @@ async function giftClaim(id){
     if(FAM.data)FAM.data.gifts=Math.max(0,(FAM.data.gifts||1)-1);
     GIFTS=GIFTS.filter(x=>x.id!==id);renderTop();confetti(70);beep('win');
     showModal('<div style="text-align:center"><div style="font-size:64px;line-height:1.1">'+big+'</div><h3>'+esc(r.from)+' te regaló</h3><p style="margin:0 0 8px;font-weight:800">'+esc(txt)+'</p>'+(p.msg?'<p class="nota" style="text-align:left">💬 «'+esc(p.msg)+'»</p>':'')+(fresh.length?'<p class="muted">🏅 Logro: '+esc(fresh[0].t)+'</p>':'')+'</div>'+(GIFTS.length?'<button class="btn" data-a="gift-inbox">Abrir el siguiente ('+GIFTS.length+')</button>':'')+'<button class="btn ghost" data-a="stay">Cerrar</button>');
-    if(TAB==='me'||TAB==='path')render();
+    if(TAB==='me'||TAB==='path'||TAB==='fr')render();else renderTabs();
   }catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
 }
 function giftMine(){
@@ -5352,8 +5358,12 @@ function renderTop(){
 }
 function renderTabs(){
   const gk=S.course==='gk';
-  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],gk?['dic','Palabras',IC.book]:['read','Lectura',IC.read],['games','Juegos',IC.users],['me','Perfil',IC.trophy]];
-  $('#tabs').firstElementChild.innerHTML=tabs.map(t=>'<button class="tab '+(TAB===t[0]?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(TAB===t[0]?'aria-current="page"':'')+'>'+t[2]+'<span>'+t[1]+'</span></button>').join('');
+  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],gk?['dic','Palabras',IC.book]:['read','Lectura',IC.read],['games','Juegos',IC.users]];
+  if(famOn())tabs.push(['fr','Amigos',IC.heart]);
+  tabs.push(['me','Perfil',IC.trophy]);
+  const pend=(typeof giftN==='function'?giftN():0)+((FAM&&FAM.cheers)?FAM.cheers.length:0);
+  $('#tabs').firstElementChild.innerHTML=tabs.map(t=>{const on=TAB===t[0]||(t[0]==='me'&&TAB==='set');
+    return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(t[0]==='fr'&&pend&&famJoined()?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
 }
 function homeHTML(){
   const gk=S.course==='gk',U=curUnits(),t=today(),xpT=S.days[t]||0,pct=Math.min(1,xpT/S.goal),C=175.9;
@@ -5419,22 +5429,32 @@ function reviewHTML(){
 }
 function meHTML(){
   const ld=ALLKEYS.concat(GKKEYS).filter(k=>S.done[k]).length;
-  return '<h1 class="page">Tu perfil</h1><div class="stats">'+
+  return '<div class="phead"><h1 class="page">Tu perfil</h1><button class="gear" data-a="settings" aria-label="Ajustes" title="Ajustes">⚙️</button></div><div class="stats">'+
    '<div class="stat s1"><span class="se">🔥</span><div><b>'+S.streak+'</b><span>Racha actual</span></div></div>'+
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
    '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+
-   famCardHTML()+giftsCardHTML()+'<section class="card"><b>📣 Compartir y animar</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha o anima a alguien a hacer su lección. Se envía por WhatsApp o por donde quieras.</p><div class="row2" style="margin:0"><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button><button class="btn ghost sm" data-a="share" data-k="cheer">Animar a alguien</button></div></section>'+
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
+   '<section class="card"><b>🛡️ Protectores de racha</b><p class="muted" style="margin:2px 0 0;font-size:14px">Tienes '+S.freezes+' de 2. Ganas uno cada 7 días de racha y se usa solo si un día no alcanzas a practicar.</p></section>'+
+   '<section class="card"><b>📣 Compartir mi progreso</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha. Se envía por WhatsApp o por donde quieras.</p><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button></section>'+
+   '<h3 style="margin:18px 0 2px">Logros</h3><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
+   '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
+}
+function settingsHTML(){
+  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lámpara.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
-   '<section class="card"><b>🛡️ Protectores de racha</b><p class="muted" style="margin:2px 0 0;font-size:14px">Tienes '+S.freezes+' de 2. Ganas uno cada 7 días de racha y se usa solo si un día no alcanzas a practicar.</p></section>'+
-   '<h3 style="margin:18px 0 2px">Logros</h3><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
    '<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
    '<textarea id="bk" class="code" placeholder="Aquí aparece tu código. Para restaurar, pégalo aquí."></textarea><div class="row2" style="margin:10px 0 0"><button class="btn blue sm" data-a="bk-copy">Copiar código</button><button class="btn ghost sm" data-a="bk-restore">Restaurar</button></div></section>'+
-   '<div style="margin-top:14px"><button class="link-danger" data-a="reset">'+(resetArmed?'Toca otra vez para borrar todo el progreso':'Borrar progreso')+'</button></div>'+
-   '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
+   '<div style="margin-top:22px"><button class="link-danger" data-a="reset">'+(resetArmed?'Toca otra vez para borrar todo el progreso':'Borrar progreso')+'</button></div>';
+}
+function amigosHTML(){
+  if(!famOn())return '<h1 class="page">Amigos</h1><div class="hero">'+mascot('think',76)+'<div class="bubble">Los amigos no están disponibles en esta versión.</div></div>';
+  const joined=famJoined(),fh=famHomeHTML();
+  return '<h1 class="page">Amigos</h1><div class="hero">'+mascot('wink',84)+'<div class="bubble">'+(joined?'Practiquen juntos y anímense unos a otros.':'Crea un grupo con tu familia para practicar juntos.')+'</div></div>'+
+   fh+(fh.indexOf('famcard')<0?famCardHTML():'')+giftsCardHTML()+
+   '<section class="card"><b>📣 Animar a alguien</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Anima a alguien a hacer su lección. Se envía por WhatsApp o por donde quieras.</p><button class="btn ghost sm" data-a="share" data-k="cheer">Animar a alguien</button></section>';
 }
 /* «Ir a mi lección»: lleva a la primera lección sin hacer (la que la ruta marca con ¡EMPIEZA!).
    Aunque el avance esté en dos grupos (lecciones antiguas ya hechas y lecciones nuevas), las lecciones
@@ -5459,12 +5479,13 @@ let _gtRaf=0;
 window.addEventListener('scroll',()=>{if(_gtRaf)return;_gtRaf=requestAnimationFrame(()=>{_gtRaf=0;updateGoto();});},{passive:true});
 window.addEventListener('resize',()=>updateGoto());
 function render(){
+  if(TAB==='fr'&&!famOn())TAB='path';
   if(S.course==='gk'&&TAB==='read')TAB='path';
   if(S.course!=='gk'&&TAB==='dic')TAB='path';
   applyTheme();refreshStreak();renderTop();renderTabs();
   if(famJoined())setTimeout(()=>famPoll(),60);
   if(TAB==='me')setTimeout(()=>{prepShare('streak').catch(()=>{});},150);
-  $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='read'?readHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():meHTML();
+  $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='read'?readHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():TAB==='fr'?amigosHTML():TAB==='set'?settingsHTML():meHTML();
   setTimeout(updateGoto,50);
   renderCmenu();
 }
@@ -6037,6 +6058,8 @@ document.addEventListener('click',e=>{
   if(a.startsWith('g-')){gAct(a,b);return;}
   if(a==='goto'){gotoMyLesson();return;}
   if(a==='uc-go'){ucGo();return;}
+  if(a==='settings'){TAB='set';resetArmed=false;render();window.scrollTo(0,0);return;}
+  if(a==='settings-back'){TAB='me';render();window.scrollTo(0,0);return;}
   if(a==='rm-quick'){rmQuickJoin();return;}
   if(a==='tab'){TAB=b.dataset.t;resetArmed=false;render();window.scrollTo(0,0);}
   else if(a==='lesson'){
