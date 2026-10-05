@@ -166,6 +166,13 @@ h1,h2,h3,h4{font-weight:900}
 .ucel .btn{width:min(420px,100%)}
 .newtag{display:inline-block;margin-left:8px;background:var(--orange);color:#fff;font-weight:900;font-size:12px;padding:3px 10px;border-radius:999px;vertical-align:middle;animation:pulse 1.8s ease-in-out infinite}
 .count.full{color:var(--green)}
+.offbar{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 6px);z-index:9;background:#3C3C3C;color:#fff;font-weight:900;font-size:13px;padding:6px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.3);white-space:nowrap}
+.offbar[hidden]{display:none}
+.updbar{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 44px);z-index:9;display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--blue);border-radius:16px;padding:8px 10px 8px 14px;font-weight:900;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.25);max-width:520px;margin:0 auto}
+.updbar[hidden]{display:none}
+.updbar span{flex:1}
+.updbar .btn{width:auto;padding:8px 14px;font-size:13px}
+.updbar .x{color:var(--muted);font-size:18px;padding:4px 6px}
 .authov{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 20px) 20px calc(env(safe-area-inset-bottom,0px) + 20px);overflow:auto;animation:ucin .25s ease-out}
 .authov[hidden]{display:none}
 .auin{width:min(420px,100%);display:grid;gap:14px;text-align:center}
@@ -640,6 +647,8 @@ a.btn{text-decoration:none;text-align:center}
 <div id="cmenu" hidden></div>
 <div id="ucel" class="ucel" hidden></div>
 <div id="auth" class="authov" hidden role="dialog" aria-modal="true" aria-label="Guardar mi progreso"></div>
+<div id="offbar" class="offbar" hidden role="status">📴 Sin conexión · puedes seguir estudiando</div>
+<div id="upd" class="updbar" hidden role="status"></div>
 <div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
 <div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
 <div id="dic" class="overlay" role="dialog" aria-modal="true" aria-label="Diccionario" hidden></div>
@@ -4789,6 +4798,50 @@ function authSignOut(){
   clearTimeout(CLOUD.timer);AU=null;authSave();CLOUD.state='idle';CLOUD.last=0;
   toast('Sesión cerrada. Tu progreso sigue en este teléfono.');render();
 }
+/* ============================================================
+   APP INSTALABLE Y USO SIN INTERNET
+   ============================================================ */
+let INSTALL_EVT=null;
+const UPD={tag:null,shown:false,last:0};
+const swReady=()=>{try{return !!(navigator.serviceWorker&&navigator.serviceWorker.controller);}catch(e){return false;}};
+function installCardHTML(){
+  const ok=swReady();
+  const st='<p class="muted" style="margin:8px 0 0;font-size:13px">Sin internet: '+(ok?'<b>listo ✓</b> La app abre y puedes estudiar sin señal.':'se activará la próxima vez que abras la app con internet.')+'</p>';
+  if(isStandalone())return '<section class="card"><b>📲 App instalada</b><p class="muted" style="margin:2px 0 0;font-size:14px">Lámpara ya está instalada en este teléfono.</p>'+st+'</section>';
+  const how=INSTALL_EVT?'<button class="btn sm" data-a="install">Instalar ahora</button>'
+    :isIOS()?'<p style="margin:0;font-size:14px">En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Ábrela siempre desde ese ícono.</p>'
+    :'<p style="margin:0;font-size:14px">Abre el menú del navegador (los tres puntos) y elige <b>Instalar app</b> o <b>Añadir a pantalla de inicio</b>.</p>';
+  return '<section class="card"><b>📲 Instalar Lámpara</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Se abre como una app, es más rápida y funciona sin internet.</p>'+how+st+'</section>';
+}
+async function updTag(){
+  try{const r=await fetch('index.html',{method:'HEAD',cache:'no-store'});if(!r.ok)return null;
+    return (r.headers.get('etag')||r.headers.get('last-modified')||'')+'|'+(r.headers.get('content-length')||'');}catch(e){return null;}
+}
+async function updCheck(first){
+  UPD.last=Date.now();const t=await updTag();if(!t)return;
+  if(first||!UPD.tag){UPD.tag=t;return;}
+  if(t!==UPD.tag&&!UPD.shown)showUpd();
+}
+function showUpd(){
+  if(L||G||RM.code){setTimeout(showUpd,60000);return;}
+  const el=document.getElementById('upd');if(!el)return;UPD.shown=true;
+  el.innerHTML='<span>✨ Hay una versión nueva de Lámpara</span><button class="btn sm" data-a="upd-go">Actualizar</button><button class="x" data-a="upd-later" aria-label="Luego">✕</button>';
+  el.hidden=false;
+}
+function pwaBoot(){
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INSTALL_EVT=e;if(!L&&!G&&(TAB==='path'||TAB==='set'))render();});
+  window.addEventListener('appinstalled',()=>{INSTALL_EVT=null;toast('¡Lámpara instalada!');if(!L&&!G)render();});
+  const off=()=>{const b=document.getElementById('offbar');if(b)b.hidden=navigator.onLine!==false;};
+  window.addEventListener('offline',off);
+  window.addEventListener('online',()=>{off();toast('Conexión recuperada.');if(famJoined())famPoll(true);});
+  off();
+  if('serviceWorker' in navigator&&/^https?:/.test(location.protocol)){
+    const reg=()=>navigator.serviceWorker.register('sw.js').then(()=>{if(!L&&!G&&TAB==='set')render();}).catch(()=>{});
+    if(document.readyState==='complete')reg();else window.addEventListener('load',reg);
+  }
+  updCheck(true);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-UPD.last>600000)updCheck();});
+}
 function refreshStreak(){
   if(!S.lastDay||S.streak===0)return;
   const gap=diffDays(S.lastDay,today());
@@ -5632,7 +5685,7 @@ function homeHTML(){
       '<button class="node '+(isDone?'done ':'')+(locked?'locked':'')+(isCur?' current':'')+'" data-a="lesson" data-c="'+(gk?'gk':'bib')+'" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+inner+'</button><span>'+esc(l.title)+'</span></div>';
     }).join('')+'</div></section>';
   }).join('');
-  const tip=(!isStandalone()&&!S.tipHide)?'<div class="install"><b>📲 Instala Lámpara en tu teléfono</b><br>'+(isIOS()?'En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Úsala siempre desde ese ícono para que no se borre tu progreso.':'Abre el menú del navegador y elige <b>Añadir a pantalla de inicio</b> o <b>Instalar app</b>. Así se abre como una app y guarda tu progreso.')+'<br><button class="btn sm purple" data-a="tip">Entendido</button></div>':'';
+  const tip=(!isStandalone()&&!S.tipHide)?'<div class="install"><b>📲 Instala Lámpara en tu teléfono</b><br>'+(isIOS()?'En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Úsala siempre desde ese ícono para que no se borre tu progreso.':'Abre el menú del navegador y elige <b>Añadir a pantalla de inicio</b> o <b>Instalar app</b>. Así se abre como una app y guarda tu progreso.')+'<br>'+(INSTALL_EVT?'<button class="btn sm" data-a="install" style="margin-right:8px">Instalar ahora</button>':'')+'<button class="btn sm purple" data-a="tip">Entendido</button></div>':'';
   const sw='<div class="cswitch"><button class="cs '+(!gk?'on':'')+'" data-a="course" data-c="bib">📖 Biblia</button><button class="cs '+(gk?'on':'')+'" data-a="course" data-c="gk">'+flagGR()+' Griego</button></div>';
   let daily;
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
@@ -5688,7 +5741,7 @@ function meHTML(){
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
-  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+accountCardHTML()+
+  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+accountCardHTML()+installCardHTML()+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lámpara.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    '<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
@@ -6305,6 +6358,9 @@ document.addEventListener('click',e=>{
   if(a.startsWith('g-')){gAct(a,b);return;}
   if(a==='goto'){gotoMyLesson();return;}
   if(a==='uc-go'){ucGo();return;}
+  if(a==='install'){if(INSTALL_EVT){const ev2=INSTALL_EVT;INSTALL_EVT=null;try{ev2.prompt();ev2.userChoice.then(()=>render()).catch(()=>{});}catch(e){}}return;}
+  if(a==='upd-go'){location.reload();return;}
+  if(a==='upd-later'){const el=document.getElementById('upd');if(el){el.hidden=true;el.innerHTML='';}UPD.shown=false;UPD.tag=null;return;}
   if(a==='auth-open'){authOpen();return;}
   if(a==='auth-close'||a==='auth-done'){authClose();return;}
   if(a==='auth-send'){authSend();return;}
@@ -6448,7 +6504,7 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{if(famJoined())famPoll(true);if(RM.code)rmPoll();if(!L&&!G&&!RM.code)render();}});
 window.addEventListener('pagehide',()=>{try{save();}catch(e){}});
 
-load();render();cloudBoot();
+load();render();cloudBoot();pwaBoot();
 </script>
 </body>
 </html>
