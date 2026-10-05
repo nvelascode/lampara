@@ -143,6 +143,29 @@ h1,h2,h3,h4{font-weight:900}
 .cbtn .ci .flag{width:30px;height:20px;border-radius:4px;display:block}
 .cbtn .car{font-size:12px;color:var(--muted);transition:transform .2s}
 .cbtn[aria-expanded="true"] .car{transform:rotate(180deg)}
+.ucel{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:calc(env(safe-area-inset-top,0px) + 22px) 22px calc(env(safe-area-inset-bottom,0px) + 22px);background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--u) 40%,var(--bg)),var(--bg) 72%);text-align:center;overflow:auto;animation:ucin .35s ease-out}
+.ucel[hidden]{display:none}
+@keyframes ucin{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.uctag{background:var(--u);color:#fff;font-weight:900;font-size:13px;letter-spacing:.08em;padding:6px 14px;border-radius:999px;animation:ucpop .5s .15s both cubic-bezier(.2,1.6,.4,1)}
+@keyframes ucpop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.ucrow{display:flex;align-items:center;justify-content:center;margin:2px 0}
+.ucbadge{position:relative;width:128px;height:128px;border-radius:50%;display:grid;place-items:center;font-size:64px;background:var(--surface);border:6px solid var(--u);box-shadow:0 0 0 10px color-mix(in srgb,var(--u) 25%,transparent);animation:ucpop .6s .25s both cubic-bezier(.2,1.6,.4,1)}
+.ucbadge::before{content:"";position:absolute;inset:-46px;z-index:-1;border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--u) 30%,transparent) 0 10deg,transparent 10deg 30deg);animation:ucspin 14s linear infinite;-webkit-mask:radial-gradient(circle,transparent 73px,#000 75px,#000 100%,transparent 100%);mask:radial-gradient(circle,transparent 73px,#000 75px,#000 100%,transparent 100%)}
+@keyframes ucspin{to{transform:rotate(360deg)}}
+.ucbadge .md{position:absolute;right:-8px;bottom:-6px;font-size:40px;animation:ucpop .5s .7s both cubic-bezier(.2,1.6,.4,1)}
+.ucrow .mas{margin-left:-14px}
+.ucel h1{margin:0;font-size:26px;line-height:1.15;max-width:420px}
+.ucel .ucsub{margin:0;color:var(--muted);font-weight:800;font-size:15px}
+.ucprog{width:min(320px,86%);height:14px;border-radius:999px;background:var(--surface2);border:2px solid var(--line);overflow:hidden}
+.ucprog i{display:block;height:100%;background:var(--u);border-radius:999px;transition:width .9s .5s ease-out}
+.ucnext{display:flex;align-items:center;gap:14px;text-align:left;width:min(420px,100%);padding:14px 16px;border-radius:20px;border:3px solid var(--u);border-bottom-width:6px;background:var(--surface);animation:ucpop .5s .9s both cubic-bezier(.2,1.4,.4,1)}
+.ucnext .uce{font-size:40px;line-height:1}
+.ucnext small{display:block;color:var(--u);font-weight:900;letter-spacing:.06em;font-size:12px;text-transform:uppercase}
+.ucnext b{display:block;font-size:18px;line-height:1.2}
+.ucnext span.s{color:var(--muted);font-size:14px;font-weight:800}
+.ucel .btn{width:min(420px,100%)}
+.newtag{display:inline-block;margin-left:8px;background:var(--orange);color:#fff;font-weight:900;font-size:12px;padding:3px 10px;border-radius:999px;vertical-align:middle;animation:pulse 1.8s ease-in-out infinite}
+.count.full{color:var(--green)}
 .cmenu-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:12}
 .cmenu{position:fixed;top:0;left:0;right:0;z-index:13;background:var(--bg);border-bottom:2px solid var(--line);border-radius:0 0 22px 22px;padding:calc(env(safe-area-inset-top,0px) + 14px) 16px 20px;animation:cmdown .22s ease-out;max-height:92vh;overflow:auto}
 @keyframes cmdown{from{transform:translateY(-30px);opacity:0}to{transform:none;opacity:1}}
@@ -584,6 +607,7 @@ a.btn{text-decoration:none;text-align:center}
 <nav class="tabs" id="tabs" aria-label="Secciones"><div></div></nav>
 <button id="goto" class="goto" data-a="goto" hidden aria-label="Ir a mi lección"></button>
 <div id="cmenu" hidden></div>
+<div id="ucel" class="ucel" hidden></div>
 <div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
 <div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
 <div id="dic" class="overlay" role="dialog" aria-modal="true" aria-label="Diccionario" hidden></div>
@@ -1373,6 +1397,7 @@ function beep(kind){
     const t=AC.currentTime;
     const seq=kind==='good'?[[660,0,.09],[880,.09,.16]]
       :kind==='bad'?[[250,0,.14],[180,.14,.24]]
+      :kind==='fan'?[[523,0,.1],[659,.1,.1],[784,.2,.1],[1047,.3,.16],[784,.52,.1],[1047,.62,.1],[1319,.74,.5]]
       :kind==='win'?[[523,0,.11],[659,.11,.11],[784,.22,.11],[1047,.33,.34]]
       :[[600,0,.05]];
     seq.forEach(([f,s,d])=>{
@@ -5311,9 +5336,9 @@ function homeHTML(){
   const cur=firstUndone(U);let flat=0;
   const offs=[0,46,0,-46];
   const units=U.map((u,ui)=>{
-    const dn=u.lessons.filter(l=>S.done[l.title]).length;
+    const dn=u.lessons.filter(l=>S.done[l.title]).length,u0=flat,full=dn===u.lessons.length,isNew=!full&&dn===0&&u0>0&&cur>=u0&&cur<u0+u.lessons.length;
     const emo=UNIT_EMO[u.title]||'📖';
-    return '<section class="unit" style="--u:'+COLORS[(gk?ui+4:ui)%COLORS.length]+'"><div class="unit-h"><div><h2>'+esc(u.title)+'</h2><p>'+esc(u.sub)+'</p><span class="count">'+dn+' de '+u.lessons.length+'</span></div><div class="uemo" aria-hidden="true">'+emo+'</div></div><div class="path">'+
+    return '<section class="unit" style="--u:'+COLORS[(gk?ui+4:ui)%COLORS.length]+'"><div class="unit-h"><div><h2>'+esc(u.title)+(isNew?'<span class="newtag">¡Nueva unidad!</span>':'')+'</h2><p>'+esc(u.sub)+'</p><span class="count'+(full?' full':'')+'">'+(full?'🏅 Unidad completa':dn+' de '+u.lessons.length)+'</span></div><div class="uemo" aria-hidden="true">'+emo+'</div></div><div class="path">'+
     u.lessons.map((l,li)=>{
       const idx=flat++,isDone=!!S.done[l.title],locked=idx>cur&&!isDone,isCur=idx===cur;
       const inner=isDone?IC.check:locked?IC.lock:'<span class="e">'+emo+'</span>';
@@ -5526,13 +5551,46 @@ function check(){
   haptic(ok?15:[30,40,30]);
   save();renderLesson();
 }
+/* Celebración al terminar una unidad completa (solo la primera vez que se completa) */
+function unitOf(U,title){for(let i=0;i<U.length;i++)if(U[i].lessons.some(l=>l.title===title))return i;return -1;}
+function unitDone(u){return u.lessons.every(l=>S.done[l.title]);}
+function nextUnitIdx(U){for(let i=0;i<U.length;i++)if(!unitDone(U[i]))return i;return -1;}
+function showUnitCel(uc){
+  const el=document.getElementById('ucel');if(!el)return;
+  const U=uc.gk?GK_UNITS:UNITS,u=U[uc.ui],col=c=>COLORS[((uc.gk?c+4:c))%COLORS.length];
+  const total=U.length,doneN=U.filter(unitDone).length,ni=nextUnitIdx(U),nu=ni>=0?U[ni]:null;
+  const curso=uc.gk?'Griego':'Biblia';
+  el.style.setProperty('--u',col(uc.ui));
+  el.innerHTML=
+   '<span class="uctag">¡UNIDAD COMPLETADA!</span>'+
+   '<div class="ucrow"><div class="ucbadge"><span aria-hidden="true">'+(UNIT_EMO[u.title]||'📖')+'</span><span class="md" aria-hidden="true">🏅</span></div>'+mascot('cheer',112)+'</div>'+
+   '<h1>'+esc(u.title)+'</h1>'+
+   '<p class="ucsub">'+u.lessons.length+(u.lessons.length===1?' lección':' lecciones')+' · '+doneN+' de '+total+' unidades del curso de '+curso+'</p>'+
+   '<div class="ucprog" role="progressbar" aria-valuemin="0" aria-valuemax="'+total+'" aria-valuenow="'+doneN+'"><i style="width:0%" data-w="'+Math.round(100*doneN/total)+'"></i></div>'+
+   (nu?'<div class="ucnext" style="--u:'+col(ni)+'"><span class="uce" aria-hidden="true">'+(UNIT_EMO[nu.title]||'📖')+'</span><div><small>Ahora sigue</small><b>'+esc(nu.title)+'</b><span class="s">'+esc(nu.sub)+'</span></div></div>'
+      :'<div class="ucnext"><span class="uce" aria-hidden="true">🏆</span><div><small>¡Increíble!</small><b>Terminaste todo el curso de '+curso+'</b><span class="s">Puedes repasar cuando quieras.</span></div></div>')+
+   '<button class="btn" data-a="uc-go" data-primary>'+(nu?'¡Vamos a la siguiente unidad!':'¡Gracias, Señor!')+'</button>';
+  el.hidden=false;document.body.style.overflow='hidden';
+  setTimeout(()=>{const b=el.querySelector('.ucprog i');if(b)b.style.width=b.dataset.w+'%';},60);
+  beep('fan');haptic([30,60,30,60,30,60,90]);
+  confetti(160);setTimeout(()=>confetti(120),700);setTimeout(()=>confetti(90),1500);
+}
+function ucGo(){
+  const el=document.getElementById('ucel');el.hidden=true;el.innerHTML='';document.body.style.overflow='';
+  TAB='path';render();window.scrollTo(0,0);setTimeout(()=>{try{gotoMyLesson();}catch(e){}},200);
+}
 function finishLesson(){
   const bonus=5+(L.mistakes===0?5:0);
   const xp=L.xp+bonus;
   const r=recordDay(xp);
   const isReview=L.meta.type==='review';
+  L.wasDone=!isReview&&!!S.done[L.meta.key];
   if(isReview)S.reviews++;
   else{const p=S.done[L.meta.key]||{n:0};S.done[L.meta.key]={n:p.n+1,acc:Math.max(p.acc||0,L.firstTry/L.total)};}
+  if(!isReview){
+    const gkc=L.meta.course==='gk',UU=gkc?GK_UNITS:UNITS,ui0=unitOf(UU,L.meta.key);
+    if(!L.wasDone&&ui0>=0&&unitDone(UU[ui0])&&!(S.cel&&S.cel[UU[ui0].title])){S.cel=S.cel||{};S.cel[UU[ui0].title]=1;L.unitCel={ui:ui0,gk:gkc};}
+  }
   S.lessons++;if(L.mistakes===0)S.perfect++;
   S.froze=0;
   const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);
@@ -5948,6 +6006,7 @@ document.addEventListener('click',e=>{
   const a=b.dataset.a;
   if(a.startsWith('g-')){gAct(a,b);return;}
   if(a==='goto'){gotoMyLesson();return;}
+  if(a==='uc-go'){ucGo();return;}
   if(a==='tab'){TAB=b.dataset.t;resetArmed=false;render();window.scrollTo(0,0);}
   else if(a==='lesson'){
     const ui=+b.dataset.u,li=+b.dataset.l;
@@ -5979,7 +6038,7 @@ document.addEventListener('click',e=>{
   else if(a==='close'){showModal('<h3>¿Salir de la lección?</h3><p>Perderás el avance de esta lección.</p><button class="btn" data-a="stay">Seguir aprendiendo</button><button class="btn ghost" data-a="leave">Salir</button>');}
   else if(a==='stay')hideModal();
   else if(a==='leave'){hideModal();closeLesson();}
-  else if(a==='finish')closeLesson();
+  else if(a==='finish'){const uc=L&&L.unitCel;closeLesson();if(uc)setTimeout(()=>showUnitCel(uc),300);}
   else if(a==='share'){doShare(b.dataset.k,b.dataset.id);}
   else if(a==='rd-plan'){RDSET.plan=b.dataset.p;render();}
   else if(a==='rd-yrs'){RDSET.yrs=+b.dataset.y;render();}
