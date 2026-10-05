@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lámpara · Curso bíblico diario</title>
+<title>Lampy · Curso bíblico diario</title>
 <meta name="description" content="Aprende la Biblia cada día con preguntas, rachas y juegos en familia. Texto: Reina-Valera 1960.">
 <meta name="theme-color" content="#58CC02">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Lámpara">
+<meta name="apple-mobile-web-app-title" content="Lampy">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -328,6 +328,15 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .nota b{color:var(--blue)}
 .xpfloat{position:absolute;right:20px;top:-18px;font-weight:900;font-size:22px;color:var(--yellow-d);animation:floatup 1.1s ease-out forwards;pointer-events:none;text-shadow:0 2px 0 rgba(0,0,0,.12)}
 .intro{padding-top:6px}
+.icard{animation:icin .28s ease-out}
+@keyframes icin{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+.idots{display:flex;gap:6px;justify-content:center;margin:2px 0 10px}
+.idots i{display:block;width:9px;height:9px;border-radius:999px;background:var(--line);transition:all .25s}
+.idots i.on{background:var(--blue);width:24px}
+.idots i.dn{background:var(--blue);opacity:.55}
+.intro .h2s{font-size:20px;color:var(--muted);margin:0 0 10px}
+.intro p.rl{font-size:17px;line-height:1.5;margin:0 0 12px;padding:10px 12px;border-radius:14px;background:var(--surface2,var(--surface));border:2px solid var(--line)}
+.intro p b{font-weight:900}
 .intro .tag{display:inline-block;font-size:13px;font-weight:900;color:#fff;background:var(--blue);border-radius:999px;padding:3px 14px;margin:6px 0 10px}
 .intro h2{font-size:30px;line-height:1.15;margin:0 0 12px;letter-spacing:-.02em}
 .intro p{font-size:19px;line-height:1.55;margin:0 0 14px;font-weight:700}
@@ -3545,31 +3554,31 @@ function shareData(kind,id){
     const n=S.streak;
     return {key:'s:'+n+':'+S.xp,title:'¡Llevo '+n+(n===1?' día':' días')+' de racha!',sub:'aprendiendo la Biblia con Lampy',
       stats:[['🔥',n,'días de racha','#FFEFD0','#FF9600'],['⚡',S.xp,'XP','#FFF6CC','#FFC800'],['📚',lessonsDone(),'lecciones','#D7FFB8','#58CC02']],
-      text:'🔥 ¡Llevo '+n+(n===1?' día':' días')+' seguidos aprendiendo la Biblia en Lámpara! ¿Te animas a hacerlo conmigo?'+sp};
+      text:'🔥 ¡Llevo '+n+(n===1?' día':' días')+' seguidos aprendiendo la Biblia en Lampy! ¿Te animas a hacerlo conmigo?'+sp};
   }
   if(kind==='ach'){
     const a=ACH.find(x=>x.id===id)||ACH[0];
     return {key:'a:'+a.id,title:'¡Nuevo logro!',big:ACH_E[a.id]||'⭐',sub:a.t,sub2:a.d,
-      text:(ACH_E[a.id]||'⭐')+' ¡Gané el logro «'+a.t+'» en Lámpara! '+a.d+'.'+sp};
+      text:(ACH_E[a.id]||'⭐')+' ¡Gané el logro «'+a.t+'» en Lampy! '+a.d+'.'+sp};
   }
   if(kind==='lesson'){
     const r=LASTRES||{title:'una lección',xp:0,acc:0,streak:S.streak};
     return {key:'l:'+r.title+':'+r.xp,title:r.review?'¡Repaso listo!':'¡Lección completada!',sub:r.title,
       stats:[['⚡','+'+r.xp,'XP','#FFF6CC','#FFC800'],['🎯',r.acc+'%','al primer intento','#D7FFB8','#58CC02'],['🔥',r.streak,'días de racha','#FFEFD0','#FF9600']],
-      text:'✅ Completé «'+r.title+'» en Lámpara y gané '+r.xp+' XP. ¿Te animas a hacer la tuya?'+sp};
+      text:'✅ Completé «'+r.title+'» en Lampy y gané '+r.xp+' XP. ¿Te animas a hacer la tuya?'+sp};
   }
   if(kind==='read'){
     const n=rdStreak(),best=Math.max(S.rdbest||0,n),R=S.rd;let pct=0;
     if(R){const P=rdPlan(R.plan,R.n);pct=Math.round(100*Object.keys(R.done).reduce((a,i)=>a+(P.vs[i]||0),0)/rdFlat().T);}
     return {key:'r:'+n+':'+pct,title:'¡Llevo '+n+(n===1?' día':' días')+' leyendo la Biblia!',sub:'con mi plan de lectura',
       stats:[['📖',n,'días seguidos','#E1F3FF','#1CB0F6'],['🏆',best,'mejor racha','#F3E3FF','#CE82FF'],['📜',pct+'%','de la Biblia','#D7FFB8','#58CC02']],
-      text:'📖 ¡Llevo '+n+(n===1?' día':' días')+' seguidos leyendo la Biblia en Lámpara! ¿Leemos juntos?'+sp};
+      text:'📖 ¡Llevo '+n+(n===1?' día':' días')+' seguidos leyendo la Biblia en Lampy! ¿Leemos juntos?'+sp};
   }
   const msgs=[
-    '¡Hoy toca Lámpara! 🕯️ Llevo '+S.streak+' días de racha. ¿Hacemos una lección juntos?',
+    '¡Hoy toca Lampy! 🕯️ Llevo '+S.streak+' días de racha. ¿Hacemos una lección juntos?',
     '¡Ánimo! Con una lección de unos minutos mantenemos la racha 🔥',
     '¿Ya hiciste tu lección de hoy? Yo ya sumé '+(S.days[today()]||0)+' XP 💪',
-    'Un versículo al día cambia el ánimo. Te espero en Lámpara 🕯️'
+    'Un versículo al día cambia el ánimo. Te espero en Lampy 🕯️'
   ];
   return {key:'c',text:pickOne(msgs)+sp,noImage:true};
 }
@@ -3587,7 +3596,7 @@ async function makeShareCanvas(d){
   const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#6BD70A');g.addColorStop(.55,'#4CB800');g.addColorStop(1,'#2F7A00');x.fillStyle=g;x.fillRect(0,0,W,H);
   x.fillStyle='rgba(255,255,255,.10)';[[120,180,150],[960,260,110],[900,1080,170],[130,1000,100]].forEach(o=>{x.beginPath();x.arc(o[0],o[1],o[2],0,7);x.fill();});
   x.textAlign='center';x.textBaseline='alphabetic';
-  x.fillStyle='#fff';x.font='900 56px '+F;x.fillText('Lámpara',W/2,110);
+  x.fillStyle='#fff';x.font='900 56px '+F;x.fillText('Lampy',W/2,110);
   x.font='800 30px '+F;x.fillStyle='rgba(255,255,255,.9)';x.fillText('Aprende la Biblia cada día',W/2,156);
   rrect(x,70,430,W-140,720,64,'rgba(0,0,0,.14)');rrect(x,70,418,W-140,720,64,'#fff');
   const sv=(mascot('cheer',420).match(/<svg[\s\S]*<\/svg>/)||[''])[0].replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" ');
@@ -3613,10 +3622,10 @@ async function prepShare(kind,id){
   const c=await makeShareCanvas(d);
   const blob=await new Promise(r=>c.toBlob(r,'image/png'));
   if(!blob)return null;
-  let file=null;try{file=new File([blob],'lampara.png',{type:'image/png'});}catch(e){}
+  let file=null;try{file=new File([blob],'lampy.png',{type:'image/png'});}catch(e){}
   SHC[d.key]={blob,file,text:d.text};return SHC[d.key];
 }
-function downloadBlob(blob){try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lampara.png';document.body.appendChild(a);a.click();setTimeout(()=>{try{a.remove();URL.revokeObjectURL(a.href);}catch(e){}},500);}catch(e){}}
+function downloadBlob(blob){try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lampy.png';document.body.appendChild(a);a.click();setTimeout(()=>{try{a.remove();URL.revokeObjectURL(a.href);}catch(e){}},500);}catch(e){}}
 async function doShare(kind,id){
   const d=shareData(kind,id);
   try{
@@ -3625,8 +3634,8 @@ async function doShare(kind,id){
       window.open('https://wa.me/?text='+encodeURIComponent(d.text),'_blank');return;
     }
     const pre=SHC[d.key]||await prepShare(kind,id);
-    if(pre&&pre.file&&navigator.canShare&&navigator.canShare({files:[pre.file]})){await navigator.share({files:[pre.file],text:d.text,title:'Lámpara'});return;}
-    if(navigator.share){await navigator.share({text:d.text,title:'Lámpara'});return;}
+    if(pre&&pre.file&&navigator.canShare&&navigator.canShare({files:[pre.file]})){await navigator.share({files:[pre.file],text:d.text,title:'Lampy'});return;}
+    if(navigator.share){await navigator.share({text:d.text,title:'Lampy'});return;}
     if(pre)downloadBlob(pre.blob);
     try{await navigator.clipboard.writeText(d.text);}catch(e){}
     toast('Imagen guardada y mensaje copiado. ¡Pégalo donde quieras!');
@@ -3762,7 +3771,7 @@ async function famCheer(to,k,btn){
 }
 async function famInvite(){
   const code=FAM.data&&FAM.data.family.code,link=appLink();
-  const text='👨‍👩‍👧 ¡Únete a mi grupo en Lámpara y practiquemos la Biblia juntos! Mi código es: '+code+(link?'\nEntra aquí: '+link:'');
+  const text='👨‍👩‍👧 ¡Únete a mi grupo en Lampy y practiquemos la Biblia juntos! Mi código es: '+code+(link?'\nEntra aquí: '+link:'');
   try{if(navigator.share){await navigator.share({text});return;}}catch(e){if(e&&e.name==='AbortError')return;}
   window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
@@ -4471,7 +4480,7 @@ async function rmStart(){
   rmPoll();
 }
 async function rmInvite(){
-  const link=appLink(),text='🎮 ¡Juega conmigo en Lámpara! Entra a Juegos → «Unirme con código» y escribe: '+RM.code+(link?'\nEntra aquí: '+link:'');
+  const link=appLink(),text='🎮 ¡Juega conmigo en Lampy! Entra a Juegos → «Unirme con código» y escribe: '+RM.code+(link?'\nEntra aquí: '+link:'');
   try{if(navigator.share){await navigator.share({text});return;}}catch(e){if(e&&e.name==='AbortError')return;}
   window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
@@ -4807,11 +4816,11 @@ const swReady=()=>{try{return !!(navigator.serviceWorker&&navigator.serviceWorke
 function installCardHTML(){
   const ok=swReady();
   const st='<p class="muted" style="margin:8px 0 0;font-size:13px">Sin internet: '+(ok?'<b>listo ✓</b> La app abre y puedes estudiar sin señal.':'se activará la próxima vez que abras la app con internet.')+'</p>';
-  if(isStandalone())return '<section class="card"><b>📲 App instalada</b><p class="muted" style="margin:2px 0 0;font-size:14px">Lámpara ya está instalada en este teléfono.</p>'+st+'</section>';
+  if(isStandalone())return '<section class="card"><b>📲 App instalada</b><p class="muted" style="margin:2px 0 0;font-size:14px">Lampy ya está instalada en este teléfono.</p>'+st+'</section>';
   const how=INSTALL_EVT?'<button class="btn sm" data-a="install">Instalar ahora</button>'
     :isIOS()?'<p style="margin:0;font-size:14px">En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Ábrela siempre desde ese ícono.</p>'
     :'<p style="margin:0;font-size:14px">Abre el menú del navegador (los tres puntos) y elige <b>Instalar app</b> o <b>Añadir a pantalla de inicio</b>.</p>';
-  return '<section class="card"><b>📲 Instalar Lámpara</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Se abre como una app, es más rápida y funciona sin internet.</p>'+how+st+'</section>';
+  return '<section class="card"><b>📲 Instalar Lampy</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Se abre como una app, es más rápida y funciona sin internet.</p>'+how+st+'</section>';
 }
 async function updTag(){
   try{const r=await fetch('index.html',{method:'HEAD',cache:'no-store'});if(!r.ok)return null;
@@ -4825,12 +4834,12 @@ async function updCheck(first){
 function showUpd(){
   if(L||G||RM.code){setTimeout(showUpd,60000);return;}
   const el=document.getElementById('upd');if(!el)return;UPD.shown=true;
-  el.innerHTML='<span>✨ Hay una versión nueva de Lámpara</span><button class="btn sm" data-a="upd-go">Actualizar</button><button class="x" data-a="upd-later" aria-label="Luego">✕</button>';
+  el.innerHTML='<span>✨ Hay una versión nueva de Lampy</span><button class="btn sm" data-a="upd-go">Actualizar</button><button class="x" data-a="upd-later" aria-label="Luego">✕</button>';
   el.hidden=false;
 }
 function pwaBoot(){
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INSTALL_EVT=e;if(!L&&!G&&(TAB==='path'||TAB==='set'))render();});
-  window.addEventListener('appinstalled',()=>{INSTALL_EVT=null;toast('¡Lámpara instalada!');if(!L&&!G)render();});
+  window.addEventListener('appinstalled',()=>{INSTALL_EVT=null;toast('¡Lampy instalada!');if(!L&&!G)render();});
   const off=()=>{const b=document.getElementById('offbar');if(b)b.hidden=navigator.onLine!==false;};
   window.addEventListener('offline',off);
   window.addEventListener('online',()=>{off();toast('Conexión recuperada.');if(famJoined())famPoll(true);});
@@ -5685,7 +5694,7 @@ function homeHTML(){
       '<button class="node '+(isDone?'done ':'')+(locked?'locked':'')+(isCur?' current':'')+'" data-a="lesson" data-c="'+(gk?'gk':'bib')+'" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+inner+'</button><span>'+esc(l.title)+'</span></div>';
     }).join('')+'</div></section>';
   }).join('');
-  const tip=(!isStandalone()&&!S.tipHide)?'<div class="install"><b>📲 Instala Lámpara en tu teléfono</b><br>'+(isIOS()?'En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Úsala siempre desde ese ícono para que no se borre tu progreso.':'Abre el menú del navegador y elige <b>Añadir a pantalla de inicio</b> o <b>Instalar app</b>. Así se abre como una app y guarda tu progreso.')+'<br>'+(INSTALL_EVT?'<button class="btn sm" data-a="install" style="margin-right:8px">Instalar ahora</button>':'')+'<button class="btn sm purple" data-a="tip">Entendido</button></div>':'';
+  const tip=(!isStandalone()&&!S.tipHide)?'<div class="install"><b>📲 Instala Lampy en tu teléfono</b><br>'+(isIOS()?'En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Úsala siempre desde ese ícono para que no se borre tu progreso.':'Abre el menú del navegador y elige <b>Añadir a pantalla de inicio</b> o <b>Instalar app</b>. Así se abre como una app y guarda tu progreso.')+'<br>'+(INSTALL_EVT?'<button class="btn sm" data-a="install" style="margin-right:8px">Instalar ahora</button>':'')+'<button class="btn sm purple" data-a="tip">Entendido</button></div>':'';
   const sw='<div class="cswitch"><button class="cs '+(!gk?'on':'')+'" data-a="course" data-c="bib">📖 Biblia</button><button class="cs '+(gk?'on':'')+'" data-a="course" data-c="gk">'+flagGR()+' Griego</button></div>';
   let daily;
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
@@ -5742,7 +5751,7 @@ function meHTML(){
 }
 function settingsHTML(){
   return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+accountCardHTML()+installCardHTML()+
-   '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lámpara.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
+   '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lampy.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    '<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
    '<textarea id="bk" class="code" placeholder="Aquí aparece tu código. Para restaurar, pégalo aquí."></textarea><div class="row2" style="margin:10px 0 0"><button class="btn blue sm" data-a="bk-copy">Copiar código</button><button class="btn ghost sm" data-a="bk-restore">Restaurar</button></div></section>'+
@@ -5799,12 +5808,75 @@ function startLesson(meta,qs,intro){
   $('#lesson').hidden=false;document.body.style.overflow='hidden';
   if(L.intro)renderIntro();else nextQ();
 }
+/* La introducción se parte en tarjetas cortas (unos 500 caracteres cada una) y las lecturas de capítulos
+   van juntas en una tarjeta al final. El texto de las lecciones no cambia: se parte al mostrarlo. */
+function introTitleCase(s){return String(s).toLowerCase().replace(/(^|\s)([a-záéíóúñ])/g,(m,a,b)=>a+b.toUpperCase()).replace(/\b(Y|De)\b/g,x=>x.toLowerCase());}
+function introSplit(p,max){
+  const t=p.replace(/\ba\. C\./g,'a.\u00A0C.');
+  const ss=t.match(/[^.!?]+[.!?]+["»)]?(?: +|$)|[^.!?]+$/g)||[t];
+  const out=[];let cur='';
+  ss.forEach(s=>{ if(cur&&(cur+s).length>max){out.push(cur.trim());cur='';} cur+=s; });
+  if(cur.trim())out.push(cur.trim());
+  return out;
+}
+function introHead(p){
+  const k=p.indexOf(' — ');
+  if(k>1&&k<=40){
+    const hd=p.slice(0,k),flat=hd.replace(/\b(y|de)\b/g,'');
+    if(!/[.,;:]/.test(hd)&&flat===flat.toUpperCase())return hd.trim();
+  }
+  return '';
+}
+function introParaHTML(p){
+  const hd=introHead(p);
+  if(hd)return '<p><b>'+esc(introTitleCase(hd))+'</b> — '+esc(p.slice(p.indexOf(' — ')+3))+'</p>';
+  return '<p>'+esc(p)+'</p>';
+}
+function introCards(intro,max){
+  max=max||520;
+  const paras=String(intro.p||'').split('\n').map(x=>x.trim()).filter(Boolean);
+  const body=[],reads=[];let book='';
+  paras.forEach(p=>{
+    if(/^Lecturas:/.test(p)){reads.push({book,text:p.replace(/^Lecturas:\s*/,'')});return;}
+    const hd=introHead(p);if(hd)book=hd;
+    body.push(p);
+  });
+  const chunks=[];
+  body.forEach(p=>{ if(p.length<=max)chunks.push(p);else introSplit(p,max).forEach(x=>chunks.push(x)); });
+  const cards=[];let cur=[],len=0;
+  chunks.forEach(c=>{ if(cur.length&&len+c.length>max){cards.push({kind:'text',html:cur.map(introParaHTML).join('')});cur=[];len=0;} cur.push(c);len+=c.length; });
+  if(cur.length)cards.push({kind:'text',html:cur.map(introParaHTML).join('')});
+  if(reads.length){
+    const lines=reads.map(r=>{
+      const nm=introTitleCase(r.book||''),txt=r.text.trim();
+      if(nm&&txt.toLowerCase().indexOf(nm.toLowerCase())===0)return '<p class="rl">📖 <b>'+esc(txt.slice(0,nm.length))+'</b>'+esc(txt.slice(nm.length))+'</p>';
+      return '<p class="rl">📖 '+(nm?'<b>'+esc(nm)+':</b> ':'')+esc(txt)+'</p>';
+    }).join('');
+    cards.push({kind:'read',html:'<p style="font-size:16px;color:var(--muted);margin:0 0 12px">Lee estos capítulos para reforzar lo que aprendiste:</p>'+lines});
+  }
+  if(!cards.length)cards.push({kind:'text',html:'<p>'+esc(intro.p||'')+'</p>'});
+  return cards;
+}
+function introGo(d){
+  const n=(L.introCards||[]).length;
+  if(d>0&&(L.introI||0)>=n-1){L.intro=null;nextQ();return;}
+  L.introI=Math.max(0,Math.min(n-1,(L.introI||0)+d));renderIntro();
+}
 function renderIntro(){
-  const i=L.intro;
+  const i=L.intro;if(!L.introCards)L.introCards=introCards(i);
+  const cards=L.introCards,n=cards.length,k=L.introI||0,c=cards[k],last=k===n-1;
+  const dots=n>1?'<div class="idots" role="img" aria-label="Tarjeta '+(k+1)+' de '+n+'">'+cards.map((_,j)=>'<i class="'+(j===k?'on':j<k?'dn':'')+'"></i>').join('')+'</div>':'';
+  const mood=k===0?'wink':last&&n>1?'cheer':'happy';
+  const btns=n===1?'<button class="btn" data-a="begin" data-primary>¡Vamos!</button>'
+    :k===0?'<div class="row2" style="margin:0"><button class="btn ghost" data-a="begin">Saltar</button><button class="btn" data-a="intro-next" data-primary>Siguiente</button></div>'
+    :last?'<div class="row2" style="margin:0"><button class="btn ghost" data-a="intro-back">Atrás</button><button class="btn" data-a="begin" data-primary>¡Vamos!</button></div>'
+    :'<div class="row2" style="margin:0"><button class="btn ghost" data-a="intro-back">Atrás</button><button class="btn" data-a="intro-next" data-primary>Siguiente</button></div>';
   $('#lesson').innerHTML=
    '<div class="lh"><button class="x" data-a="close" aria-label="Salir de la lección">'+IC.close+'</button><div class="bar"><i style="width:0%"></i></div></div>'+
-   '<div class="lb"><div class="intro"><div style="display:flex;justify-content:center;margin:4px 0 6px">'+mascot('happy',110)+'</div><span class="tag">💡 Antes de empezar</span><h2>'+esc(i.t)+'</h2>'+String(i.p).split('\n').map(x=>'<p>'+esc(x)+'</p>').join('')+'</div></div>'+
-   '<div class="lf"><div class="in"><button class="btn" data-a="begin">¡Vamos!</button></div></div>';
+   '<div class="lb"><div class="intro icard" id="icard">'+dots+'<div style="display:flex;justify-content:center;margin:2px 0 6px">'+mascot(mood,k===0?104:86)+'</div>'+
+   '<span class="tag">'+(c.kind==='read'?'📖 Lecturas sugeridas':'💡 Antes de empezar')+'</span>'+(k===0?'<h2>'+esc(i.t)+'</h2>':'<h2 class="h2s">'+esc(i.t)+'</h2>')+c.html+'</div></div>'+
+   '<div class="lf"><div class="in">'+btns+'</div></div>';
+  const lb=$('#lesson .lb');if(lb)lb.scrollTop=0;
 }
 function nextQ(){
   L.cur=L.queue.shift();
@@ -6398,6 +6470,8 @@ document.addEventListener('click',e=>{
     startLesson({type:'review',title:'Repaso diario',verses:pick5},buildQuestions(pick5,[],8));
   }
   else if(a==='begin'){if(L&&L.intro){L.intro=null;nextQ();}}
+  else if(a==='intro-next'){if(L&&L.intro)introGo(1);}
+  else if(a==='intro-back'){if(L&&L.intro)introGo(-1);}
   else if(a==='pick')pick(+b.dataset.i);
   else if(a==='mi')matchTap(b.dataset.s,+b.dataset.id);
   else if(a==='place'){if(L&&!L.ui.checked){L.ui.placed.push(+b.dataset.id);renderLesson();}}
@@ -6494,7 +6568,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target&&e.target.id==='rmquick'){e.preventDefault();rmQuickJoin();return;}
   if(G&&e.key==='Enter'&&$('#modal').hidden&&e.target.tagName!=='INPUT'){const pb=document.querySelector('#game [data-primary]');if(pb){e.preventDefault();pb.click();}return;}
   if(!L||!$('#modal').hidden)return;
-  if(L.intro){if(e.key==='Enter'){L.intro=null;nextQ();}return;}
+  if(L.intro){if(e.key==='Enter'||e.key==='ArrowRight'){e.preventDefault();introGo(1);}else if(e.key==='ArrowLeft'){e.preventDefault();introGo(-1);}return;}
   if(e.key==='Enter'){
     if(L.finished){closeLesson();return;}
     if(L.ui&&L.ui.checked){e.preventDefault();nextQ();}
