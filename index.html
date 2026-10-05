@@ -67,6 +67,8 @@ h1,h2,h3,h4{font-weight:900}
 .mas svg{width:100%;height:100%;overflow:visible}
 .mas .fl{transform-origin:50px 32px;animation:flick 1.6s ease-in-out infinite}
 .mas.cheer{animation:bounce .8s ease-out 2}
+.mas .tw{transform-origin:80px 49px;animation:twinkle 2.2s ease-in-out infinite}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0);opacity:1}50%{transform:scale(.55) rotate(25deg);opacity:.7}}
 .mas.sad{animation:wiggle .9s ease-in-out 2}
 .pop{animation:pop .35s ease-out}
 
@@ -136,8 +138,31 @@ h1,h2,h3,h4{font-weight:900}
 
 /* ---------- pestañas ---------- */
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:2px solid var(--line);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:6}
+.cbtn{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-weight:900;font-size:17px;color:var(--ink)}
+.cbtn .ci{font-size:24px;line-height:1;display:grid;place-items:center}
+.cbtn .ci .flag{width:30px;height:20px;border-radius:4px;display:block}
+.cbtn .car{font-size:12px;color:var(--muted);transition:transform .2s}
+.cbtn[aria-expanded="true"] .car{transform:rotate(180deg)}
+.cmenu-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:12}
+.cmenu{position:fixed;top:0;left:0;right:0;z-index:13;background:var(--bg);border-bottom:2px solid var(--line);border-radius:0 0 22px 22px;padding:calc(env(safe-area-inset-top,0px) + 14px) 16px 20px;animation:cmdown .22s ease-out;max-height:92vh;overflow:auto}
+@keyframes cmdown{from{transform:translateY(-30px);opacity:0}to{transform:none;opacity:1}}
+.cmenu .in{max-width:560px;margin:0 auto}
+.cmenu h2{margin:0 0 4px;font-size:22px}
+.cmenu .sub{margin:0 0 12px;color:var(--muted);font-size:14px;font-weight:800}
+.ctiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ctile{display:grid;justify-items:center;gap:6px;padding:12px 6px;border-radius:18px;border:3px solid var(--line);border-bottom-width:5px;background:var(--surface);font-weight:900;text-align:center}
+.ctile.on{border-color:var(--blue);background:var(--blue-bg)}
+.ctile[disabled]{opacity:.55}
+.ctile .ci{font-size:38px;line-height:1;height:42px;display:grid;place-items:center}
+.ctile .ci .flag{width:54px;height:36px;border-radius:6px}
+.ctile b{font-size:15px}
+.ctile small{font-size:12px;color:var(--muted);font-weight:800}
+.cmenu .cl{margin:14px auto 0;display:block;color:var(--muted);font-weight:900}
 .goto{position:fixed;right:14px;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:7;display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;background:var(--blue);color:#fff;font-weight:900;font-size:15px;border:0;border-bottom:4px solid rgba(0,0,0,.22);box-shadow:0 6px 18px rgba(0,0,0,.25)}
-.goto:active{transform:translateY(2px);border-bottom-width:2px}
+.goto{animation:gotoPulse 2.6s ease-in-out infinite}
+@keyframes gotoPulse{0%,100%{transform:scale(1);box-shadow:0 6px 18px rgba(0,0,0,.25),0 0 0 0 rgba(28,176,246,.45)}50%{transform:scale(1.045);box-shadow:0 8px 22px rgba(0,0,0,.28),0 0 0 9px rgba(28,176,246,0)}}
+.goto .mas{margin:-6px 0 -6px -6px}
+.goto:active{animation:none;transform:translateY(2px);border-bottom-width:2px}
 .goto[hidden]{display:none}
 .stop.ping .node{animation:pulse .5s ease-in-out 3}
 .tabs>div{display:flex;width:100%;max-width:560px;gap:2px}
@@ -558,6 +583,7 @@ a.btn{text-decoration:none;text-align:center}
 </div>
 <nav class="tabs" id="tabs" aria-label="Secciones"><div></div></nav>
 <button id="goto" class="goto" data-a="goto" hidden aria-label="Ir a mi lección"></button>
+<div id="cmenu" hidden></div>
 <div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
 <div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
 <div id="dic" class="overlay" role="dialog" aria-modal="true" aria-label="Diccionario" hidden></div>
@@ -1298,16 +1324,20 @@ const IC={
 function mascot(mood,size){
   mood=mood||'happy';size=size||80;
   const ink='#3C3C3C';
-  const eyes=mood==='cheer'
+  const eyes=mood==='wink'
+    ?'<ellipse cx="38" cy="53" rx="5.6" ry="6.4" fill="'+ink+'"/><circle cx="40" cy="50.6" r="2.1" fill="#fff"/><path d="M54 54q8-9 16 0" fill="none" stroke="'+ink+'" stroke-width="3.8" stroke-linecap="round"/>'
+    :mood==='cheer'
     ?'<path d="M30 52q8-10 16 0M54 52q8-10 16 0" fill="none" stroke="'+ink+'" stroke-width="3.8" stroke-linecap="round"/>'
     :'<ellipse cx="38" cy="53" rx="5.6" ry="6.4" fill="'+ink+'"/><ellipse cx="62" cy="53" rx="5.6" ry="6.4" fill="'+ink+'"/><circle cx="40" cy="50.6" r="2.1" fill="#fff"/><circle cx="64" cy="50.6" r="2.1" fill="#fff"/>';
   const brows=mood==='sad'?'<path d="M29 46l15-6M71 46l-15-6" stroke="'+ink+'" stroke-width="3.2" stroke-linecap="round"/>'
     :mood==='think'?'<path d="M30 43h15M56 39l15-3" stroke="'+ink+'" stroke-width="3.2" stroke-linecap="round"/>':'';
-  const mouth=mood==='cheer'?'<path d="M36 62q14 20 28 0z" fill="#C62828"/><path d="M43 70q7 6 14 0" fill="#FF8FA3"/>'
+  const mouth=mood==='wink'?'<path d="M37 63q13 15 27-3" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/><path d="M50 71q5 7 10 1" fill="#FF8FA3" stroke="#E0607A" stroke-width="1.4" stroke-linejoin="round"/>'
+    :mood==='cheer'?'<path d="M36 62q14 20 28 0z" fill="#C62828"/><path d="M43 70q7 6 14 0" fill="#FF8FA3"/>'
     :mood==='sad'?'<path d="M39 72q11-11 22 0" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>'
     :mood==='think'?'<ellipse cx="54" cy="69" rx="4.4" ry="3.6" fill="'+ink+'"/>'
     :'<path d="M38 64q12 12 24 0" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>';
-  const extra=mood==='sad'?'<path d="M30 59C28.4 63.4 24.6 66.6 24.6 70.6A5.4 5.4 0 0 0 35.4 70.6C35.4 66.6 31.6 63.4 30 59Z" fill="#1CB0F6"/><circle cx="28.3" cy="70.2" r="1.5" fill="#fff" opacity=".85"/>'
+  const extra=mood==='wink'?'<g class="tw" fill="#1CB0F6"><path d="M80 42l2.2 5 5 2.2-5 2.2-2.2 5-2.2-5-5-2.2 5-2.2z"/></g>'
+    :mood==='sad'?'<path d="M30 59C28.4 63.4 24.6 66.6 24.6 70.6A5.4 5.4 0 0 0 35.4 70.6C35.4 66.6 31.6 63.4 30 59Z" fill="#1CB0F6"/><circle cx="28.3" cy="70.2" r="1.5" fill="#fff" opacity=".85"/>'
     :mood==='think'?'<text x="76" y="24" font-size="24" font-weight="900" fill="#1CB0F6" font-family="Nunito,sans-serif">?</text>'
     :mood==='cheer'?'<g fill="#FFC800"><path d="M10 20l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path d="M88 10l2.5 5.5 5.5 2.5-5.5 2.5-2.5 5.5-2.5-5.5-5.5-2.5 5.5-2.5z"/></g>':'';
   const flame='<path d="M50 2C58 12 64 18 64 25C64 32 58 36 50 36C42 36 36 32 36 25C36 18 42 12 50 2Z" fill="#FF9600"/><path d="M50 15C54 21 57 24 57 28C57 32 54 34 50 34C46 34 43 32 43 28C43 24 46 21 50 15Z" fill="#FFD84D"/>';
@@ -4417,7 +4447,7 @@ ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>
    ESTADO Y ALMACENAMIENTO (localStorage protegido)
    ============================================================ */
 const KEY='lampara.rvr1960.v1';
-const defaults=()=>({course:'bib',theme:'auto',gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0});
+const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0});
 let S=defaults();
 function idbOpen(cb){
   try{
@@ -4432,13 +4462,13 @@ function idbGet(cb){idbOpen(db=>{if(!db)return cb(null);try{const g=db.transacti
 function save(){const j=JSON.stringify(S);try{localStorage.setItem(KEY,j);}catch(e){}idbSet(j);}
 function applyTheme(){
   try{
-    const t=(S&&S.theme)||'auto',r=document.documentElement;
-    if(t==='dark'||t==='light')r.setAttribute('data-theme',t);else r.removeAttribute('data-theme');
-    const dark=t==='dark'||(t!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+    /* Solo hay dos opciones: claro u oscuro. Quien tenía «automático» (o nada guardado) arranca con el modo de su teléfono. */
+    if(S.theme!=='dark'&&S.theme!=='light'){S.theme=(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)?'dark':'light';}
+    const t=S.theme,r=document.documentElement,dark=t==='dark';
+    r.setAttribute('data-theme',t);
     const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',dark?'#131F24':'#58CC02');
   }catch(e){}
 }
-try{if(window.matchMedia)window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>applyTheme());}catch(e){}
 function load(){
   let found=false;
   try{const r=localStorage.getItem(KEY);if(r){S=Object.assign(defaults(),JSON.parse(r));found=true;}}catch(e){}
@@ -5242,17 +5272,32 @@ const curUnits=()=>S.course==='gk'?GK_UNITS:UNITS;
 function firstUndone(U){const keys=U.flatMap(u=>u.lessons.map(l=>l.title));const i=keys.findIndex(k=>!S.done[k]);return i<0?keys.length:i;}
 const PCOL=['#1CB0F6','#FF9600','#58CC02','#A560E8','#FF4B4B','#00B894','#E91E8C','#2B70C9'];
 
+let CMENU=false;
+function courseProg(c){const keys=c==='gk'?GKKEYS:ALLKEYS;const d=keys.filter(k=>S.done[k]).length;return d+' de '+keys.length;}
+function renderCmenu(){
+  const el=document.getElementById('cmenu');if(!el)return;
+  if(!CMENU){el.hidden=true;el.innerHTML='';return;}
+  const gk=S.course==='gk';
+  el.hidden=false;
+  el.innerHTML='<div class="cmenu-bg" data-a="cmenu-close"></div><div class="cmenu" role="dialog" aria-label="Mis cursos"><div class="in"><div style="display:flex;align-items:center;gap:12px">'+mascot('wink',56)+'<h2 style="margin:0">Mis cursos</h2></div><p class="sub">Elige en qué curso quieres estar. Cada curso tiene su ruta y su repaso.</p><div class="ctiles">'+
+   '<button class="ctile '+(!gk?'on':'')+'" data-a="course" data-c="bib"><span class="ci">📖</span><b>Biblia</b><small>'+courseProg('bib')+' lecciones</small></button>'+
+   '<button class="ctile '+(gk?'on':'')+'" data-a="course" data-c="gk"><span class="ci">'+flagGR()+'</span><b>Griego</b><small>'+courseProg('gk')+' lecciones</small></button>'+
+   '<button class="ctile" disabled><span class="ci">🕎</span><b>Hebreo</b><small>Próximamente</small></button>'+
+   '</div><button class="cl" data-a="cmenu-close">Cerrar</button></div></div>';
+}
+function setCmenu(v){CMENU=!!v;renderCmenu();renderTop();}
 function renderTop(){
   const t=today(),doneToday=S.lastDay===t,alive=S.streak>0;
   $('#top').innerHTML=
-   '<div class="brand">'+mascot('happy',38)+'<span>Lámpara</span></div>'+
+   '<button class="cbtn" data-a="cmenu" aria-haspopup="true" aria-expanded="'+(typeof CMENU!=='undefined'&&CMENU)+'" aria-label="Curso actual: '+(S.course==='gk'?'Griego':'Biblia')+'. Cambiar de curso"><span class="ci">'+(S.course==='gk'?flagGR():'📖')+'</span><span>'+(S.course==='gk'?'Griego':'Biblia')+'</span><span class="car" aria-hidden="true">▼</span></button>'+
    '<div class="chips">'+
    (S.freezes?'<span class="chip shield" title="Protectores de racha" aria-label="'+S.freezes+' protectores de racha">'+IC.shield+S.freezes+'</span>':'')+
    '<span class="chip streak '+(doneToday?'on':alive?'risk':'off')+'" aria-label="Racha de '+S.streak+' días">'+IC.flame+S.streak+'</span>'+
    '<span class="chip xp" aria-label="'+S.xp+' puntos de experiencia">'+IC.bolt+S.xp+'</span></div>';
 }
 function renderTabs(){
-  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],['read','Lectura',IC.read],['dic','Palabras',IC.book],['games','Juegos',IC.users],['me','Perfil',IC.trophy]];
+  const gk=S.course==='gk';
+  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],gk?['dic','Palabras',IC.book]:['read','Lectura',IC.read],['games','Juegos',IC.users],['me','Perfil',IC.trophy]];
   $('#tabs').firstElementChild.innerHTML=tabs.map(t=>'<button class="tab '+(TAB===t[0]?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(TAB===t[0]?'aria-current="page"':'')+'>'+t[2]+'<span>'+t[1]+'</span></button>').join('');
 }
 function homeHTML(){
@@ -5260,8 +5305,8 @@ function homeHTML(){
   let msg,mood='happy';
   if(xpT>=S.goal){msg='¡Meta cumplida! Tu racha está a salvo por hoy.';mood='cheer';}
   else if(S.streak>0&&S.lastDay!==t){msg='¡No pierdas tu racha de '+S.streak+(S.streak===1?' día':' días')+'! Haz una lección hoy.';mood='think';}
-  else if(S.streak>0)msg='Llevas '+S.streak+' días seguidos. Te faltan '+(S.goal-xpT)+' XP para tu meta.';
-  else msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':'¡Hola! Haz tu primera lección y empieza tu racha.';
+  else if(S.streak>0){msg='Llevas '+S.streak+' días seguidos. Te faltan '+(S.goal-xpT)+' XP para tu meta.';mood='wink';}
+  else{mood='wink';msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':'¡Hola! Haz tu primera lección y empieza tu racha.';}
   const week=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');week.push('<div class="day"><div class="dot '+((S.days[d]||0)>0?'on':'')+(i===0?' today':'')+'">'+IC.check+'</div>'+DOW[dt.getDay()]+'</div>');}
   const cur=firstUndone(U);let flat=0;
   const offs=[0,46,0,-46];
@@ -5281,7 +5326,7 @@ function homeHTML(){
   let daily;
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
-  return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+sw+
+  return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+
   '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+famHomeHTML()+rdHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
@@ -5293,7 +5338,22 @@ function lvlOf(r){
   if(s<3)return {t:'👍 Vas bien',c:'var(--orange)',w:60};
   return {t:'⭐ Dominado',c:'var(--green)',w:100};
 }
+function lvlScore(s){
+  if(s<=0)return {t:'💪 A practicar',c:'var(--red)',w:25};
+  if(s<3)return {t:'👍 Vas bien',c:'var(--orange)',w:60};
+  return {t:'⭐ Dominado',c:'var(--green)',w:100};
+}
+function gkSeen(){return Object.keys(S.gw||{}).filter(id=>GK_BY[id]&&(S.gw[id].c+S.gw[id].w)>0);}
+function gkReviewHTML(){
+  const seen=gkSeen(),ready=seen.length>=3;
+  const weak=seen.map(id=>({id,s:S.gw[id].c-S.gw[id].w*1.5})).sort((a,b)=>a.s-b.s).slice(0,6);
+  return '<h1 class=\"page\">Repaso</h1>'+
+   '<section class=\"revhero\">'+mascot(ready?'think':'happy',90)+'<div style=\"flex:1\"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Repasa las palabras griegas que más te cuestan. Llevas <b>'+seen.length+'</b> de '+GK_DICT.length+'.':'Haz lecciones de palabras griegas y aquí aparecerán las que practiques.')+'</p>'+
+   '<button class=\"btn orange\" data-a=\"review\" '+(ready?'':'disabled')+'>'+(ready?'Empezar repaso':'Bloqueado')+'</button></div></section>'+
+   (ready?'<h3 style=\"margin:18px 0 8px\">Las que más te cuestan</h3><div class=\"list\">'+weak.map(w=>{const e=GK_BY[w.id],l=lvlScore(w.s);return '<div class=\"li\"><cite class=\"gk\">'+esc(e.g)+'</cite> <span class=\"lvl\" style=\"background:'+l.c+'\">'+l.t+'</span><p>'+esc(e.tr+' — '+e.es)+'</p><div class=\"meter\"><i style=\"width:'+l.w+'%;background:'+l.c+'\"></i></div></div>';}).join('')+'</div>':'');
+}
 function reviewHTML(){
+  if(S.course==='gk')return gkReviewHTML();
   const seen=Object.keys(S.verses).filter(r=>VBY[r]);
   const ready=seen.length>=3;
   const weak=seen.map(r=>({r,s:S.verses[r].c-S.verses[r].w*1.5})).sort((a,b)=>a.s-b.s).slice(0,6);
@@ -5312,7 +5372,7 @@ function meHTML(){
    famCardHTML()+giftsCardHTML()+'<section class="card"><b>📣 Compartir y animar</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha o anima a alguien a hacer su lección. Se envía por WhatsApp o por donde quieras.</p><div class="row2" style="margin:0"><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button><button class="btn ghost sm" data-a="share" data-k="cheer">Animar a alguien</button></div></section>'+
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
-   '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lámpara. «Automático» sigue el modo de tu teléfono.</p><div class="seg">'+[['auto','Automático'],['light','Claro'],['dark','Oscuro']].map(o=>'<button class="'+((S.theme||'auto')===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
+   '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lámpara.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    '<section class="card"><b>🛡️ Protectores de racha</b><p class="muted" style="margin:2px 0 0;font-size:14px">Tienes '+S.freezes+' de 2. Ganas uno cada 7 días de racha y se usa solo si un día no alcanzas a practicar.</p></section>'+
    '<h3 style="margin:18px 0 2px">Logros</h3><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
@@ -5331,7 +5391,7 @@ function updateGoto(){
   const open=(L&&!document.getElementById('lesson').hidden)||(document.getElementById('game')&&!document.getElementById('game').hidden);
   if(!n||open){b.hidden=true;return;}
   const r=n.getBoundingClientRect(),vh=window.innerHeight||800;
-  if(r.bottom<90||r.top>vh-130){b.hidden=false;b.innerHTML='<span aria-hidden="true">'+(r.top>vh-130?'⬇️':'⬆️')+'</span> Ir a mi lección';}
+  if(r.bottom<90||r.top>vh-130){b.hidden=false;b.innerHTML=mascot('wink',34)+'<span>Ir a mi lección</span><span aria-hidden="true">'+(r.top>vh-130?'⬇️':'⬆️')+'</span>';}
   else b.hidden=true;
 }
 function gotoMyLesson(){
@@ -5344,11 +5404,14 @@ let _gtRaf=0;
 window.addEventListener('scroll',()=>{if(_gtRaf)return;_gtRaf=requestAnimationFrame(()=>{_gtRaf=0;updateGoto();});},{passive:true});
 window.addEventListener('resize',()=>updateGoto());
 function render(){
+  if(S.course==='gk'&&TAB==='read')TAB='path';
+  if(S.course!=='gk'&&TAB==='dic')TAB='path';
   applyTheme();refreshStreak();renderTop();renderTabs();
   if(famJoined())setTimeout(()=>famPoll(),60);
   if(TAB==='me')setTimeout(()=>{prepShare('streak').catch(()=>{});},150);
   $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='read'?readHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():meHTML();
   setTimeout(updateGoto,50);
+  renderCmenu();
 }
 
 /* ============================================================
@@ -5778,7 +5841,7 @@ function gRenderSetup(){
   $('#game').innerHTML=
    '<div class="lh"><button class="x" data-a="g-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:0%"></i></div></div>'+
    '<div class="lb"><div class="gsetup"><span style="font-size:52px;line-height:1" aria-hidden="true">'+g.emo+'</span><div><h1>'+esc(g.t)+'</h1><p>'+esc(g.d)+'</p></div></div>'+
-   (sc?'<section class="sec"><h3>Jugadores</h3><div class="stepper"><button data-a="g-n" data-d="-1" aria-label="Menos jugadores">−</button><b>'+c.n+'</b><button data-a="g-n" data-d="1" aria-label="Más jugadores">+</button></div><div class="names">'+names+'</div></section>':'')+
+   (sc?'<section class="sec"><h3>Jugadores</h3><div class="stepper"><button data-a="g-n" data-d="-1" aria-label="Menos jugadores">−</button><b>'+c.n+'</b><button data-a="g-n" data-d="1" aria-label="Más jugadores">+</button></div>'+(c.n===1?'<p class="muted" style="font-size:14px;margin:8px 0 0">Juegas solo: el teléfono te pregunta, tú respondes y marcas si acertaste.</p>':'')+'<div class="names">'+names+'</div></section>':'')+
    '<section class="sec"><h3>'+(sc?'Rondas':'Preguntas')+'</h3><div class="seg">'+[5,10,15].map(r=>'<button class="'+(c.rounds===r?'on':'')+'" data-a="g-r" data-r="'+r+'">'+r+'</button>').join('')+'</div></section>'+
    '<section class="sec"><h3>🔊 Leer en voz alta</h3>'+(canV?'<div class="seg"><button class="'+(c.voice?'on':'')+'" data-a="g-voice" data-v="1">Sí</button><button class="'+(!c.voice?'on':'')+'" data-a="g-voice" data-v="0">No</button></div><p class="muted" style="font-size:14px;margin:8px 0 0">El teléfono lee cada pregunta y cada respuesta.</p>':'<p class="muted" style="font-size:14px;margin:0">Este navegador no ofrece lectura en voz alta.</p>')+'</section>'+
    '<p class="muted" style="font-size:14px">Al terminar sumas +10 XP a tu racha. 🔥</p></div>'+
@@ -5808,6 +5871,8 @@ function gRender(){
   }else if(G.phase==='q'){
     const more=it.clues&&G.cl<it.clues.length?'<button class="btn ghost" data-a="g-clue">💡 Otra pista</button>':'';
     foot='<div class="lf"><div class="in">'+((rep||more)?'<div class="row2">'+rep+more+'</div>':'')+'<button class="btn" data-a="g-reveal" data-primary>Ver respuesta</button></div></div>';
+  }else if(G.scores.length===1){
+    foot='<div class="lf"><div class="in"><p style="margin:0 0 8px;font-weight:900">¿Acertaste? <span class="muted" style="font-weight:800">(+'+pts+')</span></p><div class="row2"><button class="btn bad" data-a="g-solo" data-ok="0">❌ No</button><button class="btn good" data-a="g-solo" data-ok="1" data-primary>✅ Sí</button></div></div></div>';
   }else{
     foot='<div class="lf"><div class="in"><p style="margin:0 0 8px;font-weight:900">¿Quién acertó? <span class="muted" style="font-weight:800">(+'+pts+')</span></p><div class="who">'+
      G.scores.map((_,i)=>'<button class="pl '+(G.win.includes(i)?'on':'')+'" data-a="g-win" data-p="'+i+'" aria-pressed="'+G.win.includes(i)+'">'+av(i)+esc(nameOf(i))+'</button>').join('')+
@@ -5831,12 +5896,13 @@ function gEnd(){
   if(sc){
     const arr=G.scores.map((s,i)=>({s,n:nameOf(i),i})).sort((a,b)=>b.s-a.s);
     const top=arr.filter(x=>x.s===arr[0].s);
-    head=arr[0].s===0?'¡Partida terminada!':top.length>1?'¡Empate!':'¡Ganó '+arr[0].n+'!';
+    const solo=G.scores.length===1,maxPts=G.deck.reduce((a,it)=>a+(it.clues?3:1),0);
+    head=solo?(arr[0].s===0?'¡Partida terminada!':arr[0].s/maxPts>=.7?'¡Muy bien, '+arr[0].n+'!':'¡Buen intento, '+arr[0].n+'!'):arr[0].s===0?'¡Partida terminada!':top.length>1?'¡Empate!':'¡Ganó '+arr[0].n+'!';
     const medals=['🥇','🥈','🥉'];
-    rank='<div class="list" style="text-align:left;margin-top:14px">'+arr.map((x,k)=>'<div class="li rk"><span style="display:flex;align-items:center;gap:10px"><span class="medal">'+(medals[k]||'🎖️')+'</span>'+av(x.i)+'<b>'+esc(x.n)+'</b></span><b style="font-size:22px">'+x.s+'</b></div>').join('')+'</div>';
+    rank='<div class="list" style="text-align:left;margin-top:14px">'+arr.map((x,k)=>'<div class="li rk"><span style="display:flex;align-items:center;gap:10px"><span class="medal">'+(medals[k]||'🎖️')+'</span>'+av(x.i)+'<b>'+esc(x.n)+'</b></span><b style="font-size:22px">'+x.s+(G.scores.length===1?' de '+maxPts:'')+'</b></div>').join('')+'</div>';
   }
   $('#game').innerHTML=
-   '<div class="lb"><div class="res"><div style="display:flex;justify-content:center">'+mascot('cheer',130)+'</div><h1>'+esc(head)+'</h1><p class="muted" style="margin:0">'+esc(G.game.t)+'</p>'+rank+
+   '<div class="lb"><div class="res"><div style="display:flex;justify-content:center">'+mascot(sc&&G.scores.length===1&&head.indexOf('Buen intento')>=0?'wink':'cheer',130)+'</div><h1>'+esc(head)+'</h1><p class="muted" style="margin:0">'+esc(G.game.t)+'</p>'+rank+
    '<div class="rs" style="grid-template-columns:1fr 1fr"><div><i>⚡</i><b>+10</b><span>XP</span></div><div><i>🔥</i><b>'+S.streak+'</b><span>Días de racha</span></div></div>'+
    (r.newDay?'<div class="note fl">🔥 <b>¡Racha de '+S.streak+(S.streak===1?' día':' días')+'!</b> Jugar en familia también cuenta.</div>':'')+
    (r.gotFreeze?'<div class="note fl">🛡️ <b>¡Ganaste un protector de racha!</b></div>':'')+
@@ -5850,7 +5916,8 @@ function gAct(a,b){
   const c=S.g;
   if(a==='g-open')gSetup(b.dataset.g);
   else if(!G)return;
-  else if(a==='g-n'){c.n=Math.max(2,Math.min(8,c.n+(+b.dataset.d)));save();gRenderSetup();}
+  else if(a==='g-n'){c.n=Math.max(1,Math.min(8,c.n+(+b.dataset.d)));save();gRenderSetup();}
+  else if(a==='g-solo'){G.win=b.dataset.ok==='1'?[0]:[];gNext();}
   else if(a==='g-r'){c.rounds=+b.dataset.r;save();gRenderSetup();}
   else if(a==='g-voice'){c.voice=b.dataset.v==='1';save();gRenderSetup();if(c.voice)speak('Lectura en voz alta activada.');}
   else if(a==='g-start')gStart();
@@ -5891,6 +5958,11 @@ document.addEventListener('click',e=>{
       const les=UNITS[ui].lessons[li];
       startLesson({type:'lesson',key:lk(ui,li),title:les.title,verses:les.verses},buildQuestions(les.verses,les.qs,les.max||10,les.cx),les.intro);
     }
+  }
+  else if(a==='review'&&S.course==='gk'){
+    const seen=gkSeen();if(seen.length<3)return;
+    const ids=seen.map(id=>({id,s:S.gw[id].c-S.gw[id].w*1.5+Math.random()})).sort((x,y)=>x.s-y.s).slice(0,6).map(x=>x.id);
+    startLesson({type:'review',title:'Repaso diario',verses:[],words:ids,course:'gk'},gkWords({ids}));
   }
   else if(a==='review'){
     const seen=Object.keys(S.verses).filter(r=>VBY[r]);if(seen.length<3)return;
@@ -5952,10 +6024,12 @@ document.addEventListener('click',e=>{
   else if(a==='fam-leave'){showModal('<h3>¿Salir del grupo?</h3><p>Dejarás de ver a tu familia y ellos dejarán de verte.</p><button class="btn" data-a="stay">Quedarme</button><button class="btn ghost" data-a="fam-leave-yes">Salir</button>');}
   else if(a==='fam-leave-yes'){famLeave();}
   else if(a==='goal'){S.goal=+b.dataset.g;save();render();}
-  else if(a==='course'){S.course=b.dataset.c;save();render();window.scrollTo(0,0);}
+  else if(a==='cmenu'){setCmenu(!CMENU);}
+  else if(a==='cmenu-close'){setCmenu(false);}
+  else if(a==='course'){S.course=b.dataset.c;TAB='path';CMENU=false;save();render();window.scrollTo(0,0);}
   else if(a==='dic-open'||a==='dic-peek'){dicOpen(b.dataset.w);}
   else if(a==='dic-close'){dicClose();}
-  else if(a==='abc-go'){DICV='a';TAB='dic';render();window.scrollTo(0,0);}
+  else if(a==='abc-go'){DICV='a';S.course='gk';TAB='dic';render();window.scrollTo(0,0);}
   else if(a==='dicv'){DICV=b.dataset.v;render();window.scrollTo(0,0);}
   else if(a==='say-l'){sayLetter(+b.dataset.i);}
   else if(a==='say-w'){sayWord(b.dataset.w);}
