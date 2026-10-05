@@ -166,6 +166,22 @@ h1,h2,h3,h4{font-weight:900}
 .ucel .btn{width:min(420px,100%)}
 .newtag{display:inline-block;margin-left:8px;background:var(--orange);color:#fff;font-weight:900;font-size:12px;padding:3px 10px;border-radius:999px;vertical-align:middle;animation:pulse 1.8s ease-in-out infinite}
 .count.full{color:var(--green)}
+.authov{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 20px) 20px calc(env(safe-area-inset-bottom,0px) + 20px);overflow:auto;animation:ucin .25s ease-out}
+.authov[hidden]{display:none}
+.auin{width:min(420px,100%);display:grid;gap:14px;text-align:center}
+.auin h1{margin:0;font-size:26px;line-height:1.15}
+.ausub{margin:0;color:var(--muted);font-weight:800;font-size:15px;line-height:1.4}
+.aurow{display:flex;justify-content:center}
+.auin .inp{text-align:center;font-size:18px}
+.auin .inp.code6{font-size:28px;letter-spacing:.35em;font-weight:900}
+.aumsg{margin:0;color:var(--red);font-weight:900;font-size:14px}
+.link-plain{color:var(--blue);font-weight:900;padding:8px}
+.link-plain[disabled]{color:var(--muted)}
+.cloudb{display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--blue) 12%,var(--surface));border:2px solid var(--blue);border-radius:18px;padding:10px 12px;margin:0 0 12px}
+.cloudb>div{flex:1;min-width:0}
+.cloudb small{display:block;color:var(--muted);font-weight:800;font-size:12px}
+.cloudb .btn{width:auto;padding:8px 14px;font-size:13px}
+.cloudb .x{color:var(--muted);font-size:18px;padding:6px}
 .cmenu-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:12}
 .cmenu{position:fixed;top:0;left:0;right:0;z-index:13;background:var(--bg);border-bottom:2px solid var(--line);border-radius:0 0 22px 22px;padding:calc(env(safe-area-inset-top,0px) + 14px) 16px 20px;animation:cmdown .22s ease-out;max-height:92vh;overflow:auto}
 @keyframes cmdown{from{transform:translateY(-30px);opacity:0}to{transform:none;opacity:1}}
@@ -623,6 +639,7 @@ a.btn{text-decoration:none;text-align:center}
 <button id="goto" class="goto" data-a="goto" hidden aria-label="Ir a mi lección"></button>
 <div id="cmenu" hidden></div>
 <div id="ucel" class="ucel" hidden></div>
+<div id="auth" class="authov" hidden role="dialog" aria-modal="true" aria-label="Guardar mi progreso"></div>
 <div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
 <div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
 <div id="dic" class="overlay" role="dialog" aria-modal="true" aria-label="Diccionario" hidden></div>
@@ -4520,7 +4537,7 @@ function idbOpen(cb){
 }
 function idbSet(val){idbOpen(db=>{if(!db)return;try{db.transaction('kv','readwrite').objectStore('kv').put(val,'S');}catch(e){}});}
 function idbGet(cb){idbOpen(db=>{if(!db)return cb(null);try{const g=db.transaction('kv').objectStore('kv').get('S');g.onsuccess=()=>cb(g.result||null);g.onerror=()=>cb(null);}catch(e){cb(null);}});}
-function save(){const j=JSON.stringify(S);try{localStorage.setItem(KEY,j);}catch(e){}idbSet(j);}
+function save(){const j=JSON.stringify(S);try{localStorage.setItem(KEY,j);}catch(e){}idbSet(j);try{cloudSchedule();}catch(e){}}
 function applyTheme(){
   try{
     /* Solo hay dos opciones: claro u oscuro. Quien tenía «automático» (o nada guardado) arranca con el modo de su teléfono. */
@@ -4543,6 +4560,235 @@ function importCode(c){
   try{const o=JSON.parse(decodeURIComponent(escape(atob(c.slice(6)))));if(!o||typeof o!=='object')return false;S=Object.assign(defaults(),o);save();return true;}catch(e){return false;}
 }
 
+/* ============================================================
+   CUENTA CON CORREO Y PROGRESO EN LA NUBE (Supabase)
+   Entrada sin contraseña: un código de 6 números llega al correo.
+   Tabla: lampara_progress (una fila por persona, protegida por RLS).
+   ============================================================ */
+const AUTHKEY='lampara.auth.v1';
+let AU=(()=>{try{return JSON.parse(localStorage.getItem(AUTHKEY)||'null');}catch(e){return null;}})();
+const cloudOn=()=>famOn();
+const signedIn=()=>!!(AU&&AU.rt&&AU.uid);
+const CLOUD={busy:false,again:false,applying:false,timer:0,dirty:false,state:'idle',last:0};
+function authSave(){try{if(AU)localStorage.setItem(AUTHKEY,JSON.stringify(AU));else localStorage.removeItem(AUTHKEY);}catch(e){}}
+async function authCall(path,body,token){
+  const hd={'Content-Type':'application/json',apikey:CFG.key};
+  if(token)hd.Authorization='Bearer '+token;else if(/^eyJ/.test(CFG.key))hd.Authorization='Bearer '+CFG.key;
+  const r=await fetch(CFG.url.replace(/\/$/,'')+path,{method:'POST',headers:hd,body:JSON.stringify(body||{})});
+  let j=null;try{j=await r.json();}catch(e){}
+  if(!r.ok){const e=new Error((j&&(j.msg||j.error_description||j.message||j.error))||('http '+r.status));e.status=r.status;e.code=(j&&(j.error_code||j.code))||'';throw e;}
+  return j;
+}
+function authMsg(e){
+  const m=String((e&&e.message)||'').toLowerCase(),c=String((e&&e.code)||'').toLowerCase();
+  if(c==='over_email_send_rate_limit'||e.status===429||/rate limit|only request this after|security purposes/.test(m))return 'Espera un minuto antes de pedir otro código.';
+  if(/unable to validate email|invalid format|email address.*invalid|invalid.*email/.test(m)||c==='email_address_invalid')return 'Revisa que el correo esté bien escrito.';
+  if(c==='otp_expired'||/expired|invalid|incorrect/.test(m))return 'Ese código no es correcto o ya venció. Pide uno nuevo.';
+  if(c==='signup_disabled'||/signups not allowed/.test(m))return 'Los registros nuevos están desactivados en Supabase.';
+  if(/failed to fetch|networkerror|load failed|network/.test(m))return 'Sin conexión. Inténtalo de nuevo.';
+  if(/smtp|error sending|sending (confirmation|magic|email)/.test(m))return 'No se pudo enviar el correo. Revisa el correo (SMTP) en Supabase.';
+  return 'No se pudo completar. Inténtalo de nuevo.';
+}
+let _refreshP=null;
+async function authToken(){
+  if(!signedIn())return null;
+  if(AU.exp&&AU.exp-Date.now()>60000)return AU.at;
+  if(!_refreshP){
+    _refreshP=(async()=>{
+      try{
+        const j=await authCall('/auth/v1/token?grant_type=refresh_token',{refresh_token:AU.rt});
+        AU.at=j.access_token;AU.rt=j.refresh_token||AU.rt;AU.exp=Date.now()+(j.expires_in||3600)*1000;authSave();return AU.at;
+      }catch(e){
+        if(e.status===400||e.status===401||e.status===403){AU=null;authSave();CLOUD.state='out';try{renderTabs();}catch(x){}}
+        return null;
+      }finally{_refreshP=null;}
+    })();
+  }
+  return _refreshP;
+}
+async function cloudReq(method,path,body,extra){
+  const tok=await authToken();if(!tok){const e=new Error('sin sesión');e.status=401;throw e;}
+  const hd={'Content-Type':'application/json',apikey:CFG.key,Authorization:'Bearer '+tok};
+  if(extra)Object.assign(hd,extra);
+  const r=await fetch(CFG.url.replace(/\/$/,'')+'/rest/v1/'+path,{method,headers:hd,body:body?JSON.stringify(body):undefined});
+  if(!r.ok){let m='';try{m=(await r.json()).message||'';}catch(e){}const e=new Error(m||('http '+r.status));e.status=r.status;throw e;}
+  const t=await r.text();return t?JSON.parse(t):null;
+}
+/* ---- unir dos avances sin perder nada ---- */
+function deepMerge(a,b){
+  if(a===undefined||a===null)return b===undefined?a:b;
+  if(b===undefined||b===null)return a;
+  if(typeof a==='number'&&typeof b==='number')return Math.max(a,b);
+  if(typeof a==='boolean'&&typeof b==='boolean')return a||b;
+  if(Array.isArray(a)&&Array.isArray(b)){const seen=new Set(),out=[];a.concat(b).forEach(x=>{const k=JSON.stringify(x);if(!seen.has(k)){seen.add(k);out.push(x);}});return out;}
+  if(typeof a==='object'&&typeof b==='object'&&!Array.isArray(a)&&!Array.isArray(b)){const o={};new Set(Object.keys(a).concat(Object.keys(b))).forEach(k=>{o[k]=deepMerge(a[k],b[k]);});return o;}
+  return a;
+}
+function mergeProgress(loc,rem){
+  const m=deepMerge(loc,rem);
+  /* racha: la del día más reciente (si empatan, la más larga) */
+  const la=loc.lastDay||'',lb=rem.lastDay||'';
+  const pick=la>lb?loc:lb>la?rem:((loc.streak||0)>=(rem.streak||0)?loc:rem);
+  m.lastDay=pick.lastDay||null;m.streak=pick.streak||0;m.best=Math.max(loc.best||0,rem.best||0,m.streak);
+  m.freezes=Math.min(2,Math.max(loc.freezes||0,rem.freezes||0));m.froze=0;
+  /* XP: nunca menos que la suma de los días unidos */
+  const sum=Object.keys(m.days||{}).reduce((t,k)=>t+(+m.days[k]||0),0);m.xp=Math.max(m.xp||0,sum);
+  /* preferencias: manda este teléfono, salvo que sea nuevo y sin avance */
+  const fresh=!((loc.lessons||0)>0||(loc.xp||0)>0||Object.keys(loc.done||{}).length);
+  ['course','theme','sound','haptic','tipHide','goal','g','badge'].forEach(k=>{
+    if(fresh&&rem[k]!==undefined&&rem[k]!==null)m[k]=rem[k];else if(loc[k]!==undefined&&loc[k]!==null)m[k]=loc[k];
+  });
+  /* grupo familiar: se conserva el de este teléfono; si no tiene, se recupera el de la nube */
+  const lj=loc.fam&&loc.fam.joined,rj=rem.fam&&rem.fam.joined;
+  m.fam=lj?loc.fam:rj?rem.fam:(loc.fam||rem.fam);
+  m.rd=loc.rd||rem.rd||null;
+  return m;
+}
+const doneCount=s=>Object.keys((s&&s.done)||{}).length;
+/* ---- sincronizar ---- */
+function cloudSchedule(){
+  if(!signedIn()||!cloudOn()||CLOUD.applying)return;
+  CLOUD.dirty=true;clearTimeout(CLOUD.timer);CLOUD.timer=setTimeout(()=>{cloudSync();},4000);
+}
+async function cloudSync(opts){
+  if(!signedIn()||!cloudOn())return {ok:false};
+  if(CLOUD.busy){CLOUD.again=true;return {ok:false,busy:true};}
+  CLOUD.busy=true;CLOUD.state='sync';updateCloudUI();
+  let merged=false,had=false;
+  try{
+    const rows=await cloudReq('GET','lampara_progress?select=data,updated_at&user_id=eq.'+AU.uid);
+    const row=rows&&rows[0]||null;had=!!row;
+    if(row&&row.data&&row.updated_at!==AU.seen){
+      CLOUD.applying=true;
+      try{S=Object.assign(defaults(),mergeProgress(S,row.data));S.cloudUid=AU.uid;merged=true;save();}finally{CLOUD.applying=false;}
+    }
+    if(S.cloudUid!==AU.uid){CLOUD.applying=true;try{S.cloudUid=AU.uid;save();}finally{CLOUD.applying=false;}}
+    const up=await cloudReq('POST','lampara_progress?on_conflict=user_id&select=updated_at',{user_id:AU.uid,data:S},{Prefer:'resolution=merge-duplicates,return=representation'});
+    AU.seen=(up&&up[0]&&up[0].updated_at)||AU.seen;authSave();
+    CLOUD.dirty=false;CLOUD.state='ok';CLOUD.last=Date.now();
+    if(merged&&!(opts&&opts.render===false)&&!G&&!L&&!RM.code)render();
+    return {ok:true,merged,had};
+  }catch(e){
+    CLOUD.state=(typeof navigator!=='undefined'&&navigator.onLine===false)?'offline':'err';
+    return {ok:false,err:e};
+  }finally{
+    CLOUD.busy=false;updateCloudUI();
+    if(CLOUD.again){CLOUD.again=false;cloudSchedule();}
+  }
+}
+function cloudStatText(){
+  if(CLOUD.state==='sync')return 'Sincronizando…';
+  if(CLOUD.state==='offline')return 'Sin conexión. Se guardará al volver.';
+  if(CLOUD.state==='err')return 'No se pudo sincronizar. Lo intentaremos otra vez.';
+  if(CLOUD.state==='out')return 'La sesión venció. Vuelve a entrar con tu correo.';
+  const t=CLOUD.last||(AU&&AU.synced)||0;
+  if(!t)return CLOUD.dirty?'Guardando…':'Listo.';
+  const mn=Math.floor((Date.now()-t)/60000);
+  return 'Guardado '+(mn<1?'hace un momento':mn<60?'hace '+mn+' min':mn<1440?'hace '+Math.floor(mn/60)+' h':'hace '+Math.floor(mn/1440)+' d')+'.';
+}
+function updateCloudUI(){const e=document.getElementById('cloudstat');if(e)e.textContent=cloudStatText();}
+function cloudBoot(){
+  if(signedIn()&&cloudOn())setTimeout(()=>{cloudSync();},1500);
+  window.addEventListener('online',()=>{if(signedIn())cloudSync();});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&signedIn()&&Date.now()-(CLOUD.last||0)>300000)cloudSync();});
+}
+/* ---- tarjetas y avisos ---- */
+function cloudCardHTML(){
+  if(!cloudOn())return '';
+  if(!signedIn())return '<section class="card"><b>☁️ Guarda tu progreso</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Con tu correo no pierdes tu avance si cambias de teléfono. Sin contraseña: te enviamos un código. Si ya tienes cuenta, usa el mismo botón.</p><button class="btn sm" data-a="auth-open">Guardar con mi correo</button></section>';
+  return '<section class="card"><b>☁️ Progreso guardado</b><p class="muted" style="margin:2px 0 4px;font-size:14px">'+esc(AU.email||'')+'</p><p class="muted" style="margin:0 0 10px;font-size:13px" id="cloudstat">'+esc(cloudStatText())+'</p><button class="btn ghost sm" data-a="cloud-now">Sincronizar ahora</button></section>';
+}
+function accountCardHTML(){
+  if(!cloudOn())return '';
+  if(!signedIn())return '<section class="card"><b>☁️ Cuenta</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Aún no has guardado tu progreso en la nube.</p><button class="btn sm" data-a="auth-open">Guardar con mi correo</button></section>';
+  return '<section class="card"><b>☁️ Cuenta</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Entraste con <b>'+esc(AU.email||'')+'</b>.</p><button class="link-danger" data-a="auth-out">Cerrar sesión</button></section>';
+}
+function cloudBannerHTML(){
+  if(!cloudOn()||signedIn()||(S.lessons||0)<1||(S.cloudSnooze||'')>today())return '';
+  return '<div class="cloudb"><div>☁️ <b>Guarda tu progreso</b><small>Si cambias de teléfono, no lo pierdes.</small></div><button class="btn sm" data-a="auth-open">Guardar</button><button class="x" data-a="auth-snooze" aria-label="Más tarde">✕</button></div>';
+}
+/* ---- pantalla de entrada ---- */
+let AUTHUI={open:false,step:'email',email:'',code:'',busy:false,msg:'',until:0,res:null,tick:0};
+function authOpen(){AUTHUI={open:true,step:'email',email:(AU&&AU.email)||'',code:'',busy:false,msg:'',until:0,res:null,tick:0};authRender();}
+function authClose(){clearInterval(AUTHUI.tick);AUTHUI.open=false;authRender();}
+function authRender(){
+  const el=document.getElementById('auth');if(!el)return;
+  const ie=document.getElementById('auth-email'),ic=document.getElementById('auth-code');
+  if(ie)AUTHUI.email=ie.value;if(ic)AUTHUI.code=ic.value;
+  if(!AUTHUI.open){el.hidden=true;el.innerHTML='';document.body.style.overflow='';return;}
+  el.hidden=false;document.body.style.overflow='hidden';
+  const U=AUTHUI,msg=U.msg?'<p class="aumsg" role="alert">'+esc(U.msg)+'</p>':'';
+  let body='';
+  if(U.step==='email'){
+    body='<div class="aurow">'+mascot('wink',96)+'</div><h1>Guarda tu progreso</h1><p class="ausub">Escribe tu correo y te enviamos un código de 6 números. Sin contraseña. Si ya tienes cuenta, escribe el mismo correo y recuperas todo.</p>'+
+     '<input id="auth-email" class="inp" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="tucorreo@ejemplo.com" value="'+esc(U.email)+'">'+msg+
+     '<button class="btn" data-a="auth-send" '+(U.busy?'disabled':'')+'>'+(U.busy?'Enviando…':'Enviar código')+'</button><button class="link-plain" data-a="auth-close">Ahora no</button>';
+  }else if(U.step==='code'){
+    body='<div class="aurow">'+mascot('happy',88)+'</div><h1>Revisa tu correo</h1><p class="ausub">Te enviamos un código a <b>'+esc(U.email)+'</b>. Puede tardar un minuto y a veces llega a la carpeta de spam.</p>'+
+     '<input id="auth-code" class="inp code6" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456" value="'+esc(U.code)+'">'+msg+
+     '<button class="btn" data-a="auth-verify" '+(U.busy?'disabled':'')+'>'+(U.busy?'Entrando…':'Confirmar')+'</button>'+
+     '<div><button class="link-plain" id="auth-resend" data-a="auth-resend"></button><button class="link-plain" data-a="auth-change">Cambiar correo</button></div>';
+  }else if(U.step==='conflict'){
+    body='<div class="aurow">'+mascot('think',88)+'</div><h1>Este teléfono tiene otro avance</h1><p class="ausub">Este teléfono guardaba el progreso de otra cuenta. Si sigues, se reemplaza por el de <b>'+esc(U.email)+'</b>. El avance de la otra cuenta sigue guardado en su correo.</p>'+
+     '<button class="btn" data-a="auth-switch">Usar esta cuenta</button><button class="link-plain" data-a="auth-cancel-switch">Cancelar</button>';
+  }else{
+    const r=U.res||{};
+    const t=r.kind==='new'?'Tu progreso ya está guardado en tu correo.':r.kind==='merged'?'Encontramos tu progreso y lo unimos con el de este teléfono. Ahora tienes '+r.done+' lecciones hechas.':r.kind==='restored'?'Recuperamos tu progreso: '+r.done+' lecciones hechas y una racha de '+(S.streak||0)+' días.':'Cuenta cambiada. Tienes '+r.done+' lecciones hechas.';
+    body='<div class="aurow">'+mascot('cheer',110)+'</div><h1>¡Listo!</h1><p class="ausub">'+esc(t)+' Desde ahora se guarda solo después de cada lección.</p><button class="btn" data-a="auth-done" data-primary>Continuar</button>';
+  }
+  el.innerHTML='<div class="auin">'+body+'</div>';
+  authTick();
+  const f=document.getElementById(U.step==='code'?'auth-code':U.step==='email'?'auth-email':'');if(f&&!U.busy){try{f.focus();}catch(e){}}
+}
+function authTick(){
+  clearInterval(AUTHUI.tick);
+  const upd=()=>{const b=document.getElementById('auth-resend');if(!b)return;const s=Math.ceil((AUTHUI.until-Date.now())/1000);if(s>0){b.disabled=true;b.textContent='Reenviar código ('+s+')';}else{b.disabled=false;b.textContent='Reenviar código';}};
+  upd();if(AUTHUI.step==='code')AUTHUI.tick=setInterval(upd,1000);
+}
+async function authSend(){
+  const U=AUTHUI,ie=document.getElementById('auth-email');if(ie)U.email=ie.value;
+  const email=(U.email||'').trim().toLowerCase();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){U.msg='Revisa que el correo esté bien escrito.';authRender();return;}
+  U.email=email;if(ie)ie.value=email;U.busy=true;U.msg='';authRender();
+  try{await authCall('/auth/v1/otp',{email,create_user:true});U.step='code';U.until=Date.now()+60000;U.code='';U.busy=false;U.msg='';authRender();}
+  catch(e){U.busy=false;U.msg=authMsg(e);authRender();}
+}
+async function authResend(){
+  const U=AUTHUI;if(Date.now()<U.until)return;U.msg='';
+  try{await authCall('/auth/v1/otp',{email:U.email,create_user:true});U.until=Date.now()+60000;U.msg='Te enviamos un código nuevo.';authRender();}
+  catch(e){U.msg=authMsg(e);authRender();}
+}
+async function authVerify(){
+  const U=AUTHUI,ic=document.getElementById('auth-code');if(ic)U.code=ic.value;
+  const code=(U.code||'').replace(/\D/g,'');
+  if(code.length<6){U.msg='Escribe el código completo, de 6 números.';authRender();return;}
+  U.busy=true;U.msg='';authRender();
+  try{
+    const j=await authCall('/auth/v1/verify',{type:'email',email:(U.email||'').trim().toLowerCase(),token:code});
+    if(!j||!j.access_token||!j.user)throw new Error('respuesta vacía');
+    AU={email:(U.email||'').trim().toLowerCase(),uid:j.user.id,at:j.access_token,rt:j.refresh_token,exp:Date.now()+(j.expires_in||3600)*1000,seen:null};
+    if(S.cloudUid&&S.cloudUid!==AU.uid){U.busy=false;U.step='conflict';authRender();return;}
+    U.res=await authFinish();U.busy=false;U.step='done';authSave();authRender();render();
+  }catch(e){U.busy=false;U.msg=authMsg(e);authRender();}
+}
+async function authFinish(replace){
+  authSave();
+  const rows=await cloudReq('GET','lampara_progress?select=data,updated_at&user_id=eq.'+AU.uid);
+  const row=rows&&rows[0]||null,before=doneCount(S);
+  CLOUD.applying=true;
+  try{
+    if(replace){S=Object.assign(defaults(),row&&row.data?row.data:{});}
+    else if(row&&row.data){S=Object.assign(defaults(),mergeProgress(S,row.data));}
+    S.cloudUid=AU.uid;save();
+  }finally{CLOUD.applying=false;}
+  const r=await cloudSync({render:false});
+  if(!r.ok)throw (r.err||new Error('no se pudo guardar'));
+  return {kind:replace?'switched':!row?'new':before?'merged':'restored',done:doneCount(S)};
+}
+function authSignOut(){
+  clearTimeout(CLOUD.timer);AU=null;authSave();CLOUD.state='idle';CLOUD.last=0;
+  toast('Sesión cerrada. Tu progreso sigue en este teléfono.');render();
+}
 function refreshStreak(){
   if(!S.lastDay||S.streak===0)return;
   const gap=diffDays(S.lastDay,today());
@@ -5391,7 +5637,7 @@ function homeHTML(){
   let daily;
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
-  return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+
+  return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
   '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+famHomeHTML()+rdHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
@@ -5433,7 +5679,7 @@ function meHTML(){
    '<div class="stat s1"><span class="se">🔥</span><div><b>'+S.streak+'</b><span>Racha actual</span></div></div>'+
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
-   '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+
+   '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+cloudCardHTML()+
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
    '<section class="card"><b>🛡️ Protectores de racha</b><p class="muted" style="margin:2px 0 0;font-size:14px">Tienes '+S.freezes+' de 2. Ganas uno cada 7 días de racha y se usa solo si un día no alcanzas a practicar.</p></section>'+
@@ -5442,12 +5688,12 @@ function meHTML(){
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
-  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+
+  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+accountCardHTML()+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lámpara.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    '<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
    '<textarea id="bk" class="code" placeholder="Aquí aparece tu código. Para restaurar, pégalo aquí."></textarea><div class="row2" style="margin:10px 0 0"><button class="btn blue sm" data-a="bk-copy">Copiar código</button><button class="btn ghost sm" data-a="bk-restore">Restaurar</button></div></section>'+
-   '<div style="margin-top:22px"><button class="link-danger" data-a="reset">'+(resetArmed?'Toca otra vez para borrar todo el progreso':'Borrar progreso')+'</button></div>';
+   '<div style="margin-top:22px"><button class="link-danger" data-a="reset">'+(resetArmed?(signedIn()?'Toca otra vez para borrar también el progreso de tu cuenta':'Toca otra vez para borrar todo el progreso'):'Borrar progreso')+'</button></div>';
 }
 function amigosHTML(){
   if(!famOn())return '<h1 class="page">Amigos</h1><div class="hero">'+mascot('think',76)+'<div class="bubble">Los amigos no están disponibles en esta versión.</div></div>';
@@ -5643,6 +5889,7 @@ function finishLesson(){
     if(!L.wasDone&&ui0>=0&&unitDone(UU[ui0])&&!(S.cel&&S.cel[UU[ui0].title])){S.cel=S.cel||{};S.cel[UU[ui0].title]=1;L.unitCel={ui:ui0,gk:gkc};}
   }
   S.lessons++;if(L.mistakes===0)S.perfect++;
+  if(S.lessons===1&&!S.cloudAsked&&cloudOn()&&!signedIn())L.offerCloud=true;
   S.froze=0;
   const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);
   save();
@@ -6058,6 +6305,18 @@ document.addEventListener('click',e=>{
   if(a.startsWith('g-')){gAct(a,b);return;}
   if(a==='goto'){gotoMyLesson();return;}
   if(a==='uc-go'){ucGo();return;}
+  if(a==='auth-open'){authOpen();return;}
+  if(a==='auth-close'||a==='auth-done'){authClose();return;}
+  if(a==='auth-send'){authSend();return;}
+  if(a==='auth-verify'){authVerify();return;}
+  if(a==='auth-resend'){authResend();return;}
+  if(a==='auth-change'){AUTHUI.step='email';AUTHUI.msg='';AUTHUI.code='';authRender();return;}
+  if(a==='auth-switch'){AUTHUI.busy=true;authRender();authFinish(true).then(r=>{AUTHUI.res=r;AUTHUI.busy=false;AUTHUI.step='done';authRender();render();}).catch(e=>{AUTHUI.busy=false;AUTHUI.step='code';AUTHUI.msg=authMsg(e);authRender();});return;}
+  if(a==='auth-cancel-switch'){AU=null;authSave();authClose();return;}
+  if(a==='auth-snooze'){S.cloudSnooze=addDays(today(),3);save();render();return;}
+  if(a==='cloud-now'){cloudSync().then(r=>{toast(r.ok?'Progreso sincronizado.':'No se pudo sincronizar. Lo intentaremos otra vez.');});return;}
+  if(a==='auth-out'){showModal('<h3>¿Cerrar sesión?</h3><p>Tu progreso se queda en este teléfono y en tu cuenta. Para volver a sincronizar, entras otra vez con tu correo.</p><button class="btn" data-a="auth-out-yes">Cerrar sesión</button><button class="btn ghost" data-a="stay">Cancelar</button>');return;}
+  if(a==='auth-out-yes'){hideModal();authSignOut();return;}
   if(a==='settings'){TAB='set';resetArmed=false;render();window.scrollTo(0,0);return;}
   if(a==='settings-back'){TAB='me';render();window.scrollTo(0,0);return;}
   if(a==='rm-quick'){rmQuickJoin();return;}
@@ -6092,7 +6351,7 @@ document.addEventListener('click',e=>{
   else if(a==='close'){showModal('<h3>¿Salir de la lección?</h3><p>Perderás el avance de esta lección.</p><button class="btn" data-a="stay">Seguir aprendiendo</button><button class="btn ghost" data-a="leave">Salir</button>');}
   else if(a==='stay')hideModal();
   else if(a==='leave'){hideModal();closeLesson();}
-  else if(a==='finish'){const uc=L&&L.unitCel;closeLesson();if(uc)setTimeout(()=>showUnitCel(uc),300);}
+  else if(a==='finish'){const uc=L&&L.unitCel,oc=L&&L.offerCloud;closeLesson();if(uc)setTimeout(()=>showUnitCel(uc),300);else if(oc){S.cloudAsked=true;save();setTimeout(()=>authOpen(),450);}}
   else if(a==='share'){doShare(b.dataset.k,b.dataset.id);}
   else if(a==='rd-plan'){RDSET.plan=b.dataset.p;render();}
   else if(a==='rd-yrs'){RDSET.yrs=+b.dataset.y;render();}
@@ -6163,10 +6422,19 @@ document.addEventListener('click',e=>{
   }
   else if(a==='reset'){
     if(!resetArmed){resetArmed=true;render();}
-    else{S=defaults();save();resetArmed=false;render();}
+    else{
+      const was=signedIn();
+      S=defaults();if(was)S.cloudUid=AU.uid;
+      if(was){CLOUD.applying=true;}
+      save();resetArmed=false;
+      if(was){CLOUD.applying=false;cloudReq('DELETE','lampara_progress?user_id=eq.'+AU.uid).then(()=>{AU.seen=null;authSave();cloudSync({render:false});}).catch(()=>{CLOUD.state='err';updateCloudUI();});}
+      render();
+    }
   }
 });
 document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target&&e.target.id==='auth-email'){e.preventDefault();authSend();return;}
+  if(e.key==='Enter'&&e.target&&e.target.id==='auth-code'){e.preventDefault();authVerify();return;}
   if(e.key==='Enter'&&e.target&&e.target.id==='rmquick'){e.preventDefault();rmQuickJoin();return;}
   if(G&&e.key==='Enter'&&$('#modal').hidden&&e.target.tagName!=='INPUT'){const pb=document.querySelector('#game [data-primary]');if(pb){e.preventDefault();pb.click();}return;}
   if(!L||!$('#modal').hidden)return;
@@ -6180,7 +6448,7 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{if(famJoined())famPoll(true);if(RM.code)rmPoll();if(!L&&!G&&!RM.code)render();}});
 window.addEventListener('pagehide',()=>{try{save();}catch(e){}});
 
-load();render();
+load();render();cloudBoot();
 </script>
 </body>
 </html>
