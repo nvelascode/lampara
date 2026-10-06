@@ -643,7 +643,7 @@ a.btn{text-decoration:none;text-align:center}
 .rmhelp{margin:10px 0 6px;color:var(--muted);font-size:13px;font-weight:700;line-height:1.4}
 .giftbtn{flex:none;padding:8px 12px;border-radius:14px;border:2px solid var(--purple);border-bottom-width:4px;background:var(--purple-bg);font-weight:900;font-size:14px;color:var(--purple-d)}
 
-/* ---------- seguir a alguien ---------- */
+/* ---------- amigos: seguir, regalos y salas por invitación ---------- */
 .frsec{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 8px}
 .frsec h3{margin:0;font-size:18px}
 .frpill{display:inline-block;flex:none;font-size:12px;font-weight:900;color:#fff;background:var(--green);border-radius:999px;padding:2px 10px}
@@ -657,14 +657,26 @@ a.btn{text-decoration:none;text-align:center}
 .frun{display:block;margin:10px 0 0;padding:4px 0;color:var(--muted);font-weight:900;font-size:13px;text-decoration:underline}
 .frlist{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:10px}
 .frlist li{display:flex;gap:12px;align-items:center;font-size:15px;font-weight:800;line-height:1.35}
-.frlist li span{font-size:24px;line-height:1;flex:none}
+.frlist li span{font-size:24px;line-height:1;flex:none;width:28px;text-align:center}
 .frhow p{margin:4px 0 0;font-size:15px;line-height:1.45}
-.frlist li span{width:28px;text-align:center}
 .frf .minfo{flex:1;min-width:0}
 .frf .minfo b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .minfo .frpill{justify-self:start;margin-top:2px}
 .codebox .row2 .btn{padding:10px 8px;white-space:nowrap}
 #modal .box .avs{justify-content:center}
+.pickl{display:grid;gap:8px}
+.pickrow{display:flex;align-items:center;gap:12px;text-align:left;padding:10px 14px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-weight:900;font-size:17px;width:100%}
+.pickrow b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pickrow .chk{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;font-size:15px;color:#fff;flex:none}
+.pickrow.on{border-color:var(--green);background:var(--green-bg)}
+.pickrow.on .chk{background:var(--green);border-color:var(--green)}
+.rminv{display:grid;gap:10px;margin:0 0 12px}
+.rminvrow{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;border:2px solid var(--purple);border-bottom-width:4px;background:var(--purple-bg)}
+.rminvrow .minfo{flex:1;min-width:0}
+.rminvrow .btn{width:auto;flex:none;padding:10px 16px}
+.rminvb{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.rminvb span{flex:1}
+.rminvb .btn{width:auto;flex:none;padding:8px 14px;font-size:13px}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -3689,11 +3701,7 @@ const famArgs=x=>Object.assign({p_device:famState().device,p_secret:famState().s
 const FAM_ERR={codigo_no_existe:'Ese código no existe. Revisa las letras.',grupo_lleno:'El grupo ya está lleno (máximo 8 personas).',demasiados_intentos:'Demasiados intentos. Espera unos minutos.',espera:'Ya le mandaste ánimo hace poco. ¡Espera un rato!',ya_en_grupo:'Ya estás en un grupo.',no_autorizado:'No pudimos verificar tu cuenta en este teléfono.',secreto_invalido:'Hubo un problema con tu identificador. Reinicia la app.',destino_invalido:'No se pudo enviar el ánimo.',tipo_invalido:'No se pudo enviar el ánimo.'};
 const famMsg=e=>FAM_ERR[e]||'Algo salió mal. Inténtalo de nuevo.';
 function famStats(){const t=today();let wk=0;for(let i=0;i<7;i++)wk+=S.days[addDays(t,-i)]||0;return {p_streak:S.streak,p_best:S.best,p_xp:S.xp,p_week_xp:wk,p_lessons:lessonsDone(),p_last_day:S.lastDay||null};}
-async function famSync(){
-  frSync();
-  if(!famJoined())return;
-  try{await rpc('fam_sync',famArgs(famStats()));S.fam.synced=Date.now();save();}catch(e){}
-}
+async function famSync(){ frSync(); }
 async function famPoll(force){
   if(!famJoined())return;
   if(!force&&Date.now()-FAM.last<60000)return;
@@ -4135,9 +4143,9 @@ function rdDayModal(i){
 const BADGES={star:['⭐','Estrella'],crown:['👑','Corona'],dove:['🕊️','Paloma'],flame:['🔥','Llama'],medal:['🏅','Medalla'],book:['📖','Libro'],heart:['💖','Corazón'],sun:['☀️','Sol']};
 const badgeE=k=>(BADGES[k]||['',''])[0];
 Object.assign(FAM_ERR,{regalo_invalido:'Revisa el regalo: faltan datos.',no_disponible:'Ese regalo ya no está disponible.',sala_no_existe:'Esa sala no existe. Revisa el código.',ya_empezo:'Esa partida ya empezó.',sala_llena:'La sala está llena.',faltan_jugadores:'Faltan jugadores para empezar.',equipos_incompletos:'Cada equipo necesita al menos un jugador.',solo_anfitrion:'Solo quien creó la sala puede hacer eso.',no_estas:'Ya no estás en esa sala.',preguntas_invalidas:'No se pudieron preparar las preguntas.',fuera_de_turno:'Esa respuesta llegó fuera de turno.',tarde:'Llegaste tarde a esa pregunta.',ya_respondiste:'Ya respondiste esta pregunta.',no_es_tuya:'Esa pieza la tiene otra persona.',ya_colocada:'Esa pieza ya está puesta.',hueco_ocupado:'Ese hueco ya está ocupado.',modo_invalido:'Modo de juego no válido.',no_permitido:'No se puede hacer eso ahora.',opcion_invalida:'Opción no válida.'});
-function rpcMsg(e){const m=String((e&&e.message)||'');return /Could not find the function|schema cache|PGRST202/i.test(m)?'Falta instalar en Supabase el SQL de juegos y regalos (supabase-juegos-regalos.sql).':'Sin conexión con el servidor. Inténtalo de nuevo.';}
+function rpcMsg(e){const m=String((e&&e.message)||'');return /Could not find the function|schema cache|PGRST202/i.test(m)?'Falta instalar en Supabase el SQL de amigos (supabase-amigos.sql).':'Sin conexión con el servidor. Inténtalo de nuevo.';}
 let GIFT={to:null,name:'',kind:null},GIFTS=[];
-const giftN=()=>(FAM.data&&FAM.data.gifts)||0;
+const giftN=()=>(FR.data&&FR.data.gifts)||0;
 function giftOpen(to,name){
   GIFT={to,name,kind:null};
   showModal('<h3>🎁 Regalo para '+esc(name)+'</h3><p class="muted" style="margin:0 0 10px">¿Qué quieres regalarle?</p>'+
@@ -4162,7 +4170,7 @@ async function giftSend(){
   if(kind==='badge')payload={badge:GIFT.badge||'star',msg};
   if(kind==='shield'&&(S.freezes||0)<1){toast('No tienes protectores para regalar.');return;}
   try{
-    const r=await rpc('gift_send',famArgs({p_to:GIFT.to,p_kind:kind,p_payload:payload}));
+    const r=await rpc('fr_gift_send',frArgs({p_to:GIFT.to,p_kind:kind,p_payload:payload}));
     if(r&&r.ok){
       hideModal();
       if(kind==='shield'){S.freezes=Math.max(0,(S.freezes||0)-1);}
@@ -4176,7 +4184,7 @@ async function giftInbox(){
   if(!famOn())return;
   showModal('<h3>🎁 Tus regalos</h3><p class="muted">Buscando…</p>');
   try{
-    const r=await rpc('gift_inbox',famArgs());
+    const r=await rpc('fr_gift_inbox',frArgs());
     GIFTS=(r&&r.gifts)||[];
     if(!GIFTS.length){showModal('<h3>🎁 Tus regalos</h3><p class="muted">No tienes regalos por abrir.</p><button class="btn ghost" data-a="stay">Cerrar</button>');return;}
     const kl={shield:'Un protector de racha',card:'Una tarjeta con versículo',badge:'Una insignia'};
@@ -4187,7 +4195,7 @@ async function giftClaim(id){
   const g=GIFTS.find(x=>x.id===id);if(!g)return;
   if(g.kind==='shield'&&(S.freezes||0)>=2){toast('Ya tienes 2 protectores de racha. Usa uno y vuelve a abrir este regalo.');return;}
   try{
-    const r=await rpc('gift_claim',famArgs({p_id:id}));
+    const r=await rpc('fr_gift_claim',frArgs({p_id:id}));
     if(!(r&&r.ok)){toast(famMsg(r&&r.error));return;}
     const p=r.payload||{};let big='',txt='';
     if(r.kind==='shield'){S.freezes=Math.min(2,(S.freezes||0)+1);big='🛡️';txt='Un protector de racha: te cuidará un día en que no puedas practicar.';}
@@ -4195,7 +4203,7 @@ async function giftClaim(id){
     else{S.badges=S.badges||[];if(S.badges.indexOf(p.badge)<0)S.badges.push(p.badge);big=badgeE(p.badge);txt='Insignia «'+(BADGES[p.badge]||['',''])[1]+'». Puedes lucirla en Perfil → Mis regalos.';}
     S.giftsGot=(S.giftsGot||0)+1;
     const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
-    if(FAM.data)FAM.data.gifts=Math.max(0,(FAM.data.gifts||1)-1);
+    if(FR.data)FR.data.gifts=Math.max(0,(FR.data.gifts||1)-1);
     GIFTS=GIFTS.filter(x=>x.id!==id);renderTop();confetti(70);beep('win');
     showModal('<div style="text-align:center"><div style="font-size:64px;line-height:1.1">'+big+'</div><h3>'+esc(r.from)+' te regaló</h3><p style="margin:0 0 8px;font-weight:800">'+esc(txt)+'</p>'+(p.msg?'<p class="nota" style="text-align:left">💬 «'+esc(p.msg)+'»</p>':'')+(fresh.length?'<p class="muted">🏅 Logro: '+esc(fresh[0].t)+'</p>':'')+'</div>'+(GIFTS.length?'<button class="btn" data-a="gift-inbox">Abrir el siguiente ('+GIFTS.length+')</button>':'')+'<button class="btn ghost" data-a="stay">Cerrar</button>');
     if(TAB==='me'||TAB==='path'||TAB==='fr')render();else renderTabs();
@@ -4209,15 +4217,15 @@ function giftMine(){
    '<button class="btn ghost" data-a="stay">Cerrar</button>');
 }
 async function giftEquip(k){
-  try{const r=await rpc('gift_equip',famArgs({p_badge:k}));
-    if(r&&r.ok){S.badge=k||'';save();toast(k?badgeE(k)+' ¡Insignia puesta!':'Insignia quitada.');giftMine();if(famJoined())famPoll(true);}
+  try{const r=await rpc('fr_gift_equip',frArgs({p_badge:k}));
+    if(r&&r.ok){S.badge=k||'';save();toast(k?badgeE(k)+' ¡Insignia puesta!':'Insignia quitada.');giftMine();frSync();}
     else toast(famMsg(r&&r.error));
   }catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
 }
 function giftsCardHTML(){
   if(!famOn())return '';
   const n=giftN();
-  return '<section class="card"><b>🎁 Regalos</b><p class="muted" style="margin:2px 0 10px;font-size:14px">'+(n?'Tienes <b>'+n+'</b> '+(n===1?'regalo':'regalos')+' por abrir.':'Regala un protector de racha, una tarjeta o una insignia desde tu familia.')+' Tienes '+((S.cards||[]).length)+' tarjetas y '+((S.badges||[]).length)+' insignias.</p><div class="row2" style="margin:0">'+(n?'<button class="btn purple sm" data-a="gift-inbox">Abrir regalos</button>':'')+'<button class="btn ghost sm" data-a="gift-mine">Mis regalos</button></div></section>';
+  return '<section class="card"><b>🎁 Regalos</b><p class="muted" style="margin:2px 0 10px;font-size:14px">'+(n?'Tienes <b>'+n+'</b> '+(n===1?'regalo':'regalos')+' por abrir.':'Regala un protector de racha, una tarjeta o una insignia a quienes sigues.')+' Tienes '+((S.cards||[]).length)+' tarjetas y '+((S.badges||[]).length)+' insignias.</p><div class="row2" style="margin:0">'+(n?'<button class="btn purple sm" data-a="gift-inbox">Abrir regalos</button>':'')+'<button class="btn ghost sm" data-a="gift-mine">Mis regalos</button></div></section>';
 }
 
 /* ============================================================
@@ -4230,33 +4238,12 @@ const RM_MODES={
   assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores'}
 };
 const RM_TEAM=[null,{n:'Azul',c:'#1CB0F6',e:'🔵'},{n:'Naranja',c:'#FF9600',e:'🟠'}];
-let RM={code:null,st:null,t0:0,rem0:0,sig:'',sel:null,my:null,loop:0,fails:0,cfg:{mode:'race',total:10},screen:'menu',rewarded:'',av:'🙂'};
-function rmIdent(){const f=famState();return {name:((f.name||famEdit.name||'')+'').trim()||'Jugador',avatar:f.avatar||famEdit.avatar||'🙂'};}
-function rmKnownName(){return ((famState().name||famEdit.name||'')+'').trim();}
-function rmJoinRowHTML(){
-  const id=rmIdent(),known=!!rmKnownName();
-  return '<div class="joinrow"><div class="jr-t"><span class="jr-e" aria-hidden="true">🔑</span><div><b>Unirme con código</b><small>'+
-    (known?'Entrarás como '+esc(id.avatar)+' <b style="display:inline;font-size:13px">'+esc(id.name)+'</b> · <button class="lnk" data-a="rm-join-open">cambiar</button>':'La primera vez eliges tu nombre y tu emoji.')+
-    '</small></div></div><div class="jr-in"><input id="rmquick" class="inp" maxlength="5" placeholder="ABC23" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de la sala"><button class="btn" data-a="rm-quick">Entrar</button></div></div>';
-}
-async function rmQuickJoin(){
-  const el=$('#rmquick'),code=((el||{}).value||'').trim().toUpperCase();
-  if(code.length<4){toast('Escribe el código de la sala.');if(el)el.focus();return;}
-  if(!rmKnownName()){
-    /* primera vez: se pide el nombre y el emoji una sola vez, con el código ya escrito */
-    rmOpenMenu('join');const c=$('#rmcode');if(c)c.value=code;toast('Elige tu nombre y tu emoji. Solo esta vez.');return;
-  }
-  const f=famState(),id=rmIdent();
-  try{
-    const r=await rpc('rm_join',famArgs({p_code:code,p_name:id.name,p_avatar:id.avatar}));
-    if(r&&r.ok){RM.av=id.avatar;RM.screen='join';rmOpenOverlay();rmEnter(r.code);}else toast(famMsg(r&&r.error));
-  }catch(e){toast(rpcMsg(e));}
-}
-function rmTilesHTML(){
-  if(!famOn())return '';
-  return '<h3 class="rmh">🌐 En vivo, cada quien en su celular</h3>'+rmJoinRowHTML()+'<p class="rmsub">…o crea una sala nueva:</p><div class="gtiles">'+Object.values(RM_MODES).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+
-   '</div><h3 class="rmh" style="margin-top:24px">📱 En un solo celular</h3>';
-}
+let RM={code:null,st:null,t0:0,rem0:0,sig:'',sel:null,my:null,loop:0,fails:0,cfg:{mode:'race',total:10},screen:'menu',rewarded:'',av:'🙂',pick:[]};
+
+
+
+
+
 /* ----- preguntas ----- */
 function rmQBlank(used){
   const all=ALLV.filter(x=>x.t.split(/\s+/).length<=26&&BLANKS[x.r]),pool=all.filter(x=>!used.has(x.r));const v=pickOne(gFresh('comp',pool.length?pool:all,x=>x.r));used.add(v.r);gMark('comp',v.r);
@@ -4308,42 +4295,13 @@ function rmOpenOverlay(){$('#room').hidden=false;document.body.style.overflow='h
 function rmShell(inner,foot,timer){
   return '<div class="lh"><button class="x" data-a="rm-exit" aria-label="Salir">'+IC.close+'</button><div class="bar"><i id="rmbar" style="width:100%;background:var(--gcol,var(--blue))"></i></div>'+(timer?'<b id="rmtime" class="rmt"></b>':'')+'</div><div class="lb">'+inner+'</div>'+(foot||'');
 }
-function rmAvHTML(){return '<div class="avs">'+FAM_AV.map(a=>'<button class="avb '+(RM.av===a?'on':'')+'" data-a="rm-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+'</div>';}
-function rmMenuHTML(){
-  const join=RM.screen==='join',M=RM_MODES[RM.cfg.mode]||RM_MODES.race,id=rmIdent();
-  const head=join?'<div class="gsetup"><span style="font-size:52px;line-height:1">🔑</span><div><h1>Unirme a una sala</h1><p>Pide el código a quien la creó.</p></div></div>':
-    '<div class="gsetup"><span style="font-size:52px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+esc(M.d)+'<br>'+esc(M.min)+'</p></div></div>';
-  const settings=join?'<section class="sec"><h3>Código de la sala</h3><input id="rmcode" class="inp" style="text-align:center;letter-spacing:.25em;font-size:24px;text-transform:uppercase" maxlength="5" placeholder="ABC23" autocomplete="off" autocapitalize="characters"></section>':
-    '<section class="sec"><h3>'+(M.id==='assemble'?'¿Cuántos versículos?':'¿Cuántas preguntas?')+'</h3><div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+t+'</button>').join('')+'</div></section>';
-  return rmShell(head+'<section class="sec"><h3>¿Cómo te llamas?</h3><input id="rmname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(id.name==='Jugador'&&!famState().name?'':id.name)+'" autocomplete="off"></section>'+
-    '<section class="sec"><h3>Tu emoji</h3>'+rmAvHTML()+'</section>'+settings,
-    '<div class="lf"><div class="in"><button class="btn" data-a="'+(join?'rm-join':'rm-create')+'">'+(join?'Entrar a la sala':'Crear sala')+'</button></div></div>',false);
-}
-function rmOpenMenu(screen,mode){
-  if(!famOn())return;
-  famState();RM.screen=screen;if(mode){RM.cfg.mode=mode;RM.cfg.total=RM_MODES[mode].def;}
-  RM.av=famState().avatar||famEdit.avatar||'🙂';RM.code=null;RM.st=null;RM.sig='';
-  rmOpenOverlay();$('#room').innerHTML=rmMenuHTML();
-}
-function rmMenuRefresh(){const nm=($('#rmname')||{}).value,cd=($('#rmcode')||{}).value;$('#room').innerHTML=rmMenuHTML();if($('#rmname')&&nm!==undefined)$('#rmname').value=nm;if($('#rmcode')&&cd!==undefined)$('#rmcode').value=cd;}
-function rmReadIdent(){
-  const nm=(($('#rmname')||{}).value||'').trim()||'Jugador';const f=famState();f.name=nm;f.avatar=RM.av;famEdit.name=nm;famEdit.avatar=RM.av;save();return {name:nm,avatar:RM.av};
-}
-async function rmCreate(){
-  const id=rmReadIdent(),M=RM_MODES[RM.cfg.mode];
-  try{
-    const r=await rpc('rm_create',famArgs({p_name:id.name,p_avatar:id.avatar,p_mode:M.id,p_total:RM.cfg.total,p_time:M.time}));
-    if(r&&r.ok){rmEnter(r.code);}else toast(famMsg(r&&r.error));
-  }catch(e){toast(rpcMsg(e));}
-}
-async function rmJoin(){
-  const id=rmReadIdent(),code=(($('#rmcode')||{}).value||'').trim().toUpperCase();
-  if(code.length<4){toast('Escribe el código de la sala.');return;}
-  try{
-    const r=await rpc('rm_join',famArgs({p_code:code,p_name:id.name,p_avatar:id.avatar}));
-    if(r&&r.ok){rmEnter(r.code);}else toast(famMsg(r&&r.error));
-  }catch(e){toast(rpcMsg(e));}
-}
+
+
+
+
+
+
+
 function rmEnter(code){
   RM.code=code;RM.st=null;RM.sig='';RM.sel=null;RM.my=null;RM.fails=0;RM.rewarded='';
   $('#room').innerHTML=rmShell('<div class="splash"><div class="spl">🕯️</div><b>Entrando a la sala…</b></div>','',false);
@@ -4357,7 +4315,7 @@ function rmLoop(){
 async function rmPoll(){
   const code=RM.code;if(!code)return;
   try{
-    const st=await rpc('rm_state',famArgs({p_code:code}));
+    const st=await rpc('fr_room_state',frArgs({p_code:code}));
     if(code!==RM.code)return;
     if(st.error){rmEnd(st.error==='sala_no_existe'||st.error==='no_estas'?'La sala se cerró.':famMsg(st.error));return;}
     RM.fails=0;RM.st=st;RM.t0=performance.now();RM.rem0=st.room.rem;
@@ -4375,22 +4333,7 @@ function rmPlayerRow(p,st,extra){
   const host=st.room.host===p.device,me=p.device===st.me;
   return '<div class="frow'+(p.active===false?' off':'')+'"><span class="fav">'+esc(p.avatar)+'</span><b class="fnm">'+esc(p.name)+(me?' (tú)':'')+(host?' 👑':'')+(p.badge?' '+badgeE(p.badge):'')+'</b>'+(extra||'')+'</div>';
 }
-function rmLobbyHTML(st){
-  const r=st.room,M=RM_MODES[r.mode],host=r.host===st.me,n=st.players.length,me=st.players.find(p=>p.device===st.me)||{};
-  const enough=r.mode==='duel'?n===2:n>=2,teamsOk=r.mode!=='teams'||[1,2].every(t=>st.players.some(p=>p.team===t)),can=host&&enough&&teamsOk;
-  let list;
-  if(r.mode==='teams'){
-    list='<div class="rmteams">'+[1,2].map(t=>'<div class="rmteam" style="--tc:'+RM_TEAM[t].c+'"><b>'+RM_TEAM[t].e+' Equipo '+RM_TEAM[t].n+'</b>'+(st.players.filter(p=>p.team===t).map(p=>rmPlayerRow(p,st)).join('')||'<span class="muted" style="font-size:13px">Nadie todavía</span>')+'</div>').join('')+'</div>'+
-      '<button class="btn ghost sm" data-a="rm-team" data-t="'+(me.team===1?2:1)+'">Pasarme al equipo '+RM_TEAM[me.team===1?2:1].n+'</button>';
-  }else list='<div class="card" style="padding:6px 14px">'+st.players.map(p=>rmPlayerRow(p,st)).join('')+'</div>';
-  const need=!enough?(r.mode==='duel'?'Faltan jugadores: el duelo es de 2.':'Hace falta al menos otra persona.'):(!teamsOk?'Cada equipo necesita al menos un jugador.':'');
-  return rmShell('<div class="gsetup"><span style="font-size:48px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+r.total+(r.mode==='assemble'?' versículos':' preguntas')+' · '+n+(n===1?' jugador':' jugadores')+'</p></div></div>'+
-    '<section class="card codebox"><span class="muted">Código de la sala</span><div class="gcodev" style="font-size:42px">'+esc(r.code)+'</div><button class="btn blue sm" data-a="rm-invite">📲 Invitar por WhatsApp</button></section>'+
-    '<h3 style="margin:6px 0 8px">Jugadores</h3>'+list+
-    (host?'':'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">Esperando a que empiece la partida…</p>')+
-    (need&&host?'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">'+esc(need)+'</p>':''),
-    host?'<div class="lf"><div class="in"><button class="btn" data-a="rm-start" '+(can?'':'disabled')+'>Empezar</button></div></div>':'',false);
-}
+
 function rmBoardHTML(st,deltas){
   const teams=st.room.mode==='teams';
   let top='';
@@ -4481,7 +4424,7 @@ function rmTick(){
 async function rmAnswer(i){
   const st=RM.st;if(!st||st.room.phase!=='question'||st.mine||(RM.my&&RM.my.q===st.room.q))return;
   RM.my={q:st.room.q,i};rmRender();
-  try{const r=await rpc('rm_answer',famArgs({p_code:RM.code,p_q:st.room.q,p_choice:i}));
+  try{const r=await rpc('fr_room_answer',frArgs({p_code:RM.code,p_q:st.room.q,p_choice:i}));
     if(!(r&&r.ok)){RM.my=null;toast(famMsg(r&&r.error));}
   }catch(e){RM.my=null;toast('Sin conexión. Toca otra vez para responder.');}
   rmPoll();
@@ -4489,7 +4432,7 @@ async function rmAnswer(i){
 async function rmPlace(slot){
   const st=RM.st;if(!st||RM.sel===null||st.room.phase!=='question')return;
   const piece=RM.sel;
-  try{const r=await rpc('rm_place',famArgs({p_code:RM.code,p_piece:piece,p_slot:slot}));
+  try{const r=await rpc('fr_room_place',frArgs({p_code:RM.code,p_piece:piece,p_slot:slot}));
     if(r&&r.ok){RM.sel=null;if(r.correct){beep('good');haptic(15);toast(r.complete?'🎉 ¡Versículo completo!':'✔ ¡Esa va ahí!');}else{beep('bad');haptic([30,40,30]);toast('✖ Esa pieza no va ahí');}}
     else{toast(famMsg(r&&r.error));RM.sel=null;}
   }catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
@@ -4498,19 +4441,15 @@ async function rmPlace(slot){
 async function rmStart(){
   const st=RM.st;if(!st)return;const M=RM_MODES[st.room.mode];
   const qs=st.room.mode==='assemble'?rmBuildAssemble(st.room.total):rmBuildQA(st.room.total);
-  try{const r=await rpc('rm_start',famArgs({p_code:RM.code,p_questions:qs}));
+  try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:qs}));
     if(!(r&&r.ok))toast(famMsg(r&&r.error));
   }catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
   rmPoll();
 }
-async function rmInvite(){
-  const link=appLink(),text='🎮 ¡Juega conmigo en Lampy! Entra a Juegos → «Unirme con código» y escribe: '+RM.code+(link?'\nEntra aquí: '+link:'');
-  try{if(navigator.share){await navigator.share({text});return;}}catch(e){if(e&&e.name==='AbortError')return;}
-  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
-}
+
 async function rmLeave(){
   hideModal();const code=RM.code;
-  try{if(code)await rpc('rm_leave',famArgs({p_code:code}));}catch(e){}
+  try{if(code)await rpc('fr_room_leave',frArgs({p_code:code}));}catch(e){}
   rmEnd();
 }
 function dicList(q){
@@ -4550,10 +4489,11 @@ function dicOpen(id){
 function dicClose(){$('#dic').hidden=true;$('#dic').innerHTML='';}
 
 /* ============================================================
-   SEGUIR A ALGUIEN (amigos por código)
-   Cada persona crea un perfil con un código de amigo. Quien escriba ese código la sigue
-   (en una sola dirección) y ve su racha, sus XP de la semana y si practicó hoy.
-   Todo pasa por las funciones fr_* de Supabase (ver supabase-amigos.sql).
+   AMIGOS: todo lo social funciona según a quién sigues
+   Cada persona tiene UN perfil con UN código de usuario (el mismo identificador que tenía
+   en el grupo familiar). Con quienes sigues puedes: ver su racha, mandarles ánimo,
+   regalarles cosas e invitarlos a jugar en vivo. Todo pasa por las funciones fr_* de
+   Supabase (ver supabase-amigos.sql).
    ============================================================ */
 Object.assign(FAM_ERR,{
   perfil_no_existe:'Primero crea tu perfil de amigos.',
@@ -4563,17 +4503,17 @@ Object.assign(FAM_ERR,{
   no_sigues:'Primero tienes que seguir a esa persona.',
   perfil_oculto:'Esa persona no está aceptando seguidores por ahora.',
   no_te_sigue:'Esa persona ya no te sigue.',
+  sin_invitacion:'Esa sala no te invitó.',
   intenta_otra_vez:'Algo salió mal. Inténtalo otra vez.'
 });
-const FR={data:null,last:0,sig:'',err:'',recv:[],recvNew:[]};
+const FR={data:null,last:0,sig:'',err:'',recv:[],recvNew:[],probing:false};
 const FRE={name:'',avatar:'🙂',init:false};
 const FRM={name:'',avatar:'🙂'};
-let FRV='fr';
 const frActive=()=>!!(famOn()&&S.fr&&S.fr.on);
-function frState(){S.fr=S.fr||{};if(!S.fr.device){S.fr.device=uuid4();S.fr.secret=hexr(24);save();}return S.fr;}
-const frArgs=x=>Object.assign({p_device:frState().device,p_secret:frState().secret},x||{});
-function frMsg(e){const m=String((e&&e.message)||'');return /Could not find the function|schema cache|PGRST202/i.test(m)?'Falta instalar en Supabase el SQL de amigos (supabase-amigos.sql).':rpcMsg(e);}
-/* Los números de cada persona llegan tal como los guardó su teléfono; aquí se ajustan al día de hoy */
+const frArgs=x=>{const f=famState();return Object.assign({p_device:f.device,p_secret:f.secret},x||{});};
+const frMsg=e=>rpcMsg(e);
+const frInviteN=()=>((FR.data&&FR.data.invites)||[]).length;
+/* Los números de cada persona llegan como los guardó su teléfono; aquí se ajustan a hoy */
 const frLost=m=>!(m.last_day&&diffDays(m.last_day,today())<=1);
 const frStreak=m=>frLost(m)?0:(m.streak||0);
 const frWeek=m=>(m.last_day&&diffDays(m.last_day,today())<=6)?(m.week_xp||0):0;
@@ -4585,19 +4525,19 @@ function frWhen(d){
 }
 function frPend(){
   if(!frActive()||TAB==='fr'||!FR.data)return 0;
-  return (FR.data.cheers||[]).length+(FR.data.new_followers||0);
+  return (FR.data.cheers||[]).length+(FR.data.new_followers||0)+(FR.data.invites||[]).length;
 }
 async function frSync(){
   if(!frActive())return;
   try{
     const r=await rpc('fr_sync',frArgs(Object.assign(famStats(),{p_badge:S.badge||''})));
     if(r&&r.ok)FR.synced=Date.now();
-    else if(r&&r.error==='perfil_no_existe'){S.fr.on=false;S.fr.code=null;FR.data=null;save();frRefresh();}
+    else if(r&&r.error==='perfil_no_existe'){S.fr=null;FR.data=null;save();frRefresh();}
   }catch(e){}
 }
 function frRefresh(){
-  if(L||G||RM.code||!$('#fam').hidden||!$('#room').hidden)return;
-  if(TAB==='fr'||TAB==='path')render();else renderTabs();
+  if(L||G||RM.code||!$('#room').hidden)return;
+  if(TAB==='fr'||TAB==='path'||TAB==='games')render();else renderTabs();
 }
 function frAchCheck(d){
   let ch=false;
@@ -4607,10 +4547,11 @@ function frAchCheck(d){
   const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
   if(fresh.length){toast('🏅 Logro: '+fresh[0].t);confetti(40);beep('good');}
 }
-/* mark=true: se está mirando la pestaña, así que los ánimos y seguidores nuevos se dan por vistos */
-async function frPoll(force,mark){
+/* mark=true: se está mirando la pestaña Amigos, así que los ánimos y seguidores nuevos se dan por vistos.
+   quick=true: sondeo rápido (para ver invitaciones a jugar casi al instante). */
+async function frPoll(force,mark,quick){
   if(!frActive())return;
-  if(!force&&Date.now()-FR.last<60000)return;
+  if(!force&&Date.now()-FR.last<(quick?3000:60000))return;
   FR.last=Date.now();
   try{
     const d=await rpc('fr_list',frArgs({p_today:today(),p_mark:!!mark}));
@@ -4625,33 +4566,72 @@ async function frPoll(force,mark){
       const sig=raw+'|'+FR.recv.length+'|'+FR.recvNew.length;
       const changed=sig!==FR.sig;
       FR.data=d;FR.sig=sig;
-      if(d.me&&S.fr.code!==d.me.code){S.fr.code=d.me.code;S.fr.name=d.me.name;S.fr.avatar=d.me.avatar;save();}
+      if(d.me&&(S.fr.code!==d.me.code||S.fr.name!==d.me.name||S.fr.avatar!==d.me.avatar)){S.fr={on:true,code:d.me.code,name:d.me.name,avatar:d.me.avatar};save();}
       frAchCheck(d);
       if(changed||force)frRefresh();
-    }else if(d&&d.error==='perfil_no_existe'){S.fr.on=false;S.fr.code=null;save();FR.data=null;FR.sig='';frRefresh();}
+    }else if(d&&d.error==='perfil_no_existe'){S.fr=null;save();FR.data=null;FR.sig='';frRefresh();}
     else if(d&&d.error){FR.err=famMsg(d.error);if(!FR.data)frRefresh();}
   }catch(e){FR.err=frMsg(e);if(!FR.data)frRefresh();}
 }
+/* ¿Ya tengo perfil en el servidor? (por ejemplo, el que se creó solo a partir del grupo familiar) */
+async function frProbe(){
+  if(!famOn()||frActive()||FR.probing)return;
+  FR.probing=true;
+  try{
+    const d=await rpc('fr_list',frArgs({p_today:today(),p_mark:false}));
+    if(d&&d.ok&&d.me){
+      S.fr={on:true,code:d.me.code,name:d.me.name,avatar:d.me.avatar};save();
+      FR.data=null;FR.sig='';
+      await frPoll(true,TAB==='fr');
+      render();frApplyPending();
+    }
+  }catch(e){}
+  finally{FR.probing=false;}
+}
+function frApplyPending(){
+  const c=S.frPending;if(!c||!frActive())return;
+  S.frPending='';save();
+  frFollow(c);
+}
 function frOpened(){
-  if(!frActive())return;
   FR.recv=[];FR.recvNew=[];
+  if(!frActive()){frProbe();return;}
   frSync();
   frPoll(true,true);
 }
+/* Enlace de invitación: lampy…/?a=CÓDIGO */
+function frBoot(){
+  try{
+    const u=new URL(location.href),a=(u.searchParams.get('a')||'').trim().toUpperCase();
+    if(a){
+      if(/^[A-Z2-9]{4,8}$/.test(a)){S.frPending=a;save();TAB='fr';}
+      u.searchParams.delete('a');
+      history.replaceState(null,'',u.pathname+u.search+u.hash);
+      render();
+    }
+  }catch(e){}
+  if(!famOn())return;
+  if(frActive()){setTimeout(frSync,2500);setTimeout(frApplyPending,2800);}
+  else if(S.fam&&S.fam.device)setTimeout(frProbe,900);
+}
+try{setInterval(()=>{
+  if(document.hidden||!frActive()||L||G||RM.code)return;
+  if(TAB==='games'||TAB==='fr')frPoll(false,TAB==='fr',true);
+},4000);}catch(e){}
 /* ----- acciones ----- */
 async function frCreate(){
   const nm=(($('#frname')||{}).value||'').trim();
   if(!nm){toast('Escribe tu nombre para que te reconozcan.');const i=$('#frname');if(i)i.focus();return;}
   FRE.name=nm;
-  const st=frState();
   try{
     const r=await rpc('fr_me',frArgs({p_name:nm,p_avatar:FRE.avatar}));
     if(r&&r.ok){
-      st.on=true;st.code=r.code;st.name=r.name;st.avatar=r.avatar;save();
+      S.fr={on:true,code:r.code,name:r.name,avatar:r.avatar};save();
       FR.data=null;FR.sig='';FR.recv=[];FR.recvNew=[];
       await frSync();
       await frPoll(true,true);
       render();confetti(70);beep('win');toast('¡Perfil creado! Comparte tu código.');
+      frApplyPending();
     }else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
@@ -4669,7 +4649,7 @@ async function frFollow(code){
     if(r&&r.ok){
       const i=$('#frcode');if(i)i.value='';
       frFollowedOk(r.name);
-      await frPoll(true,true);
+      await frPoll(true,TAB==='fr');
     }else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
@@ -4688,7 +4668,7 @@ async function frCheer(to,k,btn){
   }catch(e){toast(frMsg(e));}
 }
 function frAskUnf(to,n){
-  showModal('<h3>¿Dejar de seguir a '+esc(n)+'?</h3><p>Ya no verás su racha. Puedes volver a seguirla con su código.</p><button class="btn bad" data-a="fr-unf-yes" data-to="'+esc(to)+'">Dejar de seguir</button><button class="btn ghost" data-a="stay">Cancelar</button>');
+  showModal('<h3>¿Dejar de seguir a '+esc(n)+'?</h3><p>Ya no verás su racha ni podrás regalarle ni invitarla a jugar. Puedes volver a seguirla con su código.</p><button class="btn bad" data-a="fr-unf-yes" data-to="'+esc(to)+'">Dejar de seguir</button><button class="btn ghost" data-a="stay">Cancelar</button>');
 }
 async function frUnfollow(to){
   hideModal();
@@ -4698,7 +4678,7 @@ async function frUnfollow(to){
   }catch(e){toast(frMsg(e));}
 }
 function frAskRem(to,n){
-  showModal('<h3>¿Quitar a '+esc(n)+' de tus seguidores?</h3><p>Dejará de ver tu racha. No se entera. Si tiene tu código, puede volver a seguirte.</p><button class="btn bad" data-a="fr-rem-yes" data-to="'+esc(to)+'">Quitar seguidor</button><button class="btn ghost" data-a="stay">Cancelar</button>');
+  showModal('<h3>¿Quitar a '+esc(n)+' de tus seguidores?</h3><p>Dejará de ver tu racha y de poder mandarte cosas. No se entera. Si tiene tu código, puede volver a seguirte.</p><button class="btn bad" data-a="fr-rem-yes" data-to="'+esc(to)+'">Quitar seguidor</button><button class="btn ghost" data-a="stay">Cancelar</button>');
 }
 async function frRemove(to){
   hideModal();
@@ -4714,7 +4694,18 @@ async function frVisible(v){
     else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
-function frEditOpen(){FRM.name=(FR.data&&FR.data.me&&FR.data.me.name)||S.fr.name||'';FRM.avatar=(FR.data&&FR.data.me&&FR.data.me.avatar)||S.fr.avatar||'🙂';frEditModal();}
+function frAskCode(){
+  showModal('<h3>¿Cambiar tu código?</h3><p>El código de ahora dejará de servir para seguirte. Quienes ya te siguen te siguen igual.</p><button class="btn" data-a="fr-code-yes">Cambiar código</button><button class="btn ghost" data-a="stay">Cancelar</button>');
+}
+async function frNewCode(){
+  hideModal();
+  try{
+    const r=await rpc('fr_new_code',frArgs());
+    if(r&&r.ok){S.fr.code=r.code;save();toast('Tu código nuevo es '+r.code+'.');await frPoll(true,true);}
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+function frEditOpen(){FRM.name=(FR.data&&FR.data.me&&FR.data.me.name)||(S.fr&&S.fr.name)||'';FRM.avatar=(FR.data&&FR.data.me&&FR.data.me.avatar)||(S.fr&&S.fr.avatar)||'🙂';frEditModal();}
 function frEditModal(){
   showModal('<h3>Mi perfil de amigos</h3><input id="frmname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRM.name)+'" autocomplete="off" aria-label="Tu nombre"><div class="avs">'+
     FAM_AV.map(a=>'<button class="avb '+(FRM.avatar===a?'on':'')+'" data-a="fr-medit-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+
@@ -4725,7 +4716,7 @@ async function frEditSave(){
   if(!nm){toast('Escribe tu nombre.');return;}
   try{
     const r=await rpc('fr_me',frArgs({p_name:nm,p_avatar:FRM.avatar}));
-    if(r&&r.ok){hideModal();S.fr.name=r.name;S.fr.avatar=r.avatar;save();toast('Perfil actualizado.');await frPoll(true,true);}
+    if(r&&r.ok){hideModal();S.fr={on:true,code:r.code,name:r.name,avatar:r.avatar};save();toast('Perfil actualizado.');await frPoll(true,true);}
     else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
@@ -4733,13 +4724,13 @@ async function frDelete(){
   hideModal();
   try{
     const r=await rpc('fr_delete',frArgs());
-    if(r&&r.ok){S.fr.on=false;S.fr.code=null;save();FR.data=null;FR.sig='';FR.recv=[];FR.recvNew=[];toast('Perfil eliminado.');render();}
+    if(r&&r.ok){S.fr=null;save();FR.data=null;FR.sig='';FR.recv=[];FR.recvNew=[];toast('Perfil eliminado.');render();}
     else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
 function frInviteText(){
   const link=appLink(),c=S.fr&&S.fr.code;
-  return '👥 ¡Sígueme en Lampy! Mi código de amigo es: '+c+'\nEntra a Amigos → Siguiendo, escribe el código en «Seguir a alguien» y verás mi racha.'+(link?'\nEntra aquí: '+link:'');
+  return '👥 ¡Sígueme en Lampy!'+(link?' Abre este enlace y quedarás siguiéndome:\n'+link+'?a='+c+'\n\nO escribe mi código de amigo: '+c:' Mi código de amigo es: '+c);
 }
 async function frInvite(){
   const text=frInviteText();
@@ -4754,7 +4745,7 @@ function frCopy(){
 }
 /* ----- pantallas ----- */
 function frHeroMsg(){
-  if(!frActive())return '¡Mira cómo van los tuyos! Crea tu perfil y sigue a tu familia y amigos.';
+  if(!frActive())return S.frPending?'¡Te invitaron! Crea tu perfil y quedarás siguiendo a tu amigo.':'¡Mira cómo van los tuyos! Crea tu perfil y sigue a tu familia y amigos.';
   const d=FR.data;
   if(!d)return 'Buscando a tus amigos…';
   const f=d.following;
@@ -4769,26 +4760,32 @@ function frHeroMsg(){
 }
 function frIntroHTML(){
   if(!FRE.init){FRE.init=true;FRE.name=FRE.name||(S.fam&&S.fam.name)||'';FRE.avatar=(S.fam&&S.fam.avatar)||FRE.avatar||'🙂';}
-  return '<section class="card frhow"><b>Así funciona</b><p>Crea tu perfil y recibe un código de amigo. Quien lo escriba podrá seguirte, y tú podrás seguir a quien quieras.</p>'+
-    '<ul class="frlist"><li><span aria-hidden="true">🔥</span>Ves su racha y si ya practicaron hoy.</li><li><span aria-hidden="true">⚡</span>Comparan los XP de la semana.</li><li><span aria-hidden="true">💪</span>Se mandan ánimo cuando hace falta.</li></ul></section>'+
+  return (S.frPending?'<div class="banner">👋 Te invitaron a seguir a un amigo. Crea tu perfil y quedarás siguiéndolo.</div>':'')+
+    '<section class="card frhow"><b>Así funciona</b><p>Crea tu perfil y recibe tu código de usuario. Quien lo escriba podrá seguirte, y tú podrás seguir a quien quieras.</p>'+
+    '<ul class="frlist"><li><span aria-hidden="true">🔥</span>Ves su racha y si ya practicaron hoy.</li><li><span aria-hidden="true">💪</span>Se mandan ánimo y se hacen regalos.</li><li><span aria-hidden="true">🎮</span>Se invitan a jugar en vivo.</li></ul></section>'+
     '<section class="sec"><h3>¿Cómo te llamas?</h3><input id="frname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRE.name)+'" autocomplete="off"></section>'+
     '<section class="sec"><h3>Elige tu emoji</h3><div class="avs">'+FAM_AV.map(a=>'<button class="avb '+(FRE.avatar===a?'on':'')+'" data-a="fr-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+'</div></section>'+
-    '<button class="btn purple" data-a="fr-create">Crear mi perfil de amigos</button>'+
+    '<button class="btn purple" data-a="fr-create">Crear mi perfil</button>'+
     '<p class="foot">Quien te sigue ve tu nombre, tu emoji, tu racha, tus XP de la semana y si practicaste hoy. Nada más: no se comparte tu correo ni tu teléfono. Tú decides quién te sigue y puedes quitar seguidores cuando quieras.</p>';
 }
-function frBoardHTML(d){
+function frBoardHTML(d,limit){
   const mine=famStats();
-  const rows=[{name:'Tú',avatar:(d.me&&d.me.avatar)||'🙂',wk:mine.p_week_xp,st:S.streak,badge:S.badge||'',me:true}]
+  let rows=[{name:'Tú',avatar:(d.me&&d.me.avatar)||'🙂',wk:mine.p_week_xp,st:S.streak,badge:S.badge||'',me:true}]
     .concat(d.following.map(m=>({name:m.name,avatar:m.avatar,wk:frWeek(m),st:frStreak(m),badge:m.badge,me:false})));
   rows.sort((a,b)=>b.wk-a.wk||b.st-a.st);
+  if(limit)rows=rows.slice(0,limit);
   return '<section class="card famcard"><div class="famh"><b>🏆 Esta semana</b><span class="muted">XP</span></div>'+
-    rows.map((r,i)=>'<div class="frow"><span class="fpos">'+(i===0&&r.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc(r.avatar)+'</span><b class="fnm">'+esc(r.name)+(r.badge?' '+badgeE(r.badge):'')+'</b><span class="fst">🔥 '+r.st+'</span><span class="fxp">⚡ '+r.wk+'</span></div>').join('')+'</section>';
+    rows.map((r,i)=>'<div class="frow"><span class="fpos">'+(i===0&&r.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc(r.avatar)+'</span><b class="fnm">'+esc(r.name)+(r.badge?' '+badgeE(r.badge):'')+'</b><span class="fst">🔥 '+r.st+'</span><span class="fxp">⚡ '+r.wk+'</span></div>').join('')+
+    (limit?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-go">Ver amigos</button>':'')+'</section>';
 }
 function frFollowingHTML(m){
-  return '<div class="mrow"><div class="mtop"><span class="fav big">'+esc(m.avatar)+'</span><div class="minfo"><b>'+esc(m.name)+(m.badge?' '+badgeE(m.badge):'')+'</b><span class="muted">'+esc(frWhen(m.last_day))+'</span></div>'+(frToday(m)?'<span class="frpill">hoy ✔</span>':'')+'</div>'+
+  const to=esc(m.device),nm=esc(m.name);
+  return '<div class="mrow"><div class="mtop"><span class="fav big">'+esc(m.avatar)+'</span><div class="minfo"><b>'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b><span class="muted">'+esc(frWhen(m.last_day))+'</span></div>'+(frToday(m)?'<span class="frpill">hoy ✔</span>':'')+'</div>'+
     '<div class="mstats"><span>🔥 <b>'+frStreak(m)+'</b> racha</span><span>⚡ <b>'+frWeek(m)+'</b> esta semana</span><span>📚 <b>'+(m.lessons||0)+'</b></span></div>'+
-    '<div class="chb">'+['animo','fuego','oracion'].map(k=>'<button class="chbtn" data-a="fr-cheer" data-to="'+esc(m.device)+'" data-k="'+k+'" aria-label="'+esc(KIND_T[k])+' a '+esc(m.name)+'" title="'+esc(KIND_T[k])+'">'+KIND_E[k]+'</button>').join('')+'</div>'+
-    '<button class="frun" data-a="fr-unf" data-to="'+esc(m.device)+'" data-n="'+esc(m.name)+'">Dejar de seguir</button></div>';
+    '<div class="chb">'+['animo','fuego','oracion'].map(k=>'<button class="chbtn" data-a="fr-cheer" data-to="'+to+'" data-k="'+k+'" aria-label="'+esc(KIND_T[k])+' a '+nm+'" title="'+esc(KIND_T[k])+'">'+KIND_E[k]+'</button>').join('')+
+    '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar">🎁</button>'+
+    '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar">🎮</button></div>'+
+    '<button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button></div>';
 }
 function frFollowerHTML(f){
   const isNew=FR.recvNew.indexOf(f.device)>=0;
@@ -4807,21 +4804,27 @@ function frHTML(){
   if(FR.recv.length)out+='<section class="cheers"><b>Te enviaron:</b>'+FR.recv.map(c=>'<div class="cheerrow">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> · '+esc(KIND_T[c.kind]||'¡Ánimo!')+'</div>').join('')+'</section>';
   const nn=fws.filter(f=>FR.recvNew.indexOf(f.device)>=0).map(f=>f.name);
   if(nn.length)out+='<div class="banner">👋 <b>'+esc(nn.length===1?nn[0]:nn.slice(0,-1).join(', ')+' y '+nn[nn.length-1])+'</b> '+(nn.length===1?'empezó a seguirte':'empezaron a seguirte')+'.</div>';
-  out+='<section class="card codebox"><span class="muted">Tu código de amigo</span><div class="gcodev">'+esc(me.code)+'</div><div class="row2" style="margin:0"><button class="btn blue sm" data-a="fr-invite">📲 Compartir</button><button class="btn ghost sm" data-a="fr-copy">Copiar</button></div></section>';
-  out+='<div class="joinrow"><div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de amigo que te pasó.</small></div></div><div class="jr-in"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de amigo"><button class="btn" data-a="fr-follow">Seguir</button></div></div>';
+  out+='<section class="card codebox"><span class="muted">Tu código de usuario</span><div class="gcodev">'+esc(me.code)+'</div><div class="row2" style="margin:0"><button class="btn blue sm" data-a="fr-invite">📲 Compartir</button><button class="btn ghost sm" data-a="fr-copy">Copiar</button></div></section>';
+  out+='<div class="joinrow"><div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de usuario que te pasó.</small></div></div><div class="jr-in"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></div>';
   out+='<div class="frsec"><h3>Siguiendo</h3><span class="muted">'+fol.length+'</span></div>';
-  if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<p>Aún no sigues a nadie. Pídele su código de amigo a alguien de tu familia y escríbelo arriba.</p></section>';
+  if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<p>Aún no sigues a nadie. Pídele su código de usuario a alguien de tu familia y escríbelo arriba, o abre el enlace que te mande.</p></section>';
   else out+=frBoardHTML(d)+'<div class="mlist">'+fol.map(frFollowingHTML).join('')+'</div>';
   out+='<div class="frsec"><h3>Te siguen</h3><span class="muted">'+fws.length+'</span></div>';
   out+=fws.length?'<section class="card" style="padding:6px 14px">'+fws.map(frFollowerHTML).join('')+'</section>':'<p class="muted" style="margin:0;font-size:14px;font-weight:800">Cuando alguien escriba tu código, aparecerá aquí.</p>';
-  out+='<section class="card" style="margin-top:18px"><b>⚙️ Mi perfil de amigos</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Quien te sigue ve tu nombre, tu emoji, tu racha, tus XP de la semana y si practicaste hoy. Nada más.</p>'+
+  out+='<div style="margin-top:18px">'+giftsCardHTML()+'</div>';
+  out+='<section class="card"><b>⚙️ Mi perfil</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Quien te sigue ve tu nombre, tu emoji, tu racha, tus XP de la semana y si practicaste hoy. Nada más.</p>'+
     '<b style="display:block;font-size:15px">Permitir que me sigan con mi código</b><div class="seg"><button class="'+(me.visible?'on':'')+'" data-a="fr-vis" data-v="1">Sí</button><button class="'+(!me.visible?'on':'')+'" data-a="fr-vis" data-v="0">No</button></div>'+
-    '<div class="row2" style="margin-top:12px"><button class="btn ghost sm" data-a="fr-edit">Cambiar nombre o emoji</button></div><button class="link-danger" data-a="fr-del">Eliminar mi perfil de amigos</button></section>';
+    '<div class="row2" style="margin-top:12px"><button class="btn ghost sm" data-a="fr-edit">Cambiar nombre o emoji</button><button class="btn ghost sm" data-a="fr-code-ask">Cambiar mi código</button></div><button class="link-danger" data-a="fr-del">Eliminar mi perfil de amigos</button></section>';
   return out;
 }
 function frHomeHTML(){
   if(!frActive()||!FR.data)return '';
   const d=FR.data;let out='';
+  (d.invites||[]).slice(0,2).forEach(i=>{
+    const M=RM_MODES[i.mode]||RM_MODES.race;
+    out+='<div class="banner rminvb"><span>'+M.emo+' <b>'+esc(i.from)+'</b> te invita a jugar: '+esc(M.t)+'</span><button class="btn sm" data-a="rm-join-inv" data-code="'+esc(i.code)+'">Unirme</button></div>';
+  });
+  if(giftN()>0)out+='<button class="banner cheerb" data-a="gift-inbox">🎁 Tienes <b>'+giftN()+'</b> '+(giftN()===1?'regalo':'regalos')+' por abrir</button>';
   if((d.cheers||[]).length){
     const c=d.cheers[0],more=d.cheers.length-1;
     out+='<button class="banner cheerb" data-a="fr-go">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> te mandó: '+esc(KIND_T[c.kind]||'¡Ánimo!')+(more>0?' (y '+more+' más)':'')+'</button>';
@@ -4830,15 +4833,121 @@ function frHomeHTML(){
     const nn=d.followers.filter(f=>f.new).map(f=>f.name),k=d.new_followers;
     out+='<button class="banner cheerb" data-a="fr-go">👋 <b>'+esc(nn[0]||'Alguien')+'</b>'+(k>1?' y '+(k-1)+(k-1===1?' persona más':' más'):'')+(k>1?' empezaron a seguirte':' empezó a seguirte')+'</button>';
   }
+  if(d.following.length)out+=frBoardHTML(d,4);
   return out;
 }
 function amigosHTML(){
   if(!famOn())return '<h1 class="page">Amigos</h1><div class="hero">'+mascot('think',76)+'<div class="bubble">Los amigos no están disponibles en esta versión.</div></div>';
-  const fc=FR.data&&FR.data.following?FR.data.following.length:0;
-  const seg='<div class="abcseg"><button class="cs '+(FRV==='fr'?'on':'')+'" data-a="frv" data-v="fr" aria-pressed="'+(FRV==='fr')+'">👥 Siguiendo'+(fc?' · '+fc:'')+'</button><button class="cs '+(FRV==='fam'?'on':'')+'" data-a="frv" data-v="fam" aria-pressed="'+(FRV==='fam')+'">👨‍👩‍👧 Familia</button></div>';
-  if(FRV==='fam')return '<h1 class="page">Amigos</h1>'+seg+amigosFamHTML();
-  const me=frActive()&&FR.data&&FR.data.following.length&&S.lastDay===today()&&FR.data.following.some(frToday);
-  return '<h1 class="page">Amigos</h1>'+seg+'<div class="hero">'+mascot(me?'cheer':'wink',84)+'<div class="bubble">'+esc(frHeroMsg())+'</div></div>'+frHTML();
+  const happy=frActive()&&FR.data&&FR.data.following.length&&S.lastDay===today()&&FR.data.following.some(frToday);
+  return '<h1 class="page">Amigos</h1><div class="hero">'+mascot(happy?'cheer':'wink',84)+'<div class="bubble">'+esc(frHeroMsg())+'</div></div>'+frHTML();
+}
+
+/* ============================================================
+   JUEGOS EN VIVO: se juega con quienes sigues (invitación, sin códigos de sala)
+   ============================================================ */
+function rmTilesHTML(){
+  if(!famOn())return '';
+  const d=FR.data,inv=(d&&d.invites)||[],fol=(d&&d.following)||[];
+  let out='<h3 class="rmh">🌐 En vivo con tus amigos</h3>';
+  if(inv.length)out+='<div class="rminv">'+inv.map(i=>{
+    const M=RM_MODES[i.mode]||RM_MODES.race;
+    return '<div class="rminvrow"><span class="fav big">'+esc(i.avatar)+'</span><div class="minfo"><b>'+esc(i.from)+' te invita</b><span class="muted">'+esc(M.emo+' '+M.t)+'</span></div><button class="btn sm" data-a="rm-join-inv" data-code="'+esc(i.code)+'">Unirme</button></div>';
+  }).join('')+'</div>';
+  if(!frActive())out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Para jugar en vivo, crea tu perfil y sigue a alguien.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
+  else if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Sigue al menos a una persona para invitarla a jugar.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
+  else out+='<div class="gtiles">'+Object.values(RM_MODES).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
+  return out+'<h3 class="rmh" style="margin-top:24px">📱 En un solo celular</h3>';
+}
+function rmMenuHTML(){
+  const M=RM_MODES[RM.cfg.mode]||RM_MODES.race;
+  const fol=((FR.data&&FR.data.following)||[]).slice().sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+  const n=RM.pick.length;
+  const head='<div class="gsetup"><span style="font-size:52px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+esc(M.d)+'<br>'+esc(M.min)+'</p></div></div>';
+  const list=fol.length?'<div class="pickl">'+fol.map(f=>{const on=RM.pick.indexOf(f.device)>=0;
+    return '<button class="pickrow'+(on?' on':'')+'" data-a="rm-pick" data-d="'+esc(f.device)+'" aria-pressed="'+on+'"><span class="fav big">'+esc(f.avatar)+'</span><b>'+esc(f.name)+'</b><span class="chk">'+(on?'✔':'')+'</span></button>';}).join('')+'</div>'
+    :'<p class="muted">Aún no sigues a nadie.</p>';
+  const who='<section class="sec"><h3>¿Con quién juegas?</h3><p class="muted" style="font-size:14px;margin:0 0 10px">'+(M.id==='duel'?'Elige a 1 persona.':'Elige hasta 7 personas. Les llegará una invitación.')+'</p>'+list+'</section>';
+  const settings='<section class="sec"><h3>'+(M.id==='assemble'?'¿Cuántos versículos?':'¿Cuántas preguntas?')+'</h3><div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+t+'</button>').join('')+'</div></section>';
+  return rmShell(head+who+settings,
+    '<div class="lf"><div class="in"><button class="btn" data-a="rm-create" '+(n?'':'disabled')+'>'+(n?'Crear sala e invitar a '+n:'Elige a quién invitar')+'</button></div></div>',false);
+}
+function rmOpenMenu(screen,mode){
+  if(!famOn())return;
+  if(mode){RM.cfg.mode=mode;RM.cfg.total=RM_MODES[mode].def;}
+  const fol=(FR.data&&FR.data.following)||[];
+  RM.pick=RM.pick.filter(d=>fol.some(f=>f.device===d));
+  if(RM.cfg.mode==='duel')RM.pick=RM.pick.slice(0,1);
+  RM.screen='create';RM.code=null;RM.st=null;RM.sig='';
+  rmOpenOverlay();$('#room').innerHTML=rmMenuHTML();
+}
+function rmMenuRefresh(){
+  const lb=document.querySelector('#room .lb'),top=lb?lb.scrollTop:0;
+  $('#room').innerHTML=rmMenuHTML();
+  const lb2=document.querySelector('#room .lb');if(lb2)lb2.scrollTop=top;
+}
+function rmPickToggle(d){
+  const M=RM_MODES[RM.cfg.mode]||RM_MODES.race,i=RM.pick.indexOf(d);
+  if(i>=0)RM.pick.splice(i,1);
+  else if(M.id==='duel')RM.pick=[d];
+  else if(RM.pick.length<7)RM.pick.push(d);
+  else toast('Máximo 7 invitados.');
+  rmMenuRefresh();
+}
+async function rmCreate(){
+  const M=RM_MODES[RM.cfg.mode];
+  if(!RM.pick.length){toast('Elige a quién invitar.');return;}
+  try{
+    const r=await rpc('fr_room_create',frArgs({p_mode:M.id,p_total:RM.cfg.total,p_time:M.time,p_invite:RM.pick.slice()}));
+    if(r&&r.ok){RM.pick=[];rmEnter(r.code);}else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+async function rmJoinInvite(code){
+  try{
+    const r=await rpc('fr_room_join',frArgs({p_code:code}));
+    if(r&&r.ok){
+      if(FR.data)FR.data.invites=(FR.data.invites||[]).filter(i=>i.code!==r.code);
+      rmOpenOverlay();rmEnter(r.code);
+    }else{toast(famMsg(r&&r.error));frPoll(true,false);}
+  }catch(e){toast(frMsg(e));}
+}
+function rmInviteOpen(){
+  const st=RM.st;if(!st)return;
+  const inv=st.invited||[];
+  const cands=((FR.data&&FR.data.following)||[]).filter(f=>!st.players.some(p=>p.device===f.device)&&!inv.some(i=>i.device===f.device));
+  if(!cands.length){showModal('<h3>Invitar a jugar</h3><p class="muted">Ya invitaste a todos los que sigues.</p><button class="btn ghost" data-a="stay">Cerrar</button>');return;}
+  showModal('<h3>Invitar a jugar</h3><div class="pickl">'+cands.map(f=>'<button class="pickrow" data-a="rm-inv-send" data-to="'+esc(f.device)+'"><span class="fav big">'+esc(f.avatar)+'</span><b>'+esc(f.name)+'</b><span class="frbtn">Invitar</span></button>').join('')+'</div><button class="btn ghost" data-a="stay">Cerrar</button>');
+}
+async function rmInviteSend(to){
+  try{
+    const r=await rpc('fr_room_invite',frArgs({p_code:RM.code,p_to:to}));
+    if(r&&r.ok){toast('Invitación enviada.');await rmPoll();rmInviteOpen();}
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast(frMsg(e));}
+}
+function rmLobbyHTML(st){
+  const r=st.room,M=RM_MODES[r.mode],host=r.host===st.me,n=st.players.length,me=st.players.find(p=>p.device===st.me)||{};
+  const enough=r.mode==='duel'?n===2:n>=2,teamsOk=r.mode!=='teams'||[1,2].every(t=>st.players.some(p=>p.team===t)),can=host&&enough&&teamsOk;
+  let list;
+  if(r.mode==='teams'){
+    list='<div class="rmteams">'+[1,2].map(t=>'<div class="rmteam" style="--tc:'+RM_TEAM[t].c+'"><b>'+RM_TEAM[t].e+' Equipo '+RM_TEAM[t].n+'</b>'+(st.players.filter(p=>p.team===t).map(p=>rmPlayerRow(p,st)).join('')||'<span class="muted" style="font-size:13px">Nadie todavía</span>')+'</div>').join('')+'</div>'+
+      '<button class="btn ghost sm" data-a="rm-team" data-t="'+(me.team===1?2:1)+'">Pasarme al equipo '+RM_TEAM[me.team===1?2:1].n+'</button>';
+  }else list='<div class="card" style="padding:6px 14px">'+st.players.map(p=>rmPlayerRow(p,st)).join('')+'</div>';
+  const inv=st.invited||[];
+  const cands=((FR.data&&FR.data.following)||[]).filter(f=>!st.players.some(p=>p.device===f.device)&&!inv.some(i=>i.device===f.device));
+  const waiting=inv.length?'<p class="muted" style="margin:12px 0 0;font-weight:800">Esperando a: '+inv.map(i=>esc(i.avatar+' '+i.name)).join(', ')+'</p>':'';
+  const room=n<(r.mode==='duel'?2:8);
+  const actions=host?'<div class="row2" style="margin:14px 0 0">'+(cands.length&&room?'<button class="btn ghost sm" data-a="rm-invite-open">➕ Invitar a más</button>':'')+'<button class="btn ghost sm" data-a="rm-invite">📲 Avisar por WhatsApp</button></div>':'';
+  const need=!enough?(r.mode==='duel'?'Faltan jugadores: el duelo es de 2.':'Hace falta al menos otra persona. Cuando acepte la invitación, aparecerá aquí.'):(!teamsOk?'Cada equipo necesita al menos un jugador.':'');
+  return rmShell('<div class="gsetup"><span style="font-size:48px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+r.total+(r.mode==='assemble'?' versículos':' preguntas')+' · '+n+(n===1?' jugador':' jugadores')+'</p></div></div>'+
+    '<h3 style="margin:6px 0 8px">Jugadores</h3>'+list+waiting+actions+
+    (host?'':'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">Esperando a que empiece la partida…</p>')+
+    (need&&host?'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">'+esc(need)+'</p>':''),
+    host?'<div class="lf"><div class="in"><button class="btn" data-a="rm-start" '+(can?'':'disabled')+'>Empezar</button></div></div>':'',false);
+}
+async function rmInvite(){
+  const link=appLink(),text='🎮 ¡Te invité a jugar en vivo en Lampy! Abre Juegos y toca «Unirme» en tu invitación.'+(link?'\n'+link:'');
+  try{if(navigator.share){await navigator.share({text});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
 
 
@@ -4860,7 +4969,7 @@ ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>
    ESTADO Y ALMACENAMIENTO (localStorage protegido)
    ============================================================ */
 const KEY='lampara.rvr1960.v1';
-const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0});
+const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0,frPending:''});
 let S=defaults();
 function idbOpen(cb){
   try{
@@ -4975,7 +5084,7 @@ function mergeProgress(loc,rem){
   });
   /* grupo familiar: se conserva el de este teléfono; si no tiene, se recupera el de la nube */
   const lj=loc.fam&&loc.fam.joined,rj=rem.fam&&rem.fam.joined;
-  m.fam=lj?loc.fam:rj?rem.fam:(loc.fam||rem.fam);
+  m.fam=(loc.fr&&loc.fr.on&&loc.fam)?loc.fam:(rem.fr&&rem.fr.on&&rem.fam)?rem.fam:lj?loc.fam:rj?rem.fam:(loc.fam||rem.fam);
   m.rd=loc.rd||rem.rd||null;
   m.fr=(loc.fr&&loc.fr.on)?loc.fr:(rem.fr&&rem.fr.on)?rem.fr:(loc.fr||rem.fr||null);
   return m;
@@ -5160,7 +5269,7 @@ function pwaBoot(){
   window.addEventListener('appinstalled',()=>{INSTALL_EVT=null;toast('¡Lampy instalada!');if(!L&&!G)render();});
   const off=()=>{const b=document.getElementById('offbar');if(b)b.hidden=navigator.onLine!==false;};
   window.addEventListener('offline',off);
-  window.addEventListener('online',()=>{off();toast('Conexión recuperada.');if(famJoined())famPoll(true);});
+  window.addEventListener('online',()=>{off();toast('Conexión recuperada.');if(frActive())frPoll(true,TAB==='fr');});
   off();
   if('serviceWorker' in navigator&&/^https?:/.test(location.protocol)){
     const reg=()=>navigator.serviceWorker.register('sw.js').then(()=>{if(!L&&!G&&TAB==='set')render();}).catch(()=>{});
@@ -5989,9 +6098,9 @@ function renderTabs(){
   const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],gk?['dic','Palabras',IC.book]:['read','Lectura',IC.read],['games','Juegos',IC.users]];
   if(famOn())tabs.push(['fr','Amigos',IC.heart]);
   tabs.push(['me','Perfil',IC.trophy]);
-  const pend=(typeof giftN==='function'?giftN():0)+((FAM&&FAM.cheers)?FAM.cheers.length:0)+(typeof frPend==='function'?frPend():0);
+  const pend=(typeof giftN==='function'?giftN():0)+(typeof frPend==='function'?frPend():0);
   $('#tabs').firstElementChild.innerHTML=tabs.map(t=>{const on=TAB===t[0]||(t[0]==='me'&&TAB==='set');
-    return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(t[0]==='fr'&&pend&&(famJoined()||frActive())?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
+    return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(((t[0]==='fr'&&pend&&frActive())||(t[0]==='games'&&frInviteN()>0))?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
 }
 function homeHTML(){
   const gk=S.course==='gk',U=curUnits(),t=today(),xpT=S.days[t]||0,pct=Math.min(1,xpT/S.goal),C=175.9;
@@ -6020,7 +6129,7 @@ function homeHTML(){
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
-  '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+famHomeHTML()+frHomeHTML()+rdHomeHTML()+
+  '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+frHomeHTML()+rdHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
@@ -6077,13 +6186,7 @@ function settingsHTML(){
    '<textarea id="bk" class="code" placeholder="Aquí aparece tu código. Para restaurar, pégalo aquí."></textarea><div class="row2" style="margin:10px 0 0"><button class="btn blue sm" data-a="bk-copy">Copiar código</button><button class="btn ghost sm" data-a="bk-restore">Restaurar</button></div></section>'+
    '<div style="margin-top:22px"><button class="link-danger" data-a="reset">'+(resetArmed?(signedIn()?'Toca otra vez para borrar también el progreso de tu cuenta':'Toca otra vez para borrar todo el progreso'):'Borrar progreso')+'</button></div>';
 }
-function amigosFamHTML(){
-  if(!famOn())return '<h1 class="page">Amigos</h1><div class="hero">'+mascot('think',76)+'<div class="bubble">Los amigos no están disponibles en esta versión.</div></div>';
-  const joined=famJoined(),fh=famHomeHTML();
-  return '<div class="hero">'+mascot('wink',84)+'<div class="bubble">'+(joined?'Practiquen juntos y anímense unos a otros.':'Crea un grupo con tu familia para practicar juntos.')+'</div></div>'+
-   fh+(fh.indexOf('famcard')<0?famCardHTML():'')+giftsCardHTML()+
-   '<section class="card"><b>📣 Animar a alguien</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Anima a alguien a hacer su lección. Se envía por WhatsApp o por donde quieras.</p><button class="btn ghost sm" data-a="share" data-k="cheer">Animar a alguien</button></section>';
-}
+
 /* «Ir a mi lección»: lleva a la primera lección sin hacer (la que la ruta marca con ¡EMPIEZA!).
    Aunque el avance esté en dos grupos (lecciones antiguas ya hechas y lecciones nuevas), las lecciones
    sin hacer solo se desbloquean en orden, así que esa es siempre la que toca. */
@@ -6111,8 +6214,7 @@ function render(){
   if(S.course==='gk'&&TAB==='read')TAB='path';
   if(S.course!=='gk'&&TAB==='dic')TAB='path';
   applyTheme();refreshStreak();renderTop();renderTabs();
-  if(famJoined())setTimeout(()=>famPoll(),60);
-  if(frActive())setTimeout(()=>frPoll(false,TAB==='fr'&&FRV==='fr'),80);
+  if(frActive())setTimeout(()=>frPoll(false,TAB==='fr'),80);
   if(TAB==='me')setTimeout(()=>{prepShare('streak').catch(()=>{});},150);
   const _kc=document.getElementById('frcode'),_kv=_kc?_kc.value:null,_kf=_kc&&document.activeElement===_kc;
   $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='read'?readHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():TAB==='fr'?amigosHTML():TAB==='set'?settingsHTML():meHTML();
@@ -6770,8 +6872,8 @@ document.addEventListener('click',e=>{
   if(a==='auth-out-yes'){hideModal();authSignOut();return;}
   if(a==='settings'){TAB='set';resetArmed=false;render();window.scrollTo(0,0);return;}
   if(a==='settings-back'){TAB='me';render();window.scrollTo(0,0);return;}
-  if(a==='rm-quick'){rmQuickJoin();return;}
-  if(a==='tab'){const _prev=TAB;TAB=b.dataset.t;resetArmed=false;if(_prev==='fr'&&TAB!=='fr'){FR.recv=[];FR.recvNew=[];}render();window.scrollTo(0,0);if(TAB==='fr'&&FRV==='fr')frOpened();}
+  if(a==='rm-join-inv'){rmJoinInvite(b.dataset.code);return;}
+  if(a==='tab'){const _prev=TAB;TAB=b.dataset.t;resetArmed=false;if(_prev==='fr'&&TAB!=='fr'){FR.recv=[];FR.recvNew=[];}render();window.scrollTo(0,0);if(TAB==='fr')frOpened();}
   else if(a==='lesson'){
     const ui=+b.dataset.u,li=+b.dataset.l;
     if(b.dataset.c==='gk'){
@@ -6815,21 +6917,21 @@ document.addEventListener('click',e=>{
   else if(a==='rd-tog-close'){hideModal();rdToggle(+b.dataset.i);}
   else if(a==='rd-reset'){showModal('<h3>¿Empezar un plan nuevo?</h3><p>Se borrarán las lecturas que marcaste en este plan. Tu racha de lectura y tus logros se conservan.</p><button class="btn" data-a="stay">Seguir con mi plan</button><button class="btn ghost" data-a="rd-reset-yes">Sí, empezar de nuevo</button>');}
   else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
-  else if(a==='rm-open'){rmOpenMenu('create',b.dataset.m);}
-  else if(a==='rm-join-open'){rmOpenMenu('join');}
-  else if(a==='rm-av'){RM.av=b.dataset.v;rmMenuRefresh();}
+  else if(a==='rm-open'){RM.pick=[];rmOpenMenu('create',b.dataset.m);}
+  else if(a==='rm-pick'){rmPickToggle(b.dataset.d);}
+  else if(a==='rm-invite-open'){rmInviteOpen();}
+  else if(a==='rm-inv-send'){rmInviteSend(b.dataset.to);}
   else if(a==='rm-total'){RM.cfg.total=+b.dataset.v;rmMenuRefresh();}
   else if(a==='rm-create'){rmCreate();}
-  else if(a==='rm-join'){rmJoin();}
   else if(a==='rm-exit'){if(!RM.code){$('#room').hidden=true;$('#room').innerHTML='';document.body.style.overflow='';render();}else showModal('<h3>¿Salir de la sala?</h3><p>Dejarás la partida y los demás seguirán sin ti.</p><button class="btn" data-a="stay">Quedarme</button><button class="btn ghost" data-a="rm-exit-yes">Salir</button>');}
   else if(a==='rm-exit-yes'){rmLeave();}
-  else if(a==='rm-team'){rpc('rm_team',famArgs({p_code:RM.code,p_team:+b.dataset.t})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));rmPoll();}).catch(()=>toast('Sin conexión.'));}
+  else if(a==='rm-team'){rpc('fr_room_team',frArgs({p_code:RM.code,p_team:+b.dataset.t})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));rmPoll();}).catch(()=>toast('Sin conexión.'));}
   else if(a==='rm-start'){rmStart();}
   else if(a==='rm-ans'){rmAnswer(+b.dataset.i);}
   else if(a==='rm-piece'){RM.sel=(RM.sel===+b.dataset.i)?null:+b.dataset.i;rmRender();}
   else if(a==='rm-slot'){rmPlace(+b.dataset.i);}
   else if(a==='rm-invite'){rmInvite();}
-  else if(a==='rm-again'){rpc('rm_again',famArgs({p_code:RM.code})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));RM.rewarded='';RM.my=null;RM.sel=null;rmPoll();}).catch(()=>toast('Sin conexión.'));}
+  else if(a==='rm-again'){rpc('fr_room_again',frArgs({p_code:RM.code})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));RM.rewarded='';RM.my=null;RM.sel=null;rmPoll();}).catch(()=>toast('Sin conexión.'));}
   else if(a==='gift-open'){giftOpen(b.dataset.to,b.dataset.n);}
   else if(a==='gift-kind'){giftForm(b.dataset.k);}
   else if(a==='gift-badge'){GIFT.badge=b.dataset.k;document.querySelectorAll('#gbadges .avb').forEach(x=>x.classList.toggle('on',x.dataset.k===GIFT.badge));}
@@ -6839,8 +6941,8 @@ document.addEventListener('click',e=>{
   else if(a==='gift-mine'){giftMine();}
   else if(a==='gift-equip'){giftEquip(b.dataset.k);}
   else if(a==='fam-open'){famOpen();}
-  else if(a==='frv'){FRV=b.dataset.v;render();window.scrollTo(0,0);if(FRV==='fr')frOpened();}
-  else if(a==='fr-go'){TAB='fr';FRV='fr';render();window.scrollTo(0,0);frOpened();}
+  else if(a==='fr-go'){TAB='fr';render();window.scrollTo(0,0);frOpened();}
+  else if(a==='fr-play'){RM.pick=[b.dataset.to];TAB='games';render();window.scrollTo(0,0);rmOpenMenu('create','race');}
   else if(a==='fr-av'){FRE.name=(($('#frname')||{}).value||FRE.name);FRE.avatar=b.dataset.v;render();}
   else if(a==='fr-create'){frCreate();}
   else if(a==='fr-follow'){frFollow((($('#frcode')||{}).value||''));}
@@ -6852,8 +6954,10 @@ document.addEventListener('click',e=>{
   else if(a==='fr-rem-yes'){frRemove(b.dataset.to);}
   else if(a==='fr-invite'){frInvite();}
   else if(a==='fr-copy'){frCopy();}
-  else if(a==='fr-reload'){FR.err='';frPoll(true,TAB==='fr'&&FRV==='fr');}
+  else if(a==='fr-reload'){FR.err='';frPoll(true,TAB==='fr');}
   else if(a==='fr-vis'){frVisible(b.dataset.v==='1');}
+  else if(a==='fr-code-ask'){frAskCode();}
+  else if(a==='fr-code-yes'){frNewCode();}
   else if(a==='fr-edit'){frEditOpen();}
   else if(a==='fr-medit-av'){FRM.name=(($('#frmname')||{}).value||FRM.name);FRM.avatar=b.dataset.v;frEditModal();}
   else if(a==='fr-edit-save'){frEditSave();}
@@ -6897,7 +7001,7 @@ document.addEventListener('click',e=>{
     if(!resetArmed){resetArmed=true;render();}
     else{
       const was=signedIn();
-      const keepFr=S.fr;S=defaults();S.fr=keepFr||null;if(was)S.cloudUid=AU.uid;
+      const keepFr=S.fr,keepFam=S.fam;S=defaults();S.fr=keepFr||null;if(keepFam)S.fam=keepFam;if(was)S.cloudUid=AU.uid;
       if(was){CLOUD.applying=true;}
       save();resetArmed=false;
       if(was){CLOUD.applying=false;cloudReq('DELETE','lampara_progress?user_id=eq.'+AU.uid).then(()=>{AU.seen=null;authSave();cloudSync({render:false});}).catch(()=>{CLOUD.state='err';updateCloudUI();});}
@@ -6908,7 +7012,6 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target&&e.target.id==='auth-email'){e.preventDefault();authSend();return;}
   if(e.key==='Enter'&&e.target&&e.target.id==='auth-code'){e.preventDefault();authVerify();return;}
-  if(e.key==='Enter'&&e.target&&e.target.id==='rmquick'){e.preventDefault();rmQuickJoin();return;}
   if(e.key==='Enter'&&e.target&&e.target.id==='frcode'){e.preventDefault();frFollow(e.target.value);return;}
   if(e.key==='Enter'&&e.target&&e.target.id==='frname'){e.preventDefault();frCreate();return;}
   if(G&&e.key==='Enter'&&$('#modal').hidden&&e.target.tagName!=='INPUT'){const pb=document.querySelector('#game [data-primary]');if(pb){e.preventDefault();pb.click();}return;}
@@ -6920,11 +7023,11 @@ document.addEventListener('keydown',e=>{
     else if(canCheck()){e.preventDefault();check();}
   }else if(/^[1-4]$/.test(e.key)&&!L.finished&&L.ui){pick(+e.key-1);}
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{if(famJoined())famPoll(true);if(frActive()){frSync();frPoll(false,TAB==='fr'&&FRV==='fr');}if(RM.code)rmPoll();if(!L&&!G&&!RM.code)render();}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{if(frActive()){frSync();frPoll(false,TAB==='fr');}if(RM.code)rmPoll();if(!L&&!G&&!RM.code)render();}});
 window.addEventListener('pagehide',()=>{try{save();}catch(e){}});
 
 load();render();cloudBoot();pwaBoot();
-if(frActive())setTimeout(frSync,2500);
+frBoot();
 </script>
 </body>
 </html>
