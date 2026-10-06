@@ -143,10 +143,12 @@ h1,h2,h3,h4{font-weight:900}
 .cbtn .ci .flag{width:30px;height:20px;border-radius:4px;display:block}
 .cbtn .car{font-size:12px;color:var(--muted);transition:transform .2s}
 .cbtn[aria-expanded="true"] .car{transform:rotate(180deg)}
-.ucel{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:calc(env(safe-area-inset-top,0px) + 22px) 22px calc(env(safe-area-inset-bottom,0px) + 22px);background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--u) 40%,var(--bg)),var(--bg) 72%);text-align:center;overflow:auto;animation:ucin .35s ease-out}
+.ucel{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:calc(env(safe-area-inset-top,0px) + 22px) 22px calc(env(safe-area-inset-bottom,0px) + 22px);background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--u) 13%,var(--bg)),var(--bg) 72%);text-align:center;overflow:auto;animation:ucin .35s ease-out}
 .ucel[hidden]{display:none}
 @keyframes ucin{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
-.uctag{background:var(--u);color:#fff;font-weight:900;font-size:13px;letter-spacing:.08em;padding:6px 14px;border-radius:999px;animation:ucpop .5s .15s both cubic-bezier(.2,1.6,.4,1)}
+.ucel{--ucTxt:color-mix(in srgb,var(--u) 55%,#000)}
+:root[data-theme="dark"] .ucel{--ucTxt:color-mix(in srgb,var(--u) 60%,#fff)}
+.uctag{background:color-mix(in srgb,var(--u) 52%,#000);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.18);font-weight:900;font-size:13px;letter-spacing:.08em;padding:6px 14px;border-radius:999px;animation:ucpop .5s .15s both cubic-bezier(.2,1.6,.4,1)}
 @keyframes ucpop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
 .ucrow{display:flex;align-items:center;justify-content:center;margin:2px 0}
 .ucbadge{position:relative;width:128px;height:128px;border-radius:50%;display:grid;place-items:center;font-size:64px;background:var(--surface);border:6px solid var(--u);box-shadow:0 0 0 10px color-mix(in srgb,var(--u) 25%,transparent);animation:ucpop .6s .25s both cubic-bezier(.2,1.6,.4,1)}
@@ -155,12 +157,13 @@ h1,h2,h3,h4{font-weight:900}
 .ucbadge .md{position:absolute;right:-8px;bottom:-6px;font-size:40px;animation:ucpop .5s .7s both cubic-bezier(.2,1.6,.4,1)}
 .ucrow .mas{margin-left:-14px}
 .ucel h1{margin:0;font-size:26px;line-height:1.15;max-width:420px}
+.uctag,.ucel h1,.ucel .ucsub{position:relative;z-index:2}
 .ucel .ucsub{margin:0;color:var(--muted);font-weight:800;font-size:15px}
 .ucprog{width:min(320px,86%);height:14px;border-radius:999px;background:var(--surface2);border:2px solid var(--line);overflow:hidden}
 .ucprog i{display:block;height:100%;background:var(--u);border-radius:999px;transition:width .9s .5s ease-out}
 .ucnext{display:flex;align-items:center;gap:14px;text-align:left;width:min(420px,100%);padding:14px 16px;border-radius:20px;border:3px solid var(--u);border-bottom-width:6px;background:var(--surface);animation:ucpop .5s .9s both cubic-bezier(.2,1.4,.4,1)}
 .ucnext .uce{font-size:40px;line-height:1}
-.ucnext small{display:block;color:var(--u);font-weight:900;letter-spacing:.06em;font-size:12px;text-transform:uppercase}
+.ucnext small{display:block;color:var(--ucTxt);font-weight:900;letter-spacing:.06em;font-size:12px;text-transform:uppercase}
 .ucnext b{display:block;font-size:18px;line-height:1.2}
 .ucnext span.s{color:var(--muted);font-size:14px;font-weight:800}
 .ucel .btn{width:min(420px,100%)}
@@ -664,6 +667,11 @@ a.btn{text-decoration:none;text-align:center}
 .minfo .frpill{justify-self:start;margin-top:2px}
 .codebox .row2 .btn{padding:10px 8px;white-space:nowrap}
 #modal .box .avs{justify-content:center}
+.frfoot{display:flex;gap:20px;flex-wrap:wrap}
+.frnote{margin:2px 0 0;font-size:13px;font-weight:800;color:var(--orange-ink)}
+.askbox .big{font-size:56px;line-height:1.1}
+.askbox p{margin:0;color:var(--ink);font-weight:800}
+.askbox p.muted{color:var(--muted);font-size:14px}
 .pickl{display:grid;gap:8px}
 .pickrow{display:flex;align-items:center;gap:12px;text-align:left;padding:10px 14px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-weight:900;font-size:17px;width:100%}
 .pickrow b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -4518,6 +4526,12 @@ const frLost=m=>!(m.last_day&&diffDays(m.last_day,today())<=1);
 const frStreak=m=>frLost(m)?0:(m.streak||0);
 const frWeek=m=>(m.last_day&&diffDays(m.last_day,today())<=6)?(m.week_xp||0):0;
 const frToday=m=>m.last_day===today();
+/* «Jugador», «Yo»… son nombres de relleno: el perfil se creó sin que la persona eligiera el suyo */
+const frGeneric=n=>{const s=String(n||'').trim().toLowerCase().replace(/\s*\d+$/,'');return !s||s==='jugador'||s==='yo'||s==='amigo'||s==='usuario'||s==='sin nombre'||s==='player';};
+const frAlias=m=>(S.alias&&S.alias[m.device])||'';
+const frName=m=>frAlias(m)||m.name||'Amigo';
+const frNoName=m=>frGeneric(m.name)&&!frAlias(m);
+const frNameMissing=()=>!!(frActive()&&FR.data&&FR.data.me&&frGeneric(FR.data.me.name));
 function frWhen(d){
   if(!d)return 'aún sin practicar';
   const n=diffDays(d,today());
@@ -4569,6 +4583,7 @@ async function frPoll(force,mark,quick){
       if(d.me&&(S.fr.code!==d.me.code||S.fr.name!==d.me.name||S.fr.avatar!==d.me.avatar)){S.fr={on:true,code:d.me.code,name:d.me.name,avatar:d.me.avatar};save();}
       frAchCheck(d);
       if(changed||force)frRefresh();
+      setTimeout(frMaybePrompts,600);
     }else if(d&&d.error==='perfil_no_existe'){S.fr=null;save();FR.data=null;FR.sig='';frRefresh();}
     else if(d&&d.error){FR.err=famMsg(d.error);if(!FR.data)frRefresh();}
   }catch(e){FR.err=frMsg(e);if(!FR.data)frRefresh();}
@@ -4619,6 +4634,41 @@ try{setInterval(()=>{
   if(TAB==='games'||TAB==='fr')frPoll(false,TAB==='fr',true);
 },4000);}catch(e){}
 /* ----- acciones ----- */
+/* ----- apodos, «ponle nombre a tu perfil» y «¿lo sigues también?» ----- */
+function frAliasOpen(to,name,fresh){
+  const cur=(S.alias&&S.alias[to])||'';
+  showModal('<div class="askbox">'+(fresh?'<p><b>'+esc(name)+'</b> aún no puso su nombre.</p><p class="muted">Mientras tanto, ¿cómo la quieres llamar tú? Solo lo verás tú.</p>':'<h3>Apodo para '+esc(name)+'</h3><p class="muted">Solo lo verás tú.</p>')+
+    '</div><input id="fralias" class="inp" maxlength="24" placeholder="Ej. Mamá" value="'+esc(cur)+'" autocomplete="off" aria-label="Apodo"><button class="btn" data-a="fr-alias-save" data-to="'+esc(to)+'">Guardar</button>'+
+    (cur?'<button class="btn ghost" data-a="fr-alias-del" data-to="'+esc(to)+'">Quitar apodo</button>':'')+'<button class="btn ghost" data-a="stay">'+(fresh?'Después':'Cancelar')+'</button>');
+  setTimeout(()=>{const i=$('#fralias');if(i)try{i.focus();}catch(e){}},80);
+}
+function frAliasSave(to){
+  const v=(($('#fralias')||{}).value||'').trim().slice(0,24);
+  S.alias=S.alias||{};
+  if(v)S.alias[to]=v;else delete S.alias[to];
+  save();hideModal();render();
+  toast(v?'Listo, ahora la ves como «'+v+'».':'Apodo quitado.');
+}
+function frAliasDel(to){if(S.alias)delete S.alias[to];save();hideModal();render();toast('Apodo quitado.');}
+function frAskFollowBack(f){
+  showModal('<div class="askbox"><div class="big">'+esc(f.avatar)+'</div><h3>'+esc(frName(f))+' empezó a seguirte</h3>'+(frNoName(f)?'<p class="muted">Aún no puso su nombre.</p>':'')+'<p>¿Quieres seguirla también? Así verás su racha y podrán mandarse ánimo, regalos e invitaciones a jugar.</p></div>'+
+    '<button class="btn" data-a="fr-ask-yes" data-to="'+esc(f.device)+'">Sí, seguir también</button><button class="btn ghost" data-a="fr-ask-no">Ahora no</button>');
+}
+/* Un solo aviso a la vez: primero pedir el nombre propio, luego preguntar por los seguidores nuevos */
+function frMaybePrompts(){
+  if(!frActive()||!FR.data||!FR.data.me||L||G||RM.code||document.hidden)return;
+  if(!$('#modal').hidden||!$('#ucel').hidden||!$('#auth').hidden||!$('#fam').hidden)return;
+  if(frNameMissing()&&S.frNameAsk!==today()){
+    S.frNameAsk=today();save();
+    FRM.ask=true;FRM.name='';FRM.avatar=FR.data.me.avatar||'🙂';frEditModal();
+    return;
+  }
+  S.frAsked=S.frAsked||{};
+  const f=(FR.data.followers||[]).find(x=>!x.mutual&&!S.frAsked[x.device]&&(x.new||FR.recvNew.indexOf(x.device)>=0));
+  if(!f)return;
+  S.frAsked[f.device]=1;save();
+  frAskFollowBack(f);
+}
 async function frCreate(){
   const nm=(($('#frname')||{}).value||'').trim();
   if(!nm){toast('Escribe tu nombre para que te reconozcan.');const i=$('#frname');if(i)i.focus();return;}
@@ -4650,13 +4700,14 @@ async function frFollow(code){
       const i=$('#frcode');if(i)i.value='';
       frFollowedOk(r.name);
       await frPoll(true,TAB==='fr');
+      if(frGeneric(r.name)&&r.device)setTimeout(()=>frAliasOpen(r.device,r.name,true),700);
     }else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
 async function frFollowBack(to){
   try{
     const r=await rpc('fr_follow_back',frArgs({p_to:to}));
-    if(r&&r.ok){frFollowedOk(r.name);await frPoll(true,true);}
+    if(r&&r.ok){frFollowedOk(r.name);await frPoll(true,true);if(frGeneric(r.name)&&r.device)setTimeout(()=>frAliasOpen(r.device,r.name,true),700);}
     else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
@@ -4705,18 +4756,19 @@ async function frNewCode(){
     else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
-function frEditOpen(){FRM.name=(FR.data&&FR.data.me&&FR.data.me.name)||(S.fr&&S.fr.name)||'';FRM.avatar=(FR.data&&FR.data.me&&FR.data.me.avatar)||(S.fr&&S.fr.avatar)||'🙂';frEditModal();}
+function frEditOpen(){FRM.ask=false;FRM.name=(FR.data&&FR.data.me&&FR.data.me.name)||(S.fr&&S.fr.name)||'';FRM.avatar=(FR.data&&FR.data.me&&FR.data.me.avatar)||(S.fr&&S.fr.avatar)||'🙂';frEditModal();}
 function frEditModal(){
-  showModal('<h3>Mi perfil de amigos</h3><input id="frmname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRM.name)+'" autocomplete="off" aria-label="Tu nombre"><div class="avs">'+
+  const ask=!!FRM.ask,cur=(FR.data&&FR.data.me&&FR.data.me.name)||'Jugador';
+  showModal('<h3>'+(ask?'¿Cómo te llamas?':'Mi perfil de amigos')+'</h3>'+(ask?'<p class="muted" style="margin:0">Tus amigos te ven como «'+esc(cur)+'». Pon tu nombre y elige tu emoji para que sepan quién eres.</p>':'')+'<input id="frmname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRM.name)+'" autocomplete="off" aria-label="Tu nombre"><div class="avs">'+
     FAM_AV.map(a=>'<button class="avb '+(FRM.avatar===a?'on':'')+'" data-a="fr-medit-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+
-    '</div><button class="btn" data-a="fr-edit-save">Guardar</button><button class="btn ghost" data-a="stay">Cancelar</button>');
+    '</div><button class="btn" data-a="fr-edit-save">Guardar</button><button class="btn ghost" data-a="'+(ask?'fr-name-later':'stay')+'">'+(ask?'Después':'Cancelar')+'</button>');
 }
 async function frEditSave(){
   const nm=(($('#frmname')||{}).value||'').trim();
   if(!nm){toast('Escribe tu nombre.');return;}
   try{
     const r=await rpc('fr_me',frArgs({p_name:nm,p_avatar:FRM.avatar}));
-    if(r&&r.ok){hideModal();S.fr={on:true,code:r.code,name:r.name,avatar:r.avatar};save();toast('Perfil actualizado.');await frPoll(true,true);}
+    if(r&&r.ok){hideModal();S.fr={on:true,code:r.code,name:r.name,avatar:r.avatar};S.frNameAsk='';save();toast(FRM.ask?'¡Listo, '+r.name+'! Así te verán tus amigos.':'Perfil actualizado.');FRM.ask=false;await frPoll(true,true);}
     else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
@@ -4771,7 +4823,7 @@ function frIntroHTML(){
 function frBoardHTML(d,limit){
   const mine=famStats();
   let rows=[{name:'Tú',avatar:(d.me&&d.me.avatar)||'🙂',wk:mine.p_week_xp,st:S.streak,badge:S.badge||'',me:true}]
-    .concat(d.following.map(m=>({name:m.name,avatar:m.avatar,wk:frWeek(m),st:frStreak(m),badge:m.badge,me:false})));
+    .concat(d.following.map(m=>({name:frName(m),avatar:m.avatar,wk:frWeek(m),st:frStreak(m),badge:m.badge,me:false})));
   rows.sort((a,b)=>b.wk-a.wk||b.st-a.st);
   if(limit)rows=rows.slice(0,limit);
   return '<section class="card famcard"><div class="famh"><b>🏆 Esta semana</b><span class="muted">XP</span></div>'+
@@ -4779,30 +4831,31 @@ function frBoardHTML(d,limit){
     (limit?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-go">Ver amigos</button>':'')+'</section>';
 }
 function frFollowingHTML(m){
-  const to=esc(m.device),nm=esc(m.name);
-  return '<div class="mrow"><div class="mtop"><span class="fav big">'+esc(m.avatar)+'</span><div class="minfo"><b>'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b><span class="muted">'+esc(frWhen(m.last_day))+'</span></div>'+(frToday(m)?'<span class="frpill">hoy ✔</span>':'')+'</div>'+
+  const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name);
+  return '<div class="mrow"><div class="mtop"><span class="fav big">'+esc(m.avatar)+'</span><div class="minfo"><b>'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b><span class="muted">'+esc(frWhen(m.last_day))+'</span>'+(frNoName(m)?'<span class="frnote">Aún no puso su nombre</span>':'')+'</div>'+(frToday(m)?'<span class="frpill">hoy ✔</span>':'')+'</div>'+
     '<div class="mstats"><span>🔥 <b>'+frStreak(m)+'</b> racha</span><span>⚡ <b>'+frWeek(m)+'</b> esta semana</span><span>📚 <b>'+(m.lessons||0)+'</b></span></div>'+
     '<div class="chb">'+['animo','fuego','oracion'].map(k=>'<button class="chbtn" data-a="fr-cheer" data-to="'+to+'" data-k="'+k+'" aria-label="'+esc(KIND_T[k])+' a '+nm+'" title="'+esc(KIND_T[k])+'">'+KIND_E[k]+'</button>').join('')+
     '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar">🎁</button>'+
     '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar">🎮</button></div>'+
-    '<button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button></div>';
+    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+own+'">'+(frAlias(m)?'Cambiar apodo':'Poner apodo')+'</button><button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button></div></div>';
 }
 function frFollowerHTML(f){
-  const isNew=FR.recvNew.indexOf(f.device)>=0;
+  const isNew=FR.recvNew.indexOf(f.device)>=0,fname=frName(f);
   const sub=isNew?'<span class="frpill new">Nuevo</span>':(f.mutual?'':'<span class="muted" style="font-size:13px">Te sigue</span>');
-  return '<div class="frow frf"><span class="fav">'+esc(f.avatar)+'</span><div class="minfo"><b>'+esc(f.name)+(f.badge?' '+badgeE(f.badge):'')+'</b>'+sub+'</div>'+
-    (f.mutual?'<span class="muted" style="font-size:13px;flex:none;font-weight:900">Se siguen</span>':'<button class="frbtn" data-a="fr-back" data-to="'+esc(f.device)+'" aria-label="Seguir también a '+esc(f.name)+'">Seguir también</button>')+
-    '<button class="frx" data-a="fr-rem" data-to="'+esc(f.device)+'" data-n="'+esc(f.name)+'" aria-label="Quitar a '+esc(f.name)+' de mis seguidores">✕</button></div>';
+  return '<div class="frow frf"><span class="fav">'+esc(f.avatar)+'</span><div class="minfo"><b>'+esc(fname)+(f.badge?' '+badgeE(f.badge):'')+'</b>'+sub+'</div>'+
+    (f.mutual?'<span class="muted" style="font-size:13px;flex:none;font-weight:900">Se siguen</span>':'<button class="frbtn" data-a="fr-back" data-to="'+esc(f.device)+'" aria-label="Seguir también a '+esc(fname)+'">Seguir también</button>')+
+    '<button class="frx" data-a="fr-rem" data-to="'+esc(f.device)+'" data-n="'+esc(fname)+'" aria-label="Quitar a '+esc(fname)+' de mis seguidores">✕</button></div>';
 }
 function frHTML(){
   if(!frActive())return frIntroHTML();
   const d=FR.data;
   if(!d)return '<div class="splash"><div class="spl">🕯️</div><b>'+(FR.err?esc(FR.err):'Buscando a tus amigos…')+'</b>'+(FR.err?'<button class="btn ghost sm" data-a="fr-reload" style="margin-top:6px">Reintentar</button>':'')+'</div>';
-  const me=d.me,fol=d.following.slice().sort((a,b)=>frStreak(b)-frStreak(a)||String(a.name).localeCompare(String(b.name))),fws=d.followers;
+  const me=d.me,fol=d.following.slice().sort((a,b)=>frStreak(b)-frStreak(a)||String(frName(a)).localeCompare(String(frName(b)))),fws=d.followers;
   let out='';
   if(FR.err)out+='<div class="banner">'+esc(FR.err)+'</div>';
+  if(frNameMissing())out+='<section class="card" style="border-color:var(--orange);background:var(--orange-bg)"><b>✏️ Ponle nombre a tu perfil</b><p style="margin:4px 0 10px;font-size:14px;font-weight:800">Tus amigos te ven como «'+esc(me.name)+'». Escribe tu nombre para que sepan quién eres.</p><button class="btn orange sm" data-a="fr-edit-ask">Poner mi nombre</button></section>';
   if(FR.recv.length)out+='<section class="cheers"><b>Te enviaron:</b>'+FR.recv.map(c=>'<div class="cheerrow">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> · '+esc(KIND_T[c.kind]||'¡Ánimo!')+'</div>').join('')+'</section>';
-  const nn=fws.filter(f=>FR.recvNew.indexOf(f.device)>=0).map(f=>f.name);
+  const nn=fws.filter(f=>FR.recvNew.indexOf(f.device)>=0).map(frName);
   if(nn.length)out+='<div class="banner">👋 <b>'+esc(nn.length===1?nn[0]:nn.slice(0,-1).join(', ')+' y '+nn[nn.length-1])+'</b> '+(nn.length===1?'empezó a seguirte':'empezaron a seguirte')+'.</div>';
   out+='<section class="card codebox"><span class="muted">Tu código de usuario</span><div class="gcodev">'+esc(me.code)+'</div><div class="row2" style="margin:0"><button class="btn blue sm" data-a="fr-invite">📲 Compartir</button><button class="btn ghost sm" data-a="fr-copy">Copiar</button></div></section>';
   out+='<div class="joinrow"><div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de usuario que te pasó.</small></div></div><div class="jr-in"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></div>';
@@ -4830,7 +4883,7 @@ function frHomeHTML(){
     out+='<button class="banner cheerb" data-a="fr-go">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> te mandó: '+esc(KIND_T[c.kind]||'¡Ánimo!')+(more>0?' (y '+more+' más)':'')+'</button>';
   }
   if((d.new_followers||0)>0){
-    const nn=d.followers.filter(f=>f.new).map(f=>f.name),k=d.new_followers;
+    const nn=d.followers.filter(f=>f.new).map(frName),k=d.new_followers;
     out+='<button class="banner cheerb" data-a="fr-go">👋 <b>'+esc(nn[0]||'Alguien')+'</b>'+(k>1?' y '+(k-1)+(k-1===1?' persona más':' más'):'')+(k>1?' empezaron a seguirte':' empezó a seguirte')+'</button>';
   }
   if(d.following.length)out+=frBoardHTML(d,4);
@@ -4860,11 +4913,11 @@ function rmTilesHTML(){
 }
 function rmMenuHTML(){
   const M=RM_MODES[RM.cfg.mode]||RM_MODES.race;
-  const fol=((FR.data&&FR.data.following)||[]).slice().sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+  const fol=((FR.data&&FR.data.following)||[]).slice().sort((a,b)=>String(frName(a)).localeCompare(String(frName(b))));
   const n=RM.pick.length;
   const head='<div class="gsetup"><span style="font-size:52px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+esc(M.d)+'<br>'+esc(M.min)+'</p></div></div>';
   const list=fol.length?'<div class="pickl">'+fol.map(f=>{const on=RM.pick.indexOf(f.device)>=0;
-    return '<button class="pickrow'+(on?' on':'')+'" data-a="rm-pick" data-d="'+esc(f.device)+'" aria-pressed="'+on+'"><span class="fav big">'+esc(f.avatar)+'</span><b>'+esc(f.name)+'</b><span class="chk">'+(on?'✔':'')+'</span></button>';}).join('')+'</div>'
+    return '<button class="pickrow'+(on?' on':'')+'" data-a="rm-pick" data-d="'+esc(f.device)+'" aria-pressed="'+on+'"><span class="fav big">'+esc(f.avatar)+'</span><b>'+esc(frName(f))+'</b><span class="chk">'+(on?'✔':'')+'</span></button>';}).join('')+'</div>'
     :'<p class="muted">Aún no sigues a nadie.</p>';
   const who='<section class="sec"><h3>¿Con quién juegas?</h3><p class="muted" style="font-size:14px;margin:0 0 10px">'+(M.id==='duel'?'Elige a 1 persona.':'Elige hasta 7 personas. Les llegará una invitación.')+'</p>'+list+'</section>';
   const settings='<section class="sec"><h3>'+(M.id==='assemble'?'¿Cuántos versículos?':'¿Cuántas preguntas?')+'</h3><div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+t+'</button>').join('')+'</div></section>';
@@ -4969,7 +5022,7 @@ ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>
    ESTADO Y ALMACENAMIENTO (localStorage protegido)
    ============================================================ */
 const KEY='lampara.rvr1960.v1';
-const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0,frPending:''});
+const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0,frPending:'',alias:{},frAsked:{},frNameAsk:''});
 let S=defaults();
 function idbOpen(cb){
   try{
@@ -6959,6 +7012,13 @@ document.addEventListener('click',e=>{
   else if(a==='fr-code-ask'){frAskCode();}
   else if(a==='fr-code-yes'){frNewCode();}
   else if(a==='fr-edit'){frEditOpen();}
+  else if(a==='fr-edit-ask'){FRM.ask=true;FRM.name='';FRM.avatar=(FR.data&&FR.data.me&&FR.data.me.avatar)||'🙂';frEditModal();}
+  else if(a==='fr-name-later'){S.frNameAsk=today();save();hideModal();setTimeout(frMaybePrompts,400);}
+  else if(a==='fr-alias'){frAliasOpen(b.dataset.to,b.dataset.n,false);}
+  else if(a==='fr-alias-save'){frAliasSave(b.dataset.to);}
+  else if(a==='fr-alias-del'){frAliasDel(b.dataset.to);}
+  else if(a==='fr-ask-yes'){hideModal();frFollowBack(b.dataset.to);setTimeout(frMaybePrompts,1200);}
+  else if(a==='fr-ask-no'){hideModal();setTimeout(frMaybePrompts,400);}
   else if(a==='fr-medit-av'){FRM.name=(($('#frmname')||{}).value||FRM.name);FRM.avatar=b.dataset.v;frEditModal();}
   else if(a==='fr-edit-save'){frEditSave();}
   else if(a==='fr-del'){showModal('<h3>¿Eliminar tu perfil de amigos?</h3><p>Dejarás de seguir a todos y te dejarán de seguir. Tu progreso en Lampy no se toca.</p><button class="btn bad" data-a="fr-del-yes">Eliminar perfil</button><button class="btn ghost" data-a="stay">Cancelar</button>');}
