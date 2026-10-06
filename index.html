@@ -668,6 +668,8 @@ a.btn{text-decoration:none;text-align:center}
 .codebox .row2 .btn{padding:10px 8px;white-space:nowrap}
 #modal .box .avs{justify-content:center}
 .frfoot{display:flex;gap:20px;flex-wrap:wrap}
+#welcome{z-index:58}
+.welav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .frnote{margin:2px 0 0;font-size:13px;font-weight:800;color:var(--orange-ink)}
 .askbox .big{font-size:56px;line-height:1.1}
 .askbox p{margin:0;color:var(--ink);font-weight:800}
@@ -699,6 +701,7 @@ a.btn{text-decoration:none;text-align:center}
 <div id="cmenu" hidden></div>
 <div id="ucel" class="ucel" hidden></div>
 <div id="auth" class="authov" hidden role="dialog" aria-modal="true" aria-label="Guardar mi progreso"></div>
+<div id="welcome" class="authov" hidden role="dialog" aria-modal="true" aria-label="Bienvenida"></div>
 <div id="offbar" class="offbar" hidden role="status">📴 Sin conexión · puedes seguir estudiando</div>
 <div id="upd" class="updbar" hidden role="status"></div>
 <div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
@@ -1439,7 +1442,7 @@ const IC={
 /* ============================================================
    MASCOTA «LUMI», EFECTOS, SONIDO Y AVISOS
    ============================================================ */
-function mascot(mood,size){
+function mascot(mood,size,flv){
   mood=mood||'happy';size=size||80;
   const ink='#3C3C3C';
   const eyes=mood==='wink'
@@ -1459,8 +1462,9 @@ function mascot(mood,size){
     :mood==='think'?'<text x="76" y="24" font-size="24" font-weight="900" fill="#1CB0F6" font-family="Nunito,sans-serif">?</text>'
     :mood==='cheer'?'<g fill="#FFC800"><path d="M10 20l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path d="M88 10l2.5 5.5 5.5 2.5-5.5 2.5-2.5 5.5-2.5-5.5-5.5-2.5 5.5-2.5z"/></g>':'';
   const flame='<path d="M50 2C58 12 64 18 64 25C64 32 58 36 50 36C42 36 36 32 36 25C36 18 42 12 50 2Z" fill="#FF9600"/><path d="M50 15C54 21 57 24 57 28C57 32 54 34 50 34C46 34 43 32 43 28C43 24 46 21 50 15Z" fill="#FFD84D"/>';
-  const fl=mood==='sad'?'<g transform="translate(50 36) scale(.6) translate(-50 -36)"><g class="fl">'+flame+'</g></g>':'<g class="fl">'+flame+'</g>';
-  return '<span class="mas '+mood+'" style="width:'+size+'px;height:'+size+'px"><svg viewBox="0 0 100 100" aria-hidden="true">'+
+  const live=typeof flv==='number',sc=live?flv:(mood==='sad'?.6:1);
+  const fl='<g class="flw" transform="translate(50 36) scale('+sc.toFixed(2)+') translate(-50 -36)"'+(live?' opacity="'+(.55+.45*Math.min(1,sc)).toFixed(2)+'"':'')+'><g class="fl">'+flame+'</g></g>';
+  return '<span class="mas '+mood+'"'+(live?' data-live="1"':'')+' style="width:'+size+'px;height:'+size+'px"><svg viewBox="0 0 100 100" aria-hidden="true">'+
    '<path d="M17 56C5 54 3 70 15 73" fill="none" stroke="#E5A600" stroke-width="6" stroke-linecap="round"/>'+
    '<path d="M83 50C93 46 98 40 96 33C91 39 87 41 80 42Z" fill="#E5A600"/>'+
    '<path d="M12 62C12 42 28 37 50 37C72 37 88 42 88 62C88 80 72 92 50 92C28 92 12 80 12 62Z" fill="#FFC800"/>'+
@@ -4610,7 +4614,7 @@ function frApplyPending(){
 }
 function frOpened(){
   FR.recv=[];FR.recvNew=[];
-  if(!frActive()){frProbe();return;}
+  if(!frActive()){frEnsure();return;}
   frSync();
   frPoll(true,true);
 }
@@ -4627,7 +4631,7 @@ function frBoot(){
   }catch(e){}
   if(!famOn())return;
   if(frActive()){setTimeout(frSync,2500);setTimeout(frApplyPending,2800);}
-  else if(S.fam&&S.fam.device)setTimeout(frProbe,900);
+  else setTimeout(frEnsure,900);
 }
 try{setInterval(()=>{
   if(document.hidden||!frActive()||L||G||RM.code)return;
@@ -4658,21 +4662,80 @@ function frAskFollowBack(f){
 function frMaybePrompts(){
   if(!frActive()||!FR.data||!FR.data.me||L||G||RM.code||document.hidden)return;
   if(!$('#modal').hidden||!$('#ucel').hidden||!$('#auth').hidden||!$('#fam').hidden)return;
-  if(frNameMissing()&&S.frNameAsk!==today()){
-    S.frNameAsk=today();save();
-    FRM.ask=true;FRM.name='';FRM.avatar=FR.data.me.avatar||'🙂';frEditModal();
-    return;
-  }
+  if(frNameMissing()&&meValid()&&!FR.pushed){FR.pushed=1;frEnsure();return;}
   S.frAsked=S.frAsked||{};
   const f=(FR.data.followers||[]).find(x=>!x.mutual&&!S.frAsked[x.device]&&(x.new||FR.recvNew.indexOf(x.device)>=0));
   if(!f)return;
   S.frAsked[f.device]=1;save();
   frAskFollowBack(f);
 }
+/* ============================================================
+   NOMBRE: la app lo pide al empezar (y una sola vez)
+   Es lo que ven tus amigos. Si el nombre es de relleno («Jugador»), se vuelve a pedir.
+   ============================================================ */
+const WEL={name:'',avatar:'🙂',msg:''};
+const meValid=()=>!!(S.me&&S.me.name&&!frGeneric(S.me.name));
+function meDerive(){
+  if(meValid())return;
+  const c=[S.fr&&S.fr.name,S.fam&&S.fam.name].find(n=>n&&!frGeneric(n));
+  if(c){S.me={name:String(c).trim().slice(0,24),avatar:(S.fr&&S.fr.avatar)||(S.fam&&S.fam.avatar)||'🙂'};save();}
+}
+function welcomeRender(){
+  const el=$('#welcome');if(!el)return;
+  const nw=!(S.lessons>0)&&!(S.fam&&S.fam.device);
+  el.hidden=false;document.body.style.overflow='hidden';
+  el.innerHTML='<div class="auin"><div class="aurow">'+mascot('wink',104)+'</div><h1>'+(nw?'¡Bienvenido a Lampy!':'Un paso más')+'</h1>'+
+    '<p class="ausub">'+(nw?'Aprende la Biblia un poco cada día. ':'')+'Primero dinos cómo te llamas: así te reconocerán tu familia y tus amigos.</p>'+
+    '<input id="welname" class="inp" maxlength="24" placeholder="Tu nombre" autocomplete="given-name" value="'+esc(WEL.name)+'" aria-label="Tu nombre">'+
+    '<div class="welav">'+FAM_AV.map(a=>'<button class="avb '+(WEL.avatar===a?'on':'')+'" data-a="wel-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+'</div>'+
+    (WEL.msg?'<p class="aumsg" role="alert">'+esc(WEL.msg)+'</p>':'')+
+    '<button class="btn" data-a="wel-go">'+(nw?'Empezar':'Continuar')+'</button>'+
+    (cloudOn()&&!signedIn()?'<button class="link-plain" data-a="auth-open">Ya tengo cuenta · entrar con mi correo</button>':'')+'</div>';
+}
+function welcomeCheck(){
+  meDerive();
+  const el=$('#welcome');if(!el)return false;
+  if(meValid()){if(!el.hidden){el.hidden=true;el.innerHTML='';document.body.style.overflow='';}return false;}
+  if(!WEL.name&&S.me&&S.me.name&&!frGeneric(S.me.name))WEL.name=S.me.name;
+  welcomeRender();return true;
+}
+function welcomeSave(){
+  const nm=(($('#welname')||{}).value||'').trim();
+  WEL.name=nm;
+  if(!nm){WEL.msg='Escribe tu nombre para continuar.';welcomeRender();const i=$('#welname');if(i)i.focus();return;}
+  if(frGeneric(nm)){WEL.msg='Escribe tu nombre de verdad, no «'+nm+'».';welcomeRender();const i=$('#welname');if(i)i.focus();return;}
+  WEL.msg='';
+  S.me={name:nm.slice(0,24),avatar:WEL.avatar||'🙂'};save();
+  welcomeCheck();
+  beep('good');confetti(50);haptic(15);
+  render();
+  frEnsure();
+}
+/* El perfil de amigos se crea (o se actualiza) solo, con el nombre que la persona ya eligió */
+async function frEnsure(){
+  if(!famOn()||!meValid()||S.frOff||FR.ensuring)return;
+  FR.ensuring=true;
+  try{
+    const r=await rpc('fr_me',frArgs({p_name:S.me.name,p_avatar:S.me.avatar||'🙂'}));
+    if(r&&r.ok){
+      const was=frActive();
+      S.fr={on:true,code:r.code,name:r.name,avatar:r.avatar};save();
+      FR.data=null;FR.sig='';FR.last=0;
+      await frSync();
+      await frPoll(true,TAB==='fr'&&!L&&!G);
+      if(!was){render();frApplyPending();}
+    }
+  }catch(e){}
+  finally{FR.ensuring=false;}
+}
+function meCardHTML(){
+  const me=S.me||{name:'',avatar:'🙂'};
+  return '<section class="card"><b>👤 Tu nombre</b><p class="muted" style="margin:2px 0 8px;font-size:14px">Así te ven tu familia y tus amigos.</p><div style="display:flex;align-items:center;gap:12px;margin:0 0 10px"><span class="fav big">'+esc(me.avatar||'🙂')+'</span><b style="font-size:20px">'+esc(me.name||'Sin nombre')+'</b></div><button class="btn ghost sm" data-a="fr-edit">Cambiar nombre o emoji</button></section>';
+}
 async function frCreate(){
   const nm=(($('#frname')||{}).value||'').trim();
   if(!nm){toast('Escribe tu nombre para que te reconozcan.');const i=$('#frname');if(i)i.focus();return;}
-  FRE.name=nm;
+  FRE.name=nm;S.me={name:nm,avatar:FRE.avatar||'🙂'};S.frOff=false;save();
   try{
     const r=await rpc('fr_me',frArgs({p_name:nm,p_avatar:FRE.avatar}));
     if(r&&r.ok){
@@ -4756,7 +4819,7 @@ async function frNewCode(){
     else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
-function frEditOpen(){FRM.ask=false;FRM.name=(FR.data&&FR.data.me&&FR.data.me.name)||(S.fr&&S.fr.name)||'';FRM.avatar=(FR.data&&FR.data.me&&FR.data.me.avatar)||(S.fr&&S.fr.avatar)||'🙂';frEditModal();}
+function frEditOpen(){FRM.ask=false;FRM.name=(S.me&&S.me.name)||(FR.data&&FR.data.me&&FR.data.me.name)||'';FRM.avatar=(S.me&&S.me.avatar)||(FR.data&&FR.data.me&&FR.data.me.avatar)||'🙂';frEditModal();}
 function frEditModal(){
   const ask=!!FRM.ask,cur=(FR.data&&FR.data.me&&FR.data.me.name)||'Jugador';
   showModal('<h3>'+(ask?'¿Cómo te llamas?':'Mi perfil de amigos')+'</h3>'+(ask?'<p class="muted" style="margin:0">Tus amigos te ven como «'+esc(cur)+'». Pon tu nombre y elige tu emoji para que sepan quién eres.</p>':'')+'<input id="frmname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRM.name)+'" autocomplete="off" aria-label="Tu nombre"><div class="avs">'+
@@ -4766,9 +4829,12 @@ function frEditModal(){
 async function frEditSave(){
   const nm=(($('#frmname')||{}).value||'').trim();
   if(!nm){toast('Escribe tu nombre.');return;}
+  if(frGeneric(nm)){toast('Escribe tu nombre de verdad, no «'+nm+'».');return;}
+  S.me={name:nm.slice(0,24),avatar:FRM.avatar||'🙂'};save();
+  if(!frActive()){hideModal();toast('Nombre actualizado.');render();frEnsure();return;}
   try{
-    const r=await rpc('fr_me',frArgs({p_name:nm,p_avatar:FRM.avatar}));
-    if(r&&r.ok){hideModal();S.fr={on:true,code:r.code,name:r.name,avatar:r.avatar};S.frNameAsk='';save();toast(FRM.ask?'¡Listo, '+r.name+'! Así te verán tus amigos.':'Perfil actualizado.');FRM.ask=false;await frPoll(true,true);}
+    const r=await rpc('fr_me',frArgs({p_name:S.me.name,p_avatar:S.me.avatar}));
+    if(r&&r.ok){hideModal();S.fr={on:true,code:r.code,name:r.name,avatar:r.avatar};save();toast('Perfil actualizado.');FRM.ask=false;await frPoll(true,true);render();}
     else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
@@ -4776,7 +4842,7 @@ async function frDelete(){
   hideModal();
   try{
     const r=await rpc('fr_delete',frArgs());
-    if(r&&r.ok){S.fr=null;save();FR.data=null;FR.sig='';FR.recv=[];FR.recvNew=[];toast('Perfil eliminado.');render();}
+    if(r&&r.ok){S.fr=null;S.frOff=true;save();FR.data=null;FR.sig='';FR.recv=[];FR.recvNew=[];toast('Perfil eliminado.');render();}
     else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
@@ -4802,7 +4868,7 @@ function frHeroMsg(){
   if(!d)return 'Buscando a tus amigos…';
   const f=d.following;
   if(!f.length)return d.followers.length?'Ya te siguen. Escribe el código de alguien para seguirlo tú también.':'Empieza siguiendo a alguien: escribe su código, o comparte el tuyo.';
-  const t=f.filter(frToday).map(m=>m.name),me=S.lastDay===today();
+  const t=f.filter(frToday).map(frName),me=S.lastDay===today();
   if(t.length===f.length)return t.length===1?(t[0]+' ya practicó hoy'+(me?' y tú también. ¡Qué bien!':'. ¿Y tú?')):('¡Todos practicaron hoy'+(me?', tú también!':'! ¿Y tú?'));
   if(t.length){
     const who=t.length<=2?t.join(' y '):t[0]+', '+t[1]+' y '+(t.length-2)+' más';
@@ -4811,7 +4877,7 @@ function frHeroMsg(){
   return me?'Hoy practicaste primero. ¡Anima a los demás!':'Nadie ha practicado hoy todavía. ¡Sé el primero!';
 }
 function frIntroHTML(){
-  if(!FRE.init){FRE.init=true;FRE.name=FRE.name||(S.fam&&S.fam.name)||'';FRE.avatar=(S.fam&&S.fam.avatar)||FRE.avatar||'🙂';}
+  if(!FRE.init){FRE.init=true;FRE.name=FRE.name||(S.me&&S.me.name)||(S.fam&&S.fam.name)||'';FRE.avatar=(S.me&&S.me.avatar)||(S.fam&&S.fam.avatar)||FRE.avatar||'🙂';}
   return (S.frPending?'<div class="banner">👋 Te invitaron a seguir a un amigo. Crea tu perfil y quedarás siguiéndolo.</div>':'')+
     '<section class="card frhow"><b>Así funciona</b><p>Crea tu perfil y recibe tu código de usuario. Quien lo escriba podrá seguirte, y tú podrás seguir a quien quieras.</p>'+
     '<ul class="frlist"><li><span aria-hidden="true">🔥</span>Ves su racha y si ya practicaron hoy.</li><li><span aria-hidden="true">💪</span>Se mandan ánimo y se hacen regalos.</li><li><span aria-hidden="true">🎮</span>Se invitan a jugar en vivo.</li></ul></section>'+
@@ -4853,7 +4919,6 @@ function frHTML(){
   const me=d.me,fol=d.following.slice().sort((a,b)=>frStreak(b)-frStreak(a)||String(frName(a)).localeCompare(String(frName(b)))),fws=d.followers;
   let out='';
   if(FR.err)out+='<div class="banner">'+esc(FR.err)+'</div>';
-  if(frNameMissing())out+='<section class="card" style="border-color:var(--orange);background:var(--orange-bg)"><b>✏️ Ponle nombre a tu perfil</b><p style="margin:4px 0 10px;font-size:14px;font-weight:800">Tus amigos te ven como «'+esc(me.name)+'». Escribe tu nombre para que sepan quién eres.</p><button class="btn orange sm" data-a="fr-edit-ask">Poner mi nombre</button></section>';
   if(FR.recv.length)out+='<section class="cheers"><b>Te enviaron:</b>'+FR.recv.map(c=>'<div class="cheerrow">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> · '+esc(KIND_T[c.kind]||'¡Ánimo!')+'</div>').join('')+'</section>';
   const nn=fws.filter(f=>FR.recvNew.indexOf(f.device)>=0).map(frName);
   if(nn.length)out+='<div class="banner">👋 <b>'+esc(nn.length===1?nn[0]:nn.slice(0,-1).join(', ')+' y '+nn[nn.length-1])+'</b> '+(nn.length===1?'empezó a seguirte':'empezaron a seguirte')+'.</div>';
@@ -5022,7 +5087,7 @@ ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>
    ESTADO Y ALMACENAMIENTO (localStorage protegido)
    ============================================================ */
 const KEY='lampara.rvr1960.v1';
-const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0,frPending:'',alias:{},frAsked:{},frNameAsk:''});
+const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0,frPending:'',alias:{},frAsked:{},frNameAsk:'',me:null,frOff:false});
 let S=defaults();
 function idbOpen(cb){
   try{
@@ -6083,10 +6148,17 @@ function mkCx(s){
   for(let t=0;t<(s.n||1);t++){
     let j,g=0;do{j=a+rnd(b-a+1);g++;}while(used.has(j)&&g<30);used.add(j);const bk=BK[j];
     if(s.k==='next'){
-      const fwd=j<BK.length-1&&(j===0||Math.random()<.7),k=fwd?j+1:j-1;
-      const lo=bk.d==='evan'||j>=39?39:0,hi=j>=39?BK.length-1:38;
-      let pool=[];for(let x=Math.max(lo,k-5);x<=Math.min(hi,k+5);x++)if(x!==j&&x!==k)pool.push(BK[x].n);
-      out.push(mkMcCx(fwd?'¿Qué libro viene después de «'+bk.n+'»?':'¿Qué libro viene antes de «'+bk.n+'»?',BK[k].n,shuffle(pool),'Van en este orden: '+BK[Math.min(j,k)].n+', '+BK[Math.max(j,k)].n+'.'));
+      /* se evitan los pares obvios (1 Tesalonicenses → 2 Tesalonicenses): se elige otro libro y las opciones no repiten el nombre */
+      const base=n=>String(n).replace(/^\d\s+/,'');
+      let jj=j,fwd,k,g2=0;
+      do{
+        if(g2>0)jj=a+rnd(b-a+1);
+        fwd=jj<BK.length-1&&(jj===0||Math.random()<.7);k=fwd?jj+1:jj-1;g2++;
+      }while(g2<60&&(k<0||k>=BK.length||base(BK[k].n)===base(BK[jj].n)));
+      used.add(jj);
+      const bk2=BK[jj],lo=bk2.d==='evan'||jj>=39?39:0,hi=jj>=39?BK.length-1:38;
+      let pool=[];for(let x=Math.max(lo,k-5);x<=Math.min(hi,k+5);x++)if(x!==jj&&x!==k&&base(BK[x].n)!==base(BK[jj].n)&&base(BK[x].n)!==base(BK[k].n))pool.push(BK[x].n);
+      out.push(mkMcCx(fwd?'¿Qué libro viene después de «'+bk2.n+'»?':'¿Qué libro viene antes de «'+bk2.n+'»?',BK[k].n,shuffle(pool),'Van en este orden: '+BK[Math.min(jj,k)].n+', '+BK[Math.max(jj,k)].n+'.'));
     }else if(s.k==='division'){
       if(bk.n==='Hechos'){t--;continue;}
       const opts=(j>=39?DIVS_NT:DIVS_AT).map(d=>DIVN[d]);
@@ -6155,13 +6227,49 @@ function renderTabs(){
   $('#tabs').firstElementChild.innerHTML=tabs.map(t=>{const on=TAB===t[0]||(t[0]==='me'&&TAB==='set');
     return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(((t[0]==='fr'&&pend&&frActive())||(t[0]==='games'&&frInviteN()>0))?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
 }
+/* ============================================================
+   LA LLAMITA DE LAMPY
+   La llama de Lampy refleja tu racha del día: si ya practicaste, brilla entera; si todavía no y tienes
+   racha, va bajando a medida que pasa el día y llega a su punto más bajo a medianoche.
+   ============================================================ */
+let flameNow=()=>new Date();
+function flameLevel(d){
+  d=d||flameNow();
+  if(S.lastDay===dstr(d))return 1;
+  if(!(S.streak>0))return .6;
+  const hh=d.getHours()+d.getMinutes()/60,pr=Math.min(1,Math.max(0,(hh-6)/18));
+  return +(1-.65*pr).toFixed(3);
+}
+function flameLeft(d){
+  d=d||flameNow();
+  const left=Math.max(0,24-(d.getHours()+d.getMinutes()/60));
+  if(left<1)return 'Te queda menos de una hora';
+  const n=Math.floor(left);return (n===1?'Te queda 1 hora':'Te quedan '+n+' horas');
+}
+const flameAtRisk=()=>S.streak>0&&S.lastDay!==dstr(flameNow());
+function flameMsg(){
+  const n=S.streak;
+  return '¡Cuida tu llamita! Tu racha de '+n+(n===1?' día':' días')+' se apaga a medianoche. '+flameLeft()+' para hacer una lección.';
+}
+function flameTick(){
+  try{
+    const v=flameLevel();
+    document.querySelectorAll('.mas[data-live] .flw').forEach(g=>{
+      g.setAttribute('transform','translate(50 36) scale('+v.toFixed(2)+') translate(-50 -36)');
+      g.setAttribute('opacity',(.55+.45*Math.min(1,v)).toFixed(2));
+    });
+    const b=document.getElementById('homebub');
+    if(b&&b.dataset.fl&&flameAtRisk())b.textContent=flameMsg();
+  }catch(e){}
+}
+try{setInterval(flameTick,60000);}catch(e){}
 function homeHTML(){
   const gk=S.course==='gk',U=curUnits(),t=today(),xpT=S.days[t]||0,pct=Math.min(1,xpT/S.goal),C=175.9;
   let msg,mood='happy';
   if(xpT>=S.goal){msg='¡Meta cumplida! Tu racha está a salvo por hoy.';mood='cheer';}
-  else if(S.streak>0&&S.lastDay!==t){msg='¡No pierdas tu racha de '+S.streak+(S.streak===1?' día':' días')+'! Haz una lección hoy.';mood='think';}
+  else if(S.streak>0&&S.lastDay!==t){msg=flameMsg();mood='think';}
   else if(S.streak>0){msg='Llevas '+S.streak+' días seguidos. Te faltan '+(S.goal-xpT)+' XP para tu meta.';mood='wink';}
-  else{mood='wink';msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':'¡Hola! Haz tu primera lección y empieza tu racha.';}
+  else{mood='wink';msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':'¡Hola'+(S.me&&S.me.name?', '+S.me.name:'')+'! Haz tu primera lección y empieza tu racha.';}
   const week=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');week.push('<div class="day"><div class="dot '+((S.days[d]||0)>0?'on':'')+(i===0?' today':'')+'">'+IC.check+'</div>'+DOW[dt.getDay()]+'</div>');}
   const cur=firstUndone(U);let flat=0;
   const offs=[0,46,0,-46];
@@ -6182,7 +6290,7 @@ function homeHTML(){
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
-  '<div class="hero">'+mascot(mood,84)+'<div class="bubble">'+esc(msg)+'</div></div>'+frHomeHTML()+rdHomeHTML()+
+  '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rdHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
@@ -6232,7 +6340,7 @@ function meHTML(){
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
-  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+accountCardHTML()+installCardHTML()+
+  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+meCardHTML()+accountCardHTML()+installCardHTML()+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lampy.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    '<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
@@ -6912,7 +7020,7 @@ document.addEventListener('click',e=>{
   if(a==='upd-go'){location.reload();return;}
   if(a==='upd-later'){const el=document.getElementById('upd');if(el){el.hidden=true;el.innerHTML='';}UPD.shown=false;UPD.tag=null;return;}
   if(a==='auth-open'){authOpen();return;}
-  if(a==='auth-close'||a==='auth-done'){authClose();return;}
+  if(a==='auth-close'||a==='auth-done'){authClose();welcomeCheck();return;}
   if(a==='auth-send'){authSend();return;}
   if(a==='auth-verify'){authVerify();return;}
   if(a==='auth-resend'){authResend();return;}
@@ -7011,6 +7119,8 @@ document.addEventListener('click',e=>{
   else if(a==='fr-vis'){frVisible(b.dataset.v==='1');}
   else if(a==='fr-code-ask'){frAskCode();}
   else if(a==='fr-code-yes'){frNewCode();}
+  else if(a==='wel-av'){WEL.name=(($('#welname')||{}).value||WEL.name);WEL.avatar=b.dataset.v;welcomeRender();}
+  else if(a==='wel-go'){welcomeSave();}
   else if(a==='fr-edit'){frEditOpen();}
   else if(a==='fr-edit-ask'){FRM.ask=true;FRM.name='';FRM.avatar=(FR.data&&FR.data.me&&FR.data.me.avatar)||'🙂';frEditModal();}
   else if(a==='fr-name-later'){S.frNameAsk=today();save();hideModal();setTimeout(frMaybePrompts,400);}
@@ -7072,6 +7182,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target&&e.target.id==='auth-email'){e.preventDefault();authSend();return;}
   if(e.key==='Enter'&&e.target&&e.target.id==='auth-code'){e.preventDefault();authVerify();return;}
+  if(e.key==='Enter'&&e.target&&e.target.id==='welname'){e.preventDefault();welcomeSave();return;}
   if(e.key==='Enter'&&e.target&&e.target.id==='frcode'){e.preventDefault();frFollow(e.target.value);return;}
   if(e.key==='Enter'&&e.target&&e.target.id==='frname'){e.preventDefault();frCreate();return;}
   if(G&&e.key==='Enter'&&$('#modal').hidden&&e.target.tagName!=='INPUT'){const pb=document.querySelector('#game [data-primary]');if(pb){e.preventDefault();pb.click();}return;}
@@ -7087,6 +7198,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else
 window.addEventListener('pagehide',()=>{try{save();}catch(e){}});
 
 load();render();cloudBoot();pwaBoot();
+welcomeCheck();
 frBoot();
 </script>
 </body>
