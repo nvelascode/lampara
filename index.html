@@ -668,6 +668,7 @@ a.btn{text-decoration:none;text-align:center}
 .codebox .row2 .btn{padding:10px 8px;white-space:nowrap}
 #modal .box .avs{justify-content:center}
 .frfoot{display:flex;gap:20px;flex-wrap:wrap}
+.frn{cursor:pointer}
 #welcome{z-index:58}
 .welav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .swr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-top:2px solid var(--line);font-weight:800;font-size:15px}
@@ -4597,7 +4598,8 @@ async function frPoll(force,mark,quick){
       FR.data=d;FR.sig=sig;
       if(d.me&&(S.fr.code!==d.me.code||S.fr.name!==d.me.name||S.fr.avatar!==d.me.avatar)){S.fr={on:true,code:d.me.code,name:d.me.name,avatar:d.me.avatar};save();}
       frAchCheck(d);
-      if(changed||force)frRefresh();
+      const aliasChanged=frAliasAdopt(d.aliases);
+      if(changed||force||aliasChanged)frRefresh();
       setTimeout(frMaybePrompts,600);
     }else if(d&&d.error==='perfil_no_existe'){S.fr=null;save();FR.data=null;FR.sig='';frRefresh();}
     else if(d&&d.error){FR.err=famMsg(d.error);if(!FR.data)frRefresh();}
@@ -4664,14 +4666,45 @@ function frAliasOpen(to,name,fresh){
     (cur?'<button class="btn ghost" data-a="fr-alias-del" data-to="'+esc(to)+'">Quitar apodo</button>':'')+'<button class="btn ghost" data-a="stay">'+(fresh?'Después':'Cancelar')+'</button>');
   setTimeout(()=>{const i=$('#fralias');if(i)try{i.focus();}catch(e){}},80);
 }
+function frAliasSet(to,v){
+  S.alias=S.alias||{};S.aliasPend=S.aliasPend||{};
+  if(v)S.alias[to]=v;else delete S.alias[to];
+  S.aliasPend[to]=v||'';
+  save();frAliasSync();
+}
 function frAliasSave(to){
   const v=(($('#fralias')||{}).value||'').trim().slice(0,24);
-  S.alias=S.alias||{};
-  if(v)S.alias[to]=v;else delete S.alias[to];
-  save();hideModal();render();
+  frAliasSet(to,v);hideModal();render();
   toast(v?'Listo, ahora la ves como «'+v+'».':'Apodo quitado.');
 }
-function frAliasDel(to){if(S.alias)delete S.alias[to];save();hideModal();render();toast('Apodo quitado.');}
+function frAliasDel(to){frAliasSet(to,'');hideModal();render();toast('Apodo quitado.');}
+/* Los apodos viven también en el servidor: así salen en los avisos, los ánimos, los regalos y las salas, y no se pierden al cambiar de teléfono. */
+async function frAliasSync(){
+  if(!frActive()||FR.aliasBusy)return;
+  const pend=S.aliasPend||{},first=!S.aliasUp;
+  const map=Object.assign({},first?(S.alias||{}):{},pend);
+  if(!Object.keys(map).length&&!first)return;
+  FR.aliasBusy=true;
+  try{
+    const r=Object.keys(map).length?await rpc('fr_alias_bulk',frArgs({p_aliases:map})):{ok:true};
+    if(r&&r.ok){
+      Object.keys(map).forEach(k=>{if((S.aliasPend||{})[k]===map[k]||(S.aliasPend||{})[k]===''&&!map[k])delete S.aliasPend[k];});
+      S.aliasUp=true;save();
+    }
+  }catch(e){}
+  finally{FR.aliasBusy=false;}
+}
+/* Lo que dice el servidor manda; lo que aún no se ha subido se respeta. */
+function frAliasAdopt(srv){
+  if(!srv||typeof srv!=='object')return false;
+  const pend=S.aliasPend||{},next=Object.assign({},srv);
+  Object.keys(pend).forEach(k=>{if(pend[k])next[k]=pend[k];else delete next[k];});
+  if(!S.aliasUp)Object.keys(S.alias||{}).forEach(k=>{if(!(k in next))next[k]=S.alias[k];});
+  const changed=JSON.stringify(next)!==JSON.stringify(S.alias||{});
+  if(changed){S.alias=next;save();}
+  if(Object.keys(pend).length||!S.aliasUp)setTimeout(frAliasSync,50);
+  return changed;
+}
 function frAskFollowBack(f){
   showModal('<div class="askbox"><div class="big">'+esc(f.avatar)+'</div><h3>'+esc(frName(f))+' empezó a seguirte</h3>'+(frNoName(f)?'<p class="muted">Aún no puso su nombre.</p>':'')+'<p>¿Quieres seguirla también? Así verás su racha y podrán mandarse ánimo, regalos e invitaciones a jugar.</p></div>'+
     '<button class="btn" data-a="fr-ask-yes" data-to="'+esc(f.device)+'">Sí, seguir también</button><button class="btn ghost" data-a="fr-ask-no">Ahora no</button>');
@@ -5058,7 +5091,7 @@ function frFollowingHTML(m){
 function frFollowerHTML(f){
   const isNew=FR.recvNew.indexOf(f.device)>=0,fname=frName(f);
   const sub=isNew?'<span class="frpill new">Nuevo</span>':(f.mutual?'':'<span class="muted" style="font-size:13px">Te sigue</span>');
-  return '<div class="frow frf"><span class="fav">'+esc(f.avatar)+'</span><div class="minfo"><b>'+esc(fname)+(f.badge?' '+badgeE(f.badge):'')+'</b>'+sub+'</div>'+
+  return '<div class="frow frf"><span class="fav">'+esc(f.avatar)+'</span><div class="minfo frn" data-a="fr-alias" data-to="'+esc(f.device)+'" data-n="'+esc(f.name)+'" role="button" tabindex="0" title="Poner apodo"><b>'+esc(fname)+(f.badge?' '+badgeE(f.badge):'')+' <span class="muted" aria-hidden="true">✎</span></b>'+sub+'</div>'+
     (f.mutual?'<span class="muted" style="font-size:13px;flex:none;font-weight:900">Se siguen</span>':'<button class="frbtn" data-a="fr-back" data-to="'+esc(f.device)+'" aria-label="Seguir también a '+esc(fname)+'">Seguir también</button>')+
     '<button class="frx" data-a="fr-rem" data-to="'+esc(f.device)+'" data-n="'+esc(fname)+'" aria-label="Quitar a '+esc(fname)+' de mis seguidores">✕</button></div>';
 }
@@ -5236,7 +5269,7 @@ ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>
    ESTADO Y ALMACENAMIENTO (localStorage protegido)
    ============================================================ */
 const KEY='lampara.rvr1960.v1';
-const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0,frPending:'',alias:{},frAsked:{},frNameAsk:'',me:null,frOff:false,push:null});
+const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0,frPending:'',alias:{},frAsked:{},frNameAsk:'',me:null,frOff:false,push:null,aliasPend:{},aliasUp:false});
 let S=defaults();
 function idbOpen(cb){
   try{
