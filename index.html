@@ -670,6 +670,17 @@ a.btn{text-decoration:none;text-align:center}
 .frfoot{display:flex;gap:20px;flex-wrap:wrap}
 #welcome{z-index:58}
 .welav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.swr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-top:2px solid var(--line);font-weight:800;font-size:15px}
+.swr:first-of-type{border-top:0}
+.swr span{min-width:0}
+.tg{flex:none;width:54px;height:32px;border-radius:999px;background:var(--line);position:relative;border-bottom:3px solid rgba(0,0,0,.12);transition:background .15s}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .15s}
+.tg.on{background:var(--green)}
+.tg.on::after{left:28px}
+.swr select.inp{width:auto;padding:8px 10px;font-size:14px}
+.pushli{list-style:none;padding:0;margin:8px 0 12px;display:grid;gap:8px}
+.pushli li{display:flex;gap:10px;align-items:flex-start;font-size:14px;font-weight:800;line-height:1.35}
+.pushli li span{flex:none;width:24px;text-align:center;font-size:18px;line-height:1.2}
 .frnote{margin:2px 0 0;font-size:13px;font-weight:800;color:var(--orange-ink)}
 .askbox .big{font-size:56px;line-height:1.1}
 .askbox p{margin:0;color:var(--ink);font-weight:800}
@@ -4628,9 +4639,16 @@ function frBoot(){
       history.replaceState(null,'',u.pathname+u.search+u.hash);
       render();
     }
+    const go=(u.searchParams.get('go')||'').trim();
+    if(/^(fr|games|path)$/.test(go)){
+      u.searchParams.delete('go');
+      history.replaceState(null,'',u.pathname+u.search+u.hash);
+      TAB=go;render();
+      if(go==='fr')setTimeout(()=>{if(frActive())frOpened();},500);
+    }
   }catch(e){}
   if(!famOn())return;
-  if(frActive()){setTimeout(frSync,2500);setTimeout(frApplyPending,2800);}
+  if(frActive()){setTimeout(frSync,2500);setTimeout(frApplyPending,2800);setTimeout(pushSync,3600);}
   else setTimeout(frEnsure,900);
 }
 try{setInterval(()=>{
@@ -4731,6 +4749,138 @@ async function frEnsure(){
 function meCardHTML(){
   const me=S.me||{name:'',avatar:'🙂'};
   return '<section class="card"><b>👤 Tu nombre</b><p class="muted" style="margin:2px 0 8px;font-size:14px">Así te ven tu familia y tus amigos.</p><div style="display:flex;align-items:center;gap:12px;margin:0 0 10px"><span class="fav big">'+esc(me.avatar||'🙂')+'</span><b style="font-size:20px">'+esc(me.name||'Sin nombre')+'</b></div><button class="btn ghost sm" data-a="fr-edit">Cambiar nombre o emoji</button></section>';
+}
+/* ============================================================
+   NOTIFICACIONES (Web Push)
+   Cada teléfono se suscribe una vez (con permiso) y la base de datos le manda avisos:
+   invitaciones, ánimos, regalos, seguidores nuevos y «tu llamita se está apagando».
+   Lo que se ejecuta en el servidor: supabase-notificaciones.sql + la función lampy-push.
+   ============================================================ */
+const PUSH={busy:false};
+const PUSH_DEF={invite:true,cheer:true,gift:true,follow:true,streak:true,hour:18};
+const pushSupported=()=>{try{return famOn()&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window&&/^https?:/.test(location.protocol);}catch(e){return false;}};
+const pushNeedsInstall=()=>isIOS()&&!isStandalone();      /* en iPhone solo funcionan con la app instalada */
+const pushPerm=()=>{try{return Notification.permission;}catch(e){return 'default';}};
+const pushOn=()=>!!(S.push&&S.push.on&&pushPerm()==='granted');
+const pushTz=()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Bogota';}catch(e){return 'America/Bogota';}};
+function pushB64(s){const pad='='.repeat((4-s.length%4)%4),raw=atob((s+pad).replace(/-/g,'+').replace(/_/g,'/')),a=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)a[i]=raw.charCodeAt(i);return a;}
+function pushErrMsg(e){
+  const m=String((e&&e.message)||''),n=String((e&&e.name)||'');
+  if(/Could not find the function|schema cache|PGRST202/i.test(m))return 'Falta ejecutar en Supabase el SQL de notificaciones (supabase-notificaciones.sql).';
+  if(n==='NotAllowedError')return 'El teléfono no dio permiso para las notificaciones.';
+  if(n==='AbortError'||n==='InvalidStateError')return 'El servicio de notificaciones del navegador no respondió. Inténtalo en un rato.';
+  return rpcMsg(e);
+}
+const pushHourLabel=h=>h===12?'12:00 del día':(h<12?h+':00 am':(h-12)+':00 pm');
+async function pushSubscribeNow(key){
+  const reg=await navigator.serviceWorker.ready;
+  let sub=await reg.pushManager.getSubscription();
+  if(sub&&S.push&&S.push.key&&S.push.key!==key){try{await sub.unsubscribe();}catch(e){}sub=null;}
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:pushB64(key)});
+  const j=sub.toJSON();
+  const r=await rpc('push_subscribe',frArgs({p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_tz:pushTz(),p_ua:String(navigator.userAgent||'').slice(0,180)}));
+  return {r,j};
+}
+async function pushEnable(){
+  if(PUSH.busy)return;
+  if(!pushSupported()){toast('Este navegador no permite notificaciones.');return;}
+  if(pushNeedsInstall()){toast('En iPhone, instala primero Lampy en la pantalla de inicio.');return;}
+  PUSH.busy=true;
+  try{
+    let perm=pushPerm();
+    if(perm==='default')perm=await Notification.requestPermission();      /* debe pedirse dentro del toque */
+    if(perm!=='granted'){
+      S.push=Object.assign({},S.push,{on:false,asked:true});save();
+      toast(perm==='denied'?'Las notificaciones están bloqueadas. Actívalas en los ajustes del navegador.':'No se activaron los avisos.');
+      return;
+    }
+    if(!frActive())await frEnsure();
+    if(!frActive()){toast('Primero crea tu perfil en Amigos.');return;}
+    const key=await rpc('push_public_key',{});
+    if(!key){toast('Los avisos todavía no están listos en el servidor. Inténtalo en un minuto.');return;}
+    const {r,j}=await pushSubscribeNow(key);
+    if(r&&r.ok){S.push={on:true,endpoint:j.endpoint,key,prefs:Object.assign({},PUSH_DEF,r.prefs),asked:true,at:Date.now()};save();toast('🔔 ¡Avisos activados!');beep('good');haptic(15);}
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast(pushErrMsg(e));}
+  finally{PUSH.busy=false;if(!L&&!G&&TAB==='set')render();}
+}
+async function pushDisable(){
+  let ep=(S.push&&S.push.endpoint)||'';
+  try{
+    const reg=await navigator.serviceWorker.ready,sub=await reg.pushManager.getSubscription();
+    if(sub){ep=sub.endpoint||ep;try{await sub.unsubscribe();}catch(e){}}
+    if(ep)await rpc('push_unsubscribe',frArgs({p_endpoint:ep}));
+  }catch(e){}
+  S.push=Object.assign({},S.push,{on:false,endpoint:''});save();
+  toast('Avisos desactivados en este teléfono.');render();
+}
+async function pushPref(k,v){
+  const P=S.push&&S.push.prefs;if(!P)return;
+  const old=P[k],map={invite:'p_invite',cheer:'p_cheer',gift:'p_gift',follow:'p_follow',streak:'p_streak',hour:'p_hour'};
+  P[k]=v;save();render();
+  try{
+    const r=await rpc('push_prefs',frArgs({[map[k]]:v}));
+    if(r&&r.ok){S.push.prefs=Object.assign({},PUSH_DEF,r.prefs);save();}
+    else{P[k]=old;save();toast(famMsg(r&&r.error));}
+  }catch(e){P[k]=old;save();toast(pushErrMsg(e));}
+  render();
+}
+async function pushTest(){
+  try{
+    const r=await rpc('push_test',frArgs());
+    if(r&&r.ok)toast('📨 Enviada. Te llega en unos segundos.');
+    else if(r&&r.error==='espera')toast('Espera un minuto antes de pedir otra prueba.');
+    else if(r&&r.error==='sin_suscripcion')toast('Este teléfono no está suscrito. Desactiva los avisos y vuelve a activarlos.');
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast(pushErrMsg(e));}
+}
+/* Al abrir la app: si el teléfono ya había activado los avisos, se comprueba que sigan vivos y se renuevan en silencio. */
+async function pushSync(force){
+  if(!pushSupported()||!S.push||!S.push.on||!frActive())return;
+  if(pushPerm()!=='granted'){S.push.on=false;save();return;}
+  try{
+    const reg=await navigator.serviceWorker.ready,sub=await reg.pushManager.getSubscription();
+    if(!force&&sub&&sub.endpoint===S.push.endpoint&&Date.now()-(S.push.at||0)<6*86400000)return;
+    const key=await rpc('push_public_key',{});if(!key)return;
+    const {r,j}=await pushSubscribeNow(key);
+    if(r&&r.ok){S.push=Object.assign({},S.push,{on:true,endpoint:j.endpoint,key,prefs:Object.assign({},PUSH_DEF,r.prefs),at:Date.now()});save();}
+  }catch(e){}
+}
+async function pushRefresh(){
+  if(!pushOn()||!frActive())return;
+  try{
+    const r=await rpc('push_get',frArgs({p_endpoint:S.push.endpoint}));
+    if(r&&r.ok&&r.prefs){S.push.prefs=Object.assign({},PUSH_DEF,r.prefs);save();if(!r.here)pushSync(true);if(TAB==='set'&&!L&&!G)render();}
+  }catch(e){}
+}
+const pushCanOffer=()=>pushSupported()&&!pushNeedsInstall()&&pushPerm()==='default'&&!(S.push&&S.push.asked)&&frActive();
+function pushOffer(){
+  S.push=Object.assign({},S.push,{asked:true});save();
+  showModal('<div style="display:flex;justify-content:center">'+mascot('think',84)+'</div><h3>¿Te avisamos?</h3><p>Te escribimos cuando tu llamita esté por apagarse y cuando tus amigos te manden ánimo, regalos o invitaciones a jugar. Lo puedes cambiar cuando quieras en Ajustes.</p><button class="btn" data-a="push-enable-m">Sí, activar avisos</button><button class="btn ghost" data-a="stay">Ahora no</button>');
+}
+function pushCardHTML(){
+  if(!famOn())return '';
+  const head='<b>🔔 Avisos</b>';
+  const card=x=>'<section class="card">'+head+x+'</section>';
+  if(pushNeedsInstall())return card('<p class="muted" style="margin:4px 0 0;font-size:14px">En iPhone los avisos solo funcionan con Lampy instalada en la pantalla de inicio (iOS 16.4 o más reciente). Toca Compartir → «Añadir a pantalla de inicio» y ábrela desde ese ícono.</p>');
+  if(!pushSupported())return card('<p class="muted" style="margin:4px 0 0;font-size:14px">Este navegador no permite notificaciones. Prueba con Chrome en Android, o con Lampy instalada en el iPhone.</p>');
+  if(pushPerm()==='denied')return card('<p class="muted" style="margin:4px 0 0;font-size:14px">Bloqueaste las notificaciones de Lampy. Para volver a activarlas, entra a los ajustes del navegador (o del teléfono) → Notificaciones → Lampy → Permitir.</p>');
+  if(!pushOn())return card('<p class="muted" style="margin:2px 0 0;font-size:14px">Te escribimos aunque tengas la app cerrada:</p><ul class="pushli"><li><span>🔥</span>Cuando tu llamita esté por apagarse.</li><li><span>🎮</span>Cuando te inviten a jugar.</li><li><span>💪</span>Cuando te manden ánimo, un regalo o empiecen a seguirte.</li></ul><button class="btn sm" data-a="push-enable" '+(PUSH.busy?'disabled':'')+'>'+(PUSH.busy?'Activando…':'Activar avisos')+'</button>');
+  const P=Object.assign({},PUSH_DEF,S.push.prefs||{});
+  const row=(k,txt)=>'<div class="swr"><span>'+txt+'</span><button class="tg'+(P[k]?' on':'')+'" role="switch" aria-checked="'+(!!P[k])+'" aria-label="'+esc(txt.replace(/^\S+\s/,''))+'" data-a="push-pref" data-k="'+k+'"></button></div>';
+  let hr='';
+  if(P.streak){hr='<div class="swr"><span>⏰ Recordarme a las</span><select id="pushhr" class="inp" aria-label="Hora del recordatorio">'+[12,13,14,15,16,17,18,19,20,21].map(x=>'<option value="'+x+'"'+(P.hour===x?' selected':'')+'>'+pushHourLabel(x)+'</option>').join('')+'</select></div>';}
+  return card('<p class="muted" style="margin:2px 0 6px;font-size:14px">Activados en este teléfono. Elige qué quieres recibir:</p>'+
+    row('streak','🔥 Mi llamita (racha en riesgo)')+hr+row('invite','🎮 Invitaciones a jugar')+row('cheer','💪 Ánimos')+row('gift','🎁 Regalos')+row('follow','👋 Nuevos seguidores')+
+    '<p class="muted" style="margin:6px 0 0;font-size:13px">La «última llamada» sale a las 10 pm si todavía no has practicado.</p>'+
+    '<div class="row2" style="margin-top:12px"><button class="btn ghost sm" data-a="push-test">Enviarme una prueba</button><button class="btn ghost sm" data-a="push-off">Desactivar aquí</button></div>');
+}
+/* Ir a una pantalla (lo usa el toque en una notificación) */
+function goTab(t){
+  if(L||G||RM.code||!/^(fr|games|path)$/.test(t))return;
+  TAB=t;render();window.scrollTo(0,0);
+  if(t==='fr'&&frActive())frOpened();
+  if(t==='games'&&frActive())frPoll(true,false);
 }
 async function frCreate(){
   const nm=(($('#frname')||{}).value||'').trim();
@@ -5086,7 +5236,7 @@ ALLV.forEach(v=>v.t.split(/\s+/).forEach(w=>{const c=coreOf(w).core;if(c.length>
    ESTADO Y ALMACENAMIENTO (localStorage protegido)
    ============================================================ */
 const KEY='lampara.rvr1960.v1';
-const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0,frPending:'',alias:{},frAsked:{},frNameAsk:'',me:null,frOff:false});
+const defaults=()=>({course:'bib',theme:null,gw:{},dicSeen:{},sound:true,haptic:true,tipHide:false,g:{n:3,names:[],rounds:10,voice:false},gplays:0,xp:0,streak:0,best:0,lastDay:null,freezes:0,goal:20,days:{},done:{},verses:{},lessons:0,perfect:0,reviews:0,ach:{},froze:0,rd:null,rdDays:{},rdbest:0,rdDone:false,cards:[],badges:[],badge:'',giftsSent:0,giftsGot:0,rmplays:0,fr:null,frFollowed:0,frGot:0,frPending:'',alias:{},frAsked:{},frNameAsk:'',me:null,frOff:false,push:null});
 let S=defaults();
 function idbOpen(cb){
   try{
@@ -5203,6 +5353,7 @@ function mergeProgress(loc,rem){
   const lj=loc.fam&&loc.fam.joined,rj=rem.fam&&rem.fam.joined;
   m.fam=(loc.fr&&loc.fr.on&&loc.fam)?loc.fam:(rem.fr&&rem.fr.on&&rem.fam)?rem.fam:lj?loc.fam:rj?rem.fam:(loc.fam||rem.fam);
   m.rd=loc.rd||rem.rd||null;
+  m.push=loc.push||null;   /* los avisos son de cada teléfono: no se traen de la nube */
   m.fr=(loc.fr&&loc.fr.on)?loc.fr:(rem.fr&&rem.fr.on)?rem.fr:(loc.fr||rem.fr||null);
   return m;
 }
@@ -5385,6 +5536,13 @@ function pwaBoot(){
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INSTALL_EVT=e;if(!L&&!G&&(TAB==='path'||TAB==='set'))render();});
   window.addEventListener('appinstalled',()=>{INSTALL_EVT=null;toast('¡Lampy instalada!');if(!L&&!G)render();});
   const off=()=>{const b=document.getElementById('offbar');if(b)b.hidden=navigator.onLine!==false;};
+  try{
+    if('serviceWorker' in navigator&&navigator.serviceWorker.addEventListener)navigator.serviceWorker.addEventListener('message',e=>{
+      const d=(e&&e.data)||{};
+      if(d.lampy==='go'){const m=String(d.url||'').match(/go=(fr|games|path)/);if(m)goTab(m[1]);}
+      else if(d.lampy==='resub')pushSync();
+    });
+  }catch(e){}
   window.addEventListener('offline',off);
   window.addEventListener('online',()=>{off();toast('Conexión recuperada.');if(frActive())frPoll(true,TAB==='fr');});
   off();
@@ -6339,7 +6497,7 @@ function meHTML(){
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
-  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+meCardHTML()+accountCardHTML()+installCardHTML()+
+  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+meCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lampy.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    '<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
@@ -6600,6 +6758,7 @@ function finishLesson(){
   }
   S.lessons++;if(L.mistakes===0)S.perfect++;
   if(S.lessons===1&&!S.cloudAsked&&cloudOn()&&!signedIn())L.offerCloud=true;
+  if(S.lessons>=2&&!L.offerCloud&&pushCanOffer())L.offerPush=true;
   S.froze=0;
   const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);
   save();
@@ -6997,7 +7156,7 @@ function gAct(a,b){
   else if(a==='g-again'){const id=G.id,game=G.game;G={id,game};gStart();}
   else if(a==='g-exit')gClose();
 }
-document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rdother'){RDSET.other=t.value;render();}});
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rdother'){RDSET.other=t.value;render();}if(t&&t.id==='pushhr'){pushPref('hour',+t.value);}});
   document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('rdmon')&&t.dataset.k)RD_OPEN[t.dataset.k]=t.open;},true);
   document.addEventListener('input',e=>{
   const t=e.target;
@@ -7030,7 +7189,7 @@ document.addEventListener('click',e=>{
   if(a==='cloud-now'){cloudSync().then(r=>{toast(r.ok?'Progreso sincronizado.':'No se pudo sincronizar. Lo intentaremos otra vez.');});return;}
   if(a==='auth-out'){showModal('<h3>¿Cerrar sesión?</h3><p>Tu progreso se queda en este teléfono y en tu cuenta. Para volver a sincronizar, entras otra vez con tu correo.</p><button class="btn" data-a="auth-out-yes">Cerrar sesión</button><button class="btn ghost" data-a="stay">Cancelar</button>');return;}
   if(a==='auth-out-yes'){hideModal();authSignOut();return;}
-  if(a==='settings'){TAB='set';resetArmed=false;render();window.scrollTo(0,0);return;}
+  if(a==='settings'){TAB='set';resetArmed=false;render();window.scrollTo(0,0);pushRefresh();return;}
   if(a==='settings-back'){TAB='me';render();window.scrollTo(0,0);return;}
   if(a==='rm-join-inv'){rmJoinInvite(b.dataset.code);return;}
   if(a==='tab'){const _prev=TAB;TAB=b.dataset.t;resetArmed=false;if(_prev==='fr'&&TAB!=='fr'){FR.recv=[];FR.recvNew=[];}render();window.scrollTo(0,0);if(TAB==='fr')frOpened();}
@@ -7066,7 +7225,7 @@ document.addEventListener('click',e=>{
   else if(a==='close'){showModal('<h3>¿Salir de la lección?</h3><p>Perderás el avance de esta lección.</p><button class="btn" data-a="stay">Seguir aprendiendo</button><button class="btn ghost" data-a="leave">Salir</button>');}
   else if(a==='stay')hideModal();
   else if(a==='leave'){hideModal();closeLesson();}
-  else if(a==='finish'){const uc=L&&L.unitCel,oc=L&&L.offerCloud;closeLesson();if(uc)setTimeout(()=>showUnitCel(uc),300);else if(oc){S.cloudAsked=true;save();setTimeout(()=>authOpen(),450);}}
+  else if(a==='finish'){const uc=L&&L.unitCel,oc=L&&L.offerCloud,po=L&&L.offerPush;closeLesson();if(uc)setTimeout(()=>showUnitCel(uc),300);else if(oc){S.cloudAsked=true;save();setTimeout(()=>authOpen(),450);}else if(po&&pushCanOffer())setTimeout(pushOffer,500);}
   else if(a==='share'){doShare(b.dataset.k,b.dataset.id);}
   else if(a==='rd-plan'){RDSET.plan=b.dataset.p;render();}
   else if(a==='rd-yrs'){RDSET.yrs=+b.dataset.y;render();}
@@ -7118,6 +7277,10 @@ document.addEventListener('click',e=>{
   else if(a==='fr-vis'){frVisible(b.dataset.v==='1');}
   else if(a==='fr-code-ask'){frAskCode();}
   else if(a==='fr-code-yes'){frNewCode();}
+  else if(a==='push-enable'||a==='push-enable-m'){if(a==='push-enable-m')hideModal();pushEnable();}
+  else if(a==='push-off'){pushDisable();}
+  else if(a==='push-pref'){const P=Object.assign({},PUSH_DEF,(S.push&&S.push.prefs)||{});pushPref(b.dataset.k,!P[b.dataset.k]);}
+  else if(a==='push-test'){pushTest();}
   else if(a==='wel-av'){WEL.name=(($('#welname')||{}).value||WEL.name);WEL.avatar=b.dataset.v;welcomeRender();}
   else if(a==='wel-go'){welcomeSave();}
   else if(a==='fr-edit'){frEditOpen();}
