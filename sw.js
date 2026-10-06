@@ -5,9 +5,10 @@
    - Sin internet (o con señal muy lenta): se abre la versión guardada.
    - Nunca toca las llamadas a Supabase ni nada de otros sitios,
      salvo las tipografías de Google, que se guardan para verse bien sin internet.
+   - Recibe las notificaciones (push) y las muestra; al tocarlas abre Lampy en la pantalla indicada.
    Si algún día cambias ESTE archivo, cambia también el número de VERSION.
    ============================================================ */
-const VERSION = 'lampara-v1';
+const VERSION = 'lampara-v2';
 const SHELL = ['index.html', 'config.js', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 const NET_WAIT = 4000; // si la red tarda más y hay copia guardada, se usa la copia
@@ -93,4 +94,48 @@ self.addEventListener('fetch', ev => {
     ev.respondWith(staleWhileRevalidate(req));
   }
   // Todo lo demás (Supabase, WhatsApp, etc.) pasa directo, sin tocar.
+});
+
+/* ---------- Notificaciones ----------
+   La Edge Function «lampy-push» manda {title, body, url, tag}. Aquí se muestran.
+   «url» es relativo a donde vive la app (por ejemplo «?go=fr» abre Amigos). */
+self.addEventListener('push', ev => {
+  let d = {};
+  try { d = ev.data ? ev.data.json() : {}; }
+  catch (e) { try { d = { body: ev.data.text() }; } catch (x) { d = {}; } }
+  const title = d.title || 'Lampy';
+  const opts = {
+    body: d.body || '',
+    icon: 'icon-192.png',
+    badge: 'icon-192.png',
+    lang: 'es',
+    data: { url: d.url || '' }
+  };
+  if (d.tag) { opts.tag = d.tag; opts.renotify = true; }
+  ev.waitUntil(self.registration.showNotification(title, opts));
+});
+
+self.addEventListener('notificationclick', ev => {
+  ev.notification.close();
+  const url = (ev.notification.data && ev.notification.data.url) || '';
+  const target = new URL(url, scopeUrl()).href;
+  ev.waitUntil((async () => {
+    const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const w of wins) {
+      if (String(w.url).indexOf(scopeUrl()) === 0) {
+        try { await w.focus(); } catch (e) { /* sigue */ }
+        try { w.postMessage({ lampy: 'go', url }); } catch (e) { /* sigue */ }
+        return;
+      }
+    }
+    if (self.clients.openWindow) await self.clients.openWindow(target);
+  })());
+});
+
+/* Si el servicio de notificaciones cambia la suscripción, se avisa a la app para que la renueve al abrirse. */
+self.addEventListener('pushsubscriptionchange', ev => {
+  ev.waitUntil((async () => {
+    const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    wins.forEach(w => { try { w.postMessage({ lampy: 'resub' }); } catch (e) { /* sigue */ } });
+  })());
 });
