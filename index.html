@@ -853,6 +853,26 @@ a.btn{text-decoration:none;text-align:center}
 .spfb .spc{font-style:italic;font-size:13px}
 .spfb .spr{font-size:12px}
 @media (prefers-reduced-motion:reduce){.bar.hot{animation:none}}
+
+/* pista de caballos */
+.splanes{display:grid;gap:6px;margin:0 0 8px}
+.splane{display:flex;align-items:center;gap:8px}
+.splab{display:flex;align-items:center;gap:4px;width:98px;flex:none;font-weight:900;font-size:13px;position:relative}
+.splab b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.splab i{font-style:normal;font-size:15px;min-width:16px;text-align:right}
+.splane.me .splab b{color:var(--blue-ink)}
+.sptrack{position:relative;flex:1;height:34px;border-radius:99px;border:2px solid var(--lc);background:color-mix(in srgb,var(--lc) 14%,var(--surface))}
+.splane.me .sptrack{border-width:3px;box-shadow:0 0 0 2px color-mix(in srgb,var(--lc) 35%,transparent)}
+.splane.cp .sptrack,.splanes.cp .sptrack{height:26px}
+.spgoal{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:16px;line-height:1}
+.sphorse{position:absolute;top:50%;left:calc(var(--p) * (100% - 36px) + 2px);transform:translateY(-50%);transition:left .55s cubic-bezier(.3,1.3,.5,1)}
+.sphorse u{display:grid;place-items:center;width:30px;height:30px;box-sizing:border-box;border-radius:50%;background:var(--surface);border:3px solid var(--lc);text-decoration:none;font-size:17px;line-height:1}
+.sphorse u{transform:scaleX(-1)}
+.splanes.cp .sphorse u{width:22px;height:22px;font-size:14px}
+.splanes.cp .sphorse{left:calc(var(--p) * (100% - 28px) + 2px)}
+.spm2{margin-left:auto;color:var(--ink)}
+.splab .spd{position:absolute;right:0;top:-12px}
+@media (prefers-reduced-motion:reduce){.sphorse{transition:none}}
 </style>
 </head>
 <body>
@@ -4893,11 +4913,11 @@ function spPlayers(){
   return (RM.st?RM.st.players:[]).map(p=>({device:p.device,name:p.name,avatar:p.avatar}));
 }
 function spStats(d){
-  const g=SP,qs=g.cfg.qs,seen=new Set();let ok=0,bad=0,pass=0;
+  const g=SP,qs=g.cfg.qs,seen=new Set();let ok=0,bad=0,pass=0,net=0;
   const arr=d===g.me?g.mine:g.evs.filter(x=>x.d===d&&x.ev&&x.ev.t==='r').map(x=>({i:x.ev.i,c:x.ev.c}));
-  arr.forEach(m=>{if(seen.has(m.i))return;const q=qs[m.i];if(!q)return;seen.add(m.i);if(m.c===-1)pass++;else if(m.c===q.a)ok++;else bad++;});
+  arr.forEach(m=>{if(seen.has(m.i))return;const q=qs[m.i];if(!q)return;seen.add(m.i);if(m.c===-1)pass++;else if(m.c===q.a){ok++;net++;}else{bad++;net=Math.max(0,net-1);}});
   const fin=d===g.me?g.fin:g.evs.some(x=>x.d===d&&x.ev&&x.ev.t==='fin');
-  return {ok,bad,pass,score:2*ok-2*bad,fin,n:seen.size};
+  return {ok,bad,pass,net,score:2*ok-2*bad,fin,n:seen.size};
 }
 function spNew(o){return Object.assign({solo:false,cfg:null,key:'',me:'',evs:[],after:0,base:null,i:0,mine:[],fin:false,done:false,stage:'',v:0,lock:false,flash:null,active:[],polling:false,rewarded:false,sentOver:false,pop:null},o);}
 const spKey=st=>st.room.code+'|'+st.cfg.dur+'|'+st.cfg.qs.length+'|'+st.cfg.qs.map(q=>q.a).join('');
@@ -4907,9 +4927,22 @@ function spInitLive(st){
 }
 function spStartSolo(){
   const qs=rmBuildQA(SP_N);
-  SP=spNew({solo:true,cfg:{dur:SPSET.dur,qs},me:'me',base:performance.now(),key:'solo'+Date.now()});
+  SP=spNew({solo:true,cfg:{dur:SPSET.dur,goal:Math.round(SPSET.dur*2/15),qs},me:'me',base:performance.now(),key:'solo'+Date.now()});
   RM.code=null;RM.st=null;GW=null;
   rmOpenOverlay();SP.stage='pre';spRender();
+}
+const spGoalN=()=>SP.cfg.goal||Math.round(SP.cfg.dur*2/15);
+const SP_COL=['#FF9600','#1CB0F6','#58CC02','#CE82FF','#FF4B4B','#2B70C9','#00A884','#D99200'];
+/* quién cruzó primero la meta (según el orden de los mensajes) */
+function spGoal(){
+  const g=SP,goal=spGoalN(),net={},seen={};
+  for(const x of g.evs){
+    const e=x.ev;if(!e||e.t!=='r')continue;const q=g.cfg.qs[e.i];if(!q)continue;
+    const k=x.d+':'+e.i;if(seen[k])continue;seen[k]=1;if(e.c===-1)continue;
+    net[x.d]=Math.max(0,(net[x.d]||0)+(e.c===q.a?1:-1));
+    if(net[x.d]>=goal)return {d:x.d,seq:x.seq};
+  }
+  return null;
 }
 const spEl=()=>SP.base==null?0:performance.now()-SP.base;
 function spPhase(){
@@ -4975,7 +5008,7 @@ function spMaybeOver(){
 /* ----- el reloj ----- */
 function spTick(){
   const g=SP;if(!g||$('#room').hidden)return;
-  if(!g.fin&&!g.done&&g.base!=null&&spEl()>=SP_PRE+g.cfg.dur*1000)spFinish();
+  if(!g.fin&&!g.done&&g.base!=null&&(spEl()>=SP_PRE+g.cfg.dur*1000||(!g.solo&&spGoal())))spFinish();
   const ns=spStage();
   if(ns!==g.stage){
     g.stage=ns;g.v++;g.lastS=null;g.lastN=null;
@@ -5000,7 +5033,7 @@ function spTick(){
 {const _si=setInterval(spTick,100);try{if(_si&&_si.unref)_si.unref();}catch(e){}}
 function spFinish(){
   const g=SP;if(!g||g.fin)return;
-  g.fin=true;
+  g.fin=true;g.finAt=Math.max(0,Math.round((spEl()-SP_PRE)/100)/10);
   if(g.solo){g.done=true;}else spSendEv({t:'fin'});
   beep('go');
 }
@@ -5020,24 +5053,37 @@ function spAnswer(c){
   setTimeout(()=>{
     if(SP!==g)return;
     g.lock=false;g.i=idx+1;
-    if(g.i>=g.cfg.qs.length){spFinish();return;}
+    if(g.i>=g.cfg.qs.length||spStats(g.me).net>=spGoalN()){spFinish();return;}
     if(g.stage==='play'){g.v++;spRender();}
   },ok===false?700:ok===true?380:120);
 }
 /* ----- pantallas ----- */
-function spBoardHTML(){
-  const g=SP,rows=spPlayers().map(p=>({p,s:spStats(p.device)})).sort((a,b)=>b.s.score-a.s.score);
-  return rows.map(x=>{
-    const me=x.p.device===g.me,pop=me&&g.pop&&g.pop.until>Date.now()?'<em class="spd '+(g.pop.v>0?'up':'down')+'">'+(g.pop.v>0?'+2':'−2')+'</em>':'';
-    return '<div class="spchip'+(me?' me':'')+'"><span class="spav">'+esc(x.p.avatar)+'</span><b>'+esc(me&&!g.solo?'Tú':x.p.name)+'</b><i>'+x.s.score+'</i>'+pop+'</div>';
-  }).join('');
+function spLanesHTML(){
+  const g=SP,ps=spPlayers(),goal=spGoalN();
+  return '<div class="splanes'+(ps.length>4?' cp':'')+'" id="spboard">'+ps.map((p,i)=>{
+    const s=spStats(p.device),me=p.device===g.me;
+    return '<div class="splane'+(me?' me':'')+'" data-d="'+esc(p.device)+'" style="--lc:'+SP_COL[i%SP_COL.length]+'"><div class="splab"><span class="spav">'+esc(p.avatar)+'</span><b>'+esc(me&&!g.solo?'Tú':p.name)+'</b><i>'+s.score+'</i></div><div class="sptrack"><span class="spgoal" aria-hidden="true">🏁</span><span class="sphorse" style="--p:'+Math.min(1,s.net/goal)+'"><u aria-hidden="true">🐎</u></span></div></div>';
+  }).join('')+'</div>';
 }
+const spBoardHTML=spLanesHTML;
+function spMetaHTML(){const s=spStats(SP.me);return '<span>✔ '+s.ok+'</span><span>✖ '+s.bad+'</span><span>⏭ '+s.pass+'</span><span class="spm2">🏁 '+s.net+' de '+spGoalN()+'</span>';}
 function spBoardUpdate(){
-  const el=document.getElementById('spboard');if(el)el.innerHTML=spBoardHTML();
+  const g=SP,box=document.getElementById('spboard');
+  if(box){
+    const ps=spPlayers(),goal=spGoalN();
+    if(box.children.length!==ps.length)box.outerHTML=spLanesHTML();
+    else ps.forEach(p=>{
+      const ln=[...box.children].find(x=>x.dataset.d===p.device);if(!ln)return;
+      const s=spStats(p.device);
+      ln.querySelector('.sphorse').style.setProperty('--p',Math.min(1,s.net/goal));
+      ln.querySelector('.splab i').textContent=s.score;
+      const old=ln.querySelector('.spd');if(old)old.remove();
+      if(p.device===g.me&&g.pop&&g.pop.until>Date.now()){const e=document.createElement('em');e.className='spd '+(g.pop.v>0?'up':'down');e.textContent=g.pop.v>0?'+2':'−2';ln.querySelector('.splab').appendChild(e);}
+    });
+  }
   const m=document.getElementById('spmeta');
-  if(m&&SP){const s=spStats(SP.me);m.innerHTML='<span>✔ '+s.ok+'</span><span>✖ '+s.bad+'</span><span>⏭ '+s.pass+'</span>';}
+  if(m&&SP)m.innerHTML=spMetaHTML();
 }
-function spMetaHTML(){const s=spStats(SP.me);return '<span>✔ '+s.ok+'</span><span>✖ '+s.bad+'</span><span>⏭ '+s.pass+'</span>';}
 function spView(){
   const g=SP;
   if(g.stage==='done')return spResultHTML();
@@ -5047,37 +5093,48 @@ function spView(){
 }
 function spPreHTML(){
   const wait=SP.base==null;
-  return rmShell('<div class="spcdw">'+mascot('happy',96)+'<p class="spcdt">'+(wait?'Conectando…':'¡Prepárate!')+'</p><div class="spcd" id="spcd">'+(wait?'':Math.max(1,Math.ceil((SP_PRE-spEl())/1000)))+'</div><p class="muted" style="margin:6px 0 0;font-weight:800">'+SP.cfg.dur+' segundos · acierto +2 · error −2 · paso 0</p>'+(SP.solo?'':'<div class="spboard" id="spboard" style="justify-content:center;margin-top:16px">'+spBoardHTML()+'</div>')+'</div>','',false);
+  return rmShell('<div class="spcdw">'+mascot('happy',72)+'<p class="spcdt">'+(wait?'Conectando…':'¡Prepárate!')+'</p><div class="spcd" id="spcd">'+(wait?'':Math.max(1,Math.ceil((SP_PRE-spEl())/1000)))+'</div></div>'+spBoardHTML()+'<p class="muted" style="margin:10px 0 0;font-weight:800;text-align:center;font-size:14px">'+SP.cfg.dur+' segundos · ✔ acierto +2 y avanzas · ✖ error −2 y retrocedes · ⏭ paso 0.<br>Gana quien cruce la meta 🏁 primero ('+spGoalN()+' aciertos netos) o tenga más puntos al acabar el tiempo.</p>','',false);
 }
 function spPlayHTML(){
   const g=SP,q=g.cfg.qs[g.i];
   if(!q)return spWaitHTML();
   const opts=q.o.map((o,i)=>'<button class="opt" data-a="sp-ans" data-i="'+i+'"><kbd>'+(i+1)+'</kbd><span>'+esc(o)+'</span></button>').join('');
-  return rmShell('<div class="spboard" id="spboard">'+spBoardHTML()+'</div><p class="rmmeta spmeta" id="spmeta">'+spMetaHTML()+'</p><p class="spq">'+esc(q.p)+'</p>'+(q.c?'<blockquote class="verse rmctx spv">'+esc(q.c)+'</blockquote>':'')+'<div class="opts spopts">'+opts+'</div>',
+  return rmShell(spBoardHTML()+'<p class="rmmeta spmeta" id="spmeta">'+spMetaHTML()+'</p><p class="spq">'+esc(q.p)+'</p>'+(q.c?'<blockquote class="verse rmctx spv">'+esc(q.c)+'</blockquote>':'')+'<div class="opts spopts">'+opts+'</div>',
     '<div class="lf"><div class="in"><button class="btn ghost" data-a="sp-pass">Paso · 0 puntos</button></div></div>',true);
 }
 function spWaitHTML(){
-  const g=SP;
-  return rmShell('<div style="display:flex;justify-content:center">'+mascot('cheer',96)+'</div><div class="rmwin" style="--tc:#FF9600">⏱️ ¡Se acabó el tiempo!<small>Esperando a que terminen los demás…</small></div><div class="spboard" id="spboard" style="margin-top:10px">'+spBoardHTML()+'</div>','',false);
+  const crossed=!SP.solo&&spGoal();
+  return rmShell('<div style="display:flex;justify-content:center">'+mascot('cheer',80)+'</div><div class="rmwin" style="--tc:#FF9600">'+(crossed?'🏁 ¡Alguien cruzó la meta!':'⏱️ ¡Se acabó el tiempo!')+'<small>Esperando a que terminen los demás…</small></div>'+spBoardHTML(),'',false);
+}
+function spWinner(){
+  if(SP.solo){const n=spStats('me').net;return n>=spGoalN()?'me':null;}
+  const w=spGoal();return w?w.d:null;
 }
 function spRank(){
-  const rows=spPlayers().map(p=>({p,s:spStats(p.device)})).sort((a,b)=>b.s.score-a.s.score||b.s.ok-a.s.ok);
-  let pos=0,last=null;rows.forEach((r,i)=>{if(last===null||r.s.score!==last){pos=i+1;last=r.s.score;}r.pos=pos;});
+  const w=spWinner();
+  const rows=spPlayers().map(p=>({p,s:spStats(p.device),w:p.device===w})).sort((a,b)=>(b.w-a.w)||b.s.score-a.s.score||b.s.ok-a.s.ok);
+  let pos=0,last=null;
+  rows.forEach((r,i)=>{if(r.w){r.pos=1;return;}const k=r.s.score;if(last===null||k!==last){pos=i+1;last=k;}r.pos=pos;});
   return rows;
 }
 function spResultHTML(){
-  const g=SP,rows=spRank(),me=rows.find(r=>r.p.device===g.me),top=rows.filter(r=>r.pos===1);
+  const g=SP,rows=spRank(),me=rows.find(r=>r.p.device===g.me),top=rows.filter(r=>r.pos===1),cross=rows.find(r=>r.w);
   let banner,sub='',tc='#FF9600',mood='cheer';
   if(g.solo){
-    banner=me.s.score+' puntos';sub=g.newBest?'🎉 ¡Nuevo récord para '+g.cfg.dur+' segundos!':(S.spBest&&S.spBest[g.cfg.dur]?'Tu récord en '+g.cfg.dur+' s: '+S.spBest[g.cfg.dur]+' puntos':'');
+    if(cross){banner='🏁 ¡Cruzaste la meta!';sub='En '+g.finAt+' segundos · '+me.s.score+' puntos';}
+    else{banner=me.s.score+' puntos';sub='Faltaron '+(spGoalN()-me.s.net)+' aciertos para la meta';}
+    if(g.newBest)sub+=' · 🎉 ¡nuevo récord!';else if(S.spBest&&S.spBest[g.cfg.dur])sub+=' · récord: '+S.spBest[g.cfg.dur];
     if(me.s.score<=0)mood='think';
+  }else if(cross){
+    if(cross.p.device===g.me){banner='🏆 ¡Ganaste!';sub='Cruzaste la meta primero · '+me.s.score+' puntos';tc='#58CC02';}
+    else{banner='Ganó '+esc(cross.p.name);sub='Cruzó la meta primero · tú hiciste '+me.s.score+' puntos';mood='think';}
   }else if(top.length>1&&top.some(r=>r.p.device===g.me)){banner='🤝 ¡Empate!';sub=top.length+' jugadores con '+top[0].s.score+' puntos';tc='#777';}
-  else if(top[0].p.device===g.me){banner='🏆 ¡Ganaste!';sub=top[0].s.score+' puntos';tc='#58CC02';}
+  else if(top[0].p.device===g.me){banner='🏆 ¡Ganaste!';sub='Más puntos al acabar el tiempo: '+top[0].s.score;tc='#58CC02';}
   else{banner='Ganó '+esc(top[0].p.name);sub=top[0].s.score+' puntos · tú hiciste '+me.s.score;mood='think';}
-  const list='<div class="card" style="padding:4px 14px">'+rows.map(r=>'<div class="frow"><span class="fpos">'+(r.pos===1&&r.s.score>0?'👑':r.pos)+'</span><span class="fav">'+esc(r.p.avatar)+'</span><b class="fnm">'+esc(r.p.name)+(r.p.device===g.me&&!g.solo?' (tú)':'')+'</b><span class="spst">✔'+r.s.ok+' ✖'+r.s.bad+' ⏭'+r.s.pass+'</span><span class="fxp">'+r.s.score+'</span></div>').join('')+'</div>';
+  const list='<div class="card" style="padding:4px 14px">'+rows.map(r=>'<div class="frow"><span class="fpos">'+(r.pos===1&&(r.w||r.s.score>0)?'👑':r.pos)+'</span><span class="fav">'+esc(r.p.avatar)+'</span><b class="fnm">'+esc(r.p.name)+(r.p.device===g.me&&!g.solo?' (tú)':'')+'</b><span class="spst">✔'+r.s.ok+' ✖'+r.s.bad+' ⏭'+r.s.pass+'</span><span class="fxp">'+r.s.score+'</span></div>').join('')+'</div>';
   const host=!g.solo&&RM.st&&RM.st.room.host===RM.st.me;
   const foot='<div class="lf"><div class="in"><button class="btn ghost" style="margin-bottom:10px" data-a="sp-fb">📝 Retroalimentación: ¿en qué fallé?</button><div class="row2">'+((g.solo||host)?'<button class="btn" data-a="sp-again">Jugar otra vez</button>':'')+'<button class="btn ghost" data-a="rm-exit-yes">Salir</button></div>'+((g.solo||host)?'':'<p class="muted" style="text-align:center;margin:8px 0 0;font-size:13px">Quien creó la sala puede empezar otra partida.</p>')+'</div></div>';
-  return rmShell('<div style="display:flex;justify-content:center">'+mascot(mood,100)+'</div><div class="rmwin" style="--tc:'+tc+'">'+banner+'<small>'+sub+'</small></div>'+
+  return rmShell('<div style="display:flex;justify-content:center">'+mascot(mood,100)+'</div><div class="rmwin" style="--tc:'+tc+'">'+banner+'<small>'+sub+'</small></div>'+spBoardHTML()+
     '<div class="spsum"><div><b>'+me.s.ok+'</b><span>✔ Acertadas</span></div><div><b>'+me.s.bad+'</b><span>✖ Fallidas</span></div><div><b>'+me.s.pass+'</b><span>⏭ Pasó</span></div></div>'+list,foot,false);
 }
 function spOnDone(){
@@ -5089,6 +5146,7 @@ function spOnDone(){
     if(me.s.score>prev){S.spBest[g.cfg.dur]=me.s.score;if(prev>0)g.newBest=true;}
     big=me.s.score>0&&(g.newBest||me.s.score>=10);
   }else big=me.pos===1&&rows.filter(r=>r.pos===1).length===1;
+  if(g.solo&&spWinner())big=true;
   try{
     recordDay(10);S.gplays=(S.gplays||0)+1;if(!g.solo)S.rmplays=(S.rmplays||0)+1;
     ACH.filter(a=>!S.ach[a.id]&&a.f(S)).forEach(a=>S.ach[a.id]=true);save();renderTop();
@@ -5357,7 +5415,7 @@ async function rmPlace(slot){
 async function rmStart(){
   const st=RM.st;if(!st)return;const M=RM_MODES[st.room.mode];
   if(st.room.mode==='sprint'){
-    const cfg={dur:st.room.total*10,qs:rmBuildQA(40)};
+    const cfg={dur:st.room.total*10,goal:Math.round(st.room.total*10*2/15),qs:rmBuildQA(40)};
     try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
     catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
     rmPoll();return;
