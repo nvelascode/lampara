@@ -876,6 +876,13 @@ a.btn{text-decoration:none;text-align:center}
 .answer .w[data-a=unplace]{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .answer .w.drag{opacity:.25}
 .dghost{position:fixed;z-index:90;pointer-events:none;box-shadow:0 8px 20px rgba(0,0,0,.3);transform:scale(1.06);background:var(--surface);text-align:center}
+.gsec{margin:0 0 12px;border:2px solid var(--line);border-radius:18px;background:var(--surface);padding:0 12px}
+.gsec>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:14px 2px;font-weight:900;font-size:17px}
+.gsec>summary::-webkit-details-marker{display:none}
+.gsec>summary::after{content:'▾';margin-left:auto;color:var(--muted);transition:transform .2s}
+.gsec:not([open])>summary::after{transform:rotate(-90deg)}
+.gsec[open]{padding-bottom:12px}
+.gbadge{font-style:normal;background:var(--red);color:#fff;border-radius:99px;padding:1px 8px;font-size:13px}
 /* ===== Tarjetas para compartir ===== */
 .modal .box{max-height:calc(100dvh - 40px);overflow:auto}
 .ccard{--ca:#fff;border-radius:18px;padding:22px 20px 14px;color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:190px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);position:relative;overflow:hidden}
@@ -4460,7 +4467,7 @@ const RM_MODES={
   sprint:{id:'sprint',t:'Carrera de versículos',d:'Contrarreloj: mismas preguntas, cada uno a su ritmo. +2 si aciertas, −2 si fallas.',emo:'🏁',c:'#FF9600',totals:[3,6,9],def:6,time:20,min:'2 a 8 jugadores'},
   race:{id:'race',t:'Duelo',d:'Todos ven la misma pregunta a la vez. Gana más quien acierta y responde más rápido.',emo:'⚔️',c:'#FF4B4B',totals:[5,10,15],def:10,time:20,min:'2 a 8 jugadores'},
   duel:{id:'duel',t:'Duelo 1 contra 1',d:'Dos jugadores, mismas preguntas.',emo:'⚔️',c:'#FF4B4B',totals:[5,7,10],def:7,time:20,min:'2 jugadores',one:true,hide:true},
-  teams:{id:'teams',t:'Equipos',d:'Azul contra Naranja: suman los puntos de todos.',emo:'🤝',c:'#1CB0F6',totals:[6,10,14],def:10,time:20,min:'4 a 8 jugadores (mínimo 2)'},
+  teams:{id:'teams',t:'Equipos',d:'Azul contra Naranja: suman los puntos de todos.',emo:'🤝',c:'#1CB0F6',totals:[6,10,14],def:10,time:20,min:'4 a 8 jugadores (mínimo 2)',hide:true},
   assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores'},
   guess:{id:'guess',t:'¿Quién es quién?',d:'Cada uno elige en secreto un personaje. ¡Adivina el del otro!',emo:'🃏',c:'#E84393',totals:[5,8,12],def:8,time:20,min:'2 jugadores',one:true}
 };
@@ -6342,7 +6349,7 @@ function amigosHTML(){
 function rmTilesHTML(){
   if(!famOn())return '';
   const d=FR.data,inv=(d&&d.invites)||[],fol=(d&&d.following)||[];
-  let out='<h3 class="rmh">🌐 En vivo con tus amigos</h3>';
+  let out='';
   if(inv.length)out+='<div class="rminv">'+inv.map(i=>{
     const M=RM_MODES[i.mode]||RM_MODES.race;
     return '<div class="rminvrow"><span class="fav big">'+esc(i.avatar)+'</span><div class="minfo"><b>'+esc(i.from)+' te invita</b><span class="muted">'+esc(M.emo+' '+M.t)+'</span></div><button class="btn sm" data-a="rm-join-inv" data-code="'+esc(i.code)+'">Unirme</button></div>';
@@ -6350,8 +6357,10 @@ function rmTilesHTML(){
   if(!frActive())out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Para jugar en vivo, crea tu perfil y sigue a alguien.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
   else if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Sigue al menos a una persona para invitarla a jugar.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
   else out+='<div class="gtiles">'+Object.values(RM_MODES).filter(m=>!m.hide).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
-  return out+'<h3 class="rmh" style="margin-top:24px">📱 En un solo celular</h3>';
+  return out;
 }
+let GSEC={on:true,solo:false};
+function gSecHTML(k,title,inner,badge){return '<details class="gsec" data-k="'+k+'"'+(GSEC[k]?' open':'')+'><summary><span>'+title+'</span>'+(badge?'<em class="gbadge">'+badge+'</em>':'')+'</summary>'+inner+'</details>';}
 function rmMenuHTML(){
   const M=RM_MODES[RM.cfg.mode]||RM_MODES.race;
   const fol=((FR.data&&FR.data.following)||[]).slice().sort((a,b)=>String(frName(a)).localeCompare(String(frName(b))));
@@ -8385,8 +8394,7 @@ let G=null;
 function av(i){return '<span class="av" style="background:'+PCOL[i%PCOL.length]+'">'+esc(nameOf(i).charAt(0).toUpperCase())+'</span>';}
 function gamesHTML(){
   return '<h1 class="page">Juegos</h1>'+
-   '<div class="hero">'+mascot('cheer',84)+'<div class="bubble">'+(famOn()?'¡Elijan un juego! Pueden jugar cada quien en su celular o pasarse uno solo.':'¡Elijan un juego! Uno lee la pantalla y los demás responden.')+'</div></div>'+rmTilesHTML()+
-   '<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button><button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>';
+   '<div class="hero">'+mascot('cheer',84)+'<div class="bubble">'+(famOn()?'¡Elijan un juego! Pueden jugar cada quien en su celular o pasarse uno solo.':'¡Elijan un juego! Uno lee la pantalla y los demás responden.')+'</div></div>'+(famOn()?gSecHTML('on','🌐 En línea con tus amigos',rmTilesHTML(),(FR.data&&FR.data.invites&&FR.data.invites.length)?String(FR.data.invites.length):'')+gSecHTML('solo','📱 Solo','<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button><button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>'):'<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button><button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>');
 }
 function gShow(){$('#game').hidden=false;document.body.style.overflow='hidden';}
 function gTheme(){const el=$('#game');el.className='overlay gamed';if(G&&G.game){el.style.setProperty('--gc',G.game.c);el.style.setProperty('--gcol',G.game.c);}}
@@ -8500,6 +8508,7 @@ document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rdother'){
    EVENTOS
    ============================================================ */
 function pick(i){if(!L||L.ui.checked)return;const q=L.cur;if(q.type==='order'||q.type==='match'||i>=q.opts.length)return;L.ui.sel=i;check();}
+document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.classList&&d.classList.contains('gsec'))GSEC[d.dataset.k]=d.open;},true);
 /* ----- reordenar fichas arrastrando (preguntas de ordenar) ----- */
 (function(){
   let D=null,swallow=0;
