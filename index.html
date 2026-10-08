@@ -390,6 +390,17 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
  .islide h2{font-size:24px}
  .islide h3{font-size:19px}
 }
+.inav{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px}
+.inav.fin .btn{flex:1}
+.iarr-sp{width:64px;height:54px}
+.iarr{width:64px;height:54px;flex:none;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--blue);display:grid;place-items:center;cursor:pointer;padding:0}
+.iarr:active{transform:translateY(2px);border-bottom-width:2px}
+.iarr.r{animation:nudgeR 1.3s ease-in-out infinite}
+.iarr.l{animation:nudgeL 1.3s ease-in-out infinite}
+.inav:not(.fin) .iarr.r{margin-left:auto}
+@keyframes nudgeR{0%,100%{transform:translateX(0)}50%{transform:translateX(7px)}}
+@keyframes nudgeL{0%,100%{transform:translateX(0)}50%{transform:translateX(-7px)}}
+@media (prefers-reduced-motion:reduce){.iarr.r,.iarr.l{animation:none}}
 
 
 /* ---------- resultado ---------- */
@@ -6768,10 +6779,12 @@ function introChrome(){
 }
 function introDots(n,k){return n>1?Array.from({length:n},(_,j)=>'<i class="'+(j===k?'on':j<k?'dn':'')+'"></i>').join(''):'';}
 function introBtns(n,k,last){
-  return n===1?'<button class="btn" data-a="begin" data-primary>¡Vamos!</button>'
-    :k===0?'<div class="row2" style="margin:0"><button class="btn ghost" data-a="begin">Saltar</button><button class="btn" data-a="intro-next" data-primary>Siguiente</button></div>'
-    :last?'<div class="row2" style="margin:0"><button class="btn ghost" data-a="intro-back">Atrás</button><button class="btn" data-a="begin" data-primary>¡Vamos!</button></div>'
-    :'<div class="row2" style="margin:0"><button class="btn ghost" data-a="intro-back">Atrás</button><button class="btn" data-a="intro-next" data-primary>Siguiente</button></div>';
+  if(n===1)return '<button class="btn" data-a="begin" data-primary>¡Vamos!</button>';
+  const ch=d=>'<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="'+(d<0?'M15 5l-7 7 7 7':'M9 5l7 7-7 7')+'" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const L_=k>0?'<button class="iarr l" data-a="intro-back" aria-label="Tarjeta anterior">'+ch(-1)+'</button>':'<span class="iarr-sp"></span>';
+  const R_=!last?'<button class="iarr r" data-a="intro-next" data-primary aria-label="Siguiente tarjeta">'+ch(1)+'</button>':'';
+  const M_=last?'<button class="btn" data-a="begin" data-primary>¡Vamos!</button>':'';
+  return '<div class="inav'+(last?' fin':'')+'">'+L_+M_+R_+'</div>';
 }
 function renderIntro(){
   const i=L.intro;if(!L.introCards)L.introCards=introCards(i);
@@ -6783,7 +6796,6 @@ function renderIntro(){
       (j===0?'<div class="imas">'+mascot(mood,n===1?92:76)+'</div>'+tag
             :'<div class="ihead">'+mascot(mood,44)+tag+'</div>')+
       (j===0?'<h2>'+esc(i.t)+'</h2>':c.hd?'':'<h2 class="h2s">'+esc(i.t)+'</h2>')+c.html+
-      (j===0&&n>1?'<p class="swipehint">Desliza hacia el lado para seguir ›</p>':'')+
       '</div></div></section>';
   }).join('');
   $('#lesson').innerHTML=
