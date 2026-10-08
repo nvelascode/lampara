@@ -812,6 +812,47 @@ a.btn{text-decoration:none;text-align:center}
 .gwmod{max-height:52vh;overflow:auto;margin-bottom:12px}
 .gwmod .pickrow{margin-bottom:8px}
 @media (prefers-reduced-motion:reduce){.gwc.fresh .gwcb,.gwvf{animation:none}}
+
+/* ===== Carrera de versículos (contrarreloj) ===== */
+.spboard{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.spchip{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 6px;border-radius:99px;background:var(--surface);border:2px solid var(--line);font-weight:900;font-size:13px;position:relative}
+.spchip.me{border-color:var(--blue);background:var(--blue-bg)}
+.spchip b{max-width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spchip i{font-style:normal;font-size:17px;min-width:18px;text-align:right}
+.spav{font-size:18px;line-height:1}
+.spd{position:absolute;right:8px;top:-14px;font-style:normal;font-size:16px;font-weight:900;animation:spup .9s forwards;pointer-events:none}
+.spd.up{color:var(--green-ink)}.spd.down{color:var(--red-ink)}
+@keyframes spup{0%{opacity:0;transform:translateY(8px)}20%{opacity:1}100%{opacity:0;transform:translateY(-12px)}}
+.spmeta{display:flex;gap:14px;margin:0 0 6px}
+.spq{font-size:17px;font-weight:900;margin:4px 0 8px;line-height:1.3}
+.spv{font-size:16px;line-height:1.45;padding:12px 12px 12px 40px;margin:0 0 12px}
+.spv::before{left:10px;top:4px;font-size:44px}
+.spopts{gap:8px}
+.spopts .opt{padding:10px 12px;font-size:16px}
+.bar.hot{animation:spblink .5s steps(2,start) infinite}
+.bar.hot i{background:var(--red)!important}
+@keyframes spblink{50%{opacity:.4}}
+.bar.hot+.rmt{color:var(--red-ink)}
+.spcdw{text-align:center;padding-top:6px}
+.spcdt{font-size:20px;font-weight:900;margin:6px 0 0}
+.spcd{font-size:104px;font-weight:900;line-height:1.1;color:var(--gcol,var(--orange,#FF9600))}
+.spsum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}
+.spsum div{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:8px 4px;text-align:center}
+.spsum b{display:block;font-size:26px;line-height:1.1}
+.spsum span{font-size:12px;font-weight:800;color:var(--muted)}
+.spst{font-size:12px;font-weight:800;color:var(--muted);white-space:nowrap}
+.sptags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.sptag{background:var(--red-bg);color:var(--red-ink);border-radius:99px;padding:4px 10px;font-size:12px;font-weight:900}
+.spfbl{max-height:46vh}
+.spfb{border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:14px;line-height:1.35;text-align:left}
+.spfb.bad{border-color:var(--red);background:var(--red-bg)}
+.spfb.pass{border-color:var(--line)}
+.spfb small{display:block;font-weight:900;color:var(--muted);font-size:12px}
+.spfb b{display:block;font-size:15px;margin:2px 0}
+.spfb p{margin:3px 0}
+.spfb .spc{font-style:italic;font-size:13px}
+.spfb .spr{font-size:12px}
+@media (prefers-reduced-motion:reduce){.bar.hot{animation:none}}
 </style>
 </head>
 <body>
@@ -1620,7 +1661,7 @@ function beep(kind){
       :kind==='bad'?[[250,0,.14],[180,.14,.24]]
       :kind==='fan'?[[523,0,.1],[659,.1,.1],[784,.2,.1],[1047,.3,.16],[784,.52,.1],[1047,.62,.1],[1319,.74,.5]]
       :kind==='win'?[[523,0,.11],[659,.11,.11],[784,.22,.11],[1047,.33,.34]]
-      :[[600,0,.05]];
+      :kind==='tick'?[[900,0,.035]]:kind==='tock'?[[1250,0,.07]]:kind==='go'?[[1047,0,.28]]:[[600,0,.05]];
     seq.forEach(([f,s,d])=>{
       const o=AC.createOscillator(),g=AC.createGain();
       o.type=kind==='bad'?'sawtooth':'triangle';o.frequency.value=f;
@@ -4367,11 +4408,12 @@ function giftsCardHTML(){
    JUEGOS EN VIVO (cada quien en su celular)
    ============================================================ */
 const RM_MODES={
-  race:{id:'race',t:'Carrera de versículos',d:'Todos responden a la vez. ¡El más rápido gana más!',emo:'🏁',c:'#FF9600',totals:[5,10,15],def:10,time:20,min:'2 a 8 jugadores'},
-  duel:{id:'duel',t:'Duelo 1 contra 1',d:'Dos jugadores, mismas preguntas.',emo:'⚔️',c:'#FF4B4B',totals:[5,7,10],def:7,time:20,min:'2 jugadores',one:true},
+  sprint:{id:'sprint',t:'Carrera de versículos',d:'Contrarreloj: mismas preguntas, cada uno a su ritmo. +2 si aciertas, −2 si fallas.',emo:'🏁',c:'#FF9600',totals:[3,6,9],def:6,time:20,min:'2 a 8 jugadores'},
+  race:{id:'race',t:'Duelo',d:'Todos ven la misma pregunta a la vez. Gana más quien acierta y responde más rápido.',emo:'⚔️',c:'#FF4B4B',totals:[5,10,15],def:10,time:20,min:'2 a 8 jugadores'},
+  duel:{id:'duel',t:'Duelo 1 contra 1',d:'Dos jugadores, mismas preguntas.',emo:'⚔️',c:'#FF4B4B',totals:[5,7,10],def:7,time:20,min:'2 jugadores',one:true,hide:true},
   teams:{id:'teams',t:'Equipos',d:'Azul contra Naranja: suman los puntos de todos.',emo:'🤝',c:'#1CB0F6',totals:[6,10,14],def:10,time:20,min:'4 a 8 jugadores (mínimo 2)'},
   assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores'},
-  guess:{id:'guess',t:'¿Quién es quién?',d:'Cada uno elige en secreto un personaje. ¡Adivina el del otro!',emo:'🕵️',c:'#A560E8',totals:[5,8,12],def:8,time:20,min:'2 jugadores',one:true}
+  guess:{id:'guess',t:'¿Quién es quién?',d:'Cada uno elige en secreto un personaje. ¡Adivina el del otro!',emo:'🃏',c:'#E84393',totals:[5,8,12],def:8,time:20,min:'2 jugadores',one:true}
 };
 const RM_TEAM=[null,{n:'Azul',c:'#1CB0F6',e:'🔵'},{n:'Naranja',c:'#FF9600',e:'🟠'}];
 let RM={code:null,st:null,t0:0,rem0:0,sig:'',sel:null,my:null,loop:0,fails:0,cfg:{mode:'race',total:10,size:20},screen:'menu',rewarded:'',av:'🙂',pick:[]};
@@ -4756,7 +4798,7 @@ function gwFinalHTML(){
 function gwSoloMenuHTML(){
   const roundsP=[5,8,12].map(t=>'<button class="rdpill '+(GWSET.rounds===t?'on':'')+'" data-a="gw-set-rounds" data-v="'+t+'">'+t+'</button>').join('');
   const sizeP=[12,20,30].map(t=>'<button class="rdpill '+(GWSET.size===t?'on':'')+'" data-a="gw-set-size" data-v="'+t+'">'+t+'</button>').join('');
-  return rmShell('<div class="gsetup"><span style="font-size:52px;line-height:1">🕵️</span><div><h1>¿Quién es quién?</h1><p>Lampy elige un personaje bíblico en secreto. Haz preguntas, descarta cartas y adivina quién es.</p></div></div>'+
+  return rmShell('<div class="gsetup"><span style="font-size:52px;line-height:1">🃏</span><div><h1>¿Quién es quién?</h1><p>Lampy elige un personaje bíblico en secreto. Haz preguntas, descarta cartas y adivina quién es.</p></div></div>'+
     '<section class="sec"><h3>¿Cuántas preguntas puedes hacer?</h3><div class="rdpills">'+roundsP+'</div></section>'+
     '<section class="sec"><h3>¿Cuántos personajes en el tablero?</h3><div class="rdpills">'+sizeP+'</div></section>',
     '<div class="lf"><div class="in"><button class="btn" data-a="gw-solo-go">Empezar</button></div></div>',false);
@@ -4836,6 +4878,272 @@ function gwAct(a,b){
   }
 }
 
+/* ============================================================
+   CARRERA DE VERSÍCULOS — contrarreloj (1 jugador solo, o 2 a 8 en vivo)
+   · Todos reciben las mismas preguntas en el mismo orden, pero cada uno avanza a su ritmo.
+   · Acierto +2 · Error −2 · «Paso» 0.
+   · Cada respuesta viaja como mensaje y cada teléfono calcula el marcador.
+   ============================================================ */
+const SPSET={dur:60};
+let SP=null;
+const SP_PRE=3000,SP_N=40;
+const SP_KIND={blank:'Completar versículos',book:'¿En qué libro está?',who:'¿Quién lo dijo?',tf:'Verdadero o falso',ref:'¿Qué pasaje es este?'};
+function spPlayers(){
+  if(SP.solo)return [{device:'me',name:'Tú',avatar:'🙂'}];
+  return (RM.st?RM.st.players:[]).map(p=>({device:p.device,name:p.name,avatar:p.avatar}));
+}
+function spStats(d){
+  const g=SP,qs=g.cfg.qs,seen=new Set();let ok=0,bad=0,pass=0;
+  const arr=d===g.me?g.mine:g.evs.filter(x=>x.d===d&&x.ev&&x.ev.t==='r').map(x=>({i:x.ev.i,c:x.ev.c}));
+  arr.forEach(m=>{if(seen.has(m.i))return;const q=qs[m.i];if(!q)return;seen.add(m.i);if(m.c===-1)pass++;else if(m.c===q.a)ok++;else bad++;});
+  const fin=d===g.me?g.fin:g.evs.some(x=>x.d===d&&x.ev&&x.ev.t==='fin');
+  return {ok,bad,pass,score:2*ok-2*bad,fin,n:seen.size};
+}
+function spNew(o){return Object.assign({solo:false,cfg:null,key:'',me:'',evs:[],after:0,base:null,i:0,mine:[],fin:false,done:false,stage:'',v:0,lock:false,flash:null,active:[],polling:false,rewarded:false,sentOver:false,pop:null},o);}
+const spKey=st=>st.room.code+'|'+st.cfg.dur+'|'+st.cfg.qs.length+'|'+st.cfg.qs.map(q=>q.a).join('');
+function spInitLive(st){
+  SP=spNew({cfg:st.cfg,key:spKey(st),me:st.me});
+  return SP;
+}
+function spStartSolo(){
+  const qs=rmBuildQA(SP_N);
+  SP=spNew({solo:true,cfg:{dur:SPSET.dur,qs},me:'me',base:performance.now(),key:'solo'+Date.now()});
+  RM.code=null;RM.st=null;GW=null;
+  rmOpenOverlay();SP.stage='pre';spRender();
+}
+const spEl=()=>SP.base==null?0:performance.now()-SP.base;
+function spPhase(){
+  if(SP.base==null)return 'pre';
+  const el=spEl();
+  if(el<SP_PRE)return 'pre';
+  if(el<SP_PRE+SP.cfg.dur*1000)return 'play';
+  return 'end';
+}
+function spStage(){
+  if(SP.done)return 'done';
+  if(SP.fin)return 'wait';
+  const p=spPhase();
+  return p==='end'?'wait':p;
+}
+/* ----- comunicación ----- */
+function spSendEv(ev){
+  const g=SP;if(!g||g.solo)return Promise.resolve(true);
+  g.q=(g.q||Promise.resolve()).then(async()=>{
+    for(let k=0;k<5;k++){
+      try{const r=await rpc('fr_gw_send',frArgs({p_code:RM.code,p_ev:ev}));if(r&&r.ok)return true;if(r&&(r.error==='no_estas'||r.error==='sala_no_existe'))return false;}catch(e){}
+      await new Promise(s=>setTimeout(s,700));
+    }
+    return false;
+  });
+  return g.q;
+}
+async function spPoll(){
+  const g=SP,code=RM.code;
+  if(!g||g.solo||!code||g.polling)return;
+  g.polling=true;
+  try{
+    const r=await rpc('fr_gw_poll',frArgs({p_code:code,p_after:g.after}));
+    if(g!==SP||code!==RM.code)return;
+    if(!r||!r.ok){if(r&&(r.error==='sala_no_existe'||r.error==='no_estas'))rmEnd('La partida se cerró.');return;}
+    if(typeof r.el==='number'){const b=performance.now()-r.el;g.base=g.base==null?b:Math.min(g.base,b);}
+    let fresh=false;
+    (r.ev||[]).forEach(x=>{
+      if(x.seq<=g.after)return;
+      g.after=x.seq;g.evs.push({seq:x.seq,d:x.d,ev:x.ev});fresh=true;
+      if(x.d===g.me&&x.ev){
+        if(x.ev.t==='r'&&!g.mine.some(m=>m.i===x.ev.i)){g.mine.push({i:x.ev.i,c:x.ev.c});g.i=Math.max(g.i,x.ev.i+1);}
+        if(x.ev.t==='fin')g.fin=true;
+      }
+    });
+    g.active=r.active||[];
+    if(RM.st&&r.status&&RM.st.room.status!==r.status){
+      RM.st.room.status=r.status;
+      if(r.status==='lobby'){SP=null;RM.sig='';RM.lastState=0;return;}
+    }
+    if(!g.done&&g.evs.some(x=>x.ev&&x.ev.t==='over')){g.done=true;g.stage='done';g.v++;spRender();spOnDone();return;}
+    if(fresh)spBoardUpdate();
+  }catch(e){}
+  finally{g.polling=false;}
+}
+function spMaybeOver(){
+  const g=SP;if(!g||g.solo||g.sentOver||!g.fin||g.done)return;
+  const all=spPlayers().every(p=>spStats(p.device).fin);
+  if(all||(g.base!=null&&spEl()>SP_PRE+g.cfg.dur*1000+8000)){
+    g.sentOver=true;spSendEv({t:'over'}).then(ok=>{if(!ok)g.sentOver=false;else spPoll();});
+  }
+}
+/* ----- el reloj ----- */
+function spTick(){
+  const g=SP;if(!g||$('#room').hidden)return;
+  if(!g.fin&&!g.done&&g.base!=null&&spEl()>=SP_PRE+g.cfg.dur*1000)spFinish();
+  const ns=spStage();
+  if(ns!==g.stage){
+    g.stage=ns;g.v++;g.lastS=null;g.lastN=null;
+    if(ns==='play'){beep('go');haptic(20);}
+    spRender();
+    if(ns==='done')spOnDone();
+    return;
+  }
+  const el=spEl();
+  if(ns==='pre'){
+    const n=Math.max(1,Math.ceil((SP_PRE-el)/1000)),e=document.getElementById('spcd');
+    if(g.base!=null){if(e)e.textContent=n;if(n!==g.lastN){g.lastN=n;beep('tick');}}
+  }else if(ns==='play'){
+    const rem=Math.max(0,SP_PRE+g.cfg.dur*1000-el),secs=Math.ceil(rem/1000);
+    const t=document.getElementById('rmtime'),bar=document.getElementById('rmbar');
+    if(t)t.textContent=secs;
+    if(bar){bar.style.width=(100*rem/(g.cfg.dur*1000))+'%';const pb=bar.parentNode;if(pb)pb.classList.toggle('hot',secs<=10);}
+    if(secs!==g.lastS){g.lastS=secs;if(secs<=10&&secs>0){beep(secs<=3?'tock':'tick');if(secs<=3)haptic(10);}}
+  }
+  if(ns==='wait')spMaybeOver();
+}
+{const _si=setInterval(spTick,100);try{if(_si&&_si.unref)_si.unref();}catch(e){}}
+function spFinish(){
+  const g=SP;if(!g||g.fin)return;
+  g.fin=true;
+  if(g.solo){g.done=true;}else spSendEv({t:'fin'});
+  beep('go');
+}
+/* ----- responder ----- */
+function spAnswer(c){
+  const g=SP;if(!g||g.stage!=='play'||g.lock)return;
+  const q=g.cfg.qs[g.i];if(!q)return;
+  g.lock=true;
+  const idx=g.i,ok=c===-1?null:c===q.a;
+  g.mine.push({i:idx,c});
+  spSendEv({t:'r',i:idx,c});
+  if(ok===true){beep('good');haptic(15);}else if(ok===false){beep('bad');haptic([30,40,30]);}
+  g.pop=ok===null?null:{v:ok?2:-2,until:Date.now()+900};
+  document.querySelectorAll('#room .spopts .opt').forEach((b,i)=>{b.disabled=true;if(i===q.a&&c!==-1)b.classList.add('good');else if(i===c)b.classList.add('bad');});
+  const pb=document.querySelector('#room [data-a="sp-pass"]');if(pb)pb.disabled=true;
+  spBoardUpdate();
+  setTimeout(()=>{
+    if(SP!==g)return;
+    g.lock=false;g.i=idx+1;
+    if(g.i>=g.cfg.qs.length){spFinish();return;}
+    if(g.stage==='play'){g.v++;spRender();}
+  },ok===false?700:ok===true?380:120);
+}
+/* ----- pantallas ----- */
+function spBoardHTML(){
+  const g=SP,rows=spPlayers().map(p=>({p,s:spStats(p.device)})).sort((a,b)=>b.s.score-a.s.score);
+  return rows.map(x=>{
+    const me=x.p.device===g.me,pop=me&&g.pop&&g.pop.until>Date.now()?'<em class="spd '+(g.pop.v>0?'up':'down')+'">'+(g.pop.v>0?'+2':'−2')+'</em>':'';
+    return '<div class="spchip'+(me?' me':'')+'"><span class="spav">'+esc(x.p.avatar)+'</span><b>'+esc(me&&!g.solo?'Tú':x.p.name)+'</b><i>'+x.s.score+'</i>'+pop+'</div>';
+  }).join('');
+}
+function spBoardUpdate(){
+  const el=document.getElementById('spboard');if(el)el.innerHTML=spBoardHTML();
+  const m=document.getElementById('spmeta');
+  if(m&&SP){const s=spStats(SP.me);m.innerHTML='<span>✔ '+s.ok+'</span><span>✖ '+s.bad+'</span><span>⏭ '+s.pass+'</span>';}
+}
+function spMetaHTML(){const s=spStats(SP.me);return '<span>✔ '+s.ok+'</span><span>✖ '+s.bad+'</span><span>⏭ '+s.pass+'</span>';}
+function spView(){
+  const g=SP;
+  if(g.stage==='done')return spResultHTML();
+  if(g.stage==='wait')return spWaitHTML();
+  if(g.stage==='play')return spPlayHTML();
+  return spPreHTML();
+}
+function spPreHTML(){
+  const wait=SP.base==null;
+  return rmShell('<div class="spcdw">'+mascot('happy',96)+'<p class="spcdt">'+(wait?'Conectando…':'¡Prepárate!')+'</p><div class="spcd" id="spcd">'+(wait?'':Math.max(1,Math.ceil((SP_PRE-spEl())/1000)))+'</div><p class="muted" style="margin:6px 0 0;font-weight:800">'+SP.cfg.dur+' segundos · acierto +2 · error −2 · paso 0</p>'+(SP.solo?'':'<div class="spboard" id="spboard" style="justify-content:center;margin-top:16px">'+spBoardHTML()+'</div>')+'</div>','',false);
+}
+function spPlayHTML(){
+  const g=SP,q=g.cfg.qs[g.i];
+  if(!q)return spWaitHTML();
+  const opts=q.o.map((o,i)=>'<button class="opt" data-a="sp-ans" data-i="'+i+'"><kbd>'+(i+1)+'</kbd><span>'+esc(o)+'</span></button>').join('');
+  return rmShell('<div class="spboard" id="spboard">'+spBoardHTML()+'</div><p class="rmmeta spmeta" id="spmeta">'+spMetaHTML()+'</p><p class="spq">'+esc(q.p)+'</p>'+(q.c?'<blockquote class="verse rmctx spv">'+esc(q.c)+'</blockquote>':'')+'<div class="opts spopts">'+opts+'</div>',
+    '<div class="lf"><div class="in"><button class="btn ghost" data-a="sp-pass">Paso · 0 puntos</button></div></div>',true);
+}
+function spWaitHTML(){
+  const g=SP;
+  return rmShell('<div style="display:flex;justify-content:center">'+mascot('cheer',96)+'</div><div class="rmwin" style="--tc:#FF9600">⏱️ ¡Se acabó el tiempo!<small>Esperando a que terminen los demás…</small></div><div class="spboard" id="spboard" style="margin-top:10px">'+spBoardHTML()+'</div>','',false);
+}
+function spRank(){
+  const rows=spPlayers().map(p=>({p,s:spStats(p.device)})).sort((a,b)=>b.s.score-a.s.score||b.s.ok-a.s.ok);
+  let pos=0,last=null;rows.forEach((r,i)=>{if(last===null||r.s.score!==last){pos=i+1;last=r.s.score;}r.pos=pos;});
+  return rows;
+}
+function spResultHTML(){
+  const g=SP,rows=spRank(),me=rows.find(r=>r.p.device===g.me),top=rows.filter(r=>r.pos===1);
+  let banner,sub='',tc='#FF9600',mood='cheer';
+  if(g.solo){
+    banner=me.s.score+' puntos';sub=g.newBest?'🎉 ¡Nuevo récord para '+g.cfg.dur+' segundos!':(S.spBest&&S.spBest[g.cfg.dur]?'Tu récord en '+g.cfg.dur+' s: '+S.spBest[g.cfg.dur]+' puntos':'');
+    if(me.s.score<=0)mood='think';
+  }else if(top.length>1&&top.some(r=>r.p.device===g.me)){banner='🤝 ¡Empate!';sub=top.length+' jugadores con '+top[0].s.score+' puntos';tc='#777';}
+  else if(top[0].p.device===g.me){banner='🏆 ¡Ganaste!';sub=top[0].s.score+' puntos';tc='#58CC02';}
+  else{banner='Ganó '+esc(top[0].p.name);sub=top[0].s.score+' puntos · tú hiciste '+me.s.score;mood='think';}
+  const list='<div class="card" style="padding:4px 14px">'+rows.map(r=>'<div class="frow"><span class="fpos">'+(r.pos===1&&r.s.score>0?'👑':r.pos)+'</span><span class="fav">'+esc(r.p.avatar)+'</span><b class="fnm">'+esc(r.p.name)+(r.p.device===g.me&&!g.solo?' (tú)':'')+'</b><span class="spst">✔'+r.s.ok+' ✖'+r.s.bad+' ⏭'+r.s.pass+'</span><span class="fxp">'+r.s.score+'</span></div>').join('')+'</div>';
+  const host=!g.solo&&RM.st&&RM.st.room.host===RM.st.me;
+  const foot='<div class="lf"><div class="in"><button class="btn ghost" style="margin-bottom:10px" data-a="sp-fb">📝 Retroalimentación: ¿en qué fallé?</button><div class="row2">'+((g.solo||host)?'<button class="btn" data-a="sp-again">Jugar otra vez</button>':'')+'<button class="btn ghost" data-a="rm-exit-yes">Salir</button></div>'+((g.solo||host)?'':'<p class="muted" style="text-align:center;margin:8px 0 0;font-size:13px">Quien creó la sala puede empezar otra partida.</p>')+'</div></div>';
+  return rmShell('<div style="display:flex;justify-content:center">'+mascot(mood,100)+'</div><div class="rmwin" style="--tc:'+tc+'">'+banner+'<small>'+sub+'</small></div>'+
+    '<div class="spsum"><div><b>'+me.s.ok+'</b><span>✔ Acertadas</span></div><div><b>'+me.s.bad+'</b><span>✖ Fallidas</span></div><div><b>'+me.s.pass+'</b><span>⏭ Pasó</span></div></div>'+list,foot,false);
+}
+function spOnDone(){
+  const g=SP;if(!g||g.rewarded)return;g.rewarded=true;
+  const rows=spRank(),me=rows.find(r=>r.p.device===g.me);
+  let big=false;
+  if(g.solo){
+    S.spBest=S.spBest||{};const prev=S.spBest[g.cfg.dur]||0;
+    if(me.s.score>prev){S.spBest[g.cfg.dur]=me.s.score;if(prev>0)g.newBest=true;}
+    big=me.s.score>0&&(g.newBest||me.s.score>=10);
+  }else big=me.pos===1&&rows.filter(r=>r.pos===1).length===1;
+  try{
+    recordDay(10);S.gplays=(S.gplays||0)+1;if(!g.solo)S.rmplays=(S.rmplays||0)+1;
+    ACH.filter(a=>!S.ach[a.id]&&a.f(S)).forEach(a=>S.ach[a.id]=true);save();renderTop();
+  }catch(e){}
+  if(big){beep('win');confetti(90);}
+  if(g.solo)spRender();
+}
+function spFeedback(){
+  const g=SP,qs=g.cfg.qs,errs=[];
+  g.mine.slice().sort((a,b)=>a.i-b.i).forEach(m=>{const q=qs[m.i];if(!q)return;if(m.c===-1)errs.push({q,m,t:'pass'});else if(m.c!==q.a)errs.push({q,m,t:'bad'});});
+  if(!errs.length){showModal('<h3>📝 Retroalimentación</h3><p>¡Sin errores ni pasos! Respondiste todo bien.</p><button class="btn" data-a="stay">Cerrar</button>');return;}
+  const byKind={};errs.forEach(e=>{byKind[e.q.k]=(byKind[e.q.k]||0)+1;});
+  const topics=Object.keys(byKind).sort((a,b)=>byKind[b]-byKind[a]).map(k=>'<span class="sptag">'+esc(SP_KIND[k]||k)+' · '+byKind[k]+'</span>').join('');
+  const items=errs.map(e=>{
+    const q=e.q,ref=q.x&&q.k==='blank'?q.x+' — '+q.r:(q.x||'')+(q.r&&q.r!==q.x?' · '+q.r:'');
+    return '<div class="spfb '+e.t+'"><small>'+(e.t==='pass'?'⏭ Pasaste':'✖ Fallaste')+' · '+esc(SP_KIND[q.k]||'')+'</small><b>'+esc(q.p)+'</b>'+(q.c?'<p class="spc">'+esc(q.c)+'</p>':'')+(e.t==='bad'?'<p>Tu respuesta: <s>'+esc(q.o[e.m.c])+'</s></p>':'')+'<p>Correcta: <strong>'+esc(q.o[q.a])+'</strong></p>'+(ref?'<p class="muted spr">'+esc(ref)+'</p>':'')+'</div>';
+  }).join('');
+  showModal('<h3>📝 ¿En qué fallé?</h3><p class="muted" style="margin:-6px 0 8px">Temas a repasar:</p><div class="sptags">'+topics+'</div><div class="gwmod spfbl">'+items+'</div><button class="btn" data-a="stay">Cerrar</button>');
+}
+/* menú solo */
+function spSoloMenuHTML(){
+  const pills=[30,60,90].map(t=>'<button class="rdpill '+(SPSET.dur===t?'on':'')+'" data-a="sp-set-dur" data-v="'+t+'">'+t+' s</button>').join('');
+  const best=(S.spBest&&S.spBest[SPSET.dur])||0;
+  return rmShell('<div class="gsetup"><span style="font-size:52px;line-height:1">🏁</span><div><h1>Carrera de versículos</h1><p>Contrarreloj: responde todas las preguntas que puedas antes de que se acabe el tiempo.</p></div></div>'+
+    '<section class="sec"><h3>¿Cuánto dura?</h3><div class="rdpills">'+pills+'</div></section>'+
+    '<section class="sec"><h3>Puntos</h3><p class="muted" style="margin:0;font-weight:800">✔ Acierto: +2 · ✖ Error: −2 · ⏭ «Paso»: 0</p>'+(best?'<p style="margin:10px 0 0;font-weight:900">🏅 Tu récord en '+SPSET.dur+' s: '+best+' puntos</p>':'')+'</section>',
+    '<div class="lf"><div class="in"><button class="btn" data-a="sp-solo-go">Empezar</button></div></div>',false);
+}
+function spSoloMenu(){
+  SP=null;GW=null;RM.code=null;RM.st=null;RM.sig='';
+  rmOpenOverlay();$('#room').innerHTML=spSoloMenuHTML();
+}
+function spRender(){
+  if(!SP)return;
+  if(SP.solo){
+    const lb=document.querySelector('#room .lb'),top=lb?lb.scrollTop:0,pv=SP.rv;
+    SP.rv=SP.stage;
+    $('#room').innerHTML=spView();
+    const l2=document.querySelector('#room .lb');if(l2)l2.scrollTop=(SP.rv===pv?top:0);
+  }else{RM.sig='';rmRender(true);}
+}
+function spAct(a,b){
+  if(a==='sp-solo'){spSoloMenu();return;}
+  if(a==='sp-set-dur'){SPSET.dur=+b.dataset.v;$('#room').innerHTML=spSoloMenuHTML();return;}
+  if(a==='sp-solo-go'){spStartSolo();return;}
+  if(!SP)return;
+  if(a==='sp-ans'){spAnswer(+b.dataset.i);return;}
+  if(a==='sp-pass'){spAnswer(-1);return;}
+  if(a==='sp-fb'){spFeedback();return;}
+  if(a==='sp-again'){
+    if(SP.solo){spStartSolo();return;}
+    rpc('fr_room_again',frArgs({p_code:RM.code})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));else{SP=null;RM.sig='';RM.lastState=0;}RM.rewarded='';rmPoll();}).catch(()=>toast('Sin conexión.'));
+  }
+}
+
 /* ----- preguntas ----- */
 function rmQBlank(used){
   const all=ALLV.filter(x=>x.t.split(/\s+/).length<=26&&BLANKS[x.r]),pool=all.filter(x=>!used.has(x.r));const v=pickOne(gFresh('comp',pool.length?pool:all,x=>x.r));used.add(v.r);gMark('comp',v.r);
@@ -4908,6 +5216,7 @@ async function rmPoll(){
   const code=RM.code;if(!code)return;
   try{
     if(GW&&!GW.solo&&RM.st&&RM.st.room.mode==='guess'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await gwPoll();return;}
+    if(SP&&!SP.solo&&RM.st&&RM.st.room.mode==='sprint'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await spPoll();return;}
     const st=await rpc('fr_room_state',frArgs({p_code:code}));
     if(code!==RM.code)return;
     if(st.error){rmEnd(st.error==='sala_no_existe'||st.error==='no_estas'?'La sala se cerró.':famMsg(st.error));return;}
@@ -4917,12 +5226,17 @@ async function rmPoll(){
       if(st.room.status==='lobby')GW=null;
       else if(st.cfg&&(!GW||GW.cfgKey!==st.room.code+'|'+st.cfg.first+'|'+st.cfg.ids.join(',')))gwInitLive(st);
     }
+    if(st.room.mode==='sprint'){
+      if(st.room.status==='lobby')SP=null;
+      else if(st.cfg&&(!SP||SP.key!==spKey(st)))spInitLive(st);
+    }
     rmRender();
     if(st.room.mode==='guess'&&st.room.status!=='lobby'&&GW)await gwPoll();
+    if(st.room.mode==='sprint'&&st.room.status!=='lobby'&&SP)await spPoll();
   }catch(e){RM.fails++;if(RM.fails===4)rmRender(true);}
 }
 function rmEnd(msg){
-  clearTimeout(RM.loop);RM.code=null;RM.st=null;RM.sig='';GW=null;
+  clearTimeout(RM.loop);RM.code=null;RM.st=null;RM.sig='';GW=null;SP=null;
   $('#room').hidden=true;$('#room').innerHTML='';document.body.style.overflow='';
   if(msg)toast(msg);
   render();
@@ -4989,13 +5303,14 @@ function rmFinalHTML(st){
 function rmView(st){
   const r=st.room;
   if(r.status==='lobby')return rmLobbyHTML(st);
+  if(r.mode==='sprint')return SP?spView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la carrera…</b></div>','',false);
   if(r.mode==='guess')return GW?gwView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la partida…</b></div>','',false);
   if(r.status==='finished')return rmFinalHTML(st);
   return r.mode==='assemble'?rmAssembleHTML(st):rmQuestionHTML(st);
 }
 function rmRender(force){
   const st=RM.st;if(!st||!RM.code)return;
-  const sig=JSON.stringify([st.room.status,st.room.phase,st.room.q,st.room.host,st.players.map(p=>[p.device,p.name,p.avatar,p.team,p.score,p.answered,p.active,p.badge,p.placed]),st.q&&[st.q.slots,st.q.mine,st.q.hint,st.q.errors,st.q.a,st.q.complete],st.mine,st.answers&&st.answers.length,RM.sel,RM.my&&RM.my.i,RM.fails>=4,GW?GW.v:0]);
+  const sig=JSON.stringify([st.room.status,st.room.phase,st.room.q,st.room.host,st.players.map(p=>[p.device,p.name,p.avatar,p.team,p.score,p.answered,p.active,p.badge,p.placed]),st.q&&[st.q.slots,st.q.mine,st.q.hint,st.q.errors,st.q.a,st.q.complete],st.mine,st.answers&&st.answers.length,RM.sel,RM.my&&RM.my.i,RM.fails>=4,GW?GW.v:0,SP?SP.v:0]);
   if(!force&&sig===RM.sig)return;
   const prevPhase=RM.lastPhase,prevQ=RM.lastQ;RM.sig=sig;
   const _lb=document.querySelector('#room .lb'),_top=_lb?_lb.scrollTop:0,_pv=GW&&GW.vk;
@@ -5004,7 +5319,7 @@ function rmRender(force){
   if(RM.fails>=4){const b=document.createElement('div');b.className='banner';b.style.margin='0 0 12px';b.textContent='Reconectando…';const lb=$('#room').querySelector('.lb');if(lb)lb.prepend(b);}
   if(st.room.phase==='reveal'&&(prevPhase!=='reveal'||prevQ!==st.room.q)&&st.mine){beep(st.mine.correct?'good':'bad');haptic(st.mine.correct?15:[30,40,30]);}
   RM.lastPhase=st.room.phase;RM.lastQ=st.room.q;
-  if(st.room.status==='finished'&&st.room.mode!=='guess'&&RM.rewarded!==st.room.code){
+  if(st.room.status==='finished'&&st.room.mode!=='guess'&&st.room.mode!=='sprint'&&RM.rewarded!==st.room.code){
     RM.rewarded=st.room.code;
     const x=recordDay(10);S.gplays=(S.gplays||0)+1;S.rmplays=(S.rmplays||0)+1;
     const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();renderTop();
@@ -5041,6 +5356,12 @@ async function rmPlace(slot){
 }
 async function rmStart(){
   const st=RM.st;if(!st)return;const M=RM_MODES[st.room.mode];
+  if(st.room.mode==='sprint'){
+    const cfg={dur:st.room.total*10,qs:rmBuildQA(40)};
+    try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
+    catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
+    rmPoll();return;
+  }
   if(st.room.mode==='guess'){
     const ids=gwBoard(RM.cfg.size||20),cfg={rounds:st.room.total,size:ids.length,ids,first:pickOne(st.players).device};
     try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
@@ -5738,7 +6059,7 @@ function rmTilesHTML(){
   }).join('')+'</div>';
   if(!frActive())out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Para jugar en vivo, crea tu perfil y sigue a alguien.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
   else if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Sigue al menos a una persona para invitarla a jugar.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
-  else out+='<div class="gtiles">'+Object.values(RM_MODES).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
+  else out+='<div class="gtiles">'+Object.values(RM_MODES).filter(m=>!m.hide).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
   return out+'<h3 class="rmh" style="margin-top:24px">📱 En un solo celular</h3>';
 }
 function rmMenuHTML(){
@@ -5750,7 +6071,7 @@ function rmMenuHTML(){
     return '<button class="pickrow'+(on?' on':'')+'" data-a="rm-pick" data-d="'+esc(f.device)+'" aria-pressed="'+on+'"><span class="fav big">'+esc(f.avatar)+'</span><b>'+esc(frName(f))+'</b><span class="chk">'+(on?'✔':'')+'</span></button>';}).join('')+'</div>'
     :'<p class="muted">Aún no sigues a nadie.</p>';
   const who='<section class="sec"><h3>¿Con quién juegas?</h3><p class="muted" style="font-size:14px;margin:0 0 10px">'+(M.one?'Elige a 1 persona.':'Elige hasta 7 personas. Les llegará una invitación.')+'</p>'+list+'</section>';
-  let settings='<section class="sec"><h3>'+(M.id==='assemble'?'¿Cuántos versículos?':M.id==='guess'?'¿Cuántas rondas?':'¿Cuántas preguntas?')+'</h3>'+(M.id==='guess'?'<p class="muted" style="font-size:14px;margin:0 0 10px">En cada ronda, cada jugador tiene un turno para preguntar o adivinar.</p>':'')+'<div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+t+'</button>').join('')+'</div></section>';
+  let settings='<section class="sec"><h3>'+(M.id==='assemble'?'¿Cuántos versículos?':M.id==='guess'?'¿Cuántas rondas?':M.id==='sprint'?'¿Cuánto dura la carrera?':'¿Cuántas preguntas?')+'</h3>'+(M.id==='guess'?'<p class="muted" style="font-size:14px;margin:0 0 10px">En cada ronda, cada jugador tiene un turno para preguntar o adivinar.</p>':M.id==='sprint'?'<p class="muted" style="font-size:14px;margin:0 0 10px">Todos responden las mismas preguntas, cada uno a su ritmo. ✔ Acierto +2 · ✖ Error −2 · ⏭ Paso 0.</p>':'')+'<div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+(M.id==='sprint'?t*10+' s':t)+'</button>').join('')+'</div></section>';
   if(M.id==='guess')settings+='<section class="sec"><h3>¿Cuántos personajes en el tablero?</h3><div class="rdpills">'+[12,20,30].map(t=>'<button class="rdpill '+((RM.cfg.size||20)===t?'on':'')+'" data-a="rm-size" data-v="'+t+'">'+t+'</button>').join('')+'</div></section>';
   return rmShell(head+who+settings,
     '<div class="lf"><div class="in"><button class="btn" data-a="rm-create" '+(n?'':'disabled')+'>'+(n?'Crear sala e invitar a '+n:'Elige a quién invitar')+'</button></div></div>',false);
@@ -5822,7 +6143,7 @@ function rmLobbyHTML(st){
   const room=n<((r.mode==='duel'||r.mode==='guess')?2:8);
   const actions=host?'<div class="row2" style="margin:14px 0 0">'+(cands.length&&room?'<button class="btn ghost sm" data-a="rm-invite-open">➕ Invitar a más</button>':'')+'<button class="btn ghost sm" data-a="rm-invite">📲 Avisar por WhatsApp</button></div>':'';
   const need=!enough?((r.mode==='duel'||r.mode==='guess')?'Faltan jugadores: este juego es de 2.':'Hace falta al menos otra persona. Cuando acepte la invitación, aparecerá aquí.'):(!teamsOk?'Cada equipo necesita al menos un jugador.':'');
-  return rmShell('<div class="gsetup"><span style="font-size:48px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+r.total+(r.mode==='assemble'?' versículos':r.mode==='guess'?' rondas':' preguntas')+' · '+n+(n===1?' jugador':' jugadores')+'</p></div></div>'+
+  return rmShell('<div class="gsetup"><span style="font-size:48px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+(r.mode==='sprint'?(r.total*10)+' segundos':r.total+(r.mode==='assemble'?' versículos':r.mode==='guess'?' rondas':' preguntas'))+' · '+n+(n===1?' jugador':' jugadores')+'</p></div></div>'+
     '<h3 style="margin:6px 0 8px">Jugadores</h3>'+list+waiting+actions+
     (host?'':'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">Esperando a que empiece la partida…</p>')+
     (need&&host?'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">'+esc(need)+'</p>':''),
@@ -7775,7 +8096,7 @@ function av(i){return '<span class="av" style="background:'+PCOL[i%PCOL.length]+
 function gamesHTML(){
   return '<h1 class="page">Juegos</h1>'+
    '<div class="hero">'+mascot('cheer',84)+'<div class="bubble">'+(famOn()?'¡Elijan un juego! Pueden jugar cada quien en su celular o pasarse uno solo.':'¡Elijan un juego! Uno lee la pantalla y los demás responden.')+'</div></div>'+rmTilesHTML()+
-   '<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#A560E8" data-a="gw-solo"><span class="gemo" aria-hidden="true">🕵️</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>';
+   '<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button><button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>';
 }
 function gShow(){$('#game').hidden=false;document.body.style.overflow='hidden';}
 function gTheme(){const el=$('#game');el.className='overlay gamed';if(G&&G.game){el.style.setProperty('--gc',G.game.c);el.style.setProperty('--gcol',G.game.c);}}
@@ -7958,6 +8279,7 @@ document.addEventListener('click',e=>{
   else if(a==='rd-reset'){showModal('<h3>¿Empezar un plan nuevo?</h3><p>Se borrarán las lecturas que marcaste en este plan. Tu racha de lectura y tus logros se conservan.</p><button class="btn" data-a="stay">Seguir con mi plan</button><button class="btn ghost" data-a="rd-reset-yes">Sí, empezar de nuevo</button>');}
   else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
+  else if(a.slice(0,3)==='sp-'){spAct(a,b);}
   else if(a==='rm-size'){RM.cfg.size=+b.dataset.v;rmMenuRefresh();}
   else if(a==='rm-open'){RM.pick=[];rmOpenMenu('create',b.dataset.m);}
   else if(a==='rm-pick'){rmPickToggle(b.dataset.d);}
@@ -7965,7 +8287,7 @@ document.addEventListener('click',e=>{
   else if(a==='rm-inv-send'){rmInviteSend(b.dataset.to);}
   else if(a==='rm-total'){RM.cfg.total=+b.dataset.v;rmMenuRefresh();}
   else if(a==='rm-create'){rmCreate();}
-  else if(a==='rm-exit'){if(!RM.code&&GW&&GW.solo&&GW.st&&GW.st.phase==='play'&&!GW.st.over){showModal('<h3>¿Salir de la partida?</h3><p>Se perderá el avance de esta partida.</p><button class="btn" data-a="stay">Seguir jugando</button><button class="btn ghost" data-a="rm-exit-yes">Salir</button>');}else if(!RM.code){GW=null;$('#room').hidden=true;$('#room').innerHTML='';document.body.style.overflow='';render();}else showModal('<h3>¿Salir de la sala?</h3><p>Dejarás la partida y los demás seguirán sin ti.</p><button class="btn" data-a="stay">Quedarme</button><button class="btn ghost" data-a="rm-exit-yes">Salir</button>');}
+  else if(a==='rm-exit'){if(!RM.code&&((GW&&GW.solo&&GW.st&&GW.st.phase==='play'&&!GW.st.over)||(SP&&SP.solo&&!SP.done))){showModal('<h3>¿Salir de la partida?</h3><p>Se perderá el avance de esta partida.</p><button class="btn" data-a="stay">Seguir jugando</button><button class="btn ghost" data-a="rm-exit-yes">Salir</button>');}else if(!RM.code){GW=null;SP=null;$('#room').hidden=true;$('#room').innerHTML='';document.body.style.overflow='';render();}else showModal('<h3>¿Salir de la sala?</h3><p>Dejarás la partida y los demás seguirán sin ti.</p><button class="btn" data-a="stay">Quedarme</button><button class="btn ghost" data-a="rm-exit-yes">Salir</button>');}
   else if(a==='rm-exit-yes'){rmLeave();}
   else if(a==='rm-team'){rpc('fr_room_team',frArgs({p_code:RM.code,p_team:+b.dataset.t})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));rmPoll();}).catch(()=>toast('Sin conexión.'));}
   else if(a==='rm-start'){rmStart();}
