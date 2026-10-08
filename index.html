@@ -760,6 +760,58 @@ a.btn{text-decoration:none;text-align:center}
 .rminvb .btn{width:auto;flex:none;padding:8px 14px;font-size:13px}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== ¿Quién es quién? ===== */
+.gwhead h1{margin:0 0 4px;font-size:22px;line-height:1.15}
+.gwhead p{margin:0 0 12px;color:var(--muted);font-weight:700;font-size:14px;line-height:1.35}
+.gwst{padding:10px 14px;border-radius:16px;background:var(--surface);border:2px solid var(--line);margin:4px 0 10px;display:grid;gap:2px}
+.gwst b{font-size:16px;line-height:1.2}
+.gwst span{font-size:13px;color:var(--muted);font-weight:700;line-height:1.3}
+.gwst.me{border-color:var(--blue);background:var(--blue-bg)}
+.gwst.me b{color:var(--blue-ink)}
+.gwvf{border-radius:18px;padding:10px 12px;text-align:center;margin:0 0 10px;border:3px solid;animation:gwpop .3s}
+.gwvf b{display:block;font-size:24px;line-height:1.15}
+.gwvf span{font-size:14px;font-weight:800}
+.gwvf span b{display:inline;font-size:inherit}
+.gwvf.v{background:var(--green-bg);border-color:var(--green);color:var(--green-ink)}
+.gwvf.f{background:var(--red-bg);border-color:var(--red);color:var(--red-ink)}
+@keyframes gwpop{0%{transform:scale(.9);opacity:0}100%{transform:none;opacity:1}}
+.gwcount{font-size:13px;font-weight:800;color:var(--muted);margin:2px 2px 8px}
+.gwcount b{color:var(--ink)}
+.gwgrid{display:grid;gap:8px;margin:0 0 14px}
+.gwgrid.c3{grid-template-columns:repeat(3,1fr)}
+.gwgrid.c4{grid-template-columns:repeat(4,1fr);gap:6px}
+.gwc{position:relative}
+.gwcb{width:100%;height:100%;display:grid;justify-items:center;align-content:start;gap:4px;padding:8px 3px 6px;min-height:92px;border-radius:14px;border:2px solid var(--cc);border-bottom-width:4px;background:var(--surface);position:relative;overflow:hidden;color:var(--ink)}
+.gwcb:active{transform:translateY(2px)}
+.gwav{width:36px;height:36px;border-radius:50%;background:var(--cc);color:#fff;display:grid;place-items:center;font-weight:900;font-size:19px;flex:none}
+.gwav.lg{width:64px;height:64px;font-size:34px;display:inline-grid}
+.gwn{font-size:11.5px;font-weight:900;line-height:1.1;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;word-break:break-word}
+.gwx{display:none}
+.gwc.off .gwcb{background:var(--line);border-color:var(--line);opacity:.5;filter:grayscale(1)}
+.gwc.off .gwx{display:grid;position:absolute;inset:0;place-items:center;font-size:34px;color:var(--muted)}
+.gwc.sel .gwcb{box-shadow:0 0 0 4px var(--green);border-color:var(--green)}
+.gwc.fresh .gwcb{animation:gwflip .35s}
+@keyframes gwflip{0%{transform:rotateY(90deg)}100%{transform:none}}
+.gwi{position:absolute;top:-5px;right:-4px;width:22px;height:22px;border-radius:50%;background:var(--surface);border:2px solid var(--line);font-size:12px;font-weight:900;font-style:italic;font-family:Georgia,serif;color:var(--blue);display:grid;place-items:center;padding:0;z-index:2}
+.gwi::after{content:'';position:absolute;inset:-8px}
+.gwk{margin:6px 0 10px}
+.gwk h3{margin:0 0 6px;font-size:16px}
+.gwkr{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:12px;margin-bottom:6px;font-size:14px;font-weight:700;line-height:1.25}
+.gwkr.v{background:var(--green-bg)}
+.gwkr.f{background:var(--red-bg)}
+.gwkr span:nth-child(2){flex:1;min-width:0}
+.gwkv{font-weight:900}
+.gwkr.v .gwkv,.gwkr.v em{color:var(--green-ink)}
+.gwkr.f .gwkv,.gwkr.f em{color:var(--red-ink)}
+.gwkr em{font-style:normal;font-weight:900;font-size:12px}
+.gwrev{display:flex;gap:14px;align-items:center;padding:14px;border-radius:18px;border:2px solid var(--line);background:var(--surface);margin:0 0 12px}
+.gwrev small{display:block;color:var(--muted);font-weight:800;font-size:12px}
+.gwrev b{display:block;font-size:20px;line-height:1.15;margin:1px 0 4px}
+.gwrev p{margin:0;font-size:14px;line-height:1.35}
+.gwmod{max-height:52vh;overflow:auto;margin-bottom:12px}
+.gwmod .pickrow{margin-bottom:8px}
+@media (prefers-reduced-motion:reduce){.gwc.fresh .gwcb,.gwvf{animation:none}}
 </style>
 </head>
 <body>
@@ -4316,16 +4368,473 @@ function giftsCardHTML(){
    ============================================================ */
 const RM_MODES={
   race:{id:'race',t:'Carrera de versículos',d:'Todos responden a la vez. ¡El más rápido gana más!',emo:'🏁',c:'#FF9600',totals:[5,10,15],def:10,time:20,min:'2 a 8 jugadores'},
-  duel:{id:'duel',t:'Duelo 1 contra 1',d:'Dos jugadores, mismas preguntas.',emo:'⚔️',c:'#FF4B4B',totals:[5,7,10],def:7,time:20,min:'2 jugadores'},
+  duel:{id:'duel',t:'Duelo 1 contra 1',d:'Dos jugadores, mismas preguntas.',emo:'⚔️',c:'#FF4B4B',totals:[5,7,10],def:7,time:20,min:'2 jugadores',one:true},
   teams:{id:'teams',t:'Equipos',d:'Azul contra Naranja: suman los puntos de todos.',emo:'🤝',c:'#1CB0F6',totals:[6,10,14],def:10,time:20,min:'4 a 8 jugadores (mínimo 2)'},
-  assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores'}
+  assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores'},
+  guess:{id:'guess',t:'¿Quién es quién?',d:'Cada uno elige en secreto un personaje. ¡Adivina el del otro!',emo:'🕵️',c:'#A560E8',totals:[5,8,12],def:8,time:20,min:'2 jugadores',one:true}
 };
 const RM_TEAM=[null,{n:'Azul',c:'#1CB0F6',e:'🔵'},{n:'Naranja',c:'#FF9600',e:'🟠'}];
-let RM={code:null,st:null,t0:0,rem0:0,sig:'',sel:null,my:null,loop:0,fails:0,cfg:{mode:'race',total:10},screen:'menu',rewarded:'',av:'🙂',pick:[]};
+let RM={code:null,st:null,t0:0,rem0:0,sig:'',sel:null,my:null,loop:0,fails:0,cfg:{mode:'race',total:10,size:20},screen:'menu',rewarded:'',av:'🙂',pick:[]};
 
 
 
 
+
+
+/* ============================================================
+   ¿QUIÉN ES QUIÉN? — adivina el personaje bíblico (1 o 2 jugadores)
+   · Solo: Lampy elige un personaje al azar.
+   · En vivo: cada jugador elige en secreto el personaje que el otro debe adivinar.
+     El personaje secreto NUNCA se envía al servidor: solo el teléfono de quien lo eligió responde.
+   ============================================================ */
+/* ============================================================
+   ADIVINA EL PERSONAJE — datos
+   K(id, nombre, testamento, sexo, edad, rol, partes, épocas, marcas, libros, descripción)
+   · edad = la que tenía en el momento más famoso de su historia (J joven/niño, A adulto, V anciano)
+   · marcas: j conoció a Jesús durante su ministerio · n cambió o recibió otro nombre · g está en la genealogía de Mateo 1
+             h se nombra en Hebreos 11 · m la Biblia lo presenta como malo/enemigo de Dios o de su pueblo · x extranjero (no israelita)
+   ============================================================ */
+const GW_ROLES={rey:'Rey o reina',profeta:'Profeta',sacerdote:'Sacerdote',apostol:'Apóstol',discipulo:'Discípulo o colaborador de los apóstoles',patriarca:'Patriarca o matriarca',juez:'Juez',lider:'Líder de Israel',otro:'Otro (ninguno de los anteriores)'};
+const GW_AGES={J:'Niño o joven',A:'Adulto',V:'Anciano'};
+const GW_PARTS={ley:'La Ley (Génesis a Deuteronomio)',hist:'Libros históricos (Josué a Ester)',prof:'Los profetas (Isaías a Malaquías)',evang:'Los Evangelios',hechos:'Hechos',cartas:'Las cartas'};
+const GW_EPOCHS={1:'Principios y patriarcas (Génesis)',2:'Moisés y la conquista de Canaán',3:'Jueces y reino unido (Saúl, David, Salomón)',4:'Reinos divididos, cautiverio y restauración',5:'Vida de Jesús',6:'La Iglesia primitiva'};
+const GW_PAUL=['Romanos','1 Corintios','2 Corintios','Gálatas','Efesios','Filipenses','Colosenses','1 Tesalonicenses','2 Tesalonicenses','1 Timoteo','2 Timoteo','Tito','Filemón'];
+function K(id,n,t,s,e,r,p,ep,fl,au,d){return {id,n,t,s,e,r,p:p.split(','),ep:String(ep).split(',').map(Number),j:fl.includes('j'),nn:fl.includes('n'),ge:fl.includes('g'),h:fl.includes('h'),ma:fl.includes('m'),ex:fl.includes('x'),au:au?(Array.isArray(au)?au:au.split('|')):[],d};}
+const GW_CHARS=[
+ K('adan','Adán','AT','H','A','otro','ley',1,'',0,'El primer hombre. Dios lo creó del polvo de la tierra.'),
+ K('eva','Eva','AT','M','A','otro','ley',1,'',0,'La primera mujer, esposa de Adán.'),
+ K('cain','Caín','AT','H','A','otro','ley',1,'m',0,'Hijo de Adán. Mató a su hermano Abel.'),
+ K('abel','Abel','AT','H','A','otro','ley',1,'h',0,'Hijo de Adán. Su ofrenda agradó a Dios y su hermano lo mató.'),
+ K('noe','Noé','AT','H','V','patriarca','ley',1,'h',0,'Construyó el arca y se salvó del diluvio con su familia.'),
+ K('abraham','Abraham','AT','H','V','patriarca','ley',1,'ngh',0,'Padre de la fe. Dios le prometió una gran nación. Antes se llamaba Abram.'),
+ K('sara','Sara','AT','M','V','patriarca','ley',1,'nh',0,'Esposa de Abraham y madre de Isaac. Antes se llamaba Sarai.'),
+ K('isaac','Isaac','AT','H','A','patriarca','ley',1,'gh',0,'Hijo de la promesa de Abraham y Sara. Padre de Jacob y Esaú.'),
+ K('rebeca','Rebeca','AT','M','J','patriarca','ley',1,'',0,'Esposa de Isaac. Era la joven que dio de beber al siervo de Abraham junto al pozo.'),
+ K('jacob','Jacob','AT','H','A','patriarca','ley',1,'ngh',0,'Hijo de Isaac. Dios le cambió el nombre a Israel; tuvo 12 hijos.'),
+ K('esau','Esaú','AT','H','A','otro','ley',1,'h',0,'Hermano mellizo de Jacob. Vendió su primogenitura por un plato de lentejas.'),
+ K('jose1','José, hijo de Jacob','AT','H','J','patriarca','ley',1,'nh',0,'Vendido por sus hermanos a Egipto, llegó a gobernar allí y salvó a su familia del hambre.'),
+ K('moises','Moisés','AT','H','V','profeta','ley',2,'h','Génesis|Éxodo|Levítico|Números|Deuteronomio','Sacó a Israel de Egipto y recibió la ley en el monte Sinaí.'),
+ K('aaron','Aarón','AT','H','V','sacerdote','ley',2,'',0,'Hermano de Moisés y primer sumo sacerdote de Israel.'),
+ K('josue','Josué','AT','H','A','lider','ley,hist',2,'n',0,'Sucesor de Moisés. Dirigió la conquista de Canaán. Antes se llamaba Oseas.'),
+ K('rahab','Rahab','AT','M','A','otro','hist',2,'ghx',0,'Mujer de Jericó que escondió a los espías de Israel por su fe.'),
+ K('debora','Débora','AT','M','A','juez','hist',3,'',0,'Profetisa y jueza de Israel. Acompañó a Barac a la batalla.'),
+ K('gedeon','Gedeón','AT','H','A','juez','hist',3,'nh',0,'Juez de Israel. Venció a Madián con solo 300 hombres.'),
+ K('sanson','Sansón','AT','H','A','juez','hist',3,'h',0,'Juez de Israel de fuerza extraordinaria. Era nazareo.'),
+ K('rut','Rut','AT','M','A','otro','hist',3,'gx',0,'Mujer de Moab que siguió a su suegra Noemí. Fue bisabuela de David.'),
+ K('booz','Booz','AT','H','A','otro','hist',3,'g',0,'Redentor de Rut y esposo suyo. Bisabuelo de David.'),
+ K('ana','Ana','AT','M','A','otro','hist',3,'',0,'Madre de Samuel. Pidió un hijo a Dios con oración y se lo consagró.'),
+ K('samuel','Samuel','AT','H','J','profeta','hist',3,'h',0,'Dios lo llamó de niño en el tabernáculo. Ungió a Saúl y a David.'),
+ K('saul','Saúl','AT','H','A','rey','hist',3,'',0,'Primer rey de Israel. Desobedeció a Dios y perdió el reino.'),
+ K('david','David','AT','H','J','rey','hist',3,'gh','Salmos','Pastor que venció a Goliat y llegó a ser rey de Israel. Escribió muchos Salmos.'),
+ K('goliat','Goliat','AT','H','A','otro','hist',3,'mx',0,'Gigante filisteo que desafió a Israel y murió a manos de David.'),
+ K('jonatan','Jonatán','AT','H','J','otro','hist',3,'',0,'Hijo del rey Saúl y gran amigo de David.'),
+ K('betsabe','Betsabé','AT','M','A','otro','hist',3,'g',0,'Esposa de Urías y luego de David. Madre de Salomón.'),
+ K('natan','Natán','AT','H','A','profeta','hist',3,'',0,'Profeta que reprendió a David por su pecado.'),
+ K('salomon','Salomón','AT','H','A','rey','hist',3,'gn','Proverbios|Eclesiastés|Cantares','Hijo de David. Pidió sabiduría a Dios, edificó el templo y escribió Proverbios. Se llamó también Jedidías.'),
+ K('elias','Elías','AT','H','A','profeta','hist',4,'',0,'Profeta que enfrentó a los profetas de Baal en el monte Carmelo.'),
+ K('eliseo','Eliseo','AT','H','A','profeta','hist',4,'',0,'Sucesor de Elías. Recibió una doble porción de su espíritu.'),
+ K('jezabel','Jezabel','AT','M','A','rey','hist',4,'mx',0,'Reina de Israel, esposa de Acab. Promovió la adoración a Baal.'),
+ K('isaias','Isaías','AT','H','A','profeta','prof',4,'','Isaías','Gran profeta que anunció al Mesías, el Siervo sufriente.'),
+ K('jeremias','Jeremías','AT','H','A','profeta','prof',4,'','Jeremías','El profeta que lloró. Advirtió a Judá del cautiverio en Babilonia.'),
+ K('ezequiel','Ezequiel','AT','H','A','profeta','prof',4,'','Ezequiel','Profeta entre los cautivos en Babilonia. Vio la visión del valle de los huesos secos.'),
+ K('daniel','Daniel','AT','H','V','profeta','prof',4,'n','Daniel','Cautivo en Babilonia. Dios lo guardó en el foso de los leones. Le pusieron el nombre Beltsasar.'),
+ K('nabucodonosor','Nabucodonosor','AT','H','A','rey','hist,prof',4,'x',0,'Rey de Babilonia. Destruyó Jerusalén y se llevó a Israel cautivo.'),
+ K('jonas','Jonás','AT','H','A','profeta','prof',4,'','Jonás','Profeta enviado a Nínive. Pasó tres días dentro de un gran pez.'),
+ K('ester','Ester','AT','M','J','rey','hist',4,'n',0,'Reina de Persia. Salvó a su pueblo del plan de Amán. Su nombre hebreo era Hadasa.'),
+ K('aman','Amán','AT','H','A','otro','hist',4,'mx',0,'Alto funcionario del rey Asuero. Planeó destruir a los judíos.'),
+ K('esdras','Esdras','AT','H','V','sacerdote','hist',4,'','Esdras','Sacerdote y escriba que enseñó la ley al pueblo que volvió del cautiverio.'),
+ K('nehemias','Nehemías','AT','H','A','lider','hist',4,'','Nehemías','Copero del rey de Persia. Dirigió la reconstrucción de los muros de Jerusalén.'),
+ K('malaquias','Malaquías','AT','H','A','profeta','prof',4,'','Malaquías','El último profeta del Antiguo Testamento.'),
+ K('maria','María, madre de Jesús','NT','M','J','otro','evang',5,'jg',0,'Virgen de Nazaret. Dio a luz a Jesús por obra del Espíritu Santo.'),
+ K('jose2','José, esposo de María','NT','H','A','otro','evang',5,'g',0,'Carpintero de Nazaret. Cuidó de María y de Jesús.'),
+ K('bautista','Juan el Bautista','NT','H','A','profeta','evang',5,'j',0,'Preparó el camino de Jesús y lo bautizó en el Jordán.'),
+ K('pedro','Pedro','NT','H','A','apostol','evang,hechos','5,6','jn','1 Pedro|2 Pedro','Pescador y apóstol. Negó a Jesús tres veces y luego predicó en Pentecostés. Se llamaba Simón.'),
+ K('juan','Juan, el apóstol','NT','H','A','apostol','evang,hechos','5,6','j','Juan|1 Juan|2 Juan|3 Juan|Apocalipsis','Apóstol, hijo de Zebedeo y «el discípulo amado». Escribió cinco libros del Nuevo Testamento.'),
+ K('mateo','Mateo','NT','H','A','apostol','evang',5,'jn','Mateo','Cobrador de impuestos que dejó todo para seguir a Jesús. También se llamaba Leví.'),
+ K('judas','Judas Iscariote','NT','H','A','apostol','evang',5,'jm',0,'Uno de los doce apóstoles. Traicionó a Jesús por treinta piezas de plata.'),
+ K('tomas','Tomás','NT','H','A','apostol','evang',5,'j',0,'Apóstol que dudó hasta ver a Jesús resucitado.'),
+ K('zaqueo','Zaqueo','NT','H','A','otro','evang',5,'j',0,'Jefe de los publicanos en Jericó. Se subió a un sicómoro para ver a Jesús.'),
+ K('marta','Marta','NT','M','A','otro','evang',5,'j',0,'Hermana de María y de Lázaro, en Betania. Sirvió a Jesús en su casa.'),
+ K('magdalena','María Magdalena','NT','M','A','discipulo','evang',5,'j',0,'Seguidora de Jesús. Fue la primera en ver al Señor resucitado.'),
+ K('nicodemo','Nicodemo','NT','H','V','otro','evang',5,'j',0,'Fariseo y principal entre los judíos. Visitó a Jesús de noche.'),
+ K('pilato','Poncio Pilato','NT','H','A','otro','evang',5,'jx',0,'Gobernador romano de Judea. Entregó a Jesús para que lo crucificaran.'),
+ K('esteban','Esteban','NT','H','A','discipulo','hechos',6,'',0,'Diácono lleno de fe. Fue el primer mártir de la iglesia.'),
+ K('pablo','Pablo','NT','H','A','apostol','hechos,cartas',6,'n',GW_PAUL,'Antes perseguía a la iglesia, y se llamaba Saulo. Jesús lo llamó en el camino a Damasco y escribió trece cartas.'),
+ K('timoteo','Timoteo','NT','H','J','discipulo','hechos,cartas',6,'',0,'Joven colaborador de Pablo. Pastoreó la iglesia en Éfeso.'),
+ K('priscila','Priscila','NT','M','A','discipulo','hechos',6,'',0,'Esposa de Aquila. Junto a él enseñó a Apolos y ayudó a Pablo.'),
+ K('cornelio','Cornelio','NT','H','A','otro','hechos',6,'x',0,'Centurión romano de Cesarea. Fue de los primeros gentiles en recibir el evangelio.')
+];
+const GW_BY={};GW_CHARS.forEach(c=>GW_BY[c.id]=c);
+
+const GW_BOOKS=(()=>{const s=new Set();GW_CHARS.forEach(c=>c.au.forEach(b=>s.add(b)));return [...s];})();
+const GW_DECOYS=['Amós','Oseas','Joel','Miqueas','Nahúm','Lucas','Marcos','Hechos','Santiago','Habacuc','Sofonías','Zacarías'];
+const GW_YN=[['1','Sí'],['0','No']];
+const GW_Q=[
+ {id:'ts',cat:'Testamento',t:'¿A qué testamento pertenece?',o:()=>[['AT','Antiguo Testamento'],['NT','Nuevo Testamento']],f:(c,v)=>c.t===v},
+ {id:'sx',cat:'Sexo',t:'¿Es hombre o mujer?',o:()=>[['H','Hombre'],['M','Mujer']],f:(c,v)=>c.s===v},
+ {id:'ed',cat:'Edad',t:'¿Qué edad tenía en el momento más conocido de su historia?',o:()=>Object.entries(GW_AGES),f:(c,v)=>c.e===v},
+ {id:'ro',cat:'Papel o cargo',t:'¿Cuál fue su papel o cargo?',o:()=>Object.entries(GW_ROLES),f:(c,v)=>c.r===v},
+ {id:'au',cat:'Escribió un libro',t:'¿Escribió alguno de estos libros?',o:()=>gwAuOpts(),f:(c,v)=>c.au.includes(v)},
+ {id:'jn',cat:'Conoció a Jesús',t:'¿Conoció personalmente a Jesús mientras él estuvo en la tierra?',o:()=>GW_YN,f:(c,v)=>c.j===(v==='1')},
+ {id:'pt',cat:'Parte de la Biblia',t:'¿En qué parte de la Biblia aparece principalmente?',o:()=>Object.entries(GW_PARTS),f:(c,v)=>c.p.includes(v)},
+ {id:'ep',cat:'Época',t:'¿En qué época vivió?',o:()=>Object.entries(GW_EPOCHS),f:(c,v)=>c.ep.includes(+v)},
+ {id:'nn',cat:'Cambio de nombre',t:'¿Su nombre fue cambiado o tuvo más de un nombre?',o:()=>GW_YN,f:(c,v)=>c.nn===(v==='1')},
+ {id:'ge',cat:'Genealogía de Jesús',t:'¿Aparece en la genealogía de Jesús, en Mateo 1?',o:()=>GW_YN,f:(c,v)=>c.ge===(v==='1')},
+ {id:'h',cat:'Hebreos 11',t:'¿Se menciona en Hebreos 11, la lista de los héroes de la fe?',o:()=>GW_YN,f:(c,v)=>c.h===(v==='1')},
+ {id:'ma',cat:'Enemigo de Dios o de su pueblo',t:'¿Fue enemigo de Dios o de su pueblo, o la Biblia lo presenta como malvado?',o:()=>GW_YN,f:(c,v)=>c.ma===(v==='1')},
+ {id:'ex',cat:'Extranjero',t:'¿Era extranjero (no era israelita)?',o:()=>GW_YN,f:(c,v)=>c.ex===(v==='1')}
+];
+const GW_QBY={};GW_Q.forEach(q=>GW_QBY[q.id]=q);
+let GW=null;
+const GWSET={rounds:8,size:20};
+const GW_COL=['#FF9600','#1CB0F6','#58CC02','#CE82FF','#FF4B4B','#2B70C9','#00A884','#D99200'];
+function gwHue(c){let h=0;for(let i=0;i<c.id.length;i++)h=(h*31+c.id.charCodeAt(i))>>>0;return GW_COL[h%GW_COL.length];}
+function gwEval(c,q,v){const Q=GW_QBY[q];return !!(Q&&Q.f(c,v));}
+function gwOptLabel(q,v){const o=GW_QBY[q].o();const f=o.find(x=>String(x[0])===String(v));return f?f[1]:String(v);}
+function gwBoard(n){
+  for(let t=0;t<150;t++){
+    const ch=shuffle(GW_CHARS).slice(0,n);
+    if(ch.filter(c=>c.t==='NT').length>=Math.max(3,Math.round(n*.25))&&ch.filter(c=>c.s==='M').length>=Math.max(3,Math.round(n*.2)))return ch.map(c=>c.id);
+  }
+  return shuffle(GW_CHARS).slice(0,n).map(c=>c.id);
+}
+function gwAuOpts(){
+  if(GW.ui.au)return GW.ui.au;
+  const real=[];
+  GW.cfg.ids.forEach(id=>GW_BY[id].au.forEach(b=>{if(real.indexOf(b)<0)real.push(b);}));
+  const pick=[];
+  if(real.length)pick.push(pickOne(real));
+  shuffle(GW_BOOKS.filter(b=>pick.indexOf(b)<0).concat(GW_DECOYS)).forEach(b=>{if(pick.length<3&&pick.indexOf(b)<0)pick.push(b);});
+  GW.ui.au=shuffle(pick).map(b=>[b,b]);
+  return GW.ui.au;
+}
+/* ----- el «reglamento»: con la lista de mensajes calcula en qué punto va la partida ----- */
+function gwReduce(cfg,order,evs,solo){
+  const K=order.length,R=cfg.rounds,END=K*R;
+  const T={phase:solo?'play':'pick',ready:{},n:0,stage:'ask',pend:null,log:[],guesses:[],over:null,reveal:{},K,R,END};
+  const cur=()=>order[T.n%K],oth=d=>solo?'sys':order.find(x=>x!==d);
+  for(const x of evs){
+    const d=x.d,ev=x.ev||{};
+    if(T.over&&ev.t!=='reveal'&&ev.t!=='over')continue;
+    if(ev.t==='ready'){if(!solo&&order.indexOf(d)>=0){T.ready[d]=1;if(order.every(o=>T.ready[o]))T.phase='play';}}
+    else if(ev.t==='ask'){if(T.phase==='play'&&T.stage==='ask'&&d===cur()&&ev.n===T.n&&GW_QBY[ev.q]){T.pend={q:ev.q,v:String(ev.v)};T.stage='ans';}}
+    else if(ev.t==='ans'){if(T.stage==='ans'&&d===oth(cur())&&ev.n===T.n){T.log.push({n:T.n,by:cur(),q:T.pend.q,v:T.pend.v,r:!!ev.r});T.pend=null;T.stage='act';}}
+    else if(ev.t==='guess'){if(T.phase==='play'&&(T.stage==='ask'||T.stage==='act')&&d===cur()&&ev.n===T.n&&GW_BY[ev.c]){T.pend={c:ev.c};T.stage='gres';}}
+    else if(ev.t==='gres'){if(T.stage==='gres'&&d===oth(cur())&&ev.n===T.n){
+      const g={n:T.n,by:cur(),c:T.pend.c,r:!!ev.r};T.guesses.push(g);T.pend=null;
+      if(g.r)T.over={w:g.by};else{T.n++;T.stage='ask';if(T.n>=END)T.over={w:null};}}}
+    else if(ev.t==='endturn'){if(T.stage==='act'&&d===cur()&&ev.n===T.n&&Math.floor(T.n/K)+1<R){T.n++;T.stage='ask';}}
+    else if(ev.t==='reveal'){if(typeof ev.c==='string'&&GW_BY[ev.c])T.reveal[d]=ev.c;}
+  }
+  T.cur=T.over?null:cur();T.answerer=T.over?null:oth(cur());T.turn=Math.floor(Math.min(T.n,END-1)/K)+1;T.final=T.turn>=R;
+  return T;
+}
+function gwRecalc(){
+  const g=GW,prev=g.st;
+  const T=g.st=gwReduce(g.cfg,g.order,g.evs,g.solo);
+  g.v++;
+  const key=T.n+':'+T.stage+':'+T.log.length+':'+T.guesses.length+':'+(T.over?1:0);
+  if(g.key!==key){
+    const first=g.key==null;g.key=key;
+    if(!first&&prev){
+      if(T.log.length>prev.log.length){const l=T.log[T.log.length-1];if(l.by===g.me){beep(l.r?'good':'bad');haptic(l.r?15:[30,40,30]);}}
+      if(T.cur===g.me&&T.stage==='ask'&&prev.n!==T.n){beep('good');haptic(20);}
+    }
+  }
+  if(T.over&&!g.rewarded){
+    g.rewarded=true;
+    const won=T.over.w===g.me;
+    try{
+      recordDay(10);S.gplays=(S.gplays||0)+1;if(!g.solo)S.rmplays=(S.rmplays||0)+1;
+      ACH.filter(a=>!S.ach[a.id]&&a.f(S)).forEach(a=>S.ach[a.id]=true);save();renderTop();
+    }catch(e){}
+    if(won){beep('win');confetti(90);}else beep(g.solo?'bad':'good');
+  }
+}
+/* ----- cartas bocabajo (se guardan para no perderlas si se cierra la app) ----- */
+function gwFlipKey(){return 'lampy_gwf_'+(GW.solo?'solo':RM.code)+'_'+GW.cfgKey;}
+function gwFlipSave(){try{localStorage.setItem(gwFlipKey(),JSON.stringify([...GW.flip]));}catch(e){}}
+function gwFlipLoad(){try{const a=JSON.parse(localStorage.getItem(gwFlipKey())||'[]');if(Array.isArray(a))a.forEach(x=>{if(GW_BY[x])GW.flip.add(x);});}catch(e){}}
+function gwSecretKey(){return 'lampy_gws_'+RM.code;}
+function gwSecretSave(){try{localStorage.setItem(gwSecretKey(),JSON.stringify({k:GW.cfgKey,c:GW.secret}));}catch(e){}}
+function gwSecretLoad(){try{const o=JSON.parse(localStorage.getItem(gwSecretKey())||'null');if(o&&o.k===GW.cfgKey&&GW_BY[o.c])return o.c;}catch(e){}return null;}
+/* ----- nueva partida ----- */
+function gwNew(base){
+  return Object.assign({solo:false,cfg:null,cfgKey:'',order:[],me:'',opp:'',names:{},evs:[],seq:0,after:0,secret:null,flip:new Set(),ui:{},sent:new Set(),v:0,key:null,st:null,active:[],lastState:0,polling:false,rewarded:false},base);
+}
+function gwInitLive(st){
+  const cfg=st.cfg,me=st.me,other=st.players.find(p=>p.device!==me);
+  const g=gwNew({cfg,cfgKey:st.room.code+'|'+cfg.first+'|'+cfg.ids.join(','),me,opp:other?other.device:'',lastState:Date.now()});
+  g.order=[cfg.first,cfg.first===me?g.opp:me];
+  g.names={};st.players.forEach(p=>g.names[p.device]=p.name);
+  GW=g;
+  g.secret=gwSecretLoad();gwFlipLoad();gwRecalc();
+  return g;
+}
+function gwSoloStart(){
+  const ids=gwBoard(GWSET.size),secret=pickOne(ids);
+  GW=gwNew({solo:true,cfg:{rounds:GWSET.rounds,size:ids.length,ids,first:'me'},cfgKey:'solo'+Date.now(),order:['me'],me:'me',opp:'sys',names:{me:'Tú'},secret});
+  RM.code=null;RM.st=null;
+  rmOpenOverlay();gwRecalc();gwRender();
+}
+/* ----- comunicación ----- */
+async function gwSend(ev){
+  try{const r=await rpc('fr_gw_send',frArgs({p_code:RM.code,p_ev:ev}));if(r&&r.ok)return true;if(r&&r.error&&r.error!=='no_permitido')toast(famMsg(r.error));}
+  catch(e){}
+  return false;
+}
+async function gwPoll(){
+  const g=GW,code=RM.code;
+  if(!g||g.solo||!code||g.polling)return;
+  g.polling=true;
+  try{
+    const r=await rpc('fr_gw_poll',frArgs({p_code:code,p_after:g.after}));
+    if(g!==GW||code!==RM.code)return;
+    if(!r||!r.ok){if(r&&(r.error==='sala_no_existe'||r.error==='no_estas'))rmEnd('La partida se cerró.');return;}
+    (r.ev||[]).forEach(x=>{if(x.seq>g.after){g.after=x.seq;g.evs.push({seq:x.seq,d:x.d,ev:x.ev});}});
+    g.active=r.active||[];
+    if(RM.st&&r.status&&RM.st.room.status!==r.status){
+      RM.st.room.status=r.status;
+      if(r.status==='lobby'){GW=null;RM.sig='';RM.lastState=0;}
+    }
+    if(GW===g){gwRecalc();gwAuto();}
+    RM.sig='';rmRender(true);
+  }catch(e){}
+  finally{g.polling=false;}
+}
+function gwAuto(){
+  const g=GW;if(!g||g.solo)return;const T=g.st;
+  if(T.phase==='play'&&!T.over&&T.answerer===g.me&&(T.stage==='ans'||T.stage==='gres')){
+    const key=T.stage+':'+T.n;
+    if(!g.secret){if(!g.warned){g.warned=true;toast('Se perdió tu personaje secreto. Salgan y creen otra partida.');}}
+    else if(!g.sent.has(key)){
+      g.sent.add(key);
+      const ev=T.stage==='ans'?{t:'ans',n:T.n,r:gwEval(GW_BY[g.secret],T.pend.q,T.pend.v)}:{t:'gres',n:T.n,r:T.pend.c===g.secret};
+      gwSend(ev).then(ok=>{if(!ok)g.sent.delete(key);else gwPoll();});
+    }
+  }
+  if(T.over){
+    if(!g.sent.has('over')){g.sent.add('over');gwSend({t:'over',w:T.over.w||''}).then(ok=>{if(!ok)g.sent.delete('over');});}
+    if(g.secret&&!g.sent.has('reveal')){g.sent.add('reveal');gwSend({t:'reveal',c:g.secret}).then(ok=>{if(!ok)g.sent.delete('reveal');else gwPoll();});}
+  }
+}
+function gwSysReply(){
+  const g=GW;if(!g||!g.solo)return;const T=g.st;
+  if(T.over||g.sysWait)return;
+  if(T.stage==='ans'||T.stage==='gres'){
+    const ev=T.stage==='ans'?{t:'ans',n:T.n,r:gwEval(GW_BY[g.secret],T.pend.q,T.pend.v)}:{t:'gres',n:T.n,r:T.pend.c===g.secret};
+    g.sysWait=true;
+    setTimeout(()=>{if(GW!==g)return;g.sysWait=false;g.evs.push({seq:++g.seq,d:'sys',ev});gwRecalc();gwSysReply();gwRender();},T.stage==='gres'?900:650);
+  }
+}
+/* quien juega hace algo: pregunta, adivina o termina el turno */
+async function gwDo(t,x){
+  const g=GW;if(!g||g.ui.busy||!g.st||g.st.over)return;
+  const ev=Object.assign({t,n:g.st.n},x||{});
+  g.ui.busy=true;g.ui.guessing=false;g.ui.au=null;
+  if(g.solo){
+    g.evs.push({seq:++g.seq,d:g.me,ev});gwRecalc();g.ui.busy=false;gwSysReply();gwRender();return;
+  }
+  gwRender();
+  const ok=await gwSend(ev);
+  if(!ok)toast('Sin conexión. Inténtalo de nuevo.');
+  await gwPoll();
+  g.ui.busy=false;gwRender();
+}
+async function gwReady(){
+  const g=GW;if(!g||g.solo||!g.ui.pick||g.ui.busy)return;
+  g.ui.busy=true;g.secret=g.ui.pick;gwSecretSave();gwRender();
+  const ok=await gwSend({t:'ready'});
+  if(!ok){toast('Sin conexión. Inténtalo de nuevo.');g.secret=null;}
+  await gwPoll();g.ui.busy=false;gwRender();
+}
+function gwRender(){
+  if(!GW)return;
+  if(GW.solo){
+    const lb=document.querySelector('#room .lb'),top=lb?lb.scrollTop:0,pv=GW.vk;
+    $('#room').innerHTML=gwView();
+    const lb2=document.querySelector('#room .lb');if(lb2)lb2.scrollTop=(GW.vk===pv?top:0);
+  }else{RM.sig='';rmRender(true);}
+}
+/* ----- piezas de pantalla ----- */
+const gwNm=d=>(GW.names[d]||'Tu rival');
+function gwCard(c,o){
+  o=o||{};
+  const off=GW.flip.has(c.id);
+  return '<div class="gwc'+(off?' off':'')+(o.sel?' sel':'')+(o.fresh?' fresh':'')+'" style="--cc:'+gwHue(c)+'"><button class="gwcb" data-a="gw-card" data-id="'+c.id+'" aria-label="'+esc(c.n)+(off?' (descartado)':'')+'" aria-pressed="'+off+'"><span class="gwav" aria-hidden="true">'+esc(c.n.charAt(0))+'</span><span class="gwn">'+esc(c.n)+'</span><span class="gwx" aria-hidden="true">✖</span></button><button class="gwi" data-a="gw-info" data-id="'+c.id+'" aria-label="Quién es '+esc(c.n)+'">i</button></div>';
+}
+function gwBoardHTML(o){
+  o=o||{};
+  const chars=GW.cfg.ids.map(id=>GW_BY[id]),cols=chars.length<=12?3:4;
+  return '<div class="gwgrid c'+cols+'" id="gwgrid">'+chars.map(c=>gwCard(c,{sel:o.pick===c.id,fresh:GW.ui.fresh&&GW.ui.fresh.has(c.id)})).join('')+'</div>';
+}
+function gwLeft(){return GW.cfg.ids.filter(id=>!GW.flip.has(id)).length;}
+function gwQTxt(q,v){const Q=GW_QBY[q];return '<b>'+esc(Q.cat)+':</b> '+esc(gwOptLabel(q,v));}
+function gwKnown(){
+  const mine=GW.st.log.filter(l=>l.by===GW.me);
+  if(!mine.length)return '';
+  return '<section class="gwk"><h3>Lo que sé</h3>'+mine.map(l=>'<div class="gwkr '+(l.r?'v':'f')+'"><span class="gwkv">'+(l.r?'✔':'✖')+'</span><span>'+gwQTxt(l.q,l.v)+'</span><em>'+(l.r?'Verdadero':'Falso')+'</em></div>').join('')+'</section>';
+}
+function gwShell(inner,foot){
+  const T=GW.st,pct=Math.max(4,Math.round(100*Math.min(T.n,T.END)/T.END));
+  return rmShell(inner,foot,false).replace('id="rmbar" style="width:100%','id="rmbar" style="width:'+pct+'%');
+}
+function gwView(){
+  const T=GW.st;GW.vk=(T.over?'o':T.phase)+(T.ready&&T.ready[GW.me]?'r':'');
+  if(!GW.solo&&RM.st&&RM.st.players.length<2&&!T.over)
+    return rmShell('<div class="splash"><div class="spl">🕯️</div><b>Tu rival salió de la partida.</b></div>','<div class="lf"><div class="in"><button class="btn" data-a="rm-exit-yes">Salir</button></div></div>',false);
+  if(T.over)return gwFinalHTML();
+  if(T.phase==='pick')return gwPickHTML();
+  return gwPlayHTML();
+}
+function gwPickHTML(){
+  const g=GW,T=g.st,mineReady=!!T.ready[g.me]||(!!g.secret&&g.ui.busy);
+  if(mineReady){
+    return rmShell('<div class="splash"><div class="spl">🕯️</div><b>Listo. Esperando a que '+esc(gwNm(g.opp))+' elija su personaje…</b><p class="muted" style="margin:10px 0 0">Tu personaje secreto se queda solo en tu teléfono.</p></div>','',false);
+  }
+  const sel=g.ui.pick||null;
+  return rmShell('<div class="gwhead"><h1>Elige el personaje secreto</h1><p>'+esc(gwNm(g.opp))+' tendrá que adivinar a quién elegiste. <b>No sale de tu teléfono.</b> Toca la <b>i</b> de una carta si quieres recordar quién es.</p></div>'+gwBoardHTML({pick:sel}),
+    '<div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="gw-random">🎲 Al azar</button><button class="btn" data-a="gw-ready" '+(sel?'':'disabled')+'>'+(sel?'Este es: '+esc(GW_BY[sel].n):'Toca una carta')+'</button></div></div></div>',false);
+}
+function gwLastMine(){
+  const T=GW.st;for(let i=T.log.length-1;i>=0;i--)if(T.log[i].by===GW.me&&T.log[i].n===T.n)return T.log[i];return null;
+}
+function gwPlayHTML(){
+  const g=GW,T=g.st,mine=T.cur===g.me,solo=g.solo;
+  const oppGone=!solo&&g.active.length&&g.active.indexOf(g.opp)<0;
+  let strip,foot='',banner='';
+  const rd='Ronda '+T.turn+' de '+T.R;
+  if(g.ui.guessing){
+    strip='<div class="gwst me"><b>¿Quién crees que es?</b><span>Toca la carta del personaje. Si fallas, pierdes el turno.</span></div>';
+    foot='<div class="lf"><div class="in"><button class="btn ghost" data-a="gw-guess-cancel">Volver sin adivinar</button></div></div>';
+  }else if(mine){
+    if(T.stage==='ask'){
+      strip='<div class="gwst me"><b>Tu turno · '+rd+'</b><span>'+(T.final?'Es tu última oportunidad: haz una pregunta si quieres y luego adivina.':'Haz una pregunta o arriésgate a adivinar.')+'</span></div>';
+      foot='<div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="gw-guess">Arriesgarme</button><button class="btn" data-a="gw-ask">Hacer una pregunta</button></div></div></div>';
+    }else if(T.stage==='ans'){
+      strip='<div class="gwst"><b>Esperando la respuesta…</b><span>'+(solo?'Lampy está pensando.':esc(gwNm(g.opp))+' te va a contestar.')+'</span></div>';
+    }else if(T.stage==='act'){
+      const l=gwLastMine();
+      if(l)banner='<div class="gwvf '+(l.r?'v':'f')+'"><b>'+(l.r?'✔ VERDADERO':'✖ FALSO')+'</b><span>'+gwQTxt(l.q,l.v)+'</span></div>';
+      strip='<div class="gwst me"><b>'+(l&&l.r?'¡Pista! Descarta a quienes no encajan.':'Descarta a quienes sí encajan.')+'</b><span>Toca una carta para ponerla bocabajo, o deja que Lampy lo haga.</span></div>';
+      foot='<div class="lf"><div class="in"><button class="btn ghost" style="margin-bottom:10px" data-a="gw-auto">✨ Descartar por mí</button><div class="row2"><button class="btn ghost" data-a="gw-guess">Arriesgarme</button>'+(T.final?'<button class="btn" data-a="gw-guess">Dar mi respuesta final</button>':'<button class="btn" data-a="gw-end">Terminar turno</button>')+'</div></div></div>';
+      if(T.final)foot=foot.replace('<button class="btn ghost" data-a="gw-guess">Arriesgarme</button>','');
+    }else{
+      strip='<div class="gwst"><b>Esperando el resultado…</b><span>'+(solo?'':esc(gwNm(g.opp))+' está revisando tu respuesta.')+'</span></div>';
+    }
+  }else{
+    const last=T.log.filter(l=>l.by===g.opp).slice(-1)[0];
+    strip='<div class="gwst"><b>Turno de '+esc(gwNm(g.opp))+' · '+rd+'</b><span>'+(T.stage==='ask'?'Está pensando su pregunta. Mientras tanto, puedes descartar cartas.':T.stage==='gres'?'Está arriesgando una respuesta…':'Le estás respondiendo.')+'</span></div>';
+    if(last&&T.stage==='ask'&&last.n===T.n-1)banner='';
+  }
+  if(oppGone)strip+='<div class="banner" style="margin:0 0 10px">'+esc(gwNm(g.opp))+' perdió la conexión. Esperando a que vuelva…</div>';
+  const waiting=g.ui.busy&&!mine?'':'';
+  const inner=strip+banner+'<div class="gwcount" id="gwcount">Quedan <b>'+gwLeft()+'</b> de '+g.cfg.ids.length+'</div>'+gwBoardHTML()+gwKnown();
+  if(g.ui.fresh)g.ui.fresh=null;
+  return gwShell(inner,foot);
+}
+function gwFinalHTML(){
+  const g=GW,T=g.st,w=T.over.w,iWon=w===g.me,draw=w==null;
+  const oppSecret=T.reveal[g.opp]||(g.solo?g.secret:null),mySecret=g.secret;
+  let banner,mood;
+  if(g.solo){
+    banner=iWon?'🎉 ¡Lo adivinaste!':'😮 Esta vez no pudiste';mood=iWon?'cheer':'think';
+  }else if(draw){banner='🤝 Nadie lo adivinó';mood='think';}
+  else if(iWon){banner='🏆 ¡Ganaste!';mood='cheer';}
+  else{banner='Ganó '+esc(gwNm(w));mood='think';}
+  const sub=g.solo?(iWon?'Lo lograste en la ronda '+T.turn+' de '+T.R+'.':'Se acabaron las preguntas.'):(iWon?'Adivinaste el personaje de '+esc(gwNm(g.opp))+'.':draw?'Se acabaron las rondas.':esc(gwNm(w))+' adivinó tu personaje.');
+  const cardOf=(id,title)=>{const c=GW_BY[id];return '<section class="gwrev"><span class="gwav lg" style="--cc:'+gwHue(c)+'" aria-hidden="true">'+esc(c.n.charAt(0))+'</span><div><small>'+esc(title)+'</small><b>'+esc(c.n)+'</b><p>'+esc(c.d)+'</p></div></section>';};
+  let revs='';
+  if(oppSecret)revs+=cardOf(oppSecret,g.solo?'El personaje era':'Tenías que adivinar a');
+  else if(!g.solo)revs+='<p class="muted" style="text-align:center">Cargando el personaje que tenías que adivinar…</p>';
+  if(!g.solo&&mySecret)revs+=cardOf(mySecret,'Tu personaje secreto era');
+  const host=!g.solo&&RM.st&&RM.st.room.host===RM.st.me;
+  const foot='<div class="lf"><div class="in"><div class="row2">'+((g.solo||host)?'<button class="btn" data-a="gw-again">Jugar otra vez</button>':'')+'<button class="btn ghost" data-a="rm-exit-yes">Salir</button></div>'+((g.solo||host)?'':'<p class="muted" style="text-align:center;margin:8px 0 0;font-size:13px">Quien creó la sala puede empezar otra partida.</p>')+'</div></div>';
+  return gwShell('<div style="display:flex;justify-content:center">'+mascot(mood,110)+'</div><div class="rmwin" style="--tc:'+(iWon?'#58CC02':draw?'#777':'#FF9600')+'">'+banner+'<small>'+sub+'</small></div>'+revs,foot);
+}
+/* menú de «solo» */
+function gwSoloMenuHTML(){
+  const roundsP=[5,8,12].map(t=>'<button class="rdpill '+(GWSET.rounds===t?'on':'')+'" data-a="gw-set-rounds" data-v="'+t+'">'+t+'</button>').join('');
+  const sizeP=[12,20,30].map(t=>'<button class="rdpill '+(GWSET.size===t?'on':'')+'" data-a="gw-set-size" data-v="'+t+'">'+t+'</button>').join('');
+  return rmShell('<div class="gsetup"><span style="font-size:52px;line-height:1">🕵️</span><div><h1>¿Quién es quién?</h1><p>Lampy elige un personaje bíblico en secreto. Haz preguntas, descarta cartas y adivina quién es.</p></div></div>'+
+    '<section class="sec"><h3>¿Cuántas preguntas puedes hacer?</h3><div class="rdpills">'+roundsP+'</div></section>'+
+    '<section class="sec"><h3>¿Cuántos personajes en el tablero?</h3><div class="rdpills">'+sizeP+'</div></section>',
+    '<div class="lf"><div class="in"><button class="btn" data-a="gw-solo-go">Empezar</button></div></div>',false);
+}
+function gwSoloMenu(){
+  GW=null;RM.code=null;RM.st=null;RM.sig='';
+  rmOpenOverlay();$('#room').innerHTML=gwSoloMenuHTML();
+}
+function gwSoloMenuRefresh(){const lb=document.querySelector('#room .lb'),t=lb?lb.scrollTop:0;$('#room').innerHTML=gwSoloMenuHTML();const l2=document.querySelector('#room .lb');if(l2)l2.scrollTop=t;}
+/* ----- ventanitas ----- */
+function gwAskList(){
+  const g=GW,used=g.st.log.filter(l=>l.by===g.me);
+  showModal('<h3>¿Qué quieres preguntar?</h3><div class="gwmod pickl">'+GW_Q.map(q=>{
+    if(q.id!=='au'){const o=q.o();if(o.every(x=>used.some(u=>u.q===q.id&&u.v===String(x[0]))))return '';}
+    return '<button class="pickrow" data-a="gw-cat" data-q="'+q.id+'"><b>'+esc(q.cat)+'</b><span class="muted">›</span></button>';
+  }).join('')+'</div><button class="btn ghost" data-a="stay">Cancelar</button>');
+}
+function gwAskOpts(qid){
+  const g=GW,Q=GW_QBY[qid],used=g.st.log.filter(l=>l.by===g.me&&l.q===qid).map(l=>l.v);
+  const opts=Q.o().filter(x=>used.indexOf(String(x[0]))<0);
+  showModal('<h3>'+esc(Q.t)+'</h3><p class="muted" style="margin:-6px 0 10px;font-size:14px">Elige una opción. Te diré si es verdadero o falso.</p><div class="gwmod pickl">'+opts.map(x=>'<button class="pickrow" data-a="gw-opt" data-q="'+qid+'" data-v="'+esc(String(x[0]))+'"><b style="white-space:normal">'+esc(x[1])+'</b></button>').join('')+'</div><button class="btn ghost" data-a="gw-ask">‹ Otra pregunta</button>');
+}
+function gwInfo(id){
+  const c=GW_BY[id];if(!c)return;
+  showModal('<div style="text-align:center"><span class="gwav lg" style="--cc:'+gwHue(c)+'" aria-hidden="true">'+esc(c.n.charAt(0))+'</span></div><h3 style="text-align:center">'+esc(c.n)+'</h3><p style="text-align:center">'+esc(c.d)+'</p><button class="btn" data-a="stay">Cerrar</button>');
+}
+function gwConfirmGuess(id){
+  const c=GW_BY[id];
+  showModal('<h3>¿Es '+esc(c.n)+'?</h3><p>Si fallas, pierdes este turno y esa carta se descarta.</p><button class="btn" data-a="gw-guess-yes" data-id="'+id+'">Sí, es él o ella</button><button class="btn ghost" data-a="stay">Todavía no</button>');
+}
+function gwDiscardBy(){
+  const g=GW,l=gwLastMine();if(!l)return;
+  g.ui.fresh=new Set();
+  g.cfg.ids.forEach(id=>{
+    const m=gwEval(GW_BY[id],l.q,l.v);
+    if((l.r?!m:m)&&!g.flip.has(id)){g.flip.add(id);g.ui.fresh.add(id);}
+  });
+  gwFlipSave();gwRender();
+}
+function gwAct(a,b){
+  const g=GW;
+  if(a==='gw-solo'){gwSoloMenu();return;}
+  if(a==='gw-set-rounds'){GWSET.rounds=+b.dataset.v;gwSoloMenuRefresh();return;}
+  if(a==='gw-set-size'){GWSET.size=+b.dataset.v;gwSoloMenuRefresh();return;}
+  if(a==='gw-solo-go'){gwSoloStart();return;}
+  if(!g)return;
+  if(a==='gw-info'){gwInfo(b.dataset.id);return;}
+  if(a==='gw-card'){
+    const id=b.dataset.id;
+    if(g.st.phase==='pick'){g.ui.pick=id;gwRender();return;}
+    if(g.ui.guessing){
+      if(g.flip.has(id)){toast('Esa ya la descartaste. Elige otra.');return;}
+      gwConfirmGuess(id);return;
+    }
+    if(g.flip.has(id))g.flip.delete(id);else g.flip.add(id);
+    gwFlipSave();
+    const card=b.closest('.gwc'),off=g.flip.has(id);
+    if(card){card.classList.toggle('off',off);card.classList.remove('fresh');void card.offsetWidth;card.classList.add('fresh');b.setAttribute('aria-pressed',off);}
+    const cn=document.getElementById('gwcount');if(cn)cn.innerHTML='Quedan <b>'+gwLeft()+'</b> de '+g.cfg.ids.length;
+    haptic(8);
+    return;
+  }
+  if(a==='gw-random'){g.ui.pick=pickOne(g.cfg.ids);gwRender();return;}
+  if(a==='gw-ready'){gwReady();return;}
+  if(a==='gw-ask'){hideModal();gwAskList();return;}
+  if(a==='gw-cat'){hideModal();gwAskOpts(b.dataset.q);return;}
+  if(a==='gw-opt'){hideModal();gwDo('ask',{q:b.dataset.q,v:b.dataset.v});return;}
+  if(a==='gw-auto'){gwDiscardBy();return;}
+  if(a==='gw-end'){gwDo('endturn');return;}
+  if(a==='gw-guess'){g.ui.guessing=true;gwRender();const gr=document.getElementById('gwgrid');if(gr)gr.scrollIntoView({block:'start',behavior:'smooth'});return;}
+  if(a==='gw-guess-cancel'){g.ui.guessing=false;gwRender();return;}
+  if(a==='gw-guess-yes'){hideModal();const id=b.dataset.id;g.flip.add(id);gwFlipSave();gwDo('guess',{c:id});return;}
+  if(a==='gw-again'){
+    if(g.solo){gwSoloStart();return;}
+    rpc('fr_room_again',frArgs({p_code:RM.code})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));else{GW=null;RM.sig='';RM.lastState=0;}RM.rewarded='';rmPoll();}).catch(()=>toast('Sin conexión.'));
+    return;
+  }
+}
 
 /* ----- preguntas ----- */
 function rmQBlank(used){
@@ -4398,16 +4907,22 @@ function rmLoop(){
 async function rmPoll(){
   const code=RM.code;if(!code)return;
   try{
+    if(GW&&!GW.solo&&RM.st&&RM.st.room.mode==='guess'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await gwPoll();return;}
     const st=await rpc('fr_room_state',frArgs({p_code:code}));
     if(code!==RM.code)return;
     if(st.error){rmEnd(st.error==='sala_no_existe'||st.error==='no_estas'?'La sala se cerró.':famMsg(st.error));return;}
-    RM.fails=0;RM.st=st;RM.t0=performance.now();RM.rem0=st.room.rem;
+    RM.fails=0;RM.st=st;RM.lastState=Date.now();RM.t0=performance.now();RM.rem0=st.room.rem;
     if(RM.my&&RM.my.q!==st.room.q)RM.my=null;
+    if(st.room.mode==='guess'){
+      if(st.room.status==='lobby')GW=null;
+      else if(st.cfg&&(!GW||GW.cfgKey!==st.room.code+'|'+st.cfg.first+'|'+st.cfg.ids.join(',')))gwInitLive(st);
+    }
     rmRender();
+    if(st.room.mode==='guess'&&st.room.status!=='lobby'&&GW)await gwPoll();
   }catch(e){RM.fails++;if(RM.fails===4)rmRender(true);}
 }
 function rmEnd(msg){
-  clearTimeout(RM.loop);RM.code=null;RM.st=null;RM.sig='';
+  clearTimeout(RM.loop);RM.code=null;RM.st=null;RM.sig='';GW=null;
   $('#room').hidden=true;$('#room').innerHTML='';document.body.style.overflow='';
   if(msg)toast(msg);
   render();
@@ -4474,19 +4989,22 @@ function rmFinalHTML(st){
 function rmView(st){
   const r=st.room;
   if(r.status==='lobby')return rmLobbyHTML(st);
+  if(r.mode==='guess')return GW?gwView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la partida…</b></div>','',false);
   if(r.status==='finished')return rmFinalHTML(st);
   return r.mode==='assemble'?rmAssembleHTML(st):rmQuestionHTML(st);
 }
 function rmRender(force){
   const st=RM.st;if(!st||!RM.code)return;
-  const sig=JSON.stringify([st.room.status,st.room.phase,st.room.q,st.room.host,st.players.map(p=>[p.device,p.name,p.avatar,p.team,p.score,p.answered,p.active,p.badge,p.placed]),st.q&&[st.q.slots,st.q.mine,st.q.hint,st.q.errors,st.q.a,st.q.complete],st.mine,st.answers&&st.answers.length,RM.sel,RM.my&&RM.my.i,RM.fails>=4]);
+  const sig=JSON.stringify([st.room.status,st.room.phase,st.room.q,st.room.host,st.players.map(p=>[p.device,p.name,p.avatar,p.team,p.score,p.answered,p.active,p.badge,p.placed]),st.q&&[st.q.slots,st.q.mine,st.q.hint,st.q.errors,st.q.a,st.q.complete],st.mine,st.answers&&st.answers.length,RM.sel,RM.my&&RM.my.i,RM.fails>=4,GW?GW.v:0]);
   if(!force&&sig===RM.sig)return;
   const prevPhase=RM.lastPhase,prevQ=RM.lastQ;RM.sig=sig;
+  const _lb=document.querySelector('#room .lb'),_top=_lb?_lb.scrollTop:0,_pv=GW&&GW.vk;
   $('#room').innerHTML=rmView(st);
+  {const _l2=document.querySelector('#room .lb');if(_l2&&_top&&!(GW&&GW.vk!==_pv))_l2.scrollTop=_top;}
   if(RM.fails>=4){const b=document.createElement('div');b.className='banner';b.style.margin='0 0 12px';b.textContent='Reconectando…';const lb=$('#room').querySelector('.lb');if(lb)lb.prepend(b);}
   if(st.room.phase==='reveal'&&(prevPhase!=='reveal'||prevQ!==st.room.q)&&st.mine){beep(st.mine.correct?'good':'bad');haptic(st.mine.correct?15:[30,40,30]);}
   RM.lastPhase=st.room.phase;RM.lastQ=st.room.q;
-  if(st.room.status==='finished'&&RM.rewarded!==st.room.code){
+  if(st.room.status==='finished'&&st.room.mode!=='guess'&&RM.rewarded!==st.room.code){
     RM.rewarded=st.room.code;
     const x=recordDay(10);S.gplays=(S.gplays||0)+1;S.rmplays=(S.rmplays||0)+1;
     const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();renderTop();
@@ -4523,6 +5041,12 @@ async function rmPlace(slot){
 }
 async function rmStart(){
   const st=RM.st;if(!st)return;const M=RM_MODES[st.room.mode];
+  if(st.room.mode==='guess'){
+    const ids=gwBoard(RM.cfg.size||20),cfg={rounds:st.room.total,size:ids.length,ids,first:pickOne(st.players).device};
+    try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
+    catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
+    rmPoll();return;
+  }
   const qs=st.room.mode==='assemble'?rmBuildAssemble(st.room.total):rmBuildQA(st.room.total);
   try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:qs}));
     if(!(r&&r.ok))toast(famMsg(r&&r.error));
@@ -5225,8 +5749,9 @@ function rmMenuHTML(){
   const list=fol.length?'<div class="pickl">'+fol.map(f=>{const on=RM.pick.indexOf(f.device)>=0;
     return '<button class="pickrow'+(on?' on':'')+'" data-a="rm-pick" data-d="'+esc(f.device)+'" aria-pressed="'+on+'"><span class="fav big">'+esc(f.avatar)+'</span><b>'+esc(frName(f))+'</b><span class="chk">'+(on?'✔':'')+'</span></button>';}).join('')+'</div>'
     :'<p class="muted">Aún no sigues a nadie.</p>';
-  const who='<section class="sec"><h3>¿Con quién juegas?</h3><p class="muted" style="font-size:14px;margin:0 0 10px">'+(M.id==='duel'?'Elige a 1 persona.':'Elige hasta 7 personas. Les llegará una invitación.')+'</p>'+list+'</section>';
-  const settings='<section class="sec"><h3>'+(M.id==='assemble'?'¿Cuántos versículos?':'¿Cuántas preguntas?')+'</h3><div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+t+'</button>').join('')+'</div></section>';
+  const who='<section class="sec"><h3>¿Con quién juegas?</h3><p class="muted" style="font-size:14px;margin:0 0 10px">'+(M.one?'Elige a 1 persona.':'Elige hasta 7 personas. Les llegará una invitación.')+'</p>'+list+'</section>';
+  let settings='<section class="sec"><h3>'+(M.id==='assemble'?'¿Cuántos versículos?':M.id==='guess'?'¿Cuántas rondas?':'¿Cuántas preguntas?')+'</h3>'+(M.id==='guess'?'<p class="muted" style="font-size:14px;margin:0 0 10px">En cada ronda, cada jugador tiene un turno para preguntar o adivinar.</p>':'')+'<div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+t+'</button>').join('')+'</div></section>';
+  if(M.id==='guess')settings+='<section class="sec"><h3>¿Cuántos personajes en el tablero?</h3><div class="rdpills">'+[12,20,30].map(t=>'<button class="rdpill '+((RM.cfg.size||20)===t?'on':'')+'" data-a="rm-size" data-v="'+t+'">'+t+'</button>').join('')+'</div></section>';
   return rmShell(head+who+settings,
     '<div class="lf"><div class="in"><button class="btn" data-a="rm-create" '+(n?'':'disabled')+'>'+(n?'Crear sala e invitar a '+n:'Elige a quién invitar')+'</button></div></div>',false);
 }
@@ -5235,7 +5760,7 @@ function rmOpenMenu(screen,mode){
   if(mode){RM.cfg.mode=mode;RM.cfg.total=RM_MODES[mode].def;}
   const fol=(FR.data&&FR.data.following)||[];
   RM.pick=RM.pick.filter(d=>fol.some(f=>f.device===d));
-  if(RM.cfg.mode==='duel')RM.pick=RM.pick.slice(0,1);
+  if((RM_MODES[RM.cfg.mode]||{}).one)RM.pick=RM.pick.slice(0,1);
   RM.screen='create';RM.code=null;RM.st=null;RM.sig='';
   rmOpenOverlay();$('#room').innerHTML=rmMenuHTML();
 }
@@ -5247,7 +5772,7 @@ function rmMenuRefresh(){
 function rmPickToggle(d){
   const M=RM_MODES[RM.cfg.mode]||RM_MODES.race,i=RM.pick.indexOf(d);
   if(i>=0)RM.pick.splice(i,1);
-  else if(M.id==='duel')RM.pick=[d];
+  else if(M.one)RM.pick=[d];
   else if(RM.pick.length<7)RM.pick.push(d);
   else toast('Máximo 7 invitados.');
   rmMenuRefresh();
@@ -5285,7 +5810,7 @@ async function rmInviteSend(to){
 }
 function rmLobbyHTML(st){
   const r=st.room,M=RM_MODES[r.mode],host=r.host===st.me,n=st.players.length,me=st.players.find(p=>p.device===st.me)||{};
-  const enough=r.mode==='duel'?n===2:n>=2,teamsOk=r.mode!=='teams'||[1,2].every(t=>st.players.some(p=>p.team===t)),can=host&&enough&&teamsOk;
+  const enough=(r.mode==='duel'||r.mode==='guess')?n===2:n>=2,teamsOk=r.mode!=='teams'||[1,2].every(t=>st.players.some(p=>p.team===t)),can=host&&enough&&teamsOk;
   let list;
   if(r.mode==='teams'){
     list='<div class="rmteams">'+[1,2].map(t=>'<div class="rmteam" style="--tc:'+RM_TEAM[t].c+'"><b>'+RM_TEAM[t].e+' Equipo '+RM_TEAM[t].n+'</b>'+(st.players.filter(p=>p.team===t).map(p=>rmPlayerRow(p,st)).join('')||'<span class="muted" style="font-size:13px">Nadie todavía</span>')+'</div>').join('')+'</div>'+
@@ -5294,10 +5819,10 @@ function rmLobbyHTML(st){
   const inv=st.invited||[];
   const cands=((FR.data&&FR.data.following)||[]).filter(f=>!st.players.some(p=>p.device===f.device)&&!inv.some(i=>i.device===f.device));
   const waiting=inv.length?'<p class="muted" style="margin:12px 0 0;font-weight:800">Esperando a: '+inv.map(i=>esc(i.avatar+' '+i.name)).join(', ')+'</p>':'';
-  const room=n<(r.mode==='duel'?2:8);
+  const room=n<((r.mode==='duel'||r.mode==='guess')?2:8);
   const actions=host?'<div class="row2" style="margin:14px 0 0">'+(cands.length&&room?'<button class="btn ghost sm" data-a="rm-invite-open">➕ Invitar a más</button>':'')+'<button class="btn ghost sm" data-a="rm-invite">📲 Avisar por WhatsApp</button></div>':'';
-  const need=!enough?(r.mode==='duel'?'Faltan jugadores: el duelo es de 2.':'Hace falta al menos otra persona. Cuando acepte la invitación, aparecerá aquí.'):(!teamsOk?'Cada equipo necesita al menos un jugador.':'');
-  return rmShell('<div class="gsetup"><span style="font-size:48px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+r.total+(r.mode==='assemble'?' versículos':' preguntas')+' · '+n+(n===1?' jugador':' jugadores')+'</p></div></div>'+
+  const need=!enough?((r.mode==='duel'||r.mode==='guess')?'Faltan jugadores: este juego es de 2.':'Hace falta al menos otra persona. Cuando acepte la invitación, aparecerá aquí.'):(!teamsOk?'Cada equipo necesita al menos un jugador.':'');
+  return rmShell('<div class="gsetup"><span style="font-size:48px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+r.total+(r.mode==='assemble'?' versículos':r.mode==='guess'?' rondas':' preguntas')+' · '+n+(n===1?' jugador':' jugadores')+'</p></div></div>'+
     '<h3 style="margin:6px 0 8px">Jugadores</h3>'+list+waiting+actions+
     (host?'':'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">Esperando a que empiece la partida…</p>')+
     (need&&host?'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">'+esc(need)+'</p>':''),
@@ -7250,7 +7775,7 @@ function av(i){return '<span class="av" style="background:'+PCOL[i%PCOL.length]+
 function gamesHTML(){
   return '<h1 class="page">Juegos</h1>'+
    '<div class="hero">'+mascot('cheer',84)+'<div class="bubble">'+(famOn()?'¡Elijan un juego! Pueden jugar cada quien en su celular o pasarse uno solo.':'¡Elijan un juego! Uno lee la pantalla y los demás responden.')+'</div></div>'+rmTilesHTML()+
-   '<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'</div>';
+   '<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#A560E8" data-a="gw-solo"><span class="gemo" aria-hidden="true">🕵️</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>';
 }
 function gShow(){$('#game').hidden=false;document.body.style.overflow='hidden';}
 function gTheme(){const el=$('#game');el.className='overlay gamed';if(G&&G.game){el.style.setProperty('--gc',G.game.c);el.style.setProperty('--gcol',G.game.c);}}
@@ -7432,13 +7957,15 @@ document.addEventListener('click',e=>{
   else if(a==='rd-tog-close'){hideModal();rdToggle(+b.dataset.i);}
   else if(a==='rd-reset'){showModal('<h3>¿Empezar un plan nuevo?</h3><p>Se borrarán las lecturas que marcaste en este plan. Tu racha de lectura y tus logros se conservan.</p><button class="btn" data-a="stay">Seguir con mi plan</button><button class="btn ghost" data-a="rd-reset-yes">Sí, empezar de nuevo</button>');}
   else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
+  else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
+  else if(a==='rm-size'){RM.cfg.size=+b.dataset.v;rmMenuRefresh();}
   else if(a==='rm-open'){RM.pick=[];rmOpenMenu('create',b.dataset.m);}
   else if(a==='rm-pick'){rmPickToggle(b.dataset.d);}
   else if(a==='rm-invite-open'){rmInviteOpen();}
   else if(a==='rm-inv-send'){rmInviteSend(b.dataset.to);}
   else if(a==='rm-total'){RM.cfg.total=+b.dataset.v;rmMenuRefresh();}
   else if(a==='rm-create'){rmCreate();}
-  else if(a==='rm-exit'){if(!RM.code){$('#room').hidden=true;$('#room').innerHTML='';document.body.style.overflow='';render();}else showModal('<h3>¿Salir de la sala?</h3><p>Dejarás la partida y los demás seguirán sin ti.</p><button class="btn" data-a="stay">Quedarme</button><button class="btn ghost" data-a="rm-exit-yes">Salir</button>');}
+  else if(a==='rm-exit'){if(!RM.code&&GW&&GW.solo&&GW.st&&GW.st.phase==='play'&&!GW.st.over){showModal('<h3>¿Salir de la partida?</h3><p>Se perderá el avance de esta partida.</p><button class="btn" data-a="stay">Seguir jugando</button><button class="btn ghost" data-a="rm-exit-yes">Salir</button>');}else if(!RM.code){GW=null;$('#room').hidden=true;$('#room').innerHTML='';document.body.style.overflow='';render();}else showModal('<h3>¿Salir de la sala?</h3><p>Dejarás la partida y los demás seguirán sin ti.</p><button class="btn" data-a="stay">Quedarme</button><button class="btn ghost" data-a="rm-exit-yes">Salir</button>');}
   else if(a==='rm-exit-yes'){rmLeave();}
   else if(a==='rm-team'){rpc('fr_room_team',frArgs({p_code:RM.code,p_team:+b.dataset.t})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));rmPoll();}).catch(()=>toast('Sin conexión.'));}
   else if(a==='rm-start'){rmStart();}
