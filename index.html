@@ -5070,7 +5070,7 @@ function spFinish(){
 function spAnswer(c){
   const g=SP;if(!g||g.stage!=='play'||g.lock)return;
   const q=g.cfg.qs[g.i];if(!q)return;
-  g.lock=true;g.sel=null;
+  g.lock=true;
   const idx=g.i,ok=c===-1?null:c===q.a;
   g.mine.push({i:idx,c});
   spSendEv({t:'r',i:idx,c});
@@ -5127,9 +5127,9 @@ function spPreHTML(){
 function spPlayHTML(){
   const g=SP,q=g.cfg.qs[g.i];
   if(!q)return spWaitHTML();
-  const opts=q.o.map((o,i)=>'<button class="opt'+(g.sel===i?' sel':'')+'" data-a="sp-ans" data-i="'+i+'"><kbd>'+(i+1)+'</kbd><span>'+esc(o)+'</span></button>').join('');
+  const opts=q.o.map((o,i)=>'<button class="opt" data-a="sp-ans" data-i="'+i+'"><kbd>'+(i+1)+'</kbd><span>'+esc(o)+'</span></button>').join('');
   return rmShell(spBoardHTML()+'<p class="rmmeta spmeta" id="spmeta">'+spMetaHTML()+'</p><p class="spq">'+esc(q.p)+'</p>'+(q.c?'<blockquote class="verse rmctx spv">'+esc(q.c)+'</blockquote>':'')+'<div class="opts spopts">'+opts+'</div>',
-    '<div class="lf"><div class="in"><button class="btn" data-a="sp-check"'+(g.sel==null||g.lock?' disabled':'')+'>Comprobar</button><button class="btn ghost" data-a="sp-pass" style="margin-top:8px">Paso · 0 puntos</button></div></div>',true);
+    '<div class="lf"><div class="in"><button class="btn ghost" data-a="sp-pass">Paso · 0 puntos</button></div></div>',true);
 }
 function spWaitHTML(){
   const crossed=!SP.solo&&spGoal();
@@ -5222,14 +5222,7 @@ function spAct(a,b){
   if(a==='sp-set-dur'){SPSET.dur=+b.dataset.v;$('#room').innerHTML=spSoloMenuHTML();return;}
   if(a==='sp-solo-go'){spStartSolo();return;}
   if(!SP)return;
-  if(a==='sp-ans'){
-    if(SP.lock||SP.stage!=='play')return;
-    SP.sel=+b.dataset.i;
-    document.querySelectorAll('#room .spopts .opt').forEach((x,i)=>x.classList.toggle('sel',i===SP.sel));
-    const cb=document.querySelector('#room [data-a="sp-check"]');if(cb)cb.disabled=false;
-    return;
-  }
-  if(a==='sp-check'){if(SP.sel!=null)spAnswer(SP.sel);return;}
+  if(a==='sp-ans'){spAnswer(+b.dataset.i);return;}
   if(a==='sp-pass'){spAnswer(-1);return;}
   if(a==='sp-fb'){spFeedback();return;}
   if(a==='sp-again'){
@@ -5554,8 +5547,7 @@ function rmQuestionHTML(st){
   const r=st.room,q=st.q,rev=r.phase==='reveal',mine=st.mine;
   if(!q)return rmShell('<div class="splash"><div class="spl">🕯️</div><b>Preparando…</b></div>','',false);
   const mc=mine?mine.choice:(RM.my&&RM.my.q===r.q?RM.my.i:null);
-  const pk=(RM.pk&&RM.pk.q===r.q)?RM.pk.i:null;
-  const opts=q.o.map((o,i)=>{let c='';if(rev){if(i===q.a)c='good';else if(mine&&mine.choice===i)c='bad';}else if(mc===i||(mc===null&&pk===i))c='sel';
+  const opts=q.o.map((o,i)=>{let c='';if(rev){if(i===q.a)c='good';else if(mine&&mine.choice===i)c='bad';}else if(mc===i)c='sel';
     return '<button class="opt '+c+'" data-a="rm-ans" data-i="'+i+'" '+((rev||mc!==null)?'disabled':'')+'><kbd>'+(i+1)+'</kbd><span>'+esc(o)+'</span></button>';}).join('');
   const act=st.players.filter(p=>p.active!==false),ans=act.filter(p=>p.answered).length;
   let status='',deltas=null;
@@ -5566,7 +5558,7 @@ function rmQuestionHTML(st){
   return rmShell('<p class="rmmeta">Pregunta '+(r.q+1)+' de '+r.total+(rev?' · siguiente en <b id="rmnext"></b> s':'')+'</p>'+
     '<div class="say">'+mascot(rev?(mine&&mine.correct?'cheer':'sad'):'happy',64)+'<div class="bubble"><p class="prompt">'+esc(q.p)+'</p></div></div>'+
     (q.c?'<blockquote class="verse rmctx">'+esc(q.c)+'</blockquote>':'')+'<div class="opts">'+opts+'</div>'+status+
-    '<h3 style="margin:16px 0 6px;font-size:15px">Marcador</h3>'+rmBoardHTML(st,deltas),(rev||mc!==null)?'':'<div class="lf"><div class="in"><button class="btn" data-a="rm-check"'+(pk===null?' disabled':'')+'>Comprobar</button></div></div>',true);
+    '<h3 style="margin:16px 0 6px;font-size:15px">Marcador</h3>'+rmBoardHTML(st,deltas),'',true);
 }
 function rmAssembleHTML(st){
   const r=st.room,q=st.q,rev=r.phase==='reveal';
@@ -8018,7 +8010,7 @@ function renderLesson(){
   }
   let foot;
   if(!ui.checked){
-    foot='<div class="lf"><div class="in"><button class="btn" data-a="check" '+(canCheck()?'':'disabled')+'>'+(q.type==='match'?'Une todas las parejas':'Comprobar')+'</button></div></div>';
+    foot=(q.type==='order'||q.type==='match')?'<div class="lf"><div class="in"><button class="btn" data-a="check" '+(canCheck()?'':'disabled')+'>'+(q.type==='match'?'Une todas las parejas':'Comprobar')+'</button></div></div>':'';
   }else{
     const v=q.ref?VBY[q.ref]:null,fbk=q.fb||null;
     let ans='';
@@ -8507,7 +8499,7 @@ document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rdother'){
 /* ============================================================
    EVENTOS
    ============================================================ */
-function pick(i){if(!L||L.ui.checked)return;const q=L.cur;if(q.type==='order'||q.type==='match'||i>=q.opts.length)return;L.ui.sel=i;renderLesson();}
+function pick(i){if(!L||L.ui.checked)return;const q=L.cur;if(q.type==='order'||q.type==='match'||i>=q.opts.length)return;L.ui.sel=i;check();}
 /* ----- reordenar fichas arrastrando (preguntas de ordenar) ----- */
 (function(){
   let D=null,swallow=0;
@@ -8637,8 +8629,7 @@ document.addEventListener('click',e=>{
   else if(a==='rm-exit-yes'){rmLeave();}
   else if(a==='rm-team'){rpc('fr_room_team',frArgs({p_code:RM.code,p_team:+b.dataset.t})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));rmPoll();}).catch(()=>toast('Sin conexión.'));}
   else if(a==='rm-start'){rmStart();}
-  else if(a==='rm-ans'){const st=RM.st;if(!st||st.room.phase!=='question'||st.mine||(RM.my&&RM.my.q===st.room.q))return;RM.pk={q:st.room.q,i:+b.dataset.i};rmRender(true);}
-  else if(a==='rm-check'){if(RM.pk&&RM.st&&RM.pk.q===RM.st.room.q)rmAnswer(RM.pk.i);}
+  else if(a==='rm-ans'){rmAnswer(+b.dataset.i);}
   else if(a==='rm-piece'){RM.sel=(RM.sel===+b.dataset.i)?null:+b.dataset.i;rmRender();}
   else if(a==='rm-slot'){rmPlace(+b.dataset.i);}
   else if(a==='rm-invite'){rmInvite();}
