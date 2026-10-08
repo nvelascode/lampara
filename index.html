@@ -15,8 +15,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Serif:wght@600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Serif:wght@600;700&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Serif:wght@600;700&family=Cormorant+Garamond:ital,wght@1,600;1,700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Serif:wght@600;700&family=Cormorant+Garamond:ital,wght@1,600;1,700&display=swap"></noscript>
 <style>
 :root{
   --bg:#FFFFFF; --surface:#FFFFFF; --surface2:#F7F7F7; --ink:#3C3C3C; --muted:#777777; --line:#E5E5E5;
@@ -873,6 +873,31 @@ a.btn{text-decoration:none;text-align:center}
 .spm2{margin-left:auto;color:var(--ink)}
 .splab .spd{position:absolute;right:0;top:-12px}
 @media (prefers-reduced-motion:reduce){.sphorse{transition:none}}
+/* ===== Tarjetas para compartir ===== */
+.modal .box{max-height:calc(100dvh - 40px);overflow:auto}
+.ccard{--ca:#fff;border-radius:18px;padding:22px 20px 14px;color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:190px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);position:relative;overflow:hidden}
+.ccard q{display:block;quotes:none;font-family:'Cormorant Garamond','Noto Serif',Georgia,serif;font-style:italic;font-weight:600;font-size:21px;line-height:1.3;text-shadow:0 2px 8px rgba(0,0,0,.25)}
+.ccard cite{font-style:normal;font-weight:900;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ca)}
+.ccard small{font-size:11px;font-weight:800;opacity:.75;margin-top:4px}
+#giftprev{margin-bottom:8px}
+.cpv{display:flex;justify-content:center;margin:4px 0 8px}
+.cpv canvas{height:23vh;max-height:300px;aspect-ratio:9/16;width:auto;border-radius:18px;box-shadow:0 6px 22px rgba(0,0,0,.28)}
+.csws{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:4px 0 6px}
+.csw{width:30px;height:30px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 2px var(--line);padding:0}
+.csw.on{box-shadow:0 0 0 3px var(--ink)}
+.cseg{margin:4px 0}
+.cseg button{padding:8px 4px;font-size:14px}
+#cardq{margin-bottom:8px}
+#cardmine[hidden],#cardq[hidden],#cardlist[hidden]{display:none}
+.clist{display:grid;gap:8px;max-height:34vh;overflow:auto;text-align:left;padding:2px}
+.clist.gift{max-height:26vh}
+.cpick{display:grid;gap:2px;text-align:left;padding:10px 12px;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink)}
+.cpick b{font-size:13px;color:var(--blue)}
+.cpick span{font-weight:700;font-size:14px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cpick.on{border-color:var(--blue);background:var(--blue-bg)}
+#room .lb.cb{display:flex;flex-direction:column;overflow:hidden;padding-bottom:8px}
+#room .lb.cb .clist{flex:1;min-height:80px;max-height:none}
+#room .lb.cb #cardmine{flex:none}
 </style>
 </head>
 <body>
@@ -4353,16 +4378,17 @@ function giftOpen(to,name){
 function giftForm(kind){
   GIFT.kind=kind;let body='';
   if(kind==='shield')body='<p style="margin:0 0 10px">Le darás uno de tus protectores de racha. Si lo abre y tiene lugar, lo podrá usar el día que no practique.</p>';
-  if(kind==='card')body='<label class="glabel">Versículo</label><select id="gcardref" class="inp">'+VOTD.map((v,i)=>'<option value="'+i+'">'+esc(v.r)+'</option>').join('')+'</select>';
+  if(kind==='card')body='<label class="glabel">Versículo o cita</label>'+cardGiftPicker();
   if(kind==='badge')body='<label class="glabel">Insignia</label><div class="avs" id="gbadges">'+Object.keys(BADGES).map((k,i)=>'<button class="avb'+(i===0?' on':'')+'" data-a="gift-badge" data-k="'+k+'" aria-label="'+BADGES[k][1]+'" title="'+BADGES[k][1]+'">'+BADGES[k][0]+'</button>').join('')+'</div>';
   GIFT.badge=kind==='badge'?'star':null;
   showModal('<h3>'+({shield:'🛡️ Protector de racha',card:'💌 Tarjeta con versículo',badge:'🏅 Insignia'})[kind]+'</h3>'+body+
    '<label class="glabel" style="margin-top:10px">Unas palabras (opcional)</label><input id="gmsg" class="inp" maxlength="120" placeholder="Ej. Pensando en ti" autocomplete="off">'+
    '<button class="btn" style="margin-top:12px" data-a="gift-send">Enviar regalo</button><button class="btn ghost" data-a="stay">Cancelar</button>');
+  if(kind==='card')cardGiftPreview();
 }
 async function giftSend(){
   const kind=GIFT.kind,msg=(($('#gmsg')||{}).value||'').trim();let payload={msg};
-  if(kind==='card'){const v=VOTD[+($('#gcardref')||{}).value||0];payload={ref:v.r,text:v.t,msg};}
+  if(kind==='card'){const v=cardGiftItem();if(!v){toast('Elige un versículo.');return;}payload={ref:v.r,text:v.t,msg};}
   if(kind==='badge')payload={badge:GIFT.badge||'star',msg};
   if(kind==='shield'&&(S.freezes||0)<1){toast('No tienes protectores para regalar.');return;}
   try{
@@ -4395,13 +4421,13 @@ async function giftClaim(id){
     if(!(r&&r.ok)){toast(famMsg(r&&r.error));return;}
     const p=r.payload||{};let big='',txt='';
     if(r.kind==='shield'){S.freezes=Math.min(2,(S.freezes||0)+1);big='🛡️';txt='Un protector de racha: te cuidará un día en que no puedas practicar.';}
-    else if(r.kind==='card'){S.cards=S.cards||[];S.cards.unshift({ref:p.ref,text:p.text,msg:p.msg||'',from:r.from,at:today()});S.cards=S.cards.slice(0,60);big='💌';txt='«'+p.text+'» — '+p.ref;}
+    else if(r.kind==='card'){S.cards=S.cards||[];S.cards.unshift({ref:p.ref,text:p.text,msg:p.msg||'',from:r.from,at:today()});S.cards=S.cards.slice(0,60);big='💌';txt='';CARD_LAST={k:'v',t:p.text,r:p.ref};}
     else{S.badges=S.badges||[];if(S.badges.indexOf(p.badge)<0)S.badges.push(p.badge);big=badgeE(p.badge);txt='Insignia «'+(BADGES[p.badge]||['',''])[1]+'». Puedes lucirla en Perfil → Mis regalos.';}
     S.giftsGot=(S.giftsGot||0)+1;
     const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
     if(FR.data)FR.data.gifts=Math.max(0,(FR.data.gifts||1)-1);
     GIFTS=GIFTS.filter(x=>x.id!==id);renderTop();confetti(70);beep('win');
-    showModal('<div style="text-align:center"><div style="font-size:64px;line-height:1.1">'+big+'</div><h3>'+esc(r.from)+' te regaló</h3><p style="margin:0 0 8px;font-weight:800">'+esc(txt)+'</p>'+(p.msg?'<p class="nota" style="text-align:left">💬 «'+esc(p.msg)+'»</p>':'')+(fresh.length?'<p class="muted">🏅 Logro: '+esc(fresh[0].t)+'</p>':'')+'</div>'+(GIFTS.length?'<button class="btn" data-a="gift-inbox">Abrir el siguiente ('+GIFTS.length+')</button>':'')+'<button class="btn ghost" data-a="stay">Cerrar</button>');
+    showModal('<div style="text-align:center"><div style="font-size:64px;line-height:1.1">'+(r.kind==='card'?'':big)+'</div><h3>'+esc(r.from)+' te regaló</h3>'+(r.kind==='card'?cardHTML(CARD_LAST,cardStyleFor(CARD_LAST.r)):'<p style="margin:0 0 8px;font-weight:800">'+esc(txt)+'</p>')+(p.msg?'<p class="nota" style="text-align:left">💬 «'+esc(p.msg)+'»</p>':'')+(fresh.length?'<p class="muted">🏅 Logro: '+esc(fresh[0].t)+'</p>':'')+'</div>'+(r.kind==='card'?'<button class="btn blue" data-a="card-open-sel">Compartir esta tarjeta</button>':'')+(GIFTS.length?'<button class="btn" data-a="gift-inbox">Abrir el siguiente ('+GIFTS.length+')</button>':'')+'<button class="btn ghost" data-a="stay">Cerrar</button>');
     if(TAB==='me'||TAB==='path'||TAB==='fr')render();else renderTabs();
   }catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
 }
@@ -5201,6 +5227,208 @@ function spAct(a,b){
     rpc('fr_room_again',frArgs({p_code:RM.code})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));else{SP=null;RM.sig='';RM.lastState=0;}RM.rewarded='';rmPoll();}).catch(()=>toast('Sin conexión.'));
   }
 }
+
+/* ============================================================
+   TARJETAS PARA COMPARTIR (versículos y citas) + selector de regalo
+   ============================================================ */
+const CARD_URL='lamppy.vercel.app';
+const CARD_ST=[
+ {n:'Amanecer',g:['#FF9A5A','#E8456B'],a:'#FFE6B8'},
+ {n:'Océano',g:['#2BB8F8','#1B4F9C'],a:'#C9F0FF'},
+ {n:'Bosque',g:['#4DBE78','#14513F'],a:'#D6F7C2'},
+ {n:'Noche',g:['#3B3F9A','#0E1033'],a:'#CBD0FF'},
+ {n:'Vino',g:['#A3345A','#3A0F2E'],a:'#FFD3DE'},
+ {n:'Dorado',g:['#DDA033','#8A4B12'],a:'#FFF0C4'},
+ {n:'Violeta',g:['#AE6CF0','#4F25A0'],a:'#EBD9FF'},
+ {n:'Carbón',g:['#52525C','#141418'],a:'#E4E4EC'}
+];
+const CARD_Q=[
+ {k:'q',r:'C. S. Lewis',s:'¿Es poesía la teología?',t:'Creo en el cristianismo como creo que el sol ha salido: no solo porque lo veo, sino porque por él veo todo lo demás.'},
+ {k:'q',r:'C. S. Lewis',s:'El problema del dolor',t:'Dios nos susurra en nuestros placeres, nos habla en nuestra conciencia, pero nos grita en nuestros dolores: es su megáfono para despertar a un mundo sordo.'},
+ {k:'q',r:'C. S. Lewis',s:'Mero cristianismo',t:'Si encuentro en mí un deseo que ninguna experiencia de este mundo puede satisfacer, la explicación más probable es que fui creado para otro mundo.'},
+ {k:'q',r:'Charles Spurgeon',t:'Visita muchos libros buenos, pero vive en la Biblia.'},
+ {k:'q',r:'Charles Spurgeon',t:'He aprendido a besar la ola que me lanza contra la Roca de los siglos.'},
+ {k:'q',r:'Charles Spurgeon',t:'No es tu aferrarte a Cristo lo que te salva, sino el aferrarse de Cristo a ti.'},
+ {k:'q',r:'John Bunyan',t:'En la oración es mejor tener un corazón sin palabras que palabras sin corazón.'},
+ {k:'q',r:'G. K. Chesterton',s:'Lo que anda mal en el mundo',t:'El ideal cristiano no ha sido probado y hallado deficiente; ha sido hallado difícil y no se ha probado.'},
+ {k:'q',r:'R. C. Sproul',t:'No hay moléculas rebeldes en el universo.'},
+ {k:'q',r:'Juan Calvino',s:'Institución I.1.1',t:'Casi toda la sabiduría que poseemos consiste en dos partes: el conocimiento de Dios y el de nosotros mismos.'},
+ {k:'q',r:'Agustín de Hipona',s:'Confesiones I.1',t:'Nos hiciste para ti, y nuestro corazón está inquieto hasta que descansa en ti.'},
+ {k:'q',r:'Jonathan Edwards',s:'Resoluciones, 6',t:'Resuelvo vivir con todas mis fuerzas mientras viva.'},
+ {k:'q',r:'Catecismo Menor de Westminster',s:'Pregunta 1',t:'¿Cuál es el fin principal del hombre? Glorificar a Dios y gozar de él para siempre.'},
+ {k:'q',r:'Catecismo de Heidelberg',s:'Pregunta 1',t:'¿Cuál es tu único consuelo, en la vida y en la muerte? Que no me pertenezco a mí mismo, sino que pertenezco, en cuerpo y alma, a mi fiel Salvador Jesucristo.'}
+];
+let CARD={tab:'v',q:'',sel:null,st:0,mine:{t:'',r:''}};
+let CARD_VC=null;
+function cardVerses(){
+  if(CARD_VC)return CARD_VC;
+  const seen=new Set(),top=[],rest=[];
+  VOTD.forEach(v=>{if(!seen.has(v.r)){seen.add(v.r);top.push({k:'v',r:v.r,t:v.t});}});
+  ALLV.forEach(v=>{if(seen.has(v.r))return;seen.add(v.r);(v.key?top:rest).push({k:'v',r:v.r,t:v.t});});
+  CARD_VC={top,all:top.concat(rest)};
+  return CARD_VC;
+}
+const cardNorm=s=>String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+function cardItems(){
+  const q=cardNorm(CARD.q.trim());
+  if(CARD.tab==='q')return CARD_Q.filter(x=>!q||cardNorm(x.r+' '+(x.s||'')+' '+x.t).indexOf(q)>=0);
+  const V=cardVerses();
+  if(!q)return V.top;
+  return V.all.filter(x=>cardNorm(x.r+' '+x.t).indexOf(q)>=0).slice(0,60);
+}
+const cardSame=(a,b)=>!!(a&&b&&a.r===b.r&&a.t===b.t);
+const cardRef=x=>x.s?x.r+' · '+x.s:x.r;
+function cardStyleFor(r){let h=0;String(r).split('').forEach(c=>{h=(h*31+c.charCodeAt(0))>>>0;});return h%CARD_ST.length;}
+/* ----- dibujo en canvas ----- */
+let CARD_FONT_P=null;
+function cardFonts(){
+  if(!CARD_FONT_P){
+    let ld;try{ld=Promise.all([document.fonts.load('italic 600 60px "Cormorant Garamond"'),document.fonts.load('900 30px Nunito'),document.fonts.load('700 30px Nunito')]).catch(()=>0);}catch(e){ld=Promise.resolve();}
+    CARD_FONT_P=Promise.race([ld,new Promise(r=>setTimeout(r,1800))]);
+  }
+  return CARD_FONT_P;
+}
+function cardPaint(cv,item,si){
+  const W=cv.width,H=cv.height,s=W/1080,c=cv.getContext('2d'),st=CARD_ST[si%CARD_ST.length];
+  const SERIF='"Cormorant Garamond","Noto Serif","Gentium Plus",Georgia,serif',SANS='Nunito,"Noto Sans",Arial,sans-serif';
+  c.clearRect(0,0,W,H);
+  let g=c.createLinearGradient(0,0,W*.7,H);g.addColorStop(0,st.g[0]);g.addColorStop(1,st.g[1]);c.fillStyle=g;c.fillRect(0,0,W,H);
+  g=c.createRadialGradient(W*.5,H*.3,0,W*.5,H*.3,W*1.0);g.addColorStop(0,'rgba(255,255,255,.22)');g.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=g;c.fillRect(0,0,W,H);
+  c.fillStyle='rgba(255,255,255,.06)';c.beginPath();c.arc(W*.95,H*.9,W*.5,0,7);c.fill();c.beginPath();c.arc(-W*.05,H*.05,W*.38,0,7);c.fill();
+  const rr=(x,y,w,h,r)=>{c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();};
+  c.strokeStyle='rgba(255,255,255,.3)';c.lineWidth=3*s;rr(54*s,54*s,W-108*s,H-108*s,46*s);c.stroke();
+  /* adorno superior */
+  const cx=W/2,oy=330*s;
+  c.strokeStyle='rgba(255,255,255,.55)';c.lineWidth=3*s;
+  c.beginPath();c.moveTo(cx-230*s,oy);c.lineTo(cx-34*s,oy);c.moveTo(cx+34*s,oy);c.lineTo(cx+230*s,oy);c.stroke();
+  c.fillStyle=st.a;c.beginPath();c.moveTo(cx,oy-18*s);c.lineTo(cx+14*s,oy);c.lineTo(cx,oy+18*s);c.lineTo(cx-14*s,oy);c.closePath();c.fill();
+  /* texto con tamaño automático */
+  const maxW=820*s,top=470*s,maxH=760*s;
+  c.textAlign='center';c.textBaseline='alphabetic';
+  let size=96*s,lines=[],lh=0;
+  const wrap=()=>{const out=[];let cur='';String(item.t).split(/\s+/).forEach(w=>{const t=cur?cur+' '+w:w;if(c.measureText(t).width>maxW&&cur){out.push(cur);cur=w;}else cur=t;});if(cur)out.push(cur);return out;};
+  for(;size>=40*s;size-=4*s){c.font='italic 600 '+size+'px '+SERIF;lines=wrap();lh=size*1.25;if(lines.length*lh<=maxH)break;}
+  const blockH=lines.length*lh;
+  let y=top+Math.max(0,(maxH-blockH)/2)+size*.85;
+  c.fillStyle='rgba(255,255,255,.16)';c.font='700 '+(300*s)+'px Georgia,serif';c.fillText('“',cx,y-size*.2+10*s);
+  c.shadowColor='rgba(0,0,0,.28)';c.shadowBlur=14*s;c.shadowOffsetY=3*s;
+  c.fillStyle='#fff';c.font='italic 600 '+size+'px '+SERIF;
+  lines.forEach((ln,i)=>c.fillText(ln,cx,y+i*lh));
+  c.shadowColor='transparent';c.shadowBlur=0;c.shadowOffsetY=0;
+  /* referencia o autor */
+  let ry=y+(lines.length-1)*lh+size*.9;
+  ry=Math.min(Math.max(ry,top+maxH*.55),top+maxH+120*s);
+  c.fillStyle=st.a;c.fillRect(cx-60*s,ry-26*s,120*s,3*s);
+  c.fillStyle=st.a;c.font='900 '+(42*s)+'px '+SANS;
+  try{if('letterSpacing' in c)c.letterSpacing=(3*s)+'px';}catch(e){}
+  c.fillText(String(item.r).toUpperCase(),cx,ry+30*s);
+  if(item.s){c.font='700 '+(30*s)+'px '+SANS;c.globalAlpha=.85;c.fillText(String(item.s),cx,ry+78*s);c.globalAlpha=1;}
+  try{if('letterSpacing' in c)c.letterSpacing='0px';}catch(e){}
+  /* dirección de Lampy */
+  c.fillStyle='rgba(255,255,255,.9)';c.font='800 '+(38*s)+'px '+SANS;c.fillText(CARD_URL,cx,H-150*s);
+  c.fillStyle='rgba(255,255,255,.65)';c.font='700 '+(26*s)+'px '+SANS;c.fillText('Lampy · un versículo cada día',cx,H-106*s);
+}
+function cardHTML(item,si){
+  const st=CARD_ST[si%CARD_ST.length];
+  return '<div class="ccard" style="background:linear-gradient(160deg,'+st.g[0]+','+st.g[1]+');--ca:'+st.a+'"><q>'+esc(item.t)+'</q><cite>'+esc(item.r)+(item.s?' · '+esc(item.s):'')+'</cite><small>'+CARD_URL+'</small></div>';
+}
+/* ----- listas ----- */
+function cardListHTML(){
+  const its=cardItems();
+  if(!its.length)return '<p class="muted" style="text-align:center;padding:14px 0;margin:0">No encontré nada con esa búsqueda.</p>';
+  return its.map(x=>{const i=(CARD.tab==='q'?CARD_Q:cardVerses().all).indexOf(x);
+    return '<button class="cpick'+(cardSame(x,CARD.sel)?' on':'')+'" data-a="card-pick" data-i="'+i+'"><b>'+esc(cardRef(x))+'</b><span>'+esc(x.t)+'</span></button>';}).join('');
+}
+function cardTabsHTML(mine){
+  return '<div class="seg cseg">'+[['v','Versículos'],['q','Citas'],['m','Mi texto']].filter(t=>mine||t[0]!=='m').map(t=>'<button class="'+(CARD.tab===t[0]?'on':'')+'" data-a="card-tab" data-t="'+t[0]+'">'+t[1]+'</button>').join('')+'</div>';
+}
+function cardListRefresh(){const l=document.getElementById('cardlist');if(l)l.innerHTML=cardListHTML();}
+function cardSearch(v){CARD.q=v;cardListRefresh();}
+/* ----- pantalla «Crear tarjeta» ----- */
+function cardCurrent(){
+  if(CARD.tab==='m'){const t=(CARD.mine.t||'').trim();return {k:'m',t:t||'Escribe tu texto aquí',r:(CARD.mine.r||'').trim()||'Lampy'};}
+  return CARD.sel;
+}
+function cardView(){
+  const sw=CARD_ST.map((s,i)=>'<button class="csw'+(CARD.st===i?' on':'')+'" data-a="card-style" data-i="'+i+'" style="background:linear-gradient(150deg,'+s.g[0]+','+s.g[1]+')" aria-label="Fondo '+s.n+'" aria-pressed="'+(CARD.st===i)+'"></button>').join('');
+  const mine='<div id="cardmine" '+(CARD.tab==='m'?'':'hidden')+'><textarea class="inp" id="cmt" rows="3" maxlength="260" placeholder="Escribe un versículo o frase" oninput="CARD.mine.t=this.value;cardRedraw()">'+esc(CARD.mine.t)+'</textarea><input class="inp" id="cmr" maxlength="40" placeholder="¿De quién o de dónde? (ej. Salmo 23:1)" style="margin-top:8px" value="'+esc(CARD.mine.r)+'" oninput="CARD.mine.r=this.value;cardRedraw()"></div>';
+  const search='<input class="inp" id="cardq" placeholder="Buscar por palabra o cita…" value="'+esc(CARD.q)+'" oninput="cardSearch(this.value)" autocomplete="off" '+(CARD.tab==='m'?'hidden':'')+'>';
+  return '<div class="lh"><button class="x" data-a="rm-exit" aria-label="Cerrar">'+IC.close+'</button><b style="flex:1;font-size:19px">Crear tarjeta</b></div>'+
+    '<div class="lb cb"><div class="cpv"><canvas id="cardcv" width="540" height="960" aria-label="Vista previa de la tarjeta"></canvas></div>'+
+    '<div class="csws" role="group" aria-label="Fondo">'+sw+'</div>'+cardTabsHTML(true)+search+mine+'<div class="clist" id="cardlist"'+(CARD.tab==='m'?' hidden':'')+'>'+cardListHTML()+'</div></div>'+
+    '<div class="lf"><div class="in"><div class="row2"><button class="btn" data-a="card-share">Compartir</button><button class="btn ghost" data-a="card-save">Guardar imagen</button></div></div></div>';
+}
+function cardRedraw(){
+  const cv=document.getElementById('cardcv'),it=cardCurrent();
+  if(cv&&it)cardPaint(cv,it,CARD.st);
+}
+function cardOpen(item){
+  if(item){CARD.sel=item;CARD.tab=item.k==='q'?'q':'v';CARD.st=cardStyleFor(item.r);CARD.q='';}
+  if(!CARD.sel)CARD.sel=cardVerses().top[0];
+  if(CARD.tab==='m'&&!(CARD.mine.t||'').trim())CARD.tab='v';
+  RM.code=null;RM.st=null;GW=null;SP=null;
+  rmOpenOverlay();$('#room').innerHTML=cardView();
+  cardRedraw();cardFonts().then(cardRedraw);
+}
+async function cardBlob(){
+  await cardFonts();
+  const it=cardCurrent();if(!it)return null;
+  const cv=document.createElement('canvas');cv.width=1080;cv.height=1920;
+  cardPaint(cv,it,CARD.st);
+  return new Promise(r=>cv.toBlob(r,'image/png'));
+}
+async function cardShare(save){
+  const blob=await cardBlob();if(!blob){toast('No se pudo crear la imagen.');return;}
+  const file=new File([blob],'lampy-tarjeta.png',{type:'image/png'});
+  if(!save){
+    try{
+      if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text:'📖 '+CARD_URL});return;}
+    }catch(e){if(e&&e.name==='AbortError')return;}
+  }
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='lampy-tarjeta.png';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+  toast(save?'Imagen guardada.':'Tu teléfono no permite compartir directo: se guardó la imagen para que la subas a tu estado.');
+}
+/* ----- selector para regalar ----- */
+function cardGiftRef(x){const f=cardRef(x);return f.length<=40?f:String(x.r).slice(0,40);}
+function cardGiftItem(){const x=CARD.sel;return x?{k:x.k,t:x.t,r:cardGiftRef(x)}:null;}
+function cardGiftPicker(){
+  const rr=document.getElementById('room');if(rr&&rr.querySelector('#cardcv'))rr.innerHTML='';
+  if(!CARD.sel||CARD.tab==='m'||CARD.sel.k!==CARD.tab){CARD.tab=(CARD.sel&&CARD.sel.k==='q')?'q':'v';if(!CARD.sel||CARD.sel.k==='m')CARD.sel=cardVerses().top[0];}
+  return '<div id="giftprev"></div>'+cardTabsHTML(false)+'<input class="inp" id="cardq" placeholder="Buscar por palabra o cita…" value="'+esc(CARD.q)+'" oninput="cardSearch(this.value)" autocomplete="off"><div class="clist gift" id="cardlist">'+cardListHTML()+'</div>';
+}
+function cardGiftPreview(){const p=document.getElementById('giftprev'),it=cardGiftItem();if(p&&it)p.innerHTML=cardHTML(it,cardStyleFor(it.r));}
+function cardAct(a,b){
+  if(a==='card-open'){cardOpen();return;}
+  if(a==='card-open-sel'){hideModal();cardOpen(CARD_LAST);return;}
+  if(a==='card-pick'){
+    const src=CARD.tab==='q'?CARD_Q:cardVerses().all,it=src[+b.dataset.i];if(!it)return;
+    CARD.sel=it;
+    document.querySelectorAll('#cardlist .cpick').forEach(x=>x.classList.toggle('on',x===b));
+    if(document.getElementById('cardcv'))cardRedraw();else cardGiftPreview();
+    return;
+  }
+  if(a==='card-tab'){
+    CARD.tab=b.dataset.t;CARD.q='';
+    const inRoom=!!document.getElementById('cardcv');
+    document.querySelectorAll('.cseg button').forEach(x=>x.classList.toggle('on',x.dataset.t===CARD.tab));
+    const q=document.getElementById('cardq'),l=document.getElementById('cardlist'),m=document.getElementById('cardmine');
+    if(q){q.value='';q.hidden=CARD.tab==='m';}if(l)l.hidden=CARD.tab==='m';if(m)m.hidden=CARD.tab!=='m';
+    if(CARD.tab!=='m'){const first=cardItems()[0];if(!CARD.sel||CARD.sel.k!==CARD.tab)CARD.sel=first||CARD.sel;cardListRefresh();}
+    if(inRoom)cardRedraw();else cardGiftPreview();
+    return;
+  }
+  if(a==='card-style'){
+    CARD.st=+b.dataset.i;
+    document.querySelectorAll('.csw').forEach((x,i)=>{const on=(+x.dataset.i)===CARD.st;x.classList.toggle('on',on);});
+    if(document.getElementById('cardcv'))cardRedraw();else cardGiftPreview();
+    return;
+  }
+  if(a==='card-share'){cardShare(false);return;}
+  if(a==='card-save'){cardShare(true);return;}
+}
+let CARD_LAST=null;
 
 /* ----- preguntas ----- */
 function rmQBlank(used){
@@ -6074,6 +6302,7 @@ function frHTML(){
   else out+=frBoardHTML(d)+'<div class="mlist">'+fol.map(frFollowingHTML).join('')+'</div>';
   out+='<div class="frsec"><h3>Te siguen</h3><span class="muted">'+fws.length+'</span></div>';
   out+=fws.length?'<section class="card" style="padding:6px 14px">'+fws.map(frFollowerHTML).join('')+'</section>':'<p class="muted" style="margin:0;font-size:14px;font-weight:800">Cuando alguien escriba tu código, aparecerá aquí.</p>';
+  out+='<section class="card" style="margin-top:18px"><b>🖼️ Tarjetas para compartir</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Crea una imagen con un versículo o una cita de Spurgeon, Lewis, Sproul y más, para tus estados o tus amigos.</p><button class="btn sm" data-a="card-open">Crear tarjeta</button></section>';
   out+='<div style="margin-top:18px">'+giftsCardHTML()+'</div>';
   out+='<section class="card"><b>⚙️ Mi perfil</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Quien te sigue ve tu nombre, tu emoji, tu racha, tus XP de la semana y si practicaste hoy. Nada más.</p>'+
     '<b style="display:block;font-size:15px">Permitir que me sigan con mi código</b><div class="seg"><button class="'+(me.visible?'on':'')+'" data-a="fr-vis" data-v="1">Sí</button><button class="'+(!me.visible?'on':'')+'" data-a="fr-vis" data-v="0">No</button></div>'+
@@ -8337,6 +8566,7 @@ document.addEventListener('click',e=>{
   else if(a==='rd-reset'){showModal('<h3>¿Empezar un plan nuevo?</h3><p>Se borrarán las lecturas que marcaste en este plan. Tu racha de lectura y tus logros se conservan.</p><button class="btn" data-a="stay">Seguir con mi plan</button><button class="btn ghost" data-a="rd-reset-yes">Sí, empezar de nuevo</button>');}
   else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
+  else if(a.slice(0,5)==='card-'){cardAct(a,b);}
   else if(a.slice(0,3)==='sp-'){spAct(a,b);}
   else if(a==='rm-size'){RM.cfg.size=+b.dataset.v;rmMenuRefresh();}
   else if(a==='rm-open'){RM.pick=[];rmOpenMenu('create',b.dataset.m);}
