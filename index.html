@@ -5570,12 +5570,12 @@ function rfDone(){return RF.filter(l=>S.done[l.title]).length;}
 function rfCardHTML(){
   if(!rfOn()||S.course==='gk')return '';
   const n=rfDone(),d=rfDaysLeft(),all=n>=RF.length;
-  return '<button class="rfbar'+(all?' ok':'')+'" data-a="rf-open" aria-label="Evento de la Reforma"><span class="rfi" aria-hidden="true">📜</span><b>Reforma</b><span class="rfm">'+(all?'✔ Completado':n+' de '+RF.length)+'</span><span class="rfd">'+(d<=1?'¡Último día!':'quedan '+d+' días')+'</span><span class="rfch" aria-hidden="true">›</span></button>';
+  return '<button class="rfbar'+(all?' ok':'')+'" data-a="rf-open" aria-label="Evento de la Reforma"><span class="rfi" aria-hidden="true">📜</span><b>Evento: Reforma</b><span class="rfd">'+(all?'✔ Completado':d<=1?'¡Último día!':'quedan '+d+' días')+'</span><span class="rfch" aria-hidden="true">›</span></button>';
 }
 function rfOpen(){
   if(!rfOn())return;
   let cur=RF.findIndex(l=>!S.done[l.title]);
-  showModal('<h3>📜 La Reforma</h3><p class="muted">Quedan '+rfDaysLeft()+(rfDaysLeft()===1?' día':' días')+' · hasta el 1 de noviembre</p><div class="rflist">'+
+  showModal('<h3>📜 Evento: Reforma</h3><p class="muted">'+rfDone()+' de '+RF.length+' completadas · quedan '+rfDaysLeft()+(rfDaysLeft()===1?' día':' días')+' (hasta el 1 de noviembre)</p><div class="rflist">'+
    RF.map((l,i)=>{const dn=!!S.done[l.title],lock=!dn&&i>cur&&cur>=0;
      return '<button class="rfrow'+(dn?' done':'')+(i===cur?' cur':'')+'" data-a="rf-go" data-i="'+i+'" '+(lock?'disabled':'')+'><span class="rfe">'+(dn?'✔':lock?'🔒':l.e)+'</span><b>'+esc(l.title.replace(/^Reforma \d · /,''))+'</b><small>'+(dn?'Hecha':lock?'Bloqueada':i===cur?'Sigue':'')+'</small></button>';}).join('')+
    '</div><button class="btn ghost" data-a="stay">Cerrar</button>');
