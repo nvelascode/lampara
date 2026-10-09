@@ -883,6 +883,20 @@ a.btn{text-decoration:none;text-align:center}
 .gsec:not([open])>summary::after{transform:rotate(-90deg)}
 .gsec[open]{padding-bottom:12px}
 .gbadge{font-style:normal;background:var(--red);color:#fff;border-radius:99px;padding:1px 8px;font-size:13px}
+/* ===== Evento: la Reforma ===== */
+.rfcard{margin:0 0 14px;padding:16px;border-radius:20px;color:#fff;background:linear-gradient(135deg,#C8372D,#7A1B3A);box-shadow:0 4px 0 rgba(0,0,0,.18);display:grid;gap:8px}
+.rfcard h3{margin:0;font-size:22px}.rfcard p{margin:0;font-weight:700;opacity:.95;font-size:15px}
+.rftop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rftag{font-size:12px;font-weight:900;letter-spacing:.08em;background:rgba(255,255,255,.2);padding:4px 10px;border-radius:99px}
+.rfleft{font-size:13px;font-weight:900;background:#FFD54A;color:#5A2A00;padding:4px 10px;border-radius:99px}
+.rfdots{display:flex;gap:6px}.rfdots i{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.28)}.rfdots i.on{background:#FFD54A}
+.rfcard .btn{background:#fff;color:#7A1B3A;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.rflist{display:grid;gap:8px;text-align:left}
+.rfrow{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink);text-align:left}
+.rfrow b{flex:1;font-size:15px}.rfrow small{color:var(--muted);font-weight:800}
+.rfrow .rfe{font-size:22px;width:30px;text-align:center}
+.rfrow.cur{border-color:#C8372D;background:color-mix(in srgb,#C8372D 10%,var(--surface))}
+.rfrow.done{opacity:.8}.rfrow[disabled]{opacity:.5}
 /* ===== Tarjetas para compartir ===== */
 .modal .box{max-height:calc(100dvh - 40px);overflow:auto}
 .ccard{--ca:#fff;border-radius:18px;padding:22px 20px 14px;color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:190px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);position:relative;overflow:hidden}
@@ -5465,6 +5479,120 @@ function cardAct(a,b){
 }
 let CARD_LAST=null;
 
+/* ============================================================
+   EVENTO DE TEMPORADA: LA REFORMA (octubre → 1 de noviembre)
+   · Aparece en la Ruta del curso Biblia solo entre RF_FROM y RF_TO (ambos incluidos) y luego desaparece.
+   · Cada lección es independiente de las unidades: su avance se guarda en S.done con el título.
+   ============================================================ */
+const RF_FROM='2026-10-01',RF_TO='2026-11-01';
+const rfOn=()=>{const t=today();return t>=RF_FROM&&t<=RF_TO;};
+function rfDaysLeft(){const a=new Date(today()+'T00:00:00'),b=new Date(RF_TO+'T00:00:00');return Math.round((b-a)/86400000)+1;}
+const RF_V=r=>(typeof VBY!=='undefined'&&VBY[r])?VBY[r]:null;
+const RF=[
+ {title:'Reforma 1 · La Biblia en tu idioma',e:'📖',
+  intro:{t:'Una Biblia que todos pudieran leer',p:"> Hace unos 600 años, casi toda la Biblia que se leía en Europa estaba en latín.\n- La mayoría de la gente no podía leerla en su propio idioma.\n- **Juan Wiclef** (Inglaterra) impulsó traducirla al inglés, hacia 1380.\n- **Juan Hus** (Bohemia) enseñó la Escritura en su lengua y murió quemado en 1415.\n- Hacia 1450, **Gutenberg** inventó la imprenta de tipos móviles: copiar libros se volvió mucho más rápido."},
+  verses:['Salmo 119:105'],
+  qs:[
+   ['¿En qué idioma se leía casi toda la Biblia en Europa antes de la Reforma?','En latín',['En griego moderno','En inglés','En alemán'],''],
+   ['¿Quién impulsó la traducción de la Biblia al inglés hacia 1380?','Juan Wiclef',['Martín Lutero','Juan Calvino','Ulrico Zuinglio'],''],
+   ['¿Qué invento de Gutenberg ayudó a difundir la Biblia y otros libros?','La imprenta de tipos móviles',['El telescopio','La brújula','El papel moneda'],''],
+   ['¿Quién murió quemado en 1415 por enseñar la Escritura en su idioma?','Juan Hus',['Martín Lutero','Juan Calvino','Casiodoro de Reina'],''],
+   ['¿Por qué fue tan importante la imprenta para la Reforma?','Permitió copiar y repartir Biblias y escritos con rapidez',['Hizo que la gente dejara de leer','Obligó a escribir solo en latín','Sirvió para fundar iglesias'],''],
+   ['Según Salmo 119:105, la palabra de Dios es…','Lámpara a mis pies y lumbrera a mi camino',['Una carga para el camino','Un secreto de los sabios','Un mapa de la ciudad'],'Salmo 119:105']],
+  cx:[{k:'order',prompt:'Ordena de lo más antiguo a lo más reciente',chunks:[['Wiclef (hacia 1380)','Hus (1415)','Gutenberg (hacia 1450)','Lutero (1517)']]}]},
+ {title:'Reforma 2 · 31 de octubre de 1517',e:'📜',
+  intro:{t:'Las 95 tesis',p:"> El 31 de octubre de 1517, **Martín Lutero**, monje y profesor de teología en Wittenberg (Alemania), dio a conocer sus **95 tesis**.\n- Eran puntos para debatir, sobre todo acerca de las indulgencias: documentos que prometían reducir el castigo por el pecado a cambio de dinero.\n- Lutero quería volver a lo que enseña la Biblia sobre el perdón.\n- Según la tradición, las clavó en la puerta de la iglesia del castillo de Wittenberg.\n- Gracias a la imprenta, sus ideas se difundieron muy rápido."},
+  verses:['Marcos 1:15'],
+  qs:[
+   ['¿En qué año publicó Lutero sus 95 tesis?','1517',['1492','1534','1600'],''],
+   ['¿En qué ciudad vivía y enseñaba Lutero?','Wittenberg',['Ginebra','Londres','Madrid'],''],
+   ['¿Qué eran las 95 tesis?','Puntos para debatir, sobre todo acerca de las indulgencias',['Una traducción de la Biblia','Un himno para la iglesia','Una carta a un rey'],''],
+   ['¿Qué buscaba Lutero?','Volver a lo que enseña la Biblia sobre el perdón de los pecados',['Fundar un país nuevo','Cambiar el idioma del pueblo','Quitar la Biblia de las iglesias'],''],
+   ['¿Qué día se recuerda cada año el comienzo de la Reforma?','El 31 de octubre',['El 1 de enero','El 25 de diciembre','El 31 de diciembre'],''],
+   ['La primera tesis de Lutero decía que toda la vida del creyente debe ser de…','Arrepentimiento',['Ayuno','Peregrinación','Silencio'],'Marcos 1:15','Jesús dijo: «arrepentíos, y creed en el evangelio» (Marcos 1:15).']],
+  cx:[{k:'match',prompt:'Une cada dato con su respuesta',pairs:[['Martín Lutero','Monje y profesor en Wittenberg'],['95 tesis','Debate sobre las indulgencias'],['Imprenta','Difundió sus ideas'],['1517','Año de las 95 tesis']],done:'Todos los datos quedaron bien.'}]},
+ {title:'Reforma 3 · El justo por la fe vivirá',e:'🕯️',
+  intro:{t:'¿Cómo se acerca un pecador a Dios?',p:"> Lutero estudiaba la Biblia y se preguntaba: ¿cómo puede un pecador estar a bien con Dios?\n- Halló la respuesta en Romanos 1:17: «Mas el justo por la fe vivirá».\n- Entendió que la justicia que Dios da no se gana con obras: se recibe por la fe en Cristo.\n- Pablo citaba así al profeta Habacuc (Habacuc 2:4)."},
+  verses:['Romanos 1:16-17','Efesios 2:8','Romanos 3:28'],
+  qs:[
+   ['¿Qué pasaje decía «Mas el justo por la fe vivirá» y marcó a Lutero?','Romanos 1:17',['Génesis 1:1','Salmo 23:1','Juan 3:16'],'Romanos 1:16-17'],
+   ['Según Efesios 2:8-9, ¿por qué medio somos salvos?','Por gracia, por medio de la fe',['Por nuestras buenas obras','Por ritos y ceremonias','Por nuestro esfuerzo moral'],'Efesios 2:8'],
+   ['Según Romanos 3:28, el hombre es justificado…','Por fe, sin las obras de la ley',['Por las obras de la ley','Por su familia','Por su edad'],'Romanos 3:28'],
+   ['¿Qué profeta había escrito «el justo por su fe vivirá»?','Habacuc',['Jonás','Joel','Malaquías'],'Habacuc 2:4'],
+   ['¿Cómo se recibe la justicia que Dios da?','Por la fe en Cristo',['Con dinero','Con peregrinaciones','Con el paso de los años'],''],
+   ['¿Qué libro de la Biblia leía Lutero cuando halló esta verdad?','Romanos',['Levítico','Apocalipsis','Proverbios'],'Romanos 1:16-17']],
+  cx:[]},
+ {title:'Reforma 4 · Worms y Wartburg',e:'🏰',
+  intro:{t:'Aquí me detengo',p:"> En 1521 el emperador Carlos V citó a Lutero en la ciudad de **Worms** para que se retractara de sus escritos.\n- Lutero respondió que no podía hacerlo a menos que se le convenciera con la Escritura o con razones claras.\n- Después fue puesto a salvo en el castillo de **Wartburg**.\n- Allí tradujo el Nuevo Testamento al alemán (1522). La Biblia completa se publicó en 1534."},
+  verses:['2 Timoteo 3:16-17'],
+  qs:[
+   ['¿En qué ciudad fue citado Lutero ante el emperador en 1521?','Worms',['Londres','Ginebra','Madrid'],''],
+   ['¿Qué le pidieron que hiciera en Worms?','Que se retractara de sus escritos',['Que viajara a Jerusalén','Que tradujera la Biblia','Que fundara una universidad'],''],
+   ['Lutero dijo que solo se retractaría si lo convencían con…','La Escritura y razones claras',['El poder del emperador','La opinión de la mayoría','Una tradición antigua'],''],
+   ['¿En qué castillo estuvo a salvo y tradujo el Nuevo Testamento?','Wartburg',['Wittenberg','Worms','Zúrich'],''],
+   ['¿Por qué tradujo la Biblia al alemán?','Para que la gente común pudiera leerla en su idioma',['Para venderla a otros países','Para que la leyeran solo los sabios','Para sustituir al latín en la ciencia'],''],
+   ['Según 2 Timoteo 3:16, toda la Escritura es…','Inspirada por Dios',['Un invento humano','Solo para los sacerdotes','Solo una tradición'],'2 Timoteo 3:16-17']],
+  cx:[{k:'order',prompt:'Ordena los hechos',chunks:[['Las 95 tesis (1517)','La Dieta de Worms (1521)','El Nuevo Testamento en alemán (1522)','La Biblia completa en alemán (1534)']]}]},
+ {title:'Reforma 5 · Las cinco solas',e:'⭐',
+  intro:{t:'Cinco frases que resumen la Reforma',p:"> Las enseñanzas de la Reforma suelen resumirse en cinco frases en latín que empiezan con «solo» o «solamente»:\n- **Sola Scriptura:** solo la Escritura es la autoridad final.\n- **Sola gratia:** la salvación es solo por gracia.\n- **Sola fide:** se recibe solo por la fe.\n- **Solus Christus:** Cristo es el único mediador.\n- **Soli Deo gloria:** toda la gloria es solo para Dios."},
+  verses:['2 Timoteo 3:16-17','Efesios 2:8','Romanos 3:28','1 Timoteo 2:5','Romanos 11:36'],
+  qs:[
+   ['2 Timoteo 3:16-17 («toda la Escritura es inspirada por Dios») resume la…','Sola Scriptura',['Sola gratia','Sola fide','Soli Deo gloria'],'2 Timoteo 3:16-17'],
+   ['Efesios 2:8 («por gracia sois salvos») resume la…','Sola gratia',['Sola Scriptura','Solus Christus','Soli Deo gloria'],'Efesios 2:8'],
+   ['Romanos 3:28 («justificado por fe sin las obras de la ley») resume la…','Sola fide',['Sola Scriptura','Solus Christus','Soli Deo gloria'],'Romanos 3:28'],
+   ['1 Timoteo 2:5 («un solo mediador entre Dios y los hombres») resume la…','Solus Christus',['Sola fide','Sola gratia','Sola Scriptura'],'1 Timoteo 2:5'],
+   ['Romanos 11:36 («a él sea la gloria por los siglos») resume la…','Soli Deo gloria',['Sola fide','Solus Christus','Sola gratia'],'Romanos 11:36'],
+   ['¿Qué significa «Soli Deo gloria»?','Solo a Dios la gloria',['Solo la Escritura','Solo por gracia','Solo Cristo'],'']],
+  cx:[{k:'match',prompt:'Une cada «sola» con su significado',pairs:[['Sola Scriptura','Solo la Escritura'],['Sola gratia','Solo por gracia'],['Sola fide','Solo por la fe'],['Solus Christus','Solo Cristo'],['Soli Deo gloria','Solo a Dios la gloria']],done:'Las cinco solas quedaron bien.'}]},
+ {title:'Reforma 6 · Zúrich y Ginebra',e:'🌍',
+  intro:{t:'La Reforma llegó a toda Europa',p:"> La Reforma no fue solo en Alemania.\n- **Ulrico Zuinglio** predicó la Escritura en Zúrich (Suiza) desde 1519.\n- **Juan Calvino**, francés, escribió la *Institución de la religión cristiana* (primera edición, 1536) y enseñó en Ginebra.\n- Sus seguidores se llamaron **reformados**; de ahí vienen muchas iglesias presbiterianas y reformadas.\n- Los **anabautistas** y, más tarde, los **bautistas** (siglo XVII) también quisieron volver a la Biblia y enseñaron que se bautiza a quienes creen.\n- Cada tradición llegó a conclusiones distintas en algunos temas, pero todas volvieron a la Escritura."},
+  verses:['1 Corintios 10:31'],
+  qs:[
+   ['¿En qué ciudad suiza predicó Ulrico Zuinglio?','Zúrich',['Ginebra','Wittenberg','Worms'],''],
+   ['¿En qué ciudad enseñó Juan Calvino?','Ginebra',['Zúrich','Wittenberg','Londres'],''],
+   ['¿Qué libro escribió Calvino, con su primera edición en 1536?','Institución de la religión cristiana',['Las 95 tesis','La Biblia del Oso','Castillo fuerte es nuestro Dios'],''],
+   ['¿De qué país era Juan Calvino?','Francia',['Alemania','Inglaterra','España'],''],
+   ['¿Qué enseñaron los bautistas acerca del bautismo?','Que se bautiza a quienes creen en Cristo',['Que solo se bautiza a bebés','Que el bautismo no existe','Que solo lo reciben los sacerdotes'],'','Otras tradiciones, como los presbiterianos, también bautizan a los hijos de los creyentes. Todas buscan apoyarse en la Escritura.'],
+   ['Según 1 Corintios 10:31, todo lo hacemos…','Para la gloria de Dios',['Para ser vistos','Para ganar dinero','Para cumplir la costumbre'],'1 Corintios 10:31']],
+  cx:[{k:'match',prompt:'Une cada reformador con su ciudad',pairs:[['Lutero','Wittenberg'],['Zuinglio','Zúrich'],['Calvino','Ginebra']],done:'Cada reformador quedó con su ciudad.'}]},
+ {title:'Reforma 7 · La Reforma y tu Biblia',e:'🔥',
+  intro:{t:'Una Biblia en español',p:"> La Reforma llevó la Biblia a muchos idiomas, también al español.\n- **Casiodoro de Reina** tradujo la Biblia completa al español; se publicó en 1569 (la «Biblia del Oso»).\n- **Cipriano de Valera** la revisó y la publicó en 1602.\n- La **Reina-Valera 1960**, que usas en Lampy, es una revisión de ese trabajo.\n- Lutero compuso el himno «Castillo fuerte es nuestro Dios», inspirado en el Salmo 46."},
+  verses:['Salmo 46:1'],
+  qs:[
+   ['¿Quién tradujo la Biblia completa al español, publicada en 1569?','Casiodoro de Reina',['Cipriano de Valera','Martín Lutero','Juan Calvino'],''],
+   ['¿Quién revisó esa traducción y la publicó en 1602?','Cipriano de Valera',['Casiodoro de Reina','Ulrico Zuinglio','Juan Hus'],''],
+   ['¿Cómo se conoce a la Biblia publicada en 1569?','Biblia del Oso',['Biblia de Gutenberg','Biblia del Camino','Biblia de las Américas'],''],
+   ['¿Qué versión de la Biblia usa Lampy?','Reina-Valera 1960',['Una traducción nueva de Lampy','La Vulgata latina','La Biblia de Wiclef'],''],
+   ['¿Qué salmo inspiró el himno «Castillo fuerte es nuestro Dios»?','El Salmo 46',['El Salmo 23','El Salmo 1','El Salmo 100'],'Salmo 46:1'],
+   ['Según Salmo 46:1, Dios es nuestro…','Amparo y fortaleza',['Escudo y espada','Pastor y guía','Maestro y juez'],'Salmo 46:1']],
+  cx:[{k:'order',prompt:'Ordena de lo más antiguo a lo más reciente',chunks:[['Biblia del Oso (1569)','Revisión de Valera (1602)','Reina-Valera (1960)']]}]}
+];
+function rfDone(){return RF.filter(l=>S.done[l.title]).length;}
+function rfCardHTML(){
+  if(!rfOn()||S.course==='gk')return '';
+  const n=rfDone(),d=rfDaysLeft(),all=n>=RF.length;
+  const dots=RF.map(l=>'<i class="'+(S.done[l.title]?'on':'')+'"></i>').join('');
+  return '<section class="rfcard"><div class="rftop"><span class="rftag">🔥 EVENTO</span><span class="rfleft">'+(d<=1?'¡Último día!':'Quedan '+d+' días')+'</span></div>'+
+    '<h3>'+(all?'¡Completaste el evento!':'Celebra la Reforma')+'</h3><p>'+(all?'Terminaste las 7 lecciones. ¡Gracias por recordar la Reforma!':'7 lecciones cortas sobre la Reforma: Lutero, la Biblia en tu idioma y las cinco solas.')+'</p>'+
+    '<div class="rfdots" aria-label="'+n+' de '+RF.length+' lecciones">'+dots+'</div>'+
+    '<button class="btn" data-a="rf-open">'+(all?'Ver las lecciones':n?'Continuar':'Empezar')+'</button></section>';
+}
+function rfOpen(){
+  if(!rfOn())return;
+  let cur=RF.findIndex(l=>!S.done[l.title]);
+  showModal('<h3>🔥 La Reforma</h3><p class="muted">Quedan '+rfDaysLeft()+(rfDaysLeft()===1?' día':' días')+' · hasta el 1 de noviembre</p><div class="rflist">'+
+   RF.map((l,i)=>{const dn=!!S.done[l.title],lock=!dn&&i>cur&&cur>=0;
+     return '<button class="rfrow'+(dn?' done':'')+(i===cur?' cur':'')+'" data-a="rf-go" data-i="'+i+'" '+(lock?'disabled':'')+'><span class="rfe">'+(dn?'✔':lock?'🔒':l.e)+'</span><b>'+esc(l.title.replace(/^Reforma \d · /,''))+'</b><small>'+(dn?'Hecha':lock?'Bloqueada':i===cur?'Sigue':'')+'</small></button>';}).join('')+
+   '</div><button class="btn ghost" data-a="stay">Cerrar</button>');
+}
+function rfGo(i){
+  const les=RF[i];if(!les||!rfOn())return;
+  hideModal();
+  const verses=les.verses.map(RF_V).filter(Boolean);
+  const hand=les.qs.map(q=>[q[0],q[1],q[2],(q[3]&&RF_V(q[3]))?q[3]:'',q[4]||'']);
+  startLesson({type:'lesson',key:les.title,title:les.title,verses},buildQuestions([],hand,14,les.cx),les.intro);
+}
+
 /* ----- preguntas ----- */
 function rmQBlank(used){
   const all=ALLV.filter(x=>x.t.split(/\s+/).length<=26&&BLANKS[x.r]),pool=all.filter(x=>!used.has(x.r));const v=pickOne(gFresh('comp',pool.length?pool:all,x=>x.r));used.add(v.r);gMark('comp',v.r);
@@ -7709,7 +7837,7 @@ function homeHTML(){
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
-  '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rdHomeHTML()+
+  '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rfCardHTML()+rdHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
@@ -8651,6 +8779,8 @@ document.addEventListener('click',e=>{
   else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
   else if(a.slice(0,5)==='card-'){cardAct(a,b);}
+  else if(a==='rf-open'){rfOpen();}
+  else if(a==='rf-go'){rfGo(+b.dataset.i);}
   else if(a.slice(0,3)==='sp-'){spAct(a,b);}
   else if(a==='rm-size'){RM.cfg.size=+b.dataset.v;rmMenuRefresh();}
   else if(a==='rm-open'){RM.pick=[];rmOpenMenu('create',b.dataset.m);}
