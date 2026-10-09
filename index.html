@@ -884,13 +884,12 @@ a.btn{text-decoration:none;text-align:center}
 .gsec[open]{padding-bottom:12px}
 .gbadge{font-style:normal;background:var(--red);color:#fff;border-radius:99px;padding:1px 8px;font-size:13px}
 /* ===== Evento: la Reforma ===== */
-.rfcard{margin:0 0 14px;padding:16px;border-radius:20px;color:#fff;background:linear-gradient(135deg,#C8372D,#7A1B3A);box-shadow:0 4px 0 rgba(0,0,0,.18);display:grid;gap:8px}
-.rfcard h3{margin:0;font-size:22px}.rfcard p{margin:0;font-weight:700;opacity:.95;font-size:15px}
-.rftop{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.rftag{font-size:12px;font-weight:900;letter-spacing:.08em;background:rgba(255,255,255,.2);padding:4px 10px;border-radius:99px}
-.rfleft{font-size:13px;font-weight:900;background:#FFD54A;color:#5A2A00;padding:4px 10px;border-radius:99px}
-.rfdots{display:flex;gap:6px}.rfdots i{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.28)}.rfdots i.on{background:#FFD54A}
-.rfcard .btn{background:#fff;color:#7A1B3A;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.rfbar{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin:0 0 12px;padding:6px 12px;border-radius:14px;border:0;color:#fff;background:linear-gradient(135deg,#C8372D,#7A1B3A);box-shadow:0 3px 0 rgba(0,0,0,.2);font-size:14px;text-align:left}
+.rfbar.ok{background:linear-gradient(135deg,#3A9C5A,#1F5E3A)}
+.rfbar .rfi{font-size:20px;line-height:1}.rfbar b{font-weight:900;font-size:15px}
+.rfbar .rfm{font-weight:800;opacity:.9;white-space:nowrap}
+.rfbar .rfd{margin-left:auto;font-weight:900;font-size:12px;background:#FFD54A;color:#5A2A00;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.rfbar .rfch{font-size:20px;font-weight:900;opacity:.8}
 .rflist{display:grid;gap:8px;text-align:left}
 .rfrow{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink);text-align:left}
 .rfrow b{flex:1;font-size:15px}.rfrow small{color:var(--muted);font-weight:800}
@@ -5571,16 +5570,12 @@ function rfDone(){return RF.filter(l=>S.done[l.title]).length;}
 function rfCardHTML(){
   if(!rfOn()||S.course==='gk')return '';
   const n=rfDone(),d=rfDaysLeft(),all=n>=RF.length;
-  const dots=RF.map(l=>'<i class="'+(S.done[l.title]?'on':'')+'"></i>').join('');
-  return '<section class="rfcard"><div class="rftop"><span class="rftag">🔥 EVENTO</span><span class="rfleft">'+(d<=1?'¡Último día!':'Quedan '+d+' días')+'</span></div>'+
-    '<h3>'+(all?'¡Completaste el evento!':'Celebra la Reforma')+'</h3><p>'+(all?'Terminaste las 7 lecciones. ¡Gracias por recordar la Reforma!':'7 lecciones cortas sobre la Reforma: Lutero, la Biblia en tu idioma y las cinco solas.')+'</p>'+
-    '<div class="rfdots" aria-label="'+n+' de '+RF.length+' lecciones">'+dots+'</div>'+
-    '<button class="btn" data-a="rf-open">'+(all?'Ver las lecciones':n?'Continuar':'Empezar')+'</button></section>';
+  return '<button class="rfbar'+(all?' ok':'')+'" data-a="rf-open" aria-label="Evento de la Reforma"><span class="rfi" aria-hidden="true">📜</span><b>Reforma</b><span class="rfm">'+(all?'✔ Completado':n+' de '+RF.length)+'</span><span class="rfd">'+(d<=1?'¡Último día!':'quedan '+d+' días')+'</span><span class="rfch" aria-hidden="true">›</span></button>';
 }
 function rfOpen(){
   if(!rfOn())return;
   let cur=RF.findIndex(l=>!S.done[l.title]);
-  showModal('<h3>🔥 La Reforma</h3><p class="muted">Quedan '+rfDaysLeft()+(rfDaysLeft()===1?' día':' días')+' · hasta el 1 de noviembre</p><div class="rflist">'+
+  showModal('<h3>📜 La Reforma</h3><p class="muted">Quedan '+rfDaysLeft()+(rfDaysLeft()===1?' día':' días')+' · hasta el 1 de noviembre</p><div class="rflist">'+
    RF.map((l,i)=>{const dn=!!S.done[l.title],lock=!dn&&i>cur&&cur>=0;
      return '<button class="rfrow'+(dn?' done':'')+(i===cur?' cur':'')+'" data-a="rf-go" data-i="'+i+'" '+(lock?'disabled':'')+'><span class="rfe">'+(dn?'✔':lock?'🔒':l.e)+'</span><b>'+esc(l.title.replace(/^Reforma \d · /,''))+'</b><small>'+(dn?'Hecha':lock?'Bloqueada':i===cur?'Sigue':'')+'</small></button>';}).join('')+
    '</div><button class="btn ghost" data-a="stay">Cerrar</button>');
