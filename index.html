@@ -883,6 +883,8 @@ a.btn{text-decoration:none;text-align:center}
 .gsec:not([open])>summary::after{transform:rotate(-90deg)}
 .gsec[open]{padding-bottom:12px}
 .gbadge{font-style:normal;background:var(--red);color:#fff;border-radius:99px;padding:1px 8px;font-size:13px}
+.gwdiv{margin:10px 2px 2px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left}
+.pickrow.peek{opacity:.7}
 /* ===== Evento: la Reforma ===== */
 .rfbar{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin:0 0 12px;padding:6px 12px;border-radius:14px;border:0;color:#fff;background:linear-gradient(135deg,#C8372D,#7A1B3A);box-shadow:0 3px 0 rgba(0,0,0,.2);font-size:14px;text-align:left}
 .rfbar.ok{background:linear-gradient(135deg,#3A9C5A,#1F5E3A)}
@@ -4526,7 +4528,7 @@ const GW_CHARS=[
  K('jose1','José, hijo de Jacob','AT','H','J','patriarca','ley',1,'nh',0,'Vendido por sus hermanos a Egipto, llegó a gobernar allí y salvó a su familia del hambre.'),
  K('moises','Moisés','AT','H','V','profeta','ley',2,'h','Génesis|Éxodo|Levítico|Números|Deuteronomio','Sacó a Israel de Egipto y recibió la ley en el monte Sinaí.'),
  K('aaron','Aarón','AT','H','V','sacerdote','ley',2,'',0,'Hermano de Moisés y primer sumo sacerdote de Israel.'),
- K('josue','Josué','AT','H','A','lider','ley,hist',2,'n',0,'Sucesor de Moisés. Dirigió la conquista de Canaán. Antes se llamaba Oseas.'),
+ K('josue','Josué','AT','H','A','lider','ley,hist',2,'n','Josué','Sucesor de Moisés. Dirigió la conquista de Canaán. Antes se llamaba Oseas.'),
  K('rahab','Rahab','AT','M','A','otro','hist',2,'ghx',0,'Mujer de Jericó que escondió a los espías de Israel por su fe.'),
  K('debora','Débora','AT','M','A','juez','hist',3,'',0,'Profetisa y jueza de Israel. Acompañó a Barac a la batalla.'),
  K('gedeon','Gedeón','AT','H','A','juez','hist',3,'nh',0,'Juez de Israel. Venció a Madián con solo 300 hombres.'),
@@ -4585,7 +4587,7 @@ const GW_Q=[
  {id:'sx',cat:'Sexo',t:'¿Es hombre o mujer?',o:()=>[['H','Hombre'],['M','Mujer']],f:(c,v)=>c.s===v},
  {id:'ed',cat:'Edad',t:'¿Qué edad tenía en el momento más conocido de su historia?',o:()=>Object.entries(GW_AGES),f:(c,v)=>c.e===v},
  {id:'ro',cat:'Papel o cargo',t:'¿Cuál fue su papel o cargo?',o:()=>Object.entries(GW_ROLES),f:(c,v)=>c.r===v},
- {id:'au',cat:'Escribió un libro',t:'¿Escribió alguno de estos libros?',o:()=>gwAuOpts(),f:(c,v)=>c.au.includes(v)},
+ {id:'au',cat:'Escribió un libro',t:'¿Escribió el libro de…?',o:()=>BK.map(b=>[b.n,b.n]),f:(c,v)=>c.au.includes(v)},
  {id:'jn',cat:'Conoció a Jesús',t:'¿Conoció personalmente a Jesús mientras él estuvo en la tierra?',o:()=>GW_YN,f:(c,v)=>c.j===(v==='1')},
  {id:'pt',cat:'Parte de la Biblia',t:'¿En qué parte de la Biblia aparece principalmente?',o:()=>Object.entries(GW_PARTS),f:(c,v)=>c.p.includes(v)},
  {id:'ep',cat:'Época',t:'¿En qué época vivió?',o:()=>Object.entries(GW_EPOCHS),f:(c,v)=>c.ep.includes(+v)},
@@ -4649,7 +4651,7 @@ function gwRecalc(){
     const first=g.key==null;g.key=key;
     if(!first&&prev){
       if(T.log.length>prev.log.length){const l=T.log[T.log.length-1];if(l.by===g.me){beep(l.r?'good':'bad');haptic(l.r?15:[30,40,30]);}}
-      if(T.cur===g.me&&T.stage==='ask'&&prev.n!==T.n){beep('good');haptic(20);}
+      if(T.cur===g.me&&T.stage==='ask'&&prev.n!==T.n){beep('good');haptic(20);if(document.querySelector('#modal .gwmod'))hideModal();}
     }
   }
   if(T.over&&!g.rewarded){
@@ -4835,8 +4837,9 @@ function gwPlayHTML(){
     }
   }else{
     const last=T.log.filter(l=>l.by===g.opp).slice(-1)[0];
-    strip='<div class="gwst"><b>Turno de '+esc(gwNm(g.opp))+' · '+rd+'</b><span>'+(T.stage==='ask'?'Está pensando su pregunta. Mientras tanto, puedes descartar cartas.':T.stage==='gres'?'Está arriesgando una respuesta…':'Le estás respondiendo.')+'</span></div>';
+    strip='<div class="gwst"><b>Turno de '+esc(gwNm(g.opp))+' · '+rd+'</b><span>'+(T.stage==='ask'?'Está pensando su pregunta. Mientras tanto, puedes descartar cartas o ver las preguntas posibles.':T.stage==='gres'?'Está arriesgando una respuesta…':'Le estás respondiendo.')+'</span></div>';
     if(last&&T.stage==='ask'&&last.n===T.n-1)banner='';
+    if(!T.over)foot='<div class="lf"><div class="in"><button class="btn ghost" data-a="gw-peek">👀 Ver preguntas posibles</button></div></div>';
   }
   if(oppGone)strip+='<div class="banner" style="margin:0 0 10px">'+esc(gwNm(g.opp))+' perdió la conexión. Esperando a que vuelva…</div>';
   const waiting=g.ui.busy&&!mine?'':'';
@@ -4878,17 +4881,24 @@ function gwSoloMenu(){
 }
 function gwSoloMenuRefresh(){const lb=document.querySelector('#room .lb'),t=lb?lb.scrollTop:0;$('#room').innerHTML=gwSoloMenuHTML();const l2=document.querySelector('#room .lb');if(l2)l2.scrollTop=t;}
 /* ----- ventanitas ----- */
+const gwCanAsk=()=>!!(GW&&GW.st&&!GW.st.over&&GW.st.cur===GW.me&&GW.st.stage==='ask'&&!GW.ui.guessing);
 function gwAskList(){
-  const g=GW,used=g.st.log.filter(l=>l.by===g.me);
-  showModal('<h3>¿Qué quieres preguntar?</h3><div class="gwmod pickl">'+GW_Q.map(q=>{
+  const g=GW,used=g.st.log.filter(l=>l.by===g.me),peek=!gwCanAsk();
+  showModal('<h3>'+(peek?'Preguntas posibles':'¿Qué quieres preguntar?')+'</h3>'+(peek?'<p class="muted" style="margin:-6px 0 10px;font-size:14px">Aún no es tu turno: puedes mirar y pensar tu jugada, pero no preguntar todavía.</p>':'')+'<div class="gwmod pickl">'+GW_Q.map(q=>{
     if(q.id!=='au'){const o=q.o();if(o.every(x=>used.some(u=>u.q===q.id&&u.v===String(x[0]))))return '';}
     return '<button class="pickrow" data-a="gw-cat" data-q="'+q.id+'"><b>'+esc(q.cat)+'</b><span class="muted">›</span></button>';
-  }).join('')+'</div><button class="btn ghost" data-a="stay">Cancelar</button>');
+  }).join('')+'</div><button class="btn ghost" data-a="stay">'+(peek?'Cerrar':'Cancelar')+'</button>');
 }
 function gwAskOpts(qid){
-  const g=GW,Q=GW_QBY[qid],used=g.st.log.filter(l=>l.by===g.me&&l.q===qid).map(l=>l.v);
+  const g=GW,Q=GW_QBY[qid],peek=!gwCanAsk(),used=g.st.log.filter(l=>l.by===g.me&&l.q===qid).map(l=>l.v);
   const opts=Q.o().filter(x=>used.indexOf(String(x[0]))<0);
-  showModal('<h3>'+esc(Q.t)+'</h3><p class="muted" style="margin:-6px 0 10px;font-size:14px">Elige una opción. Te diré si es verdadero o falso.</p><div class="gwmod pickl">'+opts.map(x=>'<button class="pickrow" data-a="gw-opt" data-q="'+qid+'" data-v="'+esc(String(x[0]))+'"><b style="white-space:normal">'+esc(x[1])+'</b></button>').join('')+'</div><button class="btn ghost" data-a="gw-ask">‹ Otra pregunta</button>');
+  const row=x=>'<button class="pickrow'+(peek?' peek':'')+'" '+(peek?'disabled':'data-a="gw-opt" data-q="'+qid+'" data-v="'+esc(String(x[0]))+'"')+'><b style="white-space:normal">'+esc(x[1])+'</b></button>';
+  let list;
+  if(qid==='au'){
+    /* todos los libros, agrupados por división */
+    list=BKDIV.map(d=>{const bs=opts.filter(x=>d[1].indexOf(x[0])>=0);return bs.length?'<h4 class="gwdiv">'+esc(DIVN[d[0]]||d[0])+'</h4>'+bs.map(row).join(''):'';}).join('');
+  }else list=opts.map(row).join('');
+  showModal('<h3>'+esc(Q.t)+'</h3><p class="muted" style="margin:-6px 0 10px;font-size:14px">'+(peek?'Aún no es tu turno: solo puedes mirar las opciones.':'Elige una opción. Te diré si es verdadero o falso.')+'</p><div class="gwmod pickl">'+list+'</div><button class="btn ghost" data-a="'+(peek?'gw-peek':'gw-ask')+'">‹ Otra pregunta</button>');
 }
 function gwInfo(id){
   const c=GW_BY[id];if(!c)return;
@@ -4932,9 +4942,9 @@ function gwAct(a,b){
   }
   if(a==='gw-random'){g.ui.pick=pickOne(g.cfg.ids);gwRender();return;}
   if(a==='gw-ready'){gwReady();return;}
-  if(a==='gw-ask'){hideModal();gwAskList();return;}
+  if(a==='gw-ask'||a==='gw-peek'){hideModal();gwAskList();return;}
   if(a==='gw-cat'){hideModal();gwAskOpts(b.dataset.q);return;}
-  if(a==='gw-opt'){hideModal();gwDo('ask',{q:b.dataset.q,v:b.dataset.v});return;}
+  if(a==='gw-opt'){if(!gwCanAsk()){hideModal();return;}hideModal();gwDo('ask',{q:b.dataset.q,v:b.dataset.v});return;}
   if(a==='gw-auto'){gwDiscardBy();return;}
   if(a==='gw-end'){gwDo('endturn');return;}
   if(a==='gw-guess'){g.ui.guessing=true;gwRender();const gr=document.getElementById('gwgrid');if(gr)gr.scrollIntoView({block:'start',behavior:'smooth'});return;}
