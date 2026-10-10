@@ -923,6 +923,80 @@ a.btn{text-decoration:none;text-align:center}
 #room .lb.cb{display:flex;flex-direction:column;overflow:hidden;padding-bottom:8px}
 #room .lb.cb .clist{flex:1;min-height:80px;max-height:none}
 #room .lb.cb #cardmine{flex:none}
+.pickrow.dim{opacity:.5}
+.pickrow .dn{flex:none;font-size:12px;font-weight:800;color:var(--muted)}
+.gwdiffs{display:flex;gap:8px}
+.gwdf{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 6px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:15px;font-weight:900}
+.gwdf span{font-size:26px;line-height:1}
+.gwdf.on{border-color:var(--blue);color:var(--blue-ink);background:var(--blue-bg)}
+.gwsum{font-size:14px;margin:10px 0 0}
+/* ===== ¡Yo respondo! (presencial) ===== */
+.bzhd{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--muted);font-size:14px;margin:0 2px 8px}
+.bzhd b{color:var(--ink)}
+.bzk{font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.bzsb{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.bzp{display:flex;align-items:center;gap:6px;padding:5px 10px 5px 6px;border-radius:999px;border:2px solid var(--line);background:var(--surface);font-weight:900;font-size:13px;max-width:100%}
+.bzp.me{border-color:var(--blue);background:var(--blue-bg)}
+.bzp.lk{opacity:.6}
+.bzp b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:84px}
+.bzp em{font-style:normal;background:var(--ink);color:var(--bg);border-radius:999px;padding:0 8px;min-width:22px;text-align:center}
+.bzp .fav{width:24px;height:24px;font-size:15px}
+.bzspk{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;margin:14px 0 6px}
+.bzspk b{font-size:20px}
+.bzspk small{color:var(--muted);font-weight:800;font-size:14px}
+.bzspk.small b{font-size:18px}
+.bzwave{font-size:52px;line-height:1;animation:bzw 1.2s ease-in-out infinite}
+@keyframes bzw{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.bzbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:min(64vw,236px);height:min(64vw,236px);margin:16px auto;border-radius:50%;border:0;background:#E5322D;color:#fff;box-shadow:0 10px 0 #A8201C,0 18px 28px rgba(0,0,0,.25);font-weight:900;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .06s,box-shadow .06s,background .15s}
+.bzbtn .bzmain{font-size:52px;line-height:1;letter-spacing:.01em}
+.bzbtn .bzsub{font-size:14px;font-weight:800;opacity:.9;padding:0 18px;text-align:center;line-height:1.2}
+.bzbtn:active{transform:translateY(8px);box-shadow:0 2px 0 #A8201C,0 6px 12px rgba(0,0,0,.25)}
+.bzbtn[data-st=wait],.bzbtn[data-st=out],.bzbtn[data-st=fs]{background:#9AA5AB;box-shadow:0 10px 0 #738087,0 18px 28px rgba(0,0,0,.15)}
+.bzbtn[data-st=wait] .bzmain,.bzbtn[data-st=out] .bzmain,.bzbtn[data-st=fs] .bzmain{font-size:26px}
+.bzbtn[data-st=pre]{background:#E5322D;opacity:.55}
+.bzbtn[data-st=live]{animation:bzpulse .5s ease-in-out infinite alternate}
+.bzbtn[data-st=live] .bzmain{font-size:58px}
+.bzbtn[data-st=sent]{background:#58A700;box-shadow:0 10px 0 #3F7D00,0 18px 28px rgba(0,0,0,.2)}
+.bzbtn[data-st=sent] .bzmain{font-size:28px}
+@keyframes bzpulse{from{box-shadow:0 10px 0 #A8201C,0 0 0 0 rgba(229,50,45,.55)}to{box-shadow:0 10px 0 #A8201C,0 0 0 26px rgba(229,50,45,0)}}
+.bzcdbig{display:grid;place-items:center;margin:16px auto;width:min(52vw,190px);height:min(52vw,190px);border-radius:50%;background:var(--surface2);font-size:80px;font-weight:900}
+.bztime{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin:6px 4px 12px}
+.bztime i{display:block;height:100%;width:0;background:var(--orange);border-radius:99px}
+.bzq{background:var(--surface2);border-radius:16px;padding:12px 14px;font-weight:800;font-size:16px;line-height:1.4;margin:10px 0}
+.bzq small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.bzwin{font-size:22px;font-weight:900;text-align:center;margin:8px 0}
+.bzopts{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.bzopts .opt.picked{border-color:var(--blue);background:var(--blue-bg)}
+.bzother{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;margin:22px 0}
+.bzother b{font-size:20px}
+.bzother small{color:var(--muted);font-weight:800;font-size:14px}
+.bzbig{font-size:64px;line-height:1}
+.bzother.bad .bzbig{color:var(--red)}
+.bzres{text-align:center;border-radius:16px;padding:12px;font-size:18px;margin:14px 0 6px}
+.bzres.ok{background:var(--green-bg);color:var(--green-ink)}
+.bzres.no{background:var(--surface2);color:var(--ink)}
+.bzansw{text-align:center;margin:14px 0}
+.bzansw small{display:block;color:var(--muted);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.bzansw strong{display:block;font-size:24px;margin:2px 0 6px}
+.bzansw p{margin:0;color:var(--muted);font-weight:700;font-size:14px;line-height:1.4}
+.bzrules ol,.bztips{margin:0;padding-left:20px;font-weight:700;font-size:15px;line-height:1.45}
+.bzrules li,.bztips li{margin:0 0 6px}
+.bzrank{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.bzrk{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:16px;border:2px solid var(--line);background:var(--surface);font-weight:900}
+.bzrk.me{border-color:var(--blue);background:var(--blue-bg)}
+.bzrk b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bzpos{width:30px;text-align:center;font-size:20px}
+.bzaci{color:var(--muted);font-size:13px}
+.bzrk em{font-style:normal;font-size:20px}
+.bzwin small{display:block;font-size:13px;color:var(--muted);font-weight:800}
+@media (max-height:640px){
+.bzwin{font-size:18px;margin:2px 0}
+.bzwin small{font-size:11px}
+.bzq{padding:8px 10px;font-size:14px;margin:6px 0;line-height:1.3}
+.bztime{margin:4px 4px 8px}
+.bzopts{gap:6px;margin-top:4px}
+.bzopts .opt{padding:9px 12px;font-size:14px;min-height:0}
+}
 </style>
 </head>
 <body>
@@ -3944,7 +4018,7 @@ async function rpc(fn,args){
   return r.json();
 }
 const famArgs=x=>Object.assign({p_device:famState().device,p_secret:famState().secret},x||{});
-const FAM_ERR={codigo_no_existe:'Ese código no existe. Revisa las letras.',grupo_lleno:'El grupo ya está lleno (máximo 8 personas).',demasiados_intentos:'Demasiados intentos. Espera unos minutos.',espera:'Ya le mandaste ánimo hace poco. ¡Espera un rato!',ya_en_grupo:'Ya estás en un grupo.',no_autorizado:'No pudimos verificar tu cuenta en este teléfono.',secreto_invalido:'Hubo un problema con tu identificador. Reinicia la app.',destino_invalido:'No se pudo enviar el ánimo.',tipo_invalido:'No se pudo enviar el ánimo.'};
+const FAM_ERR={codigo_no_existe:'Ese código no existe. Revisa las letras.',grupo_lleno:'El grupo ya está lleno (máximo 8 personas).',demasiados_intentos:'Demasiados intentos. Espera unos minutos.',espera:'Ya le mandaste ánimo hace poco. ¡Espera un rato!',ya_en_grupo:'Ya estás en un grupo.',no_autorizado:'No pudimos verificar tu cuenta en este teléfono.',secreto_invalido:'Hubo un problema con tu identificador. Reinicia la app.',destino_invalido:'No se pudo enviar el ánimo.',tipo_invalido:'No se pudo enviar el ánimo.',modo_invalido:'Este juego necesita que se actualice la base de datos (el archivo supabase-juegos.sql).',faltan_jugadores:'Faltan jugadores para empezar.',preguntas_invalidas:'No se pudieron preparar las preguntas. Inténtalo de nuevo.'};
 const famMsg=e=>FAM_ERR[e]||'Algo salió mal. Inténtalo de nuevo.';
 function famStats(){const t=today();let wk=0;for(let i=0;i<7;i++)wk+=S.days[addDays(t,-i)]||0;return {p_streak:S.streak,p_best:S.best,p_xp:S.xp,p_week_xp:wk,p_lessons:lessonsDone(),p_last_day:S.lastDay||null};}
 async function famSync(){ frSync(); }
@@ -4484,7 +4558,8 @@ const RM_MODES={
   duel:{id:'duel',t:'Duelo 1 contra 1',d:'Dos jugadores, mismas preguntas.',emo:'⚔️',c:'#FF4B4B',totals:[5,7,10],def:7,time:20,min:'2 jugadores',one:true,hide:true},
   teams:{id:'teams',t:'Equipos',d:'Azul contra Naranja: suman los puntos de todos.',emo:'🤝',c:'#1CB0F6',totals:[6,10,14],def:10,time:20,min:'4 a 8 jugadores (mínimo 2)',hide:true},
   assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores'},
-  guess:{id:'guess',t:'¿Quién es quién?',d:'Cada uno elige en secreto un personaje. ¡Adivina el del otro!',emo:'🃏',c:'#E84393',totals:[5,8,12],def:8,time:20,min:'2 jugadores',one:true}
+  guess:{id:'guess',t:'¿Quién es quién?',d:'Cada uno elige en secreto un personaje. ¡Adivina el del otro!',emo:'🃏',c:'#E84393',totals:[5,8,12],def:8,time:20,min:'2 jugadores',one:true},
+  buzz:{id:'buzz',t:'¡Yo respondo!',d:'Se lee la pregunta en voz alta, suena 3, 2, 1 y quien pulse primero el botón rojo responde.',emo:'🔴',c:'#FF4B4B',totals:[6,10,15],def:10,time:20,min:'2 a 8 jugadores, juntos en el mismo lugar',pres:true}
 };
 const RM_TEAM=[null,{n:'Azul',c:'#1CB0F6',e:'🔵'},{n:'Naranja',c:'#FF9600',e:'🟠'}];
 let RM={code:null,st:null,t0:0,rem0:0,sig:'',sel:null,my:null,loop:0,fails:0,cfg:{mode:'race',total:10,size:20},screen:'menu',rewarded:'',av:'🙂',pick:[]};
@@ -4599,7 +4674,15 @@ const GW_Q=[
 ];
 const GW_QBY={};GW_Q.forEach(q=>GW_QBY[q.id]=q);
 let GW=null;
-const GWSET={rounds:8,size:20};
+const GWSET={rounds:8,size:16,dim:1};
+/* dificultad: personajes en el tablero, rondas y ayuda (dim: 2 = atenúa y avisa · 1 = solo atenúa · 0 = sin ayuda) */
+const GW_DIFF=[
+ {id:'f',n:'Fácil',e:'🌱',rounds:12,size:12,dim:2},
+ {id:'n',n:'Normal',e:'🕯️',rounds:8,size:16,dim:1},
+ {id:'d',n:'Difícil',e:'🔥',rounds:8,size:24,dim:0}
+];
+const GW_DIMS=[[2,'Atenuar y avisar'],[1,'Solo atenuar'],[0,'Sin ayuda']];
+let GW_MENU='solo';
 const GW_COL=['#FF9600','#1CB0F6','#58CC02','#CE82FF','#FF4B4B','#2B70C9','#00A884','#D99200'];
 function gwHue(c){let h=0;for(let i=0;i<c.id.length;i++)h=(h*31+c.id.charCodeAt(i))>>>0;return GW_COL[h%GW_COL.length];}
 function gwEval(c,q,v){const Q=GW_QBY[q];return !!(Q&&Q.f(c,v));}
@@ -4686,7 +4769,7 @@ function gwInitLive(st){
 }
 function gwSoloStart(){
   const ids=gwBoard(GWSET.size),secret=pickOne(ids);
-  GW=gwNew({solo:true,cfg:{rounds:GWSET.rounds,size:ids.length,ids,first:'me'},cfgKey:'solo'+Date.now(),order:['me'],me:'me',opp:'sys',names:{me:'Tú'},secret});
+  GW=gwNew({solo:true,cfg:{rounds:GWSET.rounds,size:ids.length,ids,first:'me',dim:GWSET.dim},cfgKey:'solo'+Date.now(),order:['me'],me:'me',opp:'sys',names:{me:'Tú'},secret});
   RM.code=null;RM.st=null;
   rmOpenOverlay();gwRecalc();gwRender();
 }
@@ -4866,39 +4949,84 @@ function gwFinalHTML(){
   const foot='<div class="lf"><div class="in"><div class="row2">'+((g.solo||host)?'<button class="btn" data-a="gw-again">Jugar otra vez</button>':'')+'<button class="btn ghost" data-a="rm-exit-yes">Salir</button></div>'+((g.solo||host)?'':'<p class="muted" style="text-align:center;margin:8px 0 0;font-size:13px">Quien creó la sala puede empezar otra partida.</p>')+'</div></div>';
   return gwShell('<div style="display:flex;justify-content:center">'+mascot(mood,110)+'</div><div class="rmwin" style="--tc:'+(iWon?'#58CC02':draw?'#777':'#FF9600')+'">'+banner+'<small>'+sub+'</small></div>'+revs,foot);
 }
-/* menú de «solo» */
+/* ----- ajustes de partida (dificultad, rondas, personajes, ayuda): sirven para «solo» y para la sala en línea ----- */
+function gwCfgGet(){
+  if(GW_MENU==='live')return {rounds:RM.cfg.total,size:RM.cfg.size||16,dim:RM.cfg.dim==null?1:RM.cfg.dim};
+  return {rounds:GWSET.rounds,size:GWSET.size,dim:GWSET.dim};
+}
+function gwCfgSet(k,v){
+  if(GW_MENU==='live'){if(k==='rounds')RM.cfg.total=v;else RM.cfg[k]=v;}
+  else GWSET[k]=v;
+}
+function gwSetupHTML(solo){
+  const c=gwCfgGet(),cur=GW_DIFF.find(d=>d.rounds===c.rounds&&d.size===c.size&&d.dim===c.dim);
+  const pill=(k,v,t,on)=>'<button class="rdpill'+(on?' on':'')+'" data-a="gw-cfg" data-k="'+k+'" data-v="'+v+'" aria-pressed="'+on+'">'+t+'</button>';
+  const dl=(GW_DIMS.find(x=>x[0]===c.dim)||GW_DIMS[1])[1].toLowerCase();
+  return '<section class="sec"><h3>Dificultad</h3><div class="gwdiffs">'+GW_DIFF.map(d=>'<button class="gwdf'+(cur&&cur.id===d.id?' on':'')+'" data-a="gw-cfg" data-k="diff" data-v="'+d.id+'" aria-pressed="'+!!(cur&&cur.id===d.id)+'"><span aria-hidden="true">'+d.e+'</span><b>'+d.n+'</b></button>').join('')+'</div>'+
+    '<p class="muted gwsum">'+(cur?'':'Personalizada · ')+c.size+' personajes · '+c.rounds+(solo?' preguntas':' rondas')+' · '+dl+'</p></section>'+
+    '<section class="sec"><h3>'+(solo?'¿Cuántas preguntas puedes hacer?':'¿Cuántas rondas?')+'</h3>'+(solo?'':'<p class="muted" style="font-size:14px;margin:0 0 10px">En cada ronda, cada jugador tiene un turno para preguntar o adivinar. En la última, cada uno da su respuesta final.</p>')+'<div class="rdpills">'+[5,8,12].map(t=>pill('rounds',t,t,c.rounds===t)).join('')+'</div></section>'+
+    '<section class="sec"><h3>¿Cuántos personajes en el tablero?</h3><div class="rdpills">'+[12,16,24,30].map(t=>pill('size',t,t,c.size===t)).join('')+'</div></section>'+
+    '<section class="sec"><h3>Ayuda con las preguntas</h3><div class="rdpills">'+GW_DIMS.map(x=>pill('dim',x[0],x[1],c.dim===x[0])).join('')+'</div><p class="muted" style="font-size:14px;margin:8px 0 0">Las preguntas que ya no sirven para separar a los personajes que te quedan se ven en gris. «Avisar» te pregunta antes de gastar tu turno en ellas.</p></section>';
+}
+function gwCfgPick(b){
+  const k=b.dataset.k,v=b.dataset.v;
+  if(k==='diff'){const d=GW_DIFF.find(x=>x.id===v);if(d){gwCfgSet('rounds',d.rounds);gwCfgSet('size',d.size);gwCfgSet('dim',d.dim);}}
+  else gwCfgSet(k,+v);
+  if(GW_MENU==='live')rmMenuRefresh();else gwSoloMenuRefresh();
+}
 function gwSoloMenuHTML(){
-  const roundsP=[5,8,12].map(t=>'<button class="rdpill '+(GWSET.rounds===t?'on':'')+'" data-a="gw-set-rounds" data-v="'+t+'">'+t+'</button>').join('');
-  const sizeP=[12,20,30].map(t=>'<button class="rdpill '+(GWSET.size===t?'on':'')+'" data-a="gw-set-size" data-v="'+t+'">'+t+'</button>').join('');
-  return rmShell('<div class="gsetup"><span style="font-size:52px;line-height:1">🃏</span><div><h1>¿Quién es quién?</h1><p>Lampy elige un personaje bíblico en secreto. Haz preguntas, descarta cartas y adivina quién es.</p></div></div>'+
-    '<section class="sec"><h3>¿Cuántas preguntas puedes hacer?</h3><div class="rdpills">'+roundsP+'</div></section>'+
-    '<section class="sec"><h3>¿Cuántos personajes en el tablero?</h3><div class="rdpills">'+sizeP+'</div></section>',
+  return rmShell('<div class="gsetup"><span style="font-size:52px;line-height:1">🃏</span><div><h1>¿Quién es quién?</h1><p>Lampy elige un personaje bíblico en secreto. Haz preguntas, descarta cartas y adivina quién es.</p></div></div>'+gwSetupHTML(true),
     '<div class="lf"><div class="in"><button class="btn" data-a="gw-solo-go">Empezar</button></div></div>',false);
 }
 function gwSoloMenu(){
-  GW=null;RM.code=null;RM.st=null;RM.sig='';
+  GW_MENU='solo';GW=null;RM.code=null;RM.st=null;RM.sig='';
   rmOpenOverlay();$('#room').innerHTML=gwSoloMenuHTML();
 }
 function gwSoloMenuRefresh(){const lb=document.querySelector('#room .lb'),t=lb?lb.scrollTop:0;$('#room').innerHTML=gwSoloMenuHTML();const l2=document.querySelector('#room .lb');if(l2)l2.scrollTop=t;}
 /* ----- ventanitas ----- */
 const gwCanAsk=()=>!!(GW&&GW.st&&!GW.st.over&&GW.st.cur===GW.me&&GW.st.stage==='ask'&&!GW.ui.guessing);
+/* ----- ayuda: personajes que aún pueden ser, según lo que ya te respondieron (no cuenta lo que descartaste a mano) ----- */
+function gwCands(){
+  const g=GW,T=g.st,mine=T.log.filter(l=>l.by===g.me),bad=T.guesses.filter(x=>x.by===g.me&&!x.r).map(x=>x.c);
+  return g.cfg.ids.filter(id=>bad.indexOf(id)<0&&mine.every(l=>gwEval(GW_BY[id],l.q,l.v)===l.r));
+}
+/* {pregunta:{valor:true}} para las opciones que ya no separan a nadie; null si no hay ayuda o ya casi está resuelto */
+function gwDimMap(){
+  const g=GW;if(!g||!((g.cfg.dim|0)>0))return null;
+  const cs=gwCands().map(id=>GW_BY[id]);if(cs.length<=1)return null;
+  const map={};
+  GW_Q.forEach(q=>{const m={};q.o().forEach(x=>{const k=cs.filter(c=>q.f(c,x[0])).length;m[String(x[0])]=(k===0||k===cs.length);});map[q.id]=m;});
+  return map;
+}
 function gwAskList(){
-  const g=GW,used=g.st.log.filter(l=>l.by===g.me),peek=!gwCanAsk();
-  showModal('<h3>'+(peek?'Preguntas posibles':'¿Qué quieres preguntar?')+'</h3>'+(peek?'<p class="muted" style="margin:-6px 0 10px;font-size:14px">Aún no es tu turno: puedes mirar y pensar tu jugada, pero no preguntar todavía.</p>':'')+'<div class="gwmod pickl">'+GW_Q.map(q=>{
-    if(q.id!=='au'){const o=q.o();if(o.every(x=>used.some(u=>u.q===q.id&&u.v===String(x[0]))))return '';}
-    return '<button class="pickrow" data-a="gw-cat" data-q="'+q.id+'"><b>'+esc(q.cat)+'</b><span class="muted">›</span></button>';
-  }).join('')+'</div><button class="btn ghost" data-a="stay">'+(peek?'Cerrar':'Cancelar')+'</button>');
+  const g=GW,used=g.st.log.filter(l=>l.by===g.me),peek=!gwCanAsk(),dm=gwDimMap();
+  const rows=[];
+  GW_Q.forEach(q=>{
+    const opts=q.o().filter(x=>!used.some(u=>u.q===q.id&&u.v===String(x[0])));
+    if(q.id!=='au'&&!opts.length)return;
+    rows.push({q,dim:!!(dm&&opts.length&&opts.every(x=>dm[q.id][String(x[0])]))});
+  });
+  const ord=rows.filter(r=>!r.dim).concat(rows.filter(r=>r.dim));
+  showModal('<h3>'+(peek?'Preguntas posibles':'¿Qué quieres preguntar?')+'</h3>'+(peek?'<p class="muted" style="margin:-6px 0 10px;font-size:14px">Aún no es tu turno: puedes mirar y pensar tu jugada, pero no preguntar todavía.</p>':'')+(dm&&ord.some(r=>r.dim)?'<p class="muted" style="margin:-6px 0 10px;font-size:14px">Las que ya no ayudan están en gris, al final.</p>':'')+'<div class="gwmod pickl">'+ord.map(r=>
+    '<button class="pickrow'+(r.dim?' dim':'')+'" data-a="gw-cat" data-q="'+r.q.id+'"><b>'+esc(r.q.cat)+'</b>'+(r.dim?'<span class="dn">ya no aplica</span>':'')+'<span class="muted">›</span></button>'
+  ).join('')+'</div><button class="btn ghost" data-a="stay">'+(peek?'Cerrar':'Cancelar')+'</button>');
 }
 function gwAskOpts(qid){
-  const g=GW,Q=GW_QBY[qid],peek=!gwCanAsk(),used=g.st.log.filter(l=>l.by===g.me&&l.q===qid).map(l=>l.v);
+  const g=GW,Q=GW_QBY[qid],peek=!gwCanAsk(),used=g.st.log.filter(l=>l.by===g.me&&l.q===qid).map(l=>l.v),dm=gwDimMap();
   const opts=Q.o().filter(x=>used.indexOf(String(x[0]))<0);
-  const row=x=>'<button class="pickrow'+(peek?' peek':'')+'" '+(peek?'disabled':'data-a="gw-opt" data-q="'+qid+'" data-v="'+esc(String(x[0]))+'"')+'><b style="white-space:normal">'+esc(x[1])+'</b></button>';
+  const isDim=x=>!!(dm&&dm[qid]&&dm[qid][String(x[0])]);
+  const ord=arr=>arr.filter(x=>!isDim(x)).concat(arr.filter(isDim));
+  const row=x=>{const dim=isDim(x);return '<button class="pickrow'+(peek?' peek':'')+(dim?' dim':'')+'" '+(peek?'disabled':'data-a="gw-opt" data-q="'+qid+'" data-v="'+esc(String(x[0]))+'"'+(dim?' data-dim="1"':''))+'><b style="white-space:normal">'+esc(x[1])+'</b>'+(dim?'<span class="dn">ya no aplica</span>':'')+'</button>';};
   let list;
   if(qid==='au'){
     /* todos los libros, agrupados por división */
-    list=BKDIV.map(d=>{const bs=opts.filter(x=>d[1].indexOf(x[0])>=0);return bs.length?'<h4 class="gwdiv">'+esc(DIVN[d[0]]||d[0])+'</h4>'+bs.map(row).join(''):'';}).join('');
-  }else list=opts.map(row).join('');
-  showModal('<h3>'+esc(Q.t)+'</h3><p class="muted" style="margin:-6px 0 10px;font-size:14px">'+(peek?'Aún no es tu turno: solo puedes mirar las opciones.':'Elige una opción. Te diré si es verdadero o falso.')+'</p><div class="gwmod pickl">'+list+'</div><button class="btn ghost" data-a="'+(peek?'gw-peek':'gw-ask')+'">‹ Otra pregunta</button>');
+    list=BKDIV.map(d=>{const bs=ord(opts.filter(x=>d[1].indexOf(x[0])>=0));return bs.length?'<h4 class="gwdiv">'+esc(DIVN[d[0]]||d[0])+'</h4>'+bs.map(row).join(''):'';}).join('');
+  }else list=ord(opts).map(row).join('');
+  const hasDim=opts.some(isDim);
+  showModal('<h3>'+esc(Q.t)+'</h3><p class="muted" style="margin:-6px 0 10px;font-size:14px">'+(peek?'Aún no es tu turno: solo puedes mirar las opciones.':'Elige una opción. Te diré si es verdadero o falso.')+(hasDim?' Las que ya no ayudan están en gris.':'')+'</p><div class="gwmod pickl">'+list+'</div><button class="btn ghost" data-a="'+(peek?'gw-peek':'gw-ask')+'">‹ Otra pregunta</button>');
+}
+function gwConfirmDim(qid,v){
+  showModal('<h3>Esta pregunta ya no ayuda</h3><p>Con lo que ya sabes, <b>'+esc(GW_QBY[qid].cat)+': '+esc(gwOptLabel(qid,v))+'</b> no separa a los personajes que te quedan: todos darían la misma respuesta. Si la haces, gastas tu pregunta de este turno.</p><button class="btn" data-a="gw-cat" data-q="'+qid+'">Elegir otra opción</button><button class="btn ghost" data-a="gw-opt-yes" data-q="'+qid+'" data-v="'+esc(String(v))+'">Preguntar de todos modos</button>');
 }
 function gwInfo(id){
   const c=GW_BY[id];if(!c)return;
@@ -4920,8 +5048,7 @@ function gwDiscardBy(){
 function gwAct(a,b){
   const g=GW;
   if(a==='gw-solo'){gwSoloMenu();return;}
-  if(a==='gw-set-rounds'){GWSET.rounds=+b.dataset.v;gwSoloMenuRefresh();return;}
-  if(a==='gw-set-size'){GWSET.size=+b.dataset.v;gwSoloMenuRefresh();return;}
+  if(a==='gw-cfg'){gwCfgPick(b);return;}
   if(a==='gw-solo-go'){gwSoloStart();return;}
   if(!g)return;
   if(a==='gw-info'){gwInfo(b.dataset.id);return;}
@@ -4944,7 +5071,11 @@ function gwAct(a,b){
   if(a==='gw-ready'){gwReady();return;}
   if(a==='gw-ask'||a==='gw-peek'){hideModal();gwAskList();return;}
   if(a==='gw-cat'){hideModal();gwAskOpts(b.dataset.q);return;}
-  if(a==='gw-opt'){if(!gwCanAsk()){hideModal();return;}hideModal();gwDo('ask',{q:b.dataset.q,v:b.dataset.v});return;}
+  if(a==='gw-opt'||a==='gw-opt-yes'){
+    if(!gwCanAsk()){hideModal();return;}
+    if(a==='gw-opt'&&b.dataset.dim==='1'&&(g.cfg.dim|0)===2){hideModal();gwConfirmDim(b.dataset.q,b.dataset.v);return;}
+    hideModal();gwDo('ask',{q:b.dataset.q,v:b.dataset.v});return;
+  }
   if(a==='gw-auto'){gwDiscardBy();return;}
   if(a==='gw-end'){gwDo('endturn');return;}
   if(a==='gw-guess'){g.ui.guessing=true;gwRender();const gr=document.getElementById('gwgrid');if(gr)gr.scrollIntoView({block:'start',behavior:'smooth'});return;}
@@ -5594,6 +5725,459 @@ function rfGo(i){
   startLesson({type:'lesson',key:les.title,title:les.title,verses},buildQuestions([],hand,14,les.cx),les.intro);
 }
 
+/* ============================================================
+   ¡YO RESPONDO! — juego presencial del botón rojo (2 a 8 jugadores, en el mismo lugar)
+   · El celular del organizador lee la pregunta en voz alta (o la lee él mismo).
+   · Luego suena «3, 2, 1, ¡YA!» y cada quien tiene un botón rojo en su celular.
+   · Gana el derecho de responder quien pulsó primero. Su tiempo de reacción se mide en su propio celular,
+     con el reloj corregido con el del servidor, así que no importa qué celular tenga mejor señal.
+   · Responde en privado, en su pantalla. Si falla, rebote: los demás pueden pulsar, y él no juega la siguiente.
+   · Todo viaja como mensajes ordenados; cada teléfono calcula el marcador con las mismas reglas.
+   ============================================================ */
+const BZSET={kind:'mix',read:'voice',pen:1,hostPlays:true};
+const BZ_LEAD=3300,BZ_REB=2300,BZ_OPEN=8000,BZ_ANS=10000,BZ_SETTLE=750,BZ_RES=5200,BZ_TOL=120;
+const BZ_KINDS=[['mix','🎲','Mezcla'],['who','🗣️','¿Quién lo dijo?'],['pers','🕵️','Personaje'],['tf','✅','Verdadero o falso'],['book','📖','¿En qué libro?']];
+const BZ_KLAB={who:'¿Quién lo dijo?',pers:'Adivina el personaje',tf:'Verdadero o falso',book:'¿En qué libro está?'};
+let BZ=null;
+const BZCLK={samples:[],off:0};
+const BZ_T={drv:0,ui:0};
+function bzMenuDefaults(){RM.cfg.total=10;}
+/* que la pantalla no se apague mientras dura la partida (el celular del centro de la mesa, sobre todo) */
+let BZ_WL=null;
+async function bzWake(on){
+  try{
+    if(on){if(navigator.wakeLock&&!BZ_WL){BZ_WL=await navigator.wakeLock.request('screen');BZ_WL.addEventListener('release',()=>{BZ_WL=null;});}}
+    else if(BZ_WL){const w=BZ_WL;BZ_WL=null;await w.release();}
+  }catch(e){BZ_WL=null;}
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&BZ)bzWake(true);});
+
+/* ----- reloj: la hora del servidor, estimada con el viaje de ida y vuelta más corto ----- */
+const bzOrigin=()=>performance.timeOrigin||(Date.now()-performance.now());
+const bzLocal=()=>bzOrigin()+performance.now();
+function bzSample(t0,t1,now){
+  now=+now;if(!isFinite(now)||now<=0)return;
+  const rtt=t1-t0;if(!(rtt>=0)||rtt>4000)return;
+  BZCLK.samples.push({rtt,off:now+rtt/2-t1});
+  if(BZCLK.samples.length>40)BZCLK.samples.shift();
+  let best=BZCLK.samples[0];BZCLK.samples.forEach(x=>{if(x.rtt<best.rtt)best=x;});
+  BZCLK.off=best.off;
+}
+const bzSrv=()=>bzLocal()+BZCLK.off;
+
+/* ----- preguntas para escuchar ----- */
+function bzSay(t){
+  return sayClean(String(t)).replace(/(\d+):(\d+)\s*[-–]\s*(\d+)/g,'$1 versículo $2 al $3').replace(/(\d+):(\d+)/g,'$1 versículo $2');
+}
+function bzQPers(used){
+  const pool=GPERS.filter(x=>!used.has('p|'+x.a)),it=pickOne(gFresh('pers',pool.length?pool:GPERS,x=>x.a));
+  used.add('p|'+it.a);gMark('pers',it.a);
+  const names=Array.from(new Set(GPERS.map(x=>x.a))).filter(n=>n!==it.a),o=shuffle([it.a,...shuffle(names).slice(0,3)]);
+  return {k:'pers',p:'¿Quién es este personaje?',c:it.c.map((c,i)=>(i+1)+'. '+c[0]).join('\n'),o,a:o.indexOf(it.a),x:it.c.map(c=>c[1]).join(' · '),r:it.c[0][1],
+    say:'Adivina el personaje. || '+it.c.map((c,i)=>'Pista '+(i+1)+'. '+bzSay(c[0])).join(' || ')+' || ¿Quién es?'};
+}
+function bzBuildQs(n,kind){
+  const used=new Set(),fn={who:rmQWho,book:rmQBook,tf:rmQTF,pers:bzQPers};
+  const kinds=kind==='mix'||!fn[kind]?['who','tf','book','pers']:[kind],out=[];let bag=[];
+  for(let i=0;i<n;i++){
+    if(!bag.length)bag=shuffle(kinds.slice());
+    const k=bag.pop(),q=fn[k](used);
+    if(!q.say)q.say=k==='who'?'¿Quién dijo esto? || '+bzSay(q.c):k==='book'?'¿En qué libro de la Biblia está esta historia? || '+bzSay(q.c):'¿Verdadero o falso? || '+bzSay(q.c);
+    out.push(q);
+  }
+  save();return out;
+}
+const bzQText=q=>String(q.say).replace(/\s*\|\|\s*/g,' ');
+
+/* ----- voz y sonidos (solo el celular del organizador suena) ----- */
+function bzPrime(){
+  try{if(canSpeak()){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);}}catch(e){}
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){}
+}
+function bzStopSpeak(){try{if(BZ)BZ.spk++;if(canSpeak())speechSynthesis.cancel();}catch(e){}}
+function bzLeft(){bzStopSpeak();bzWake(false);}
+function bzSpeak(text,done){
+  const g=BZ;if(!g)return;
+  const token=++g.spk;let finished=false,started=false,wd1=0,wd2=0;
+  const fin=ok=>{if(finished||token!==g.spk)return;finished=true;clearTimeout(wd1);clearTimeout(wd2);if(done)done(ok);};
+  if(!canSpeak()){fin(false);return;}
+  try{
+    speechSynthesis.cancel();
+    const parts=String(text).split('||').map(x=>x.trim()).filter(Boolean);let i=0;
+    const next=()=>{
+      if(token!==g.spk||finished)return;
+      if(i>=parts.length){fin(true);return;}
+      const u=gkUtter(parts[i],{rate:.92});i++;
+      u.onstart=()=>{started=true;};
+      u.onend=()=>{if(i<parts.length)setTimeout(next,520);else fin(true);};
+      u.onerror=ev=>{if(token!==g.spk)return;if(!started)fin(false);else fin(true);};
+      speechSynthesis.speak(u);
+    };
+    wd1=setTimeout(()=>{if(!started&&!finished){try{speechSynthesis.cancel();}catch(e){}fin(false);}},3500);
+    wd2=setTimeout(()=>{if(!finished)fin(true);},String(text).length*95+parts.length*700+6000);
+    next();
+  }catch(e){fin(false);}
+}
+function bzTone(freq,whenMs,dur,vol){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+    const t=AC.currentTime+Math.max(0,whenMs)/1000,o=AC.createOscillator(),gn=AC.createGain();
+    o.type='sine';o.frequency.value=freq;
+    gn.gain.setValueAtTime(.0001,t);gn.gain.exponentialRampToValueAtTime(vol||.5,t+.012);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(gn);gn.connect(AC.destination);o.start(t);o.stop(t+dur+.03);
+  }catch(e){}
+}
+/* tres avisos y un sonido más agudo y largo justo en el ¡YA! */
+function bzBeeps(T0){
+  const ms=T0-BZCLK.off-bzLocal();
+  [3,2,1].forEach(k=>{const w=ms-k*1000;if(w>=-80)bzTone(660,w,.14,.5);});
+  if(ms>-80)bzTone(1175,ms,.55,.6);
+}
+
+/* ----- el reglamento: con la lista de mensajes calcula en qué punto va la partida ----- */
+function bzReduce(cfg,order,evs){
+  const nq=cfg.qs.length,pen=cfg.pen?1:0;
+  const T={n:-1,stage:'pre',k:0,rep:0,T0:0,buzz:[],fs:{},win:null,locked:{},benchNext:{},score:{},res:null,wrongs:[],ok:{},over:false,nq};
+  order.forEach(d=>{T.score[d]=0;T.ok[d]=0;});
+  const q=()=>cfg.qs[T.n];
+  for(const x of evs){
+    const d=x.d,ev=x.ev||{};
+    if(T.over)break;
+    if(ev.t==='q'){
+      if(ev.n===T.n&&ev.rp===T.rep+1&&(T.stage==='read'||(T.stage==='cd'&&!T.buzz.length))){T.rep++;T.stage='read';T.buzz=[];T.fs={};T.T0=0;}
+      else if(ev.n===T.n+1&&ev.n<nq&&(T.stage==='res'||T.stage==='pre')&&(ev.rp||0)===0){
+        T.n=ev.n;T.stage='read';T.k=0;T.rep=0;T.buzz=[];T.fs={};T.win=null;T.res=null;T.wrongs=[];T.T0=0;
+        const ben=Object.keys(T.benchNext).filter(b=>order.indexOf(b)>=0);
+        T.locked={};T.benchNext={};
+        if(ben.length<order.length)ben.forEach(b=>{T.locked[b]=1;});
+      }
+    }else if(ev.t==='go'){
+      if(ev.n===T.n&&(T.stage==='read'||T.stage==='wrong')&&ev.k===T.k+1&&isFinite(+ev.T)){T.stage='cd';T.k=ev.k;T.T0=+ev.T;T.buzz=[];T.fs={};}
+    }else if(ev.t==='buzz'){
+      const rt=+ev.rt;
+      if(T.stage==='cd'&&ev.n===T.n&&ev.k===T.k&&order.indexOf(d)>=0&&!T.locked[d]&&!T.fs[d]&&!T.buzz.some(b=>b.d===d)&&isFinite(rt)){
+        if(rt<-BZ_TOL)T.fs[d]=1;else T.buzz.push({d,rt:Math.max(0,rt),seq:x.seq});
+      }
+    }else if(ev.t==='win'){
+      if(T.stage==='cd'&&ev.n===T.n&&ev.k===T.k&&T.buzz.some(b=>b.d===ev.w)){T.stage='ans';T.win={d:ev.w,rt:T.buzz.find(b=>b.d===ev.w).rt};}
+    }else if(ev.t==='ans'||ev.t==='to'){
+      const wrongAns=()=>{
+        const w=T.win.d;T.score[w]=Math.max(0,(T.score[w]||0)-1);T.locked[w]=1;
+        if(pen&&order.length>=3)T.benchNext[w]=1;
+        T.wrongs.push({d:w,i:ev.t==='to'?-1:+ev.i});T.stage='wrong';
+      };
+      if(T.stage==='ans'&&ev.n===T.n&&ev.k===T.k&&(ev.t==='to'||d===T.win.d)){
+        if(ev.t==='ans'&&+ev.i===q().a){T.score[T.win.d]=(T.score[T.win.d]||0)+2;T.ok[T.win.d]=(T.ok[T.win.d]||0)+1;T.res={status:'ok',d:T.win.d,i:+ev.i};T.stage='res';}
+        else wrongAns();
+      }
+    }else if(ev.t==='end'){
+      if(ev.n===T.n&&(T.stage==='read'||T.stage==='cd'||T.stage==='wrong')){
+        T.res={status:T.wrongs.length?'fail':T.stage==='read'?'skip':'none'};T.stage='res';
+      }
+    }else if(ev.t==='over'){T.over=true;}
+  }
+  return T;
+}
+
+/* ----- nueva partida ----- */
+const bzKey=st=>st.room.code+'|'+(st.cfg&&st.cfg.id);
+function bzInitLive(st){
+  const cfg=st.cfg,pl={},host=st.room.host;
+  st.players.forEach(p=>{pl[p.device]={name:p.name,avatar:p.avatar};});
+  let order=st.players.map(p=>p.device);if(cfg.hostPlays===false)order=order.filter(d=>d!==host);
+  BZ={cfg,key:bzKey(st),me:st.me,host,isHost:st.me===host,order,pl,evs:[],after:0,st:null,v:0,sent:new Set(),seenAt:{},ui:{},polling:false,sq:null,spk:0,active:[],rewarded:false,pressedK:'',ansSent:'',lastSig:'',readKey:''};
+  bzRecalc();bzTimers();bzWake(true);
+  return BZ;
+}
+function bzTimers(){
+  if(!BZ_T.drv)BZ_T.drv=setInterval(()=>{try{bzDrive();}catch(e){}},120);
+  if(!BZ_T.ui)BZ_T.ui=setInterval(()=>{try{bzUiTick();}catch(e){}},50);
+}
+function bzRecalc(){
+  const g=BZ,prev=g.st,T=g.st=bzReduce(g.cfg,g.order,g.evs);
+  const sig=JSON.stringify([T.n,T.stage,T.k,T.rep,T.win&&T.win.d,T.fs,T.locked,T.score,T.res&&T.res.status,T.wrongs.length,T.over,g.ui.voiceFail,g.pressedK,g.ansSent,g.isHost]);
+  if(sig!==g.lastSig){
+    const first=!g.lastSig;g.lastSig=sig;g.v++;
+    if(!first&&prev){
+      if(T.stage==='ans'&&prev.stage!=='ans'&&T.win.d===g.me){beep('good');haptic([40,50,40]);}
+      if(T.stage==='res'&&prev.stage!=='res'&&T.res.status==='ok'){beep(T.res.d===g.me?'win':'good');if(T.res.d===g.me)haptic(20);}
+      if(T.stage==='wrong'&&prev.stage!=='wrong'){beep('bad');if(T.wrongs.length&&T.wrongs[T.wrongs.length-1].d===g.me)haptic([30,40,30]);}
+    }
+  }
+  if(T.over&&!g.rewarded){
+    g.rewarded=true;
+    try{
+      recordDay(10);S.gplays=(S.gplays||0)+1;S.rmplays=(S.rmplays||0)+1;
+      ACH.filter(a=>!S.ach[a.id]&&a.f(S)).forEach(a=>S.ach[a.id]=true);save();renderTop();
+    }catch(e){}
+    const top=Math.max(...g.order.map(d=>T.score[d]||0));
+    if(g.order.indexOf(g.me)>=0&&(T.score[g.me]||0)===top&&top>0){beep('win');confetti(90);}else beep('good');
+  }
+}
+/* ----- comunicación ----- */
+function bzSend(ev,direct){
+  const g=BZ;if(!g)return Promise.resolve(false);
+  const run=async()=>{
+    for(let k=0;k<6;k++){
+      try{
+        const r=await rpc('fr_gw_send',frArgs({p_code:RM.code,p_ev:ev}));
+        if(r&&r.ok)return true;
+        if(r&&(r.error==='no_estas'||r.error==='sala_no_existe'||r.error==='no_permitido'||r.error==='datos_invalidos'))return false;
+      }catch(e){}
+      await new Promise(s=>setTimeout(s,450));
+    }
+    return false;
+  };
+  if(direct)return run();
+  g.sq=(g.sq||Promise.resolve()).then(run);return g.sq;
+}
+async function bzPoll(){
+  const g=BZ,code=RM.code;
+  if(!g||!code||g.polling)return;
+  g.polling=true;
+  try{
+    const t0=bzLocal(),r=await rpc('fr_gw_poll',frArgs({p_code:code,p_after:g.after})),t1=bzLocal();
+    if(g!==BZ||code!==RM.code)return;
+    if(!r||!r.ok){if(r&&(r.error==='sala_no_existe'||r.error==='no_estas'))rmEnd('La partida se cerró.');return;}
+    bzSample(t0,t1,r.now);
+    (r.ev||[]).forEach(x=>{if(x.seq>g.after){g.after=x.seq;g.evs.push({seq:x.seq,d:x.d,ev:x.ev});}});
+    g.active=r.active||[];
+    if(r.host&&r.host!==g.host){g.host=r.host;if(RM.st)RM.st.room.host=r.host;}
+    g.isHost=g.me===g.host;
+    if(RM.st&&r.status&&RM.st.room.status!==r.status){
+      RM.st.room.status=r.status;
+      if(r.status==='lobby'){bzLeft();BZ=null;RM.sig='';RM.lastState=0;}
+    }
+    if(BZ===g){bzRecalc();g.fast=g.st.stage==='cd'||g.st.stage==='ans';}
+    rmRender();
+  }catch(e){}
+  finally{g.polling=false;}
+}
+/* ----- el organizador marca el ritmo ----- */
+function bzOnce(key,fn){
+  const g=BZ;if(!g||g.sent.has(key))return;
+  g.sent.add(key);
+  Promise.resolve(fn()).then(ok=>{if(!ok&&BZ===g)g.sent.delete(key);else bzPoll();});
+}
+function bzGo(key){
+  const g=BZ;if(!g||!g.isHost)return;const T=g.st;
+  if(T.stage!=='read'||(key&&g.readKey!==key))return;
+  bzOnce('go:'+T.n+':'+T.rep+':'+T.k,()=>{
+    const t=Math.round(bzSrv()+BZ_LEAD);bzBeeps(t);
+    return bzSend({t:'go',n:T.n,k:T.k+1,T:t});
+  });
+}
+function bzRebound(){
+  const g=BZ,T=g.st;
+  const elig=g.order.filter(d=>!T.locked[d]&&(!g.active.length||g.active.indexOf(d)>=0));
+  if(!elig.length)return bzSend({t:'end',n:T.n});
+  const t=Math.round(bzSrv()+BZ_REB);bzBeeps(t);
+  return bzSend({t:'go',n:T.n,k:T.k+1,T:t});
+}
+function bzDrive(){
+  const g=BZ;if(!g||!g.isHost||!g.st||g.st.over)return;
+  const T=g.st,now=bzLocal(),q=g.cfg.qs[T.n];
+  const seen=key=>{if(!g.seenAt[key])g.seenAt[key]=now;return now-g.seenAt[key];};
+  if(T.stage==='read'){
+    const key='r:'+T.n+':'+T.rep;
+    if(g.readKey!==key){
+      g.readKey=key;g.ui.voiceFail=false;
+      if(g.cfg.read!=='screen'&&canSpeak()){
+        bzSpeak(q.say,ok=>{if(BZ!==g)return;if(ok)setTimeout(()=>bzGo(key),450);else{g.ui.voiceFail=true;bzRecalc();rmRender();}});
+      }else{g.ui.voiceFail=g.cfg.read!=='screen';bzRecalc();rmRender();}
+    }
+  }else if(T.stage==='cd'){
+    const key=T.n+':'+T.k;
+    if(T.buzz.length){if(seen('b:'+key)>=BZ_SETTLE)bzOnce('win:'+key,()=>{
+      const w=T.buzz.slice().sort((a,b)=>a.rt-b.rt||a.seq-b.seq)[0];
+      return bzSend({t:'win',n:T.n,k:T.k,w:w.d});
+    });}
+    else if(bzSrv()>T.T0+BZ_OPEN)bzOnce('end:'+key,()=>bzSend({t:'end',n:T.n}));
+  }else if(T.stage==='ans'){
+    const key=T.n+':'+T.k;
+    if(seen('a:'+key)>=BZ_ANS+1800)bzOnce('to:'+key,()=>bzSend({t:'to',n:T.n,k:T.k}));
+  }else if(T.stage==='wrong'){
+    const key=T.n+':'+T.k;
+    if(seen('w:'+key)>=2200)bzOnce('rb:'+key,()=>bzRebound());
+  }else if(T.stage==='res'){
+    const key=T.n;
+    if(seen('x:'+key)>=BZ_RES)bzNext();
+  }
+}
+function bzNext(){
+  const g=BZ;if(!g||!g.isHost)return;const T=g.st;
+  if(T.stage!=='res')return;
+  bzOnce('nx:'+T.n,()=>T.n+1>=T.nq?bzSend({t:'over'}):bzSend({t:'q',n:T.n+1,rp:0}));
+}
+/* ----- el botón rojo ----- */
+function bzPress(e){
+  const g=BZ;if(!g||!g.st)return;const T=g.st;
+  if(T.stage!=='cd'||g.order.indexOf(g.me)<0||T.locked[g.me]||T.fs[g.me])return;
+  const key=T.n+':'+T.k;if(g.pressedK===key)return;
+  let ts=(e&&typeof e.timeStamp==='number'&&e.timeStamp>0)?(e.timeStamp>1e11?e.timeStamp:bzOrigin()+e.timeStamp):bzLocal();
+  const nowL=bzLocal();if(ts>nowL||nowL-ts>2000)ts=nowL;
+  const rt=Math.round(ts+BZCLK.off-T.T0);
+  g.pressedK=key;
+  if(rt<-BZ_TOL){haptic([30,40,30]);beep('bad');}else haptic(25);
+  g.rt=rt;
+  bzSend({t:'buzz',n:T.n,k:T.k,rt},true).then(()=>bzPoll());
+  g.v++;rmRender();
+}
+function bzAnswer(i){
+  const g=BZ;if(!g||!g.st)return;const T=g.st;
+  if(T.stage!=='ans'||!T.win||T.win.d!==g.me)return;
+  const key=T.n+':'+T.k;if(g.ansSent===key)return;
+  g.ansSent=key;g.ansPick=i;g.v++;rmRender();
+  bzSend({t:'ans',n:T.n,k:T.k,i},true).then(ok=>{if(!ok&&BZ===g&&g.ansSent===key){g.ansSent='';g.v++;rmRender();toast('Sin conexión. Toca otra vez.');}else bzPoll();});
+}
+/* cuenta regresiva y barras: se mueven sin volver a dibujar la pantalla */
+function bzUiTick(){
+  const g=BZ;if(!g||!g.st||$('#room').hidden)return;
+  const T=g.st;
+  if(T.stage==='cd'){
+    const btn=document.getElementById('bzbtn'),dig=document.getElementById('bzdig'),bar=document.getElementById('bzopen');
+    const dt=T.T0-bzSrv(),dyn=!btn||btn.dataset.st==='pre'||btn.dataset.st==='live';
+    if(dt>0){
+      const d=String(Math.ceil(dt/1000));
+      if(dyn&&dig&&dig.textContent!==d){dig.textContent=d;if(!g.isHost)haptic(12);}
+      if(btn&&btn.dataset.st==='live')btn.dataset.st='pre';
+      if(bar)bar.style.width='0%';
+    }else{
+      if(dyn&&dig&&dig.textContent!=='¡YA!'){dig.textContent='¡YA!';if(!g.isHost)haptic(35);}
+      if(btn&&btn.dataset.st==='pre')btn.dataset.st='live';
+      if(bar)bar.style.width=Math.max(0,100*(1-(-dt)/BZ_OPEN))+'%';
+    }
+  }else if(T.stage==='ans'){
+    const bar=document.getElementById('bzans'),key='a:'+T.n+':'+T.k;
+    if(!g.seenAt[key])g.seenAt[key]=bzLocal();
+    if(bar)bar.style.width=Math.max(0,100*(1-(bzLocal()-g.seenAt[key])/BZ_ANS))+'%';
+  }
+}
+
+/* ----- piezas de pantalla ----- */
+const bzNm=d=>((BZ.pl[d]&&BZ.pl[d].name)||'Jugador');
+const bzAv=d=>((BZ.pl[d]&&BZ.pl[d].avatar)||'🙂');
+function bzShell(inner,foot){
+  const T=BZ.st,pct=Math.max(4,Math.round(100*Math.max(0,T.n+(T.stage==='res'||T.over?1:0))/T.nq));
+  return rmShell(inner,foot,false).replace('id="rmbar" style="width:100%','id="rmbar" style="width:'+pct+'%');
+}
+function bzScoreHTML(){
+  const g=BZ,T=g.st;
+  return '<div class="bzsb">'+g.order.map(d=>'<span class="bzp'+(d===g.me?' me':'')+(T.locked[d]&&!T.over?' lk':'')+'" title="'+esc(bzNm(d))+'"><span class="fav">'+esc(bzAv(d))+'</span><b>'+esc(bzNm(d))+'</b><em>'+(T.score[d]||0)+'</em>'+(T.locked[d]&&!T.over?'<i aria-hidden="true">🪑</i>':'')+'</span>').join('')+'</div>';
+}
+function bzRulesHTML(){
+  const g=BZ,pen=g.cfg.pen&&g.order.length>=3;
+  return '<section class="sec bzrules"><h3>Cómo se juega</h3><ol>'+
+    '<li>Se lee una pregunta en voz alta. Nadie la ve en su pantalla.</li>'+
+    '<li>Suena <b>3, 2, 1, ¡YA!</b> y el botón rojo se enciende en todos los celulares.</li>'+
+    '<li>El <b>primero en pulsar</b> responde en su celular (10 segundos). Si pulsas antes del ¡YA!, quedas fuera de esa pregunta.</li>'+
+    '<li>Acierto: <b>+2</b>. Error: <b>−1</b>'+(pen?' y no juegas la siguiente pregunta':'')+'. Si alguien falla, los demás pueden pulsar de nuevo.</li></ol></section>';
+}
+function bzPreHTML(){
+  const g=BZ,host=g.isHost;
+  const top='<div class="gsetup"><span style="font-size:52px;line-height:1">🔴</span><div><h1>¡Yo respondo!</h1><p>'+g.cfg.qs.length+' preguntas · '+g.order.length+' jugadores</p></div></div>';
+  const tips=host?'<section class="sec"><h3>Antes de empezar</h3><ul class="bztips"><li>Pongan <b>este celular en el centro</b>, con el <b>volumen alto</b> y sin modo silencio: él lee las preguntas y hace sonar la cuenta regresiva.</li><li>Cada quien toma <b>su</b> celular y lo deja a mano.</li></ul></section>':'<section class="sec"><h3>Mientras esperas</h3><ul class="bztips"><li>Ten tu celular en la mano y el dedo listo.</li><li>Las preguntas las lee en voz alta el celular de <b>'+esc(bzNm(g.host))+'</b>.</li></ul></section>';
+  return bzShell(top+tips+bzScoreHTML()+bzRulesHTML(),host?'<div class="lf"><div class="in"><button class="btn" data-a="bz-begin">🔴 Empezar la primera pregunta</button></div></div>':'<div class="lf"><div class="in"><p class="muted" style="text-align:center;margin:0;font-weight:800">Esperando a que '+esc(bzNm(g.host))+' empiece…</p></div></div>');
+}
+function bzBtn(st,main,sub){
+  return '<button class="bzbtn" id="bzbtn" data-bz="buzz" data-a="bz-press" data-st="'+st+'" aria-label="Botón rojo"><span class="bzmain" id="bzdig">'+main+'</span>'+(sub?'<span class="bzsub">'+sub+'</span>':'')+'</button>';
+}
+function bzPlayHTML(){
+  const g=BZ,T=g.st,q=g.cfg.qs[T.n],me=g.me,plays=g.order.indexOf(me)>=0,host=g.isHost;
+  const key=T.n+':'+T.k;
+  const hdr='<div class="bzhd"><span>Pregunta <b>'+(T.n+1)+'</b> de '+T.nq+'</span><span class="bzk">'+esc(BZ_KLAB[q.k]||'')+'</span></div>';
+  const hostGone=!host&&g.active.length&&g.active.indexOf(g.host)<0;
+  let main='',foot='';
+  if(T.stage==='read'){
+    main='<div class="bzspk"><span class="bzwave" aria-hidden="true">🔊</span><b>Escuchen la pregunta…</b><small>Cuando termine, suena la cuenta regresiva.</small></div>'+
+      (plays?bzBtn('wait','ESCUCHA','espera el ¡YA!'):'');
+    if(host){
+      const fallback=g.cfg.read==='screen'||g.ui.voiceFail;
+      if(fallback)main+='<div class="bzq"><small>'+(g.cfg.read==='screen'?'Lee esta pregunta en voz alta:':'La voz no se pudo activar. Lee esta pregunta en voz alta:')+'</small>'+esc(bzQText(q)).replace(/\n/g,'<br>')+'</div>';
+      foot='<div class="lf"><div class="in">'+(fallback?'<button class="btn" style="margin-bottom:10px" data-a="bz-go">✔ Ya la leí · ¡cuenta regresiva!</button>'+(g.ui.voiceFail&&canSpeak()?'<button class="btn ghost" style="margin-bottom:10px" data-a="bz-say">🔊 Probar la voz otra vez</button>':''):'')+'<div class="row2"><button class="btn ghost" data-a="bz-repeat">🔁 Repetir</button><button class="btn ghost" data-a="bz-skip">⏭ Saltar</button></div></div></div>';
+    }
+  }else if(T.stage==='cd'){
+    let btn;
+    if(!plays)btn='<div class="bzcdbig"><span id="bzdig">3</span></div>';
+    else if(T.locked[me])btn=bzBtn('out','FUERA','no juegas esta pregunta');
+    else if(T.fs[me])btn=bzBtn('fs','¡MUY PRONTO!','te adelantaste');
+    else if(g.pressedK===key)btn=bzBtn('sent','¡PULSASTE!','esperando al resto…');
+    else btn=bzBtn('pre','3','');
+    main='<div class="bzspk small"><b>'+(T.k>1?'¡Rebote! Otra oportunidad':'¡Prepárate!')+'</b></div>'+btn+'<div class="bztime"><i id="bzopen"></i></div>';
+  }else if(T.stage==='ans'){
+    const w=T.win.d,mine=w===me;
+    if(mine){
+      const sent=g.ansSent===key;
+      main='<div class="bzwin">🎉 ¡Fuiste el primero!<small>'+(T.win.rt/1000).toFixed(2)+' s</small></div><div class="bzq">'+esc(q.p)+'<br>'+esc(q.c).replace(/\n/g,'<br>')+'</div><div class="bztime"><i id="bzans"></i></div><div class="bzopts">'+q.o.map((o,i)=>'<button class="opt'+(sent&&g.ansPick===i?' picked':'')+'" data-a="bz-ans" data-i="'+i+'" '+(sent?'disabled':'')+'><kbd>'+(i+1)+'</kbd><span>'+esc(o)+'</span></button>').join('')+'</div>';
+    }else{
+      main='<div class="bzother"><span class="bzbig" aria-hidden="true">'+esc(bzAv(w))+'</span><b>'+esc(bzNm(w))+' está respondiendo…</b><small>Fue el primero en pulsar ('+(T.win.rt/1000).toFixed(2)+' s).</small></div>';
+    }
+  }else if(T.stage==='wrong'){
+    const l=T.wrongs[T.wrongs.length-1];
+    main='<div class="bzother bad"><span class="bzbig" aria-hidden="true">✖</span><b>'+(l.d===me?'Fallaste':esc(bzNm(l.d))+' falló')+'</b><small>'+(l.i===-1?'Se acabó su tiempo. ':'')+(T.locked[me]?'Esta pregunta ya no la juegas.':'¡Prepárense, hay rebote!')+'</small></div>';
+  }else if(T.stage==='res'){
+    const st=T.res.status;
+    const head=st==='ok'?'<div class="bzres ok"><b>✔ '+(T.res.d===me?'¡Acertaste!':esc(bzNm(T.res.d))+' acertó')+' · +2</b></div>':st==='fail'?'<div class="bzres no"><b>Nadie acertó</b></div>':st==='skip'?'<div class="bzres no"><b>Pregunta saltada</b></div>':'<div class="bzres no"><b>Nadie pulsó a tiempo</b></div>';
+    const fails=T.wrongs.length?'<p class="muted" style="text-align:center;margin:6px 0 0;font-weight:800">Fallaron: '+T.wrongs.map(w=>esc(bzNm(w.d))).join(', ')+'</p>':'';
+    main=head+fails+'<div class="bzansw"><small>Respuesta</small><strong>'+esc(q.o[q.a])+'</strong><p>'+esc(q.x)+'</p></div>';
+    if(host)foot='<div class="lf"><div class="in"><button class="btn" data-a="bz-next">'+(T.n+1>=T.nq?'Ver resultados':'Siguiente pregunta')+'</button></div></div>';
+  }
+  const banner=hostGone?'<div class="banner" style="margin:0 0 10px">'+esc(bzNm(g.host))+' perdió la conexión. Esperando a que vuelva…</div>':'';
+  return bzShell(banner+hdr+main+bzScoreHTML(),foot);
+}
+function bzFinalHTML(){
+  const g=BZ,T=g.st,sorted=g.order.slice().sort((a,b)=>(T.score[b]||0)-(T.score[a]||0)),top=T.score[sorted[0]]||0;
+  const winners=sorted.filter(d=>(T.score[d]||0)===top);
+  const iWon=winners.indexOf(g.me)>=0&&top>0,host=g.isHost;
+  const banner=top===0?'🤝 Nadie sumó puntos':winners.length>1?'🤝 ¡Empate!':'🏆 ¡Ganó '+esc(bzNm(winners[0]))+'!';
+  const rank=sorted.map((d,i)=>'<div class="bzrk'+(d===g.me?' me':'')+'"><span class="bzpos">'+(['🥇','🥈','🥉'][i]||(i+1))+'</span><span class="fav big">'+esc(bzAv(d))+'</span><b>'+esc(bzNm(d))+(d===g.me?' (tú)':'')+'</b><span class="bzaci">'+(T.ok[d]||0)+' ✔</span><em>'+(T.score[d]||0)+'</em></div>').join('');
+  const foot='<div class="lf"><div class="in"><div class="row2">'+(host?'<button class="btn" data-a="bz-again">Jugar otra vez</button>':'')+'<button class="btn ghost" data-a="rm-exit-yes">Salir</button></div>'+(host?'':'<p class="muted" style="text-align:center;margin:8px 0 0;font-size:13px">Quien organizó puede empezar otra partida.</p>')+'</div></div>';
+  return bzShell('<div style="display:flex;justify-content:center">'+mascot(iWon?'cheer':'think',110)+'</div><div class="rmwin" style="--tc:'+(top===0?'#777':'#FF9600')+'">'+banner+'<small>'+(top>0?top+' puntos':'')+'</small></div><div class="bzrank">'+rank+'</div>',foot);
+}
+function bzView(){
+  const g=BZ,T=g.st;
+  if(T.over)return bzFinalHTML();
+  if(T.stage==='pre')return bzPreHTML();
+  return bzPlayHTML();
+}
+/* ----- ajustes al crear la sala ----- */
+function bzSetupHTML(){
+  const pill=(k,v,t,on)=>'<button class="rdpill'+(on?' on':'')+'" data-a="bz-set" data-k="'+k+'" data-v="'+v+'" aria-pressed="'+on+'">'+t+'</button>';
+  const M=RM_MODES.buzz;
+  return '<section class="sec"><h3>Tipo de preguntas</h3><div class="rdpills">'+BZ_KINDS.map(k=>pill('kind',k[0],k[1]+' '+k[2],BZSET.kind===k[0])).join('')+'</div></section>'+
+    '<section class="sec"><h3>¿Cuántas preguntas?</h3><div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+t+'</button>').join('')+'</div></section>'+
+    '<section class="sec"><h3>¿Quién lee las preguntas?</h3><div class="rdpills">'+pill('read','voice','🔊 La voz del celular',BZSET.read==='voice')+pill('read','screen','🗣️ Yo las leo',BZSET.read==='screen')+'</div><p class="muted" style="font-size:14px;margin:8px 0 0">Con la voz, tu celular lee cada pregunta en voz alta. Déjalo en el centro, con el volumen alto.</p></section>'+
+    '<section class="sec"><h3>¿Tú también juegas?</h3><div class="rdpills">'+pill('hostPlays','1','Sí, también pulso',BZSET.hostPlays!==false)+pill('hostPlays','0','No, solo organizo',BZSET.hostPlays===false)+'</div></section>'+
+    '<section class="sec"><h3>Si alguien falla</h3><div class="rdpills">'+pill('pen','1','Pierde 1 punto y la siguiente pregunta',BZSET.pen===1)+pill('pen','0','Solo pierde 1 punto',BZSET.pen===0)+'</div><p class="muted" style="font-size:14px;margin:8px 0 0">Con solo 2 jugadores nadie se salta preguntas: solo se pierde 1 punto.</p></section>';
+}
+/* ----- acciones ----- */
+function bzAct(a,b){
+  const g=BZ;
+  if(a==='bz-set'){const k=b.dataset.k,v=b.dataset.v;BZSET[k]=(k==='pen'||k==='hostPlays')?(k==='hostPlays'?v==='1':+v):v;rmMenuRefresh();return;}
+  if(!g)return;
+  if(a==='bz-press'){bzPress({timeStamp:performance.now()});return;}
+  if(a==='bz-ans'){bzAnswer(+b.dataset.i);return;}
+  if(!g.isHost)return;
+  if(a==='bz-begin'){bzPrime();bzOnce('q:0',()=>bzSend({t:'q',n:0,rp:0}));return;}
+  if(a==='bz-repeat'){const T=g.st;if(T.stage!=='read')return;bzStopSpeak();bzOnce('rp:'+T.n+':'+(T.rep+1),()=>bzSend({t:'q',n:T.n,rp:T.rep+1}));return;}
+  if(a==='bz-skip'){const T=g.st;bzStopSpeak();bzOnce('skip:'+T.n+':'+T.k+':'+T.stage,()=>bzSend({t:'end',n:T.n}));return;}
+  if(a==='bz-go'){bzStopSpeak();bzGo(null);return;}
+  if(a==='bz-say'){
+    const T=g.st,key='r:'+T.n+':'+T.rep;g.ui.voiceFail=false;g.readKey=key;g.v++;rmRender();
+    bzSpeak(g.cfg.qs[T.n].say,ok=>{if(BZ!==g)return;if(ok)setTimeout(()=>bzGo(key),450);else{g.ui.voiceFail=true;g.v++;rmRender();}});return;
+  }
+  if(a==='bz-next'){bzNext();return;}
+  if(a==='bz-again'){
+    rpc('fr_room_again',frArgs({p_code:RM.code})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));else{bzLeft();BZ=null;RM.sig='';RM.lastState=0;}RM.rewarded='';rmPoll();}).catch(()=>toast('Sin conexión.'));
+    return;
+  }
+}
+/* el botón rojo responde al tocar, no al soltar: se gana tiempo */
+document.addEventListener('pointerdown',e=>{
+  const b=e.target&&e.target.closest?e.target.closest('[data-bz="buzz"]'):null;
+  if(b&&BZ){if(e.cancelable)e.preventDefault();bzPress(e);}
+},{passive:false});
+
 /* ----- preguntas ----- */
 function rmQBlank(used){
   const all=ALLV.filter(x=>x.t.split(/\s+/).length<=26&&BLANKS[x.r]),pool=all.filter(x=>!used.has(x.r));const v=pickOne(gFresh('comp',pool.length?pool:all,x=>x.r));used.add(v.r);gMark('comp',v.r);
@@ -5660,14 +6244,17 @@ function rmEnter(code){
 function rmLoop(){
   clearTimeout(RM.loop);
   if(!RM.code||$('#room').hidden)return;
-  RM.loop=setTimeout(async()=>{await rmPoll();rmLoop();},document.hidden?3000:900);
+  RM.loop=setTimeout(async()=>{await rmPoll();rmLoop();},document.hidden?3000:(BZ&&RM.st&&RM.st.room.mode==='buzz'&&RM.st.room.status==='playing'?(BZ.fast?220:380):900));
 }
 async function rmPoll(){
   const code=RM.code;if(!code)return;
   try{
     if(GW&&!GW.solo&&RM.st&&RM.st.room.mode==='guess'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await gwPoll();return;}
     if(SP&&!SP.solo&&RM.st&&RM.st.room.mode==='sprint'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await spPoll();return;}
+    if(BZ&&RM.st&&RM.st.room.mode==='buzz'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await bzPoll();return;}
+    const _t0=bzLocal();
     const st=await rpc('fr_room_state',frArgs({p_code:code}));
+    bzSample(_t0,bzLocal(),st&&st.now);
     if(code!==RM.code)return;
     if(st.error){rmEnd(st.error==='sala_no_existe'||st.error==='no_estas'?'La sala se cerró.':famMsg(st.error));return;}
     RM.fails=0;RM.st=st;RM.lastState=Date.now();RM.t0=performance.now();RM.rem0=st.room.rem;
@@ -5680,13 +6267,18 @@ async function rmPoll(){
       if(st.room.status==='lobby')SP=null;
       else if(st.cfg&&(!SP||SP.key!==spKey(st)))spInitLive(st);
     }
+    if(st.room.mode==='buzz'){
+      if(st.room.status==='lobby'){if(BZ){bzLeft();}BZ=null;}
+      else if(st.cfg&&(!BZ||BZ.key!==bzKey(st)))bzInitLive(st);
+    }
     rmRender();
     if(st.room.mode==='guess'&&st.room.status!=='lobby'&&GW)await gwPoll();
     if(st.room.mode==='sprint'&&st.room.status!=='lobby'&&SP)await spPoll();
+    if(st.room.mode==='buzz'&&st.room.status!=='lobby'&&BZ)await bzPoll();
   }catch(e){RM.fails++;if(RM.fails===4)rmRender(true);}
 }
 function rmEnd(msg){
-  clearTimeout(RM.loop);RM.code=null;RM.st=null;RM.sig='';GW=null;SP=null;
+  clearTimeout(RM.loop);try{bzLeft();}catch(e){}RM.code=null;RM.st=null;RM.sig='';GW=null;SP=null;BZ=null;
   $('#room').hidden=true;$('#room').innerHTML='';document.body.style.overflow='';
   if(msg)toast(msg);
   render();
@@ -5755,12 +6347,13 @@ function rmView(st){
   if(r.status==='lobby')return rmLobbyHTML(st);
   if(r.mode==='sprint')return SP?spView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la carrera…</b></div>','',false);
   if(r.mode==='guess')return GW?gwView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la partida…</b></div>','',false);
+  if(r.mode==='buzz')return BZ?bzView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la partida…</b></div>','',false);
   if(r.status==='finished')return rmFinalHTML(st);
   return r.mode==='assemble'?rmAssembleHTML(st):rmQuestionHTML(st);
 }
 function rmRender(force){
   const st=RM.st;if(!st||!RM.code)return;
-  const sig=JSON.stringify([st.room.status,st.room.phase,st.room.q,st.room.host,st.players.map(p=>[p.device,p.name,p.avatar,p.team,p.score,p.answered,p.active,p.badge,p.placed]),st.q&&[st.q.slots,st.q.mine,st.q.hint,st.q.errors,st.q.a,st.q.complete],st.mine,st.answers&&st.answers.length,RM.sel,RM.my&&RM.my.i,RM.fails>=4,GW?GW.v:0,SP?SP.v:0]);
+  const sig=JSON.stringify([st.room.status,st.room.phase,st.room.q,st.room.host,st.players.map(p=>[p.device,p.name,p.avatar,p.team,p.score,p.answered,p.active,p.badge,p.placed]),st.q&&[st.q.slots,st.q.mine,st.q.hint,st.q.errors,st.q.a,st.q.complete],st.mine,st.answers&&st.answers.length,RM.sel,RM.my&&RM.my.i,RM.fails>=4,GW?GW.v:0,SP?SP.v:0,BZ?BZ.v:0]);
   if(!force&&sig===RM.sig)return;
   const prevPhase=RM.lastPhase,prevQ=RM.lastQ;RM.sig=sig;
   const _lb=document.querySelector('#room .lb'),_top=_lb?_lb.scrollTop:0,_pv=GW&&GW.vk;
@@ -5769,7 +6362,7 @@ function rmRender(force){
   if(RM.fails>=4){const b=document.createElement('div');b.className='banner';b.style.margin='0 0 12px';b.textContent='Reconectando…';const lb=$('#room').querySelector('.lb');if(lb)lb.prepend(b);}
   if(st.room.phase==='reveal'&&(prevPhase!=='reveal'||prevQ!==st.room.q)&&st.mine){beep(st.mine.correct?'good':'bad');haptic(st.mine.correct?15:[30,40,30]);}
   RM.lastPhase=st.room.phase;RM.lastQ=st.room.q;
-  if(st.room.status==='finished'&&st.room.mode!=='guess'&&st.room.mode!=='sprint'&&RM.rewarded!==st.room.code){
+  if(st.room.status==='finished'&&st.room.mode!=='guess'&&st.room.mode!=='sprint'&&st.room.mode!=='buzz'&&RM.rewarded!==st.room.code){
     RM.rewarded=st.room.code;
     const x=recordDay(10);S.gplays=(S.gplays||0)+1;S.rmplays=(S.rmplays||0)+1;
     const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();renderTop();
@@ -5806,6 +6399,13 @@ async function rmPlace(slot){
 }
 async function rmStart(){
   const st=RM.st;if(!st)return;const M=RM_MODES[st.room.mode];
+  if(st.room.mode==='buzz'){
+    bzPrime();
+    const cfg={id:hexr(4),qs:bzBuildQs(st.room.total,BZSET.kind),read:BZSET.read,pen:BZSET.pen,hostPlays:BZSET.hostPlays!==false};
+    try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
+    catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
+    rmPoll();return;
+  }
   if(st.room.mode==='sprint'){
     const cfg={dur:st.room.total*10,goal:Math.round(st.room.total*10*2/15),qs:rmBuildQA(40)};
     try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
@@ -5813,7 +6413,7 @@ async function rmStart(){
     rmPoll();return;
   }
   if(st.room.mode==='guess'){
-    const ids=gwBoard(RM.cfg.size||20),cfg={rounds:st.room.total,size:ids.length,ids,first:pickOne(st.players).device};
+    const ids=gwBoard(RM.cfg.size||16),cfg={rounds:st.room.total,size:ids.length,ids,first:pickOne(st.players).device,dim:RM.cfg.dim==null?1:RM.cfg.dim};
     try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
     catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
     rmPoll();return;
@@ -6500,20 +7100,20 @@ function amigosHTML(){
 /* ============================================================
    JUEGOS EN VIVO: se juega con quienes sigues (invitación, sin códigos de sala)
    ============================================================ */
-function rmTilesHTML(){
+function rmTilesHTML(pres){
   if(!famOn())return '';
   const d=FR.data,inv=(d&&d.invites)||[],fol=(d&&d.following)||[];
   let out='';
-  if(inv.length)out+='<div class="rminv">'+inv.map(i=>{
+  if(inv.length&&!pres)out+='<div class="rminv">'+inv.map(i=>{
     const M=RM_MODES[i.mode]||RM_MODES.race;
     return '<div class="rminvrow"><span class="fav big">'+esc(i.avatar)+'</span><div class="minfo"><b>'+esc(i.from)+' te invita</b><span class="muted">'+esc(M.emo+' '+M.t)+'</span></div><button class="btn sm" data-a="rm-join-inv" data-code="'+esc(i.code)+'">Unirme</button></div>';
   }).join('')+'</div>';
   if(!frActive())out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Para jugar en vivo, crea tu perfil y sigue a alguien.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
   else if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Sigue al menos a una persona para invitarla a jugar.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
-  else out+='<div class="gtiles">'+Object.values(RM_MODES).filter(m=>!m.hide).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
+  else out+='<div class="gtiles">'+Object.values(RM_MODES).filter(m=>!m.hide&&!!m.pres===!!pres).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
   return out;
 }
-let GSEC={on:true,solo:false};
+let GSEC={on:true,pres:true,solo:false};
 function gSecHTML(k,title,inner,badge){return '<details class="gsec" data-k="'+k+'"'+(GSEC[k]?' open':'')+'><summary><span>'+title+'</span>'+(badge?'<em class="gbadge">'+badge+'</em>':'')+'</summary>'+inner+'</details>';}
 function rmMenuHTML(){
   const M=RM_MODES[RM.cfg.mode]||RM_MODES.race;
@@ -6524,14 +7124,16 @@ function rmMenuHTML(){
     return '<button class="pickrow'+(on?' on':'')+'" data-a="rm-pick" data-d="'+esc(f.device)+'" aria-pressed="'+on+'"><span class="fav big">'+esc(f.avatar)+'</span><b>'+esc(frName(f))+'</b><span class="chk">'+(on?'✔':'')+'</span></button>';}).join('')+'</div>'
     :'<p class="muted">Aún no sigues a nadie.</p>';
   const who='<section class="sec"><h3>¿Con quién juegas?</h3><p class="muted" style="font-size:14px;margin:0 0 10px">'+(M.one?'Elige a 1 persona.':'Elige hasta 7 personas. Les llegará una invitación.')+'</p>'+list+'</section>';
-  let settings='<section class="sec"><h3>'+(M.id==='assemble'?'¿Cuántos versículos?':M.id==='guess'?'¿Cuántas rondas?':M.id==='sprint'?'¿Cuánto dura la carrera?':'¿Cuántas preguntas?')+'</h3>'+(M.id==='guess'?'<p class="muted" style="font-size:14px;margin:0 0 10px">En cada ronda, cada jugador tiene un turno para preguntar o adivinar.</p>':M.id==='sprint'?'<p class="muted" style="font-size:14px;margin:0 0 10px">Todos responden las mismas preguntas, cada uno a su ritmo. ✔ Acierto +2 · ✖ Error −2 · ⏭ Paso 0.</p>':'')+'<div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+(M.id==='sprint'?t*10+' s':t)+'</button>').join('')+'</div></section>';
-  if(M.id==='guess')settings+='<section class="sec"><h3>¿Cuántos personajes en el tablero?</h3><div class="rdpills">'+[12,20,30].map(t=>'<button class="rdpill '+((RM.cfg.size||20)===t?'on':'')+'" data-a="rm-size" data-v="'+t+'">'+t+'</button>').join('')+'</div></section>';
+  let settings;
+  if(M.id==='guess'){GW_MENU='live';settings=gwSetupHTML(false);}
+  else if(M.id==='buzz')settings=bzSetupHTML();
+  else settings='<section class="sec"><h3>'+(M.id==='assemble'?'¿Cuántos versículos?':M.id==='guess'?'¿Cuántas rondas?':M.id==='sprint'?'¿Cuánto dura la carrera?':'¿Cuántas preguntas?')+'</h3>'+(M.id==='guess'?'<p class="muted" style="font-size:14px;margin:0 0 10px">En cada ronda, cada jugador tiene un turno para preguntar o adivinar.</p>':M.id==='sprint'?'<p class="muted" style="font-size:14px;margin:0 0 10px">Todos responden las mismas preguntas, cada uno a su ritmo. ✔ Acierto +2 · ✖ Error −2 · ⏭ Paso 0.</p>':'')+'<div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+(M.id==='sprint'?t*10+' s':t)+'</button>').join('')+'</div></section>';
   return rmShell(head+who+settings,
     '<div class="lf"><div class="in"><button class="btn" data-a="rm-create" '+(n?'':'disabled')+'>'+(n?'Crear sala e invitar a '+n:'Elige a quién invitar')+'</button></div></div>',false);
 }
 function rmOpenMenu(screen,mode){
   if(!famOn())return;
-  if(mode){RM.cfg.mode=mode;RM.cfg.total=RM_MODES[mode].def;}
+  if(mode){RM.cfg.mode=mode;RM.cfg.total=RM_MODES[mode].def;if(mode==='guess'){RM.cfg.size=16;RM.cfg.dim=1;GW_MENU='live';}if(mode==='buzz')bzMenuDefaults();}
   const fol=(FR.data&&FR.data.following)||[];
   RM.pick=RM.pick.filter(d=>fol.some(f=>f.device===d));
   if((RM_MODES[RM.cfg.mode]||{}).one)RM.pick=RM.pick.slice(0,1);
@@ -6584,7 +7186,7 @@ async function rmInviteSend(to){
 }
 function rmLobbyHTML(st){
   const r=st.room,M=RM_MODES[r.mode],host=r.host===st.me,n=st.players.length,me=st.players.find(p=>p.device===st.me)||{};
-  const enough=(r.mode==='duel'||r.mode==='guess')?n===2:n>=2,teamsOk=r.mode!=='teams'||[1,2].every(t=>st.players.some(p=>p.team===t)),can=host&&enough&&teamsOk;
+  const enough=(r.mode==='duel'||r.mode==='guess')?n===2:(r.mode==='buzz'&&BZSET.hostPlays===false?n>=3:n>=2),teamsOk=r.mode!=='teams'||[1,2].every(t=>st.players.some(p=>p.team===t)),can=host&&enough&&teamsOk;
   let list;
   if(r.mode==='teams'){
     list='<div class="rmteams">'+[1,2].map(t=>'<div class="rmteam" style="--tc:'+RM_TEAM[t].c+'"><b>'+RM_TEAM[t].e+' Equipo '+RM_TEAM[t].n+'</b>'+(st.players.filter(p=>p.team===t).map(p=>rmPlayerRow(p,st)).join('')||'<span class="muted" style="font-size:13px">Nadie todavía</span>')+'</div>').join('')+'</div>'+
@@ -6598,7 +7200,7 @@ function rmLobbyHTML(st){
   const need=!enough?((r.mode==='duel'||r.mode==='guess')?'Faltan jugadores: este juego es de 2.':'Hace falta al menos otra persona. Cuando acepte la invitación, aparecerá aquí.'):(!teamsOk?'Cada equipo necesita al menos un jugador.':'');
   return rmShell('<div class="gsetup"><span style="font-size:48px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+(r.mode==='sprint'?(r.total*10)+' segundos':r.total+(r.mode==='assemble'?' versículos':r.mode==='guess'?' rondas':' preguntas'))+' · '+n+(n===1?' jugador':' jugadores')+'</p></div></div>'+
     '<h3 style="margin:6px 0 8px">Jugadores</h3>'+list+waiting+actions+
-    (host?'':'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">Esperando a que empiece la partida…</p>')+
+    (r.mode==='buzz'?'<p class="muted" style="margin:14px 0 0;font-size:14px">🧑‍🤝‍🧑 Juego presencial: deben estar en el mismo lugar. Cada quien usa su celular.</p>':'')+(host?'':'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">Esperando a que empiece la partida…</p>')+
     (need&&host?'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">'+esc(need)+'</p>':''),
     host?'<div class="lf"><div class="in"><button class="btn" data-a="rm-start" '+(can?'':'disabled')+'>Empezar</button></div></div>':'',false);
 }
@@ -8548,7 +9150,7 @@ let G=null;
 function av(i){return '<span class="av" style="background:'+PCOL[i%PCOL.length]+'">'+esc(nameOf(i).charAt(0).toUpperCase())+'</span>';}
 function gamesHTML(){
   return '<h1 class="page">Juegos</h1>'+
-   '<div class="hero">'+mascot('cheer',84)+'<div class="bubble">'+(famOn()?'¡Elijan un juego! Pueden jugar en línea, cada quien en su celular, o juntos en un solo celular.':'¡Elijan un juego! Uno lee la pantalla y los demás responden.')+'</div></div>'+(famOn()?gSecHTML('on','🌐 En línea con tus amigos',rmTilesHTML(),(FR.data&&FR.data.invites&&FR.data.invites.length)?String(FR.data.invites.length):'')+gSecHTML('solo','📱 En un solo celular','<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button><button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>'):'<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button><button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>');
+   '<div class="hero">'+mascot('cheer',84)+'<div class="bubble">'+(famOn()?'¡Elijan un juego! Pueden jugar en línea, juntos con cada quien en su celular, o en un solo celular.':'¡Elijan un juego! Uno lee la pantalla y los demás responden.')+'</div></div>'+(famOn()?gSecHTML('on','🌐 En línea con tus amigos',rmTilesHTML(),(FR.data&&FR.data.invites&&FR.data.invites.length)?String(FR.data.invites.length):'')+gSecHTML('pres','🧑‍🤝‍🧑 Presencial con tus amigos',rmTilesHTML(true))+gSecHTML('solo','📱 En un solo celular','<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button><button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>'):'<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button><button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>');
 }
 function gShow(){$('#game').hidden=false;document.body.style.overflow='hidden';}
 function gTheme(){const el=$('#game');el.className='overlay gamed';if(G&&G.game){el.style.setProperty('--gc',G.game.c);el.style.setProperty('--gcol',G.game.c);}}
@@ -8783,6 +9385,7 @@ document.addEventListener('click',e=>{
   else if(a==='rf-open'){rfOpen();}
   else if(a==='rf-go'){rfGo(+b.dataset.i);}
   else if(a.slice(0,3)==='sp-'){spAct(a,b);}
+  else if(a.slice(0,3)==='bz-'){bzAct(a,b);}
   else if(a==='rm-size'){RM.cfg.size=+b.dataset.v;rmMenuRefresh();}
   else if(a==='rm-open'){RM.pick=[];rmOpenMenu('create',b.dataset.m);}
   else if(a==='rm-pick'){rmPickToggle(b.dataset.d);}
