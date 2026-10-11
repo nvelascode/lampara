@@ -567,6 +567,20 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .cheers{background:var(--orange-bg);border:2px solid var(--orange);border-radius:18px;padding:10px 14px;margin:0 0 14px}
 .cheerrow{padding:4px 0;font-size:16px}
 .mlist{display:grid;gap:10px}
+.frlist2 .frow{width:100%;text-align:left;background:none;color:var(--ink);font:inherit;font-size:15px;border:0;border-radius:0;box-shadow:none;border-top:2px solid var(--line);padding:9px 0;min-height:46px;gap:8px}
+.frlist2 .famh+.frow,.frlist2 .famh+.frm .frow{border-top:0}
+.frlist2 .fpos{width:22px}
+.frm .fcv{width:14px;flex:none;color:var(--muted);transition:transform .15s}
+.frm.open .fcv{transform:rotate(180deg)}
+.frme{background:var(--blue-bg);margin:0 -8px;padding-left:8px!important;padding-right:8px!important;border-radius:12px;border-top-color:transparent!important}
+.ftd{flex:none;width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-weight:900;display:grid;place-items:center}
+.fpanel{padding:0 0 12px 30px}
+.fpanel[hidden]{display:none}
+.fmeta{font-size:13px;font-weight:800}
+.fpanel .chb{margin-top:8px}
+.fpanel .frun{margin-top:8px}
+.fradd2{margin-top:14px}
+@media (prefers-reduced-motion:reduce){.frm .fcv{transition:none}}
 .mrow{background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;padding:12px 14px}
 .mrow.me{border-color:var(--blue);background:var(--blue-bg)}
 .mtop{display:flex;align-items:center;gap:10px}
@@ -7565,6 +7579,29 @@ function frBoardHTML(d,limit){
     rows.map((r,i)=>'<div class="frow"><span class="fpos">'+(i===0&&r.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc(r.avatar)+'</span><b class="fnm">'+esc(r.name)+(r.badge?' '+badgeE(r.badge):'')+'</b><span class="fst">🔥 '+r.st+'</span><span class="fxp">⚡ '+r.wk+'</span></div>').join('')+
     (limit?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-go">Ver amigos</button>':'')+'</section>';
 }
+let FRX='',FRALL=false;
+function frRowHTML(m,i){
+  const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name),open=FRX===m.device;
+  return '<div class="frm'+(open?' open':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+': racha '+frStreak(m)+', '+frWeek(m)+' XP esta semana. Ver opciones"><span class="fpos">'+(i===0&&frWeek(m)>0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><b class="fnm">'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b>'+(frToday(m)?'<span class="ftd" title="Ya practicó hoy" aria-label="Ya practicó hoy">✔</span>':'')+'<span class="fst">🔥 '+frStreak(m)+'</span><span class="fxp">⚡ '+frWeek(m)+'</span><span class="fcv" aria-hidden="true">▾</span></button>'+
+    '<div class="fpanel"'+(open?'':' hidden')+'><div class="fmeta muted">'+esc(frWhen(m.last_day))+' · 📚 '+(m.lessons||0)+' lecciones'+(frNoName(m)?' · Aún no puso su nombre':'')+'</div>'+
+    '<div class="chb">'+['animo','fuego','oracion'].map(k=>'<button class="chbtn" data-a="fr-cheer" data-to="'+to+'" data-k="'+k+'" aria-label="'+esc(KIND_T[k])+' a '+nm+'" title="'+esc(KIND_T[k])+'">'+KIND_E[k]+'</button>').join('')+
+    '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar">🎁</button>'+
+    '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar">🎮</button></div>'+
+    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+own+'">'+(frAlias(m)?'Cambiar apodo':'Poner apodo')+'</button><button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button></div></div></div>';
+}
+function frListHTML(d){
+  const mine=famStats();
+  const all=d.following.map(m=>({m,wk:frWeek(m),st:frStreak(m)})).concat([{me:true,wk:mine.p_week_xp,st:S.streak}]);
+  all.sort((a,b)=>b.wk-a.wk||b.st-a.st);
+  const LIM=8,lim=!FRALL&&all.length>LIM+1;
+  let shown=lim?all.slice(0,LIM):all;
+  if(lim&&!shown.some(x=>x.me))shown=shown.slice(0,LIM-1).concat(all.filter(x=>x.me));
+  const rows=shown.map(x=>{const i=all.indexOf(x);
+    if(x.me)return '<div class="frow frme"><span class="fpos">'+(i===0&&x.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc((d.me&&d.me.avatar)||'🙂')+'</span><b class="fnm">Tú'+(S.badge?' '+badgeE(S.badge):'')+'</b>'+(S.lastDay===today()?'<span class="ftd" aria-label="Ya practicaste hoy">✔</span>':'')+'<span class="fst">🔥 '+x.st+'</span><span class="fxp">⚡ '+x.wk+'</span><span class="fcv" aria-hidden="true"></span></div>';
+    return frRowHTML(x.m,i);}).join('');
+  return '<section class="card famcard frlist2"><div class="famh"><b>🏆 Esta semana</b><span class="muted">🔥 racha · ⚡ XP</span></div>'+rows+
+    (all.length>LIM+1?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-all">'+(FRALL?'Ver menos':'Ver todos ('+(all.length-1)+')')+'</button>':'')+'</section>';
+}
 function frFollowingHTML(m){
   const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name);
   return '<div class="mrow"><div class="mtop"><span class="fav big">'+esc(m.avatar)+'</span><div class="minfo"><b>'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b><span class="muted">'+esc(frWhen(m.last_day))+'</span>'+(frNoName(m)?'<span class="frnote">Aún no puso su nombre</span>':'')+'</div>'+(frToday(m)?'<span class="frpill">hoy ✔</span>':'')+'</div>'+
@@ -7594,15 +7631,15 @@ function frHTML(){
   /* 1. Lo de hoy: a quién sigues y cómo van */
   out+='<div class="frsec"><h3>Siguiendo</h3><span class="muted">'+fol.length+'</span></div>';
   if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<p>Aún no sigues a nadie. Agrega a tu familia y amigos aquí abajo con su código de usuario.</p></section>';
-  else out+=frBoardHTML(d)+'<div class="mlist">'+fol.map(frFollowingHTML).join('')+'</div>';
+  else out+=frListHTML(d);
   /* 2. Agregar amigos: tu código + seguir a alguien + invitar a instalar */
-  out+='<section class="card fradd"><b>➕ Agregar amigos</b>'+
+  out+='<details class="gsec fradd2" data-k="add"'+((GSEC.add||!fol.length)?' open':'')+'><summary><span>➕ Agregar amigos</span></summary><section class="card fradd">'+
     '<div class="codebox2"><span class="muted">Tu código de usuario</span><div class="gcodev">'+esc(me.code)+'</div></div>'+
     '<button class="btn blue" data-a="fr-invite">📲 Invitar a instalar Lampy</button>'+
     '<button class="btn ghost sm" style="margin-top:8px" data-a="fr-copy">Copiar mi código</button>'+
     '<div class="fradd-sep"></div>'+
     '<div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de usuario que te pasó.</small></div></div>'+
-    '<div class="jr-in" style="margin-top:10px"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></section>';
+    '<div class="jr-in" style="margin-top:10px"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></section></details>';
   /* 3. Te siguen (plegado) */
   out+='<details class="gsec frfw" data-k="fw"'+(GSEC.fw?' open':'')+'><summary><span>👣 Te siguen</span><em class="gbadge" style="background:var(--surface2);color:var(--ink)">'+fws.length+'</em></summary>'+
     (fws.length?'<section class="card" style="padding:6px 14px">'+fws.map(frFollowerHTML).join('')+'</section>':'<p class="muted" style="margin:6px 0 0;font-size:14px;font-weight:800">Cuando alguien escriba tu código, aparecerá aquí.</p>')+'</details>';
@@ -7652,7 +7689,7 @@ function rmTilesHTML(){
   else out+='<div class="gtiles">'+['guess','sprint','buzz','talk','race','assemble'].map(k=>RM_MODES[k]).filter(m=>m&&!m.hide).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
   return out;
 }
-let GSEC={on:false,solo:false,fw:false};
+let GSEC={on:false,solo:false,fw:false,add:false};
 function gSecHTML(k,title,inner,badge){return '<details class="gsec" data-k="'+k+'"'+(GSEC[k]?' open':'')+'><summary><span>'+title+'</span>'+(badge?'<em class="gbadge">'+badge+'</em>':'')+'</summary>'+inner+'</details>';}
 function rmMenuHTML(){
   const M=RM_MODES[RM.cfg.mode]||RM_MODES.race;
@@ -9945,6 +9982,8 @@ document.addEventListener('click',e=>{
       startLesson({type:'lesson',key:lk(ui,li),title:les.title,verses:les.verses},buildQuestions(les.verses,les.qs,les.max||10,les.cx),les.intro);
     }
   }
+  else if(a==='fr-x'){FRX=(FRX===b.dataset.to)?'':b.dataset.to;render();}
+  else if(a==='fr-all'){FRALL=!FRALL;render();}
   else if(a==='review'&&S.course==='bio'){
     const pool=bioPool();if(!pool.length)return;
     const sel=shuffle(pool).slice(0,8);
