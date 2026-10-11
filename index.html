@@ -1894,7 +1894,7 @@ function haptic(pat){
   }catch(e){}
 }
 const pickOne=a=>a[rnd(a.length)];
-const UNIT_EMO={'Los reformadores':'🔥','Los puritanos':'📕','Pastores bautistas':'🕊️','Misioneros':'🌍','Mujeres de fe':'🌷','Himnos y libros fieles':'🎶','El alfabeto griego':'🔤','Sonidos y signos':'🔊','Primeras palabras':'📚','Leyendo el Nuevo Testamento':'📜','La creación':'🌍','La caída':'🐍','Los Diez Mandamientos':'📜','Jehová es mi pastor':'🐑','Sermón del Monte':'⛰️','El Evangelio de Juan':'📖','Salvación por gracia':'🎁','Atributos de Dios (1)':'👑','Atributos de Dios (2)':'✨','Doctrinas fundamentales':'🧭','Personajes bíblicos':'🧔','Eventos bíblicos':'🗺️',"Temas y lecturas: Nuevo Testamento":"📖","Historia Sagrada: el Nuevo Testamento":"⛪","Temas y lecturas: Génesis a Ester":"📚","Temas y lecturas: Job a Malaquías":"🔥","Historia Sagrada: el Antiguo Testamento (1)":"🏺","Historia Sagrada: el Antiguo Testamento (2)":"👑","Conoce tu Biblia":"📖","La historia y el mensaje de la Biblia":"🧭","De Caín a Babel":"🏗️","Salmos conocidos":"🎶","El Evangelio de Marcos":"🌅"};
+const UNIT_EMO={'Raíces de la fe':'🌱','Mártires de la Reforma':'🕯️','Los reformadores':'🔥','Los puritanos':'📕','Pastores bautistas':'🕊️','Misioneros':'🌍','Mujeres de fe':'🌷','Himnos y libros fieles':'🎶','El alfabeto griego':'🔤','Sonidos y signos':'🔊','Primeras palabras':'📚','Leyendo el Nuevo Testamento':'📜','La creación':'🌍','La caída':'🐍','Los Diez Mandamientos':'📜','Jehová es mi pastor':'🐑','Sermón del Monte':'⛰️','El Evangelio de Juan':'📖','Salvación por gracia':'🎁','Atributos de Dios (1)':'👑','Atributos de Dios (2)':'✨','Doctrinas fundamentales':'🧭','Personajes bíblicos':'🧔','Eventos bíblicos':'🗺️',"Temas y lecturas: Nuevo Testamento":"📖","Historia Sagrada: el Nuevo Testamento":"⛪","Temas y lecturas: Génesis a Ester":"📚","Temas y lecturas: Job a Malaquías":"🔥","Historia Sagrada: el Antiguo Testamento (1)":"🏺","Historia Sagrada: el Antiguo Testamento (2)":"👑","Conoce tu Biblia":"📖","La historia y el mensaje de la Biblia":"🧭","De Caín a Babel":"🏗️","Salmos conocidos":"🎶","El Evangelio de Marcos":"🌅"};
 const ACH_E={bio1:'🕯️',bioall:'📚',gk1:'🔤',gkabc:'🏛️',gkw:'📚',first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑',rd1:'📖',rd7:'🔖',rd30:'🌅',rdall:'📜',gift1:'💝',gift2:'🎁',live1:'🎮',fr1:'🤝',fr2:'🌟'};
 const isStandalone=()=>{try{return !!(window.navigator.standalone||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches));}catch(e){return false;}};
 const isIOS=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent||'');
@@ -5811,6 +5811,38 @@ function rfGo(i){
    Cada lección: una breve biografía (tarjetas) y 8 preguntas. Solo hechos históricos; sin interpretaciones.
    ============================================================ */
 const BIO_UNITS=[
+ {title:"Raíces de la fe",sub:"Antes de la Reforma: testigos fieles de los primeros siglos",lessons:[
+  {title:"Policarpo de Esmirna",kind:"hand",intro:{t:"Policarpo de Esmirna (c. 69–155)",p:"Policarpo fue obispo (pastor) de la iglesia en Esmirna, una ciudad de Asia Menor. Ireneo, que lo conoció de joven, contó que Policarpo había sido discípulo del apóstol Juan.\nEscribió una carta a los filipenses que se conserva hasta hoy. Esmirna es una de las siete iglesias a las que se dirige el libro de Apocalipsis (Apocalipsis 2:8-11).\nHacia el año 155, ya anciano, fue arrestado durante una persecución. Se le ofreció salvar su vida si maldecía a Cristo. Según el relato de su martirio, respondió: «Ochenta y seis años le he servido, y ningún mal me ha hecho; ¿cómo podré blasfemar de mi Rey que me ha salvado?».\nMurió como mártir en Esmirna."},qs:[
+   ["¿De qué ciudad fue obispo Policarpo?","Esmirna",["Roma","Alejandría","Jerusalén"],"Policarpo fue pastor de la iglesia en Esmirna, en Asia Menor."],
+   ["¿De qué apóstol se dice que fue discípulo?","Juan",["Pablo","Pedro","Santiago"],"Ireneo contó que Policarpo había escuchado al apóstol Juan."],
+   ["¿Qué le pidieron hacer para salvar su vida?","Maldecir a Cristo",["Abandonar su ciudad","Entregar sus libros","Pagar una multa"],"Se le ofreció la libertad si negaba a Cristo."],
+   ["¿Cuántos años dijo Policarpo que llevaba sirviendo a Cristo?","Ochenta y seis",["Veinte","Cincuenta","Cien"],"«Ochenta y seis años le he servido», según el relato de su martirio."],
+   ["¿Aproximadamente en qué año murió como mártir?","155",["70","250","325"],"Su martirio se ubica hacia el año 155."],
+   ["¿A cuál de las siete iglesias de Apocalipsis pertenece su ciudad?","A la iglesia de Esmirna",["A la iglesia de Éfeso","A la iglesia de Laodicea","A la iglesia de Sardis"],"Apocalipsis 2:8-11 se dirige a la iglesia en Esmirna."],
+   ["¿Qué escribió Policarpo que aún se conserva?","Una carta a los filipenses",["Una carta a los romanos","Un himnario","Una Biblia en latín"],"Su Carta a los Filipenses es uno de los escritos cristianos más antiguos fuera del Nuevo Testamento."],
+   ["¿Quién escribió que había conocido a Policarpo de joven?","Ireneo",["Agustín","Lutero","Calvino"],"Ireneo habló de haber visto y oído a Policarpo."]
+  ]},
+  {title:"Agustín de Hipona",kind:"hand",intro:{t:"Agustín de Hipona (354–430)",p:"Agustín nació en 354 en Tagaste, en el norte de África. Su madre, Mónica, era cristiana y oraba por él. Siendo joven se dedicó a la retórica y enseñó en Cartago, Roma y Milán, y durante años vivió lejos de la fe.\nEn Milán escuchó la predicación del obispo Ambrosio. En el año 386, en un jardín, oyó la voz de un niño que repetía «toma y lee». Abrió las Escrituras y leyó Romanos 13:13-14. Fue bautizado por Ambrosio en el 387.\nEn 395 fue nombrado obispo de Hipona. Escribió «Confesiones», donde cuenta su vida y su conversión, y donde dice a Dios: «nos hiciste para ti, y nuestro corazón está inquieto hasta que descanse en ti».\nTambién escribió «La ciudad de Dios». Murió en 430 mientras los vándalos sitiaban Hipona."},qs:[
+   ["¿Cómo se llama el libro donde Agustín cuenta su vida y su conversión?","Confesiones",["La ciudad de Dios","El peregrino","Institución de la religión cristiana"],"En «Confesiones» Agustín habla con Dios sobre su vida."],
+   ["¿Cómo se llamaba la madre de Agustín?","Mónica",["Ana","Mary","Lidia"],"Mónica oró por él durante años."],
+   ["¿Qué obispo de Milán influyó en Agustín y lo bautizó?","Ambrosio",["Atanasio","Policarpo","Ireneo"],"Agustín oyó predicar a Ambrosio y fue bautizado por él en el 387."],
+   ["¿Qué pasaje leyó Agustín en el jardín cuando se convirtió?","Romanos 13:13-14",["Juan 3:16","Salmo 23","Génesis 1:1"],"Contó que abrió las Escrituras y leyó Romanos 13:13-14."],
+   ["¿De qué ciudad fue obispo?","Hipona",["Milán","Cartago","Roma"],"Fue obispo de Hipona, en el norte de África."],
+   ["¿Cómo se llama otra de sus obras más conocidas?","La ciudad de Dios",["El progreso del peregrino","Los Himnos de Wesley","Teología sistemática"],"«La ciudad de Dios» la escribió después de que Roma fue saqueada en el año 410."],
+   ["¿En qué continente nació Agustín?","África",["Europa","Asia","América"],"Nació en Tagaste, en el norte de África."],
+   ["¿Qué ocurría alrededor de Hipona cuando murió en 430?","Los vándalos la sitiaban",["Una gran sequía","Un concilio de obispos","La Reforma"],"Murió durante el asedio de los vándalos."]
+  ]},
+  {title:"Jan Hus",kind:"hand",intro:{t:"Jan Hus (c. 1372–1415)",p:"Jan Hus nació hacia 1372 en Husinec, en Bohemia (hoy República Checa). Estudió en la Universidad de Praga y fue ordenado sacerdote.\nPredicó en la Capilla de Belén, en Praga, y lo hacía en checo, el idioma del pueblo. Leyó los escritos del inglés John Wycliffe y defendió que la Escritura es la autoridad suprema.\nFue excomulgado. En 1414 se le invitó al Concilio de Constanza con una promesa de salvoconducto del emperador Segismundo. Allí fue arrestado y juzgado. Se negó a retractarse de lo que enseñaba mientras no se le demostrara su error con la Escritura.\nFue quemado el 6 de julio de 1415. Unos cien años después comenzó la Reforma de Lutero."},qs:[
+   ["¿En qué región nació Jan Hus?","Bohemia",["Sajonia","Escocia","Suiza"],"Bohemia es hoy parte de la República Checa."],
+   ["¿En qué idioma predicaba Hus en la Capilla de Belén?","Checo",["Latín","Alemán","Inglés"],"Predicaba en el idioma del pueblo."],
+   ["¿Qué escritos del inglés John Wycliffe leyó Hus?","Sus escritos sobre la Escritura y la iglesia",["Sus himnos","Sus diarios de viaje","Sus cartas a Lutero"],"Los escritos de Wycliffe influyeron en Hus."],
+   ["¿A qué concilio fue invitado en 1414?","Al Concilio de Constanza",["Al Concilio de Nicea","Al Sínodo de Dort","A la Asamblea de Westminster"],"Fue a Constanza con un salvoconducto del emperador."],
+   ["¿Qué ocurrió con Hus en Constanza?","Fue arrestado y juzgado",["Fue nombrado obispo","Fue recibido con honores","Fue enviado de misionero"],"No se respetó el salvoconducto y fue arrestado."],
+   ["¿En qué año fue quemado?","1415",["1215","1517","1555"],"Murió el 6 de julio de 1415."],
+   ["¿A qué se negó a renunciar mientras no se le mostrara su error con la Escritura?","A lo que enseñaba",["A su nacionalidad","A su cargo en la universidad","A su ciudad"],"Pidió que se le convenciera con la Escritura."],
+   ["¿Aproximadamente cuántos años después de su muerte comenzó la Reforma de Lutero?","Unos cien años",["Diez años","Cincuenta años","Trescientos años"],"Entre 1415 y 1517 pasaron unos cien años."]
+  ]}
+ ]},
  {title:"Los reformadores",sub:"Volvieron a las Escrituras en el siglo XVI",lessons:[
   {title:"Martín Lutero",kind:"hand",intro:{t:"Martín Lutero (1483–1546)",p:"Martín Lutero nació en 1483 en Eisleben, Alemania. Su padre quería que fuera abogado, pero en 1505, después de una tormenta en la que temió por su vida, entró a un monasterio agustino.\nLlegó a ser profesor de Biblia en la Universidad de Wittenberg. Al estudiar la carta a los Romanos entendió que «el justo por la fe vivirá» (Romanos 1:17): la justicia de Dios se recibe como un regalo por la fe en Cristo.\nEl 31 de octubre de 1517 publicó sus 95 tesis contra la venta de indulgencias. En 1521, ante la dieta de Worms, se negó a retractarse mientras no se le demostrara su error con la Escritura.\nTradujo el Nuevo Testamento al alemán (1522) y, con otros, toda la Biblia (1534). Murió en 1546."},qs:[
    ["¿En qué año publicó Lutero las 95 tesis?","1517",["1453","1521","1546"],"Las 95 tesis son de 1517. Se suele recordar el 31 de octubre como el día en que se dieron a conocer."],
@@ -6071,6 +6103,38 @@ const BIO_UNITS=[
    ["¿Cómo predicaba la Biblia?","De forma expositiva, versículo por versículo",["Solo con historias de ficción","Solo con música","Sin usar la Biblia"],"Predicaba explicando el texto bíblico."],
    ["¿Cuál es el título de uno de sus libros?","Depresión espiritual",["Gracia abundante","Santidad","El peregrino"],"Escribió sobre cómo ayudar al creyente abatido."],
    ["¿En qué año murió?","1981",["1899","1927","2005"],"Murió en 1981."]
+  ]}
+ ]}
+ ,{title:"Mártires de la Reforma",sub:"Dieron su vida por la fe que enseñaron",lessons:[
+  {title:"George Wishart",kind:"hand",intro:{t:"George Wishart (c. 1513–1546)",p:"George Wishart fue un predicador escocés de la Reforma. Estudió el Nuevo Testamento en griego y tradujo al inglés la Primera Confesión Helvética.\nRegresó a Escocia en 1543 y recorrió el país predicando. John Knox lo acompañó por un tiempo, y se cuenta que llevaba una espada para protegerlo.\nFue arrestado por orden del cardenal David Beaton y quemado en St Andrews el 1 de marzo de 1546. Pocos meses después, el cardenal Beaton fue asesinado.\nKnox, su discípulo, llegó a ser el gran reformador de Escocia."},qs:[
+   ["¿De qué país era George Wishart?","Escocia",["Francia","Suiza","Alemania"],"Wishart fue un predicador de la Reforma en Escocia."],
+   ["¿Cuál de estos reformadores fue discípulo de Wishart?","John Knox",["Juan Calvino","Martín Lutero","Tomás Cranmer"],"Knox lo acompañó en sus predicaciones."],
+   ["¿Qué traducción al inglés hizo Wishart?","La Primera Confesión Helvética",["La Biblia completa","Los salmos métricos","Las 95 tesis"],"Tradujo esa confesión de fe reformada."],
+   ["¿Con qué idioma estudió el Nuevo Testamento?","Griego",["Hebreo","Árabe","Francés"],"Estudió el Nuevo Testamento en griego."],
+   ["¿Quién ordenó su arresto?","El cardenal David Beaton",["El rey Enrique VIII","El emperador Carlos V","El papa León X"],"Beaton fue el cardenal que lo hizo arrestar."],
+   ["¿En qué ciudad fue ejecutado?","St Andrews",["Edimburgo","Londres","Ginebra"],"Fue quemado en St Andrews."],
+   ["¿En qué año murió?","1546",["1517","1555","1603"],"Murió el 1 de marzo de 1546."],
+   ["¿Qué hizo Wishart al volver a Escocia en 1543?","Recorrió el país predicando",["Fundó una universidad","Se hizo monje","Viajó como misionero a la India"],"Predicó en varias ciudades escocesas."]
+  ]},
+  {title:"Thomas Cranmer",kind:"hand",intro:{t:"Thomas Cranmer (1489–1556)",p:"Thomas Cranmer nació en 1489 en Inglaterra. Fue arzobispo de Canterbury bajo el rey Enrique VIII y luego bajo Eduardo VI.\nEs el principal autor del Libro de Oración Común, publicado en 1549 y revisado en 1552, que puso en inglés la oración y la lectura de la Escritura en los cultos.\nCuando la reina María I llegó al trono, Cranmer fue encarcelado. Bajo presión firmó varias declaraciones en las que se retractaba, pero al final las rechazó.\nFue quemado en Oxford el 21 de marzo de 1556. Se cuenta que, al llegar al fuego, puso primero la mano con la que había firmado."},qs:[
+   ["¿Qué cargo tuvo Thomas Cranmer?","Arzobispo de Canterbury",["Rey de Inglaterra","Papa","Profesor de Wittenberg"],"Fue arzobispo de Canterbury."],
+   ["¿Cuál es su obra más conocida?","El Libro de Oración Común",["La Biblia de Ginebra","Las Confesiones","El peregrino"],"El Libro de Oración Común apareció en 1549."],
+   ["¿Bajo qué reyes fue arzobispo?","Enrique VIII y Eduardo VI",["Isabel I y Jaime I","María I y Felipe II","Carlos I y Carlos II"],"Sirvió bajo Enrique VIII y luego bajo Eduardo VI."],
+   ["¿Qué reina lo encarceló?","María I",["Isabel I","Victoria","Ana"],"María I volvió a poner a Inglaterra bajo Roma."],
+   ["¿En qué ciudad fue quemado?","Oxford",["Londres","Canterbury","Edimburgo"],"Murió en Oxford el 21 de marzo de 1556."],
+   ["¿Qué hizo al final con las declaraciones en las que se había retractado?","Las rechazó",["Las repitió","Las publicó","Las escondió"],"Antes de morir las desmintió."],
+   ["¿Qué mano puso primero en el fuego, según el relato?","La mano con la que había firmado",["Su mano izquierda","Ninguna","Las dos juntas"],"Dijo que esa mano debía ser quemada primero."],
+   ["¿En qué idioma estaba el Libro de Oración Común?","Inglés",["Latín","Griego","Hebreo"],"Puso los cultos en el idioma del pueblo."]
+  ]},
+  {title:"Latimer y Ridley",kind:"hand",intro:{t:"Hugh Latimer (c. 1487–1555) y Nicholas Ridley (c. 1500–1555)",p:"Hugh Latimer fue un predicador inglés, obispo de Worcester. Era conocido por sus sermones claros y directos. Nicholas Ridley fue obispo de Londres y colaboró con Cranmer.\nCuando María I llegó al trono, ambos fueron encarcelados. Se les pidió que dejaran de enseñar la fe reformada y no aceptaron.\nFueron quemados juntos en Oxford el 16 de octubre de 1555. Latimer, ya anciano, dijo a Ridley: «Ánimo, maestro Ridley; hoy encenderemos en Inglaterra, por la gracia de Dios, una vela que confío que nunca se apagará».\nCranmer los vio morir desde su celda."},qs:[
+   ["¿De qué ciudad fue obispo Latimer?","Worcester",["Londres","Oxford","York"],"Latimer fue obispo de Worcester."],
+   ["¿De qué ciudad fue obispo Ridley?","Londres",["Worcester","Roma","Ginebra"],"Ridley fue obispo de Londres."],
+   ["¿Por qué eran conocidos los sermones de Latimer?","Por ser claros y directos",["Por ser en latín","Por ser muy cortos","Por ser cantados"],"Latimer era un predicador popular."],
+   ["¿En qué año fueron quemados?","1555",["1517","1546","1603"],"Murieron el 16 de octubre de 1555."],
+   ["¿Dónde fueron ejecutados?","En Oxford",["En Londres","En Roma","En Escocia"],"Murieron en Oxford."],
+   ["¿Qué reina gobernaba entonces Inglaterra?","María I",["Isabel I","Victoria","Ana"],"Fue la reina que persiguió a los reformados."],
+   ["¿Con qué imagen animó Latimer a Ridley?","Una vela que no se apagaría",["Un río","Una montaña","Una espada"],"Habló de encender una vela en Inglaterra."],
+   ["¿Con quién colaboró Ridley en la Reforma inglesa?","A Cranmer",["A Lutero","A Knox","A Wesley"],"Ridley colaboró con Cranmer."]
   ]}
  ]}
 ];
@@ -7540,7 +7604,7 @@ function frHTML(){
     '<div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de usuario que te pasó.</small></div></div>'+
     '<div class="jr-in" style="margin-top:10px"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></section>';
   /* 3. Te siguen (plegado) */
-  out+='<details class="gsec frfw" data-k="fw"'+(GSEC.fw?' open':'')+'><summary><span>👀 Te siguen</span><em class="gbadge" style="background:var(--surface2);color:var(--ink)">'+fws.length+'</em></summary>'+
+  out+='<details class="gsec frfw" data-k="fw"'+(GSEC.fw?' open':'')+'><summary><span>👣 Te siguen</span><em class="gbadge" style="background:var(--surface2);color:var(--ink)">'+fws.length+'</em></summary>'+
     (fws.length?'<section class="card" style="padding:6px 14px">'+fws.map(frFollowerHTML).join('')+'</section>':'<p class="muted" style="margin:6px 0 0;font-size:14px;font-weight:800">Cuando alguien escriba tu código, aparecerá aquí.</p>')+'</details>';
   /* 4. Regalos y tarjetas */
   const gn=giftN();
