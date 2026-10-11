@@ -3276,7 +3276,8 @@ function gkUtter(text,opt){
   const want=(opt&&opt.lang)||'';
   const norm=l=>String(l).replace('_','-').toLowerCase();
   let v=want?voices.find(x=>norm(x.lang)===norm(want)):null;
-  v=v||voices.find(x=>/^es-(co|419|mx|us)/i.test(norm(x.lang)))||voices.find(x=>/^es/i.test(norm(x.lang)));
+  const pickV=re=>voices.find(x=>re.test(norm(x.lang))&&x.localService)||voices.find(x=>re.test(norm(x.lang)));
+  v=v||pickV(/^es-(co|419|mx|us)/i)||pickV(/^es/i);
   if(v){u.voice=v;u.lang=v.lang;}else u.lang=want||'es-ES';
   u.rate=(opt&&opt.rate)||.8;
   return u;
@@ -7463,7 +7464,7 @@ function vozTest(){
   if(!canSpeak()){say('Este navegador no tiene voz (speechSynthesis no existe).');return;}
   let vs=[];try{vs=speechSynthesis.getVoices()||[];}catch(e){}
   const es=vs.filter(v=>/^es/i.test(v.lang));
-  const info='Voces: '+vs.length+' · en español: '+es.length+(es.length?' ('+es.slice(0,4).map(v=>esc(v.name+' '+v.lang)).join(', ')+')':'');
+  const info='Voces: '+vs.length+' · en español: '+es.length+(es.length?' ('+es.slice(0,4).map(v=>esc(v.name+' '+v.lang+(v.localService?' · local':' · en línea'))).join(', ')+')':'');
   say(info+'<br>Probando…');
   const steps=[];let n=0;
   const tryOne=(label,mk)=>new Promise(res=>{
@@ -7478,7 +7479,8 @@ function vozTest(){
   (async()=>{
     await tryOne('1) voz por defecto',()=>new SpeechSynthesisUtterance('Hola, esta es la voz de Lampy.'));
     await tryOne('2) idioma es',()=>{const u=new SpeechSynthesisUtterance('Hola, esta es la voz de Lampy.');u.lang='es';return u;});
-    if(es[0])await tryOne('3) voz '+es[0].lang,()=>{const u=new SpeechSynthesisUtterance('Hola, esta es la voz de Lampy.');u.voice=es[0];u.lang=es[0].lang;return u;});
+    for(const v of es.slice(0,3))await tryOne('3) '+v.name+' '+v.lang+(v.localService?' (local)':' (en línea)'),()=>{const u=new SpeechSynthesisUtterance('Hola, esta es la voz de Lampy.');u.voice=v;u.lang=v.lang;return u;});
+    const en=vs.filter(v=>v.localService&&!/^es/i.test(v.lang))[0];if(en)await tryOne('4) otra voz local ('+en.lang+')',()=>{const u=new SpeechSynthesisUtterance('Hello, this is Lampy.');u.voice=en;u.lang=en.lang;return u;});
     say(info+'<br>'+steps.map(esc).join('<br>')+'<br><i>Cuéntale a Claude lo que dice aquí.</i>');
   })();
 }
@@ -9198,7 +9200,7 @@ function speak(t){
     speechSynthesis.cancel();
     const token=++SPK_TOKEN;
     const parts=String(t).split(/\s*(?:\u2014|\|\|)\s*/).map(x=>x.trim()).filter(Boolean);
-    const v=(speechSynthesis.getVoices()||[]).find(x=>/^es/i.test(x.lang));
+    const _vs=(speechSynthesis.getVoices()||[]).filter(x=>/^es/i.test(x.lang));const v=_vs.find(x=>x.localService)||_vs[0];
     const next=i=>{
       if(token!==SPK_TOKEN||i>=parts.length)return;
       const u=new SpeechSynthesisUtterance(sayClean(parts[i]));
