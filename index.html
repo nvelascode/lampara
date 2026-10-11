@@ -5577,25 +5577,41 @@ function bzPrime(){
 function bzStopSpeak(){try{if(BZ)BZ.spk++;if(canSpeak())speechSynthesis.cancel();}catch(e){}}
 function bzLeft(){bzStopSpeak();bzWake(false);}
 function bzSpeak(text,done){
+  /* Android/Chrome: la voz a veces no arranca si se habla justo después de cancelar, si las voces aún no cargaron o si el idioma elegido no está instalado.
+     Por eso: se espera un instante tras cancelar, se reintenta con la voz por defecto y solo se rinde si de verdad no suena. */
   const g=BZ;if(!g)return;
   const token=++g.spk;let finished=false,started=false,wd1=0,wd2=0;
   const fin=ok=>{if(finished||token!==g.spk)return;finished=true;clearTimeout(wd1);clearTimeout(wd2);if(done)done(ok);};
   if(!canSpeak()){fin(false);return;}
   try{
+    try{speechSynthesis.resume();}catch(e){}
     speechSynthesis.cancel();
     const parts=String(text).split('||').map(x=>x.trim()).filter(Boolean);let i=0;
+    const plain=t=>{const u=new SpeechSynthesisUtterance(t);u.lang='es';u.rate=.92;return u;};
+    const say=(t,mode,after)=>{
+      if(token!==g.spk||finished)return;
+      let u;try{u=mode==='plain'?plain(t):gkUtter(t,{rate:.92});}catch(e){u=plain(t);}
+      let ended=false,begun=false;
+      const retry=()=>{if(ended)return;ended=true;if(mode==='voz'&&!begun){say(t,'plain',after);}else if(mode==='voz'||mode==='plain'){after(begun);}};
+      u.onstart=()=>{begun=true;started=true;};
+      u.onend=()=>{if(ended)return;ended=true;after(true);};
+      u.onerror=()=>{if(token!==g.spk)return;retry();};
+      try{speechSynthesis.resume();speechSynthesis.speak(u);}catch(e){retry();return;}
+      /* si no arrancó en 2,5 s, probar con la voz por defecto */
+      setTimeout(()=>{if(!begun&&!ended&&token===g.spk&&!finished){try{speechSynthesis.cancel();}catch(e){}ended=true;if(mode==='voz')setTimeout(()=>say(t,'plain',after),150);else after(false);}},2500);
+    };
     const next=()=>{
       if(token!==g.spk||finished)return;
       if(i>=parts.length){fin(true);return;}
-      const u=gkUtter(parts[i],{rate:.92});i++;
-      u.onstart=()=>{started=true;};
-      u.onend=()=>{if(i<parts.length)setTimeout(next,520);else fin(true);};
-      u.onerror=ev=>{if(token!==g.spk)return;if(!started)fin(false);else fin(true);};
-      speechSynthesis.speak(u);
+      const t=parts[i++];
+      say(t,'voz',ok=>{if(token!==g.spk||finished)return;if(!ok&&!started){fin(false);return;}if(i<parts.length)setTimeout(next,520);else fin(true);});
     };
-    wd1=setTimeout(()=>{if(!started&&!finished){try{speechSynthesis.cancel();}catch(e){}fin(false);}},3500);
-    wd2=setTimeout(()=>{if(!finished)fin(true);},String(text).length*95+parts.length*700+6000);
-    next();
+    wd1=setTimeout(()=>{if(!started&&!finished){try{speechSynthesis.cancel();}catch(e){}fin(false);}},7500);
+    wd2=setTimeout(()=>{if(!finished)fin(true);},String(text).length*95+parts.length*700+9000);
+    /* pequeña pausa tras cancelar y, si hace falta, esperar a que carguen las voces */
+    const go=()=>setTimeout(next,160);
+    if(!(speechSynthesis.getVoices&&speechSynthesis.getVoices().length)){let once=false;const h=()=>{if(once)return;once=true;try{speechSynthesis.removeEventListener('voiceschanged',h);}catch(e){}go();};try{speechSynthesis.addEventListener('voiceschanged',h);}catch(e){}setTimeout(h,900);}
+    else go();
   }catch(e){fin(false);}
 }
 function bzTone(freq,whenMs,dur,vol){
