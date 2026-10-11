@@ -136,20 +136,11 @@ h1,h2,h3,h4{font-weight:900}
 .node:active:not(:disabled){transform:translateY(5px);box-shadow:0 2px 0 var(--shade)}
 .node.done{background:var(--yellow);color:#fff}
 .node.locked{background:var(--line);color:var(--muted);cursor:not-allowed}
-.node.current{position:relative;box-shadow:0 7px 0 var(--shade),0 0 0 4px var(--surface),0 0 0 8px var(--u)}
-.node.current:active:not(:disabled){box-shadow:0 2px 0 var(--shade),0 0 0 4px var(--surface),0 0 0 8px var(--u)}
-.node.current::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:3px solid var(--u);opacity:0;pointer-events:none;animation:halo 2s ease-out infinite}
-@keyframes halo{0%{transform:scale(.82);opacity:.55}100%{transform:scale(1.18);opacity:0}}
-@media (prefers-reduced-motion:reduce){.node.current::after{animation:none}.start-tip{animation:none!important}}
+.node.current{animation:pulse 1.8s ease-in-out infinite;outline:6px solid color-mix(in srgb,var(--u) 28%,transparent);outline-offset:3px}
 .stop span{font-size:14px;font-weight:800;text-align:center;color:var(--muted)}
-.stop.cur{margin-top:24px}
 .stop.cur span{color:var(--ink);font-weight:900}
-.start-tip{position:absolute;top:-38px;background:var(--u);color:#fff;border-radius:999px;padding:5px 14px;font-weight:900;font-size:13px;letter-spacing:.02em;box-shadow:0 3px 0 var(--shade);animation:tipfloat 2s ease-in-out infinite;white-space:nowrap}
-@keyframes tipfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-.start-tip::after{content:"";position:absolute;bottom:-5px;left:50%;margin-left:-5px;width:10px;height:10px;background:var(--u);border-radius:2px;transform:rotate(45deg)}
-.invcard{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#1CB0F6,#2B70C9);color:#fff;border-radius:18px;padding:14px;margin:0 0 14px;box-shadow:0 4px 0 #1f5fa8}
-.invcard .ie{font-size:34px;line-height:1}.invcard b{display:block;font-size:16px;font-weight:900}.invcard span{display:block;font-size:13px;font-weight:700;opacity:.92;margin-top:2px}
-.invcard button{margin-left:auto;flex:none;background:#fff;color:#1f5fa8;border:0;border-radius:12px;padding:10px 14px;font-weight:900;font-size:14px;box-shadow:0 3px 0 rgba(0,0,0,.2);cursor:pointer}
+.start-tip{position:absolute;top:-30px;background:var(--surface);color:var(--green);border:2px solid var(--line);border-radius:12px;padding:2px 12px;font-weight:900;font-size:14px;letter-spacing:.04em;animation:bounce 1.6s infinite;white-space:nowrap}
+.start-tip::after{content:"";position:absolute;bottom:-7px;left:50%;margin-left:-6px;width:10px;height:10px;background:var(--surface);border-right:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg)}
 
 /* ---------- pestañas ---------- */
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:2px solid var(--line);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:6}
@@ -8996,7 +8987,7 @@ function homeHTML(){
     u.lessons.map((l,li)=>{
       const idx=flat++,isDone=!!S.done[l.title],optN=isOptNew(l,idx,ldI),locked=idx>cur&&!isDone&&!optN,isCur=idx===cur;
       const inner=isDone?IC.check:locked?IC.lock:'<span class="e">'+emo+'</span>';
-      return '<div class="stop '+(isCur?'cur':'')+'" style="--off:'+offs[li%4]+'px">'+(isCur?'<div class="start-tip">▶ Empezar</div>':'')+
+      return '<div class="stop '+(isCur?'cur':'')+'" style="--off:'+offs[li%4]+'px">'+(isCur?'<div class="start-tip">¡EMPIEZA!</div>':'')+
       '<button class="node '+(isDone?'done ':'')+(locked?'locked':'')+(isCur?' current':'')+'" data-a="lesson" data-c="'+(gk?'gk':bio?'bio':lib?'lib':'bib')+'" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+inner+'</button><span>'+esc(l.title)+(optN?'<em class="optnew">✨ Nueva</em>':'')+'</span></div>';
     }).join('')+'</div></section>';
   }).join('');
@@ -9007,7 +8998,7 @@ function homeHTML(){
   else if(bio){const w=botd();daily='<section class="card votd"><span class="tagv">🕯️ Persona del día</span><q>'+esc(w.t)+'</q><cite>'+esc(w.n)+'</cite></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
-  '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+'<section class="invcard"><span class="ie" aria-hidden="true">📲</span><div><b>Invita a alguien a Lampy</b><span>Mándale el enlace por WhatsApp para que la instale.</span></div><button data-a="fr-invite">Invitar</button></section>'+rfCardHTML()+rdHomeHTML()+
+  '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rfCardHTML()+rdHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':bio?'Biografías: datos históricos resumidos de fuentes de dominio público. Textos bíblicos citados: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
