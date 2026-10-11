@@ -997,6 +997,13 @@ a.btn{text-decoration:none;text-align:center}
 .bzopts{gap:6px;margin-top:4px}
 .bzopts .opt{padding:9px 12px;font-size:14px;min-height:0}
 }
+
+.bzbtn[data-st=pre] .bzmain{font-size:34px}
+.bzcdbig{font-size:34px!important}
+
+.tkhid{display:grid;justify-items:center;gap:6px;text-align:center;padding:36px 12px;background:var(--surface2);border-radius:18px;margin:10px 0}
+.tkhid span{font-size:44px;line-height:1}
+.tkhid small{color:var(--muted);font-weight:800}
 </style>
 </head>
 <body>
@@ -4559,7 +4566,8 @@ const RM_MODES={
   teams:{id:'teams',t:'Equipos',d:'Azul contra Naranja: suman los puntos de todos.',emo:'🤝',c:'#1CB0F6',totals:[6,10,14],def:10,time:20,min:'4 a 8 jugadores (mínimo 2)',hide:true},
   assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores'},
   guess:{id:'guess',t:'¿Quién es quién?',d:'Cada uno elige en secreto un personaje. ¡Adivina el del otro!',emo:'🃏',c:'#E84393',totals:[5,8,12],def:8,time:20,min:'2 jugadores',one:true},
-  buzz:{id:'buzz',t:'¡Yo respondo!',d:'Se lee la pregunta en voz alta, suena 3, 2, 1 y quien pulse primero el botón rojo responde.',emo:'🔴',c:'#FF4B4B',totals:[6,10,15],def:10,time:20,min:'2 a 8 jugadores, juntos en el mismo lugar',pres:true}
+  buzz:{id:'buzz',t:'¡Yo respondo!',d:'Se lee la pregunta en voz alta, suena un timbre y quien pulse primero el botón rojo responde.',emo:'🔴',c:'#FF4B4B',totals:[6,10,15],def:10,time:20,min:'2 a 8 jugadores, juntos en el mismo lugar'},
+  talk:{id:'talk',t:'Para conversar',d:'Un versículo y una pregunta para compartir. Cada quien la ve en su celular si quiere.',emo:'💬',c:'#00B894',totals:[5,8,12],def:8,time:20,min:'2 a 8 jugadores'}
 };
 const RM_TEAM=[null,{n:'Azul',c:'#1CB0F6',e:'🔵'},{n:'Naranja',c:'#FF9600',e:'🟠'}];
 let RM={code:null,st:null,t0:0,rem0:0,sig:'',sel:null,my:null,loop:0,fails:0,cfg:{mode:'race',total:10,size:20},screen:'menu',rewarded:'',av:'🙂',pick:[]};
@@ -5728,14 +5736,14 @@ function rfGo(i){
 /* ============================================================
    ¡YO RESPONDO! — juego presencial del botón rojo (2 a 8 jugadores, en el mismo lugar)
    · El celular del organizador lee la pregunta en voz alta (o la lee él mismo).
-   · Luego suena «3, 2, 1, ¡YA!» y cada quien tiene un botón rojo en su celular.
+   · Al terminar, hay un silencio corto de duración al azar y suena un timbre: ahí se enciende el botón rojo de cada quien.
    · Gana el derecho de responder quien pulsó primero. Su tiempo de reacción se mide en su propio celular,
      con el reloj corregido con el del servidor, así que no importa qué celular tenga mejor señal.
    · Responde en privado, en su pantalla. Si falla, rebote: los demás pueden pulsar, y él no juega la siguiente.
    · Todo viaja como mensajes ordenados; cada teléfono calcula el marcador con las mismas reglas.
    ============================================================ */
 const BZSET={kind:'mix',read:'voice',pen:1,hostPlays:true};
-const BZ_LEAD=3300,BZ_REB=2300,BZ_OPEN=8000,BZ_ANS=10000,BZ_SETTLE=750,BZ_RES=5200,BZ_TOL=120;
+const BZ_LEAD=1600,BZ_LEADR=1000,BZ_REB=1600,BZ_OPEN=8000,BZ_ANS=10000,BZ_SETTLE=750,BZ_RES=5200,BZ_TOL=120;
 const BZ_KINDS=[['mix','🎲','Mezcla'],['who','🗣️','¿Quién lo dijo?'],['pers','🕵️','Personaje'],['tf','✅','Verdadero o falso'],['book','📖','¿En qué libro?']];
 const BZ_KLAB={who:'¿Quién lo dijo?',pers:'Adivina el personaje',tf:'Verdadero o falso',book:'¿En qué libro está?'};
 let BZ=null;
@@ -5827,12 +5835,12 @@ function bzTone(freq,whenMs,dur,vol){
     o.connect(gn);gn.connect(AC.destination);o.start(t);o.stop(t+dur+.03);
   }catch(e){}
 }
-/* tres avisos y un sonido más agudo y largo justo en el ¡YA! */
+/* el timbre: dos notas altas, justo en el ¡YA! */
 function bzBeeps(T0){
   const ms=T0-BZCLK.off-bzLocal();
-  [3,2,1].forEach(k=>{const w=ms-k*1000;if(w>=-80)bzTone(660,w,.14,.5);});
-  if(ms>-80)bzTone(1175,ms,.55,.6);
+  if(ms>-80){bzTone(1175,ms,.5,.65);bzTone(1568,ms+140,.7,.6);}
 }
+const bzLead=base=>Math.round(base+Math.random()*BZ_LEADR);
 
 /* ----- el reglamento: con la lista de mensajes calcula en qué punto va la partida ----- */
 function bzReduce(cfg,order,evs){
@@ -5963,7 +5971,7 @@ function bzGo(key){
   const g=BZ;if(!g||!g.isHost)return;const T=g.st;
   if(T.stage!=='read'||(key&&g.readKey!==key))return;
   bzOnce('go:'+T.n+':'+T.rep+':'+T.k,()=>{
-    const t=Math.round(bzSrv()+BZ_LEAD);bzBeeps(t);
+    const t=Math.round(bzSrv()+bzLead(BZ_LEAD));bzBeeps(t);
     return bzSend({t:'go',n:T.n,k:T.k+1,T:t});
   });
 }
@@ -5971,7 +5979,7 @@ function bzRebound(){
   const g=BZ,T=g.st;
   const elig=g.order.filter(d=>!T.locked[d]&&(!g.active.length||g.active.indexOf(d)>=0));
   if(!elig.length)return bzSend({t:'end',n:T.n});
-  const t=Math.round(bzSrv()+BZ_REB);bzBeeps(t);
+  const t=Math.round(bzSrv()+bzLead(BZ_REB));bzBeeps(t);
   return bzSend({t:'go',n:T.n,k:T.k+1,T:t});
 }
 function bzDrive(){
@@ -5983,7 +5991,7 @@ function bzDrive(){
     if(g.readKey!==key){
       g.readKey=key;g.ui.voiceFail=false;
       if(g.cfg.read!=='screen'&&canSpeak()){
-        bzSpeak(q.say,ok=>{if(BZ!==g)return;if(ok)setTimeout(()=>bzGo(key),450);else{g.ui.voiceFail=true;bzRecalc();rmRender();}});
+        bzSpeak(q.say,ok=>{if(BZ!==g)return;if(ok)setTimeout(()=>bzGo(key),150);else{g.ui.voiceFail=true;bzRecalc();rmRender();}});
       }else{g.ui.voiceFail=g.cfg.read!=='screen';bzRecalc();rmRender();}
     }
   }else if(T.stage==='cd'){
@@ -6038,12 +6046,11 @@ function bzUiTick(){
     const btn=document.getElementById('bzbtn'),dig=document.getElementById('bzdig'),bar=document.getElementById('bzopen');
     const dt=T.T0-bzSrv(),dyn=!btn||btn.dataset.st==='pre'||btn.dataset.st==='live';
     if(dt>0){
-      const d=String(Math.ceil(dt/1000));
-      if(dyn&&dig&&dig.textContent!==d){dig.textContent=d;if(!g.isHost)haptic(12);}
+      if(dyn&&dig&&dig.textContent!=='ATENTO'){dig.textContent='ATENTO';}
       if(btn&&btn.dataset.st==='live')btn.dataset.st='pre';
       if(bar)bar.style.width='0%';
     }else{
-      if(dyn&&dig&&dig.textContent!=='¡YA!'){dig.textContent='¡YA!';if(!g.isHost)haptic(35);}
+      if(dyn&&dig&&dig.textContent!=='¡YA!'){dig.textContent='¡YA!';haptic(35);}
       if(btn&&btn.dataset.st==='pre')btn.dataset.st='live';
       if(bar)bar.style.width=Math.max(0,100*(1-(-dt)/BZ_OPEN))+'%';
     }
@@ -6069,14 +6076,14 @@ function bzRulesHTML(){
   const g=BZ,pen=g.cfg.pen&&g.order.length>=3;
   return '<section class="sec bzrules"><h3>Cómo se juega</h3><ol>'+
     '<li>Se lee una pregunta en voz alta. Nadie la ve en su pantalla.</li>'+
-    '<li>Suena <b>3, 2, 1, ¡YA!</b> y el botón rojo se enciende en todos los celulares.</li>'+
-    '<li>El <b>primero en pulsar</b> responde en su celular (10 segundos). Si pulsas antes del ¡YA!, quedas fuera de esa pregunta.</li>'+
+    '<li>Al terminar, hay un breve silencio y <b>suena un timbre</b>: ahí se enciende el botón rojo en todos los celulares.</li>'+
+    '<li>El <b>primero en pulsar</b> responde en su celular (10 segundos). Si pulsas antes del timbre, quedas fuera de esa pregunta.</li>'+
     '<li>Acierto: <b>+2</b>. Error: <b>−1</b>'+(pen?' y no juegas la siguiente pregunta':'')+'. Si alguien falla, los demás pueden pulsar de nuevo.</li></ol></section>';
 }
 function bzPreHTML(){
   const g=BZ,host=g.isHost;
   const top='<div class="gsetup"><span style="font-size:52px;line-height:1">🔴</span><div><h1>¡Yo respondo!</h1><p>'+g.cfg.qs.length+' preguntas · '+g.order.length+' jugadores</p></div></div>';
-  const tips=host?'<section class="sec"><h3>Antes de empezar</h3><ul class="bztips"><li>Pongan <b>este celular en el centro</b>, con el <b>volumen alto</b> y sin modo silencio: él lee las preguntas y hace sonar la cuenta regresiva.</li><li>Cada quien toma <b>su</b> celular y lo deja a mano.</li></ul></section>':'<section class="sec"><h3>Mientras esperas</h3><ul class="bztips"><li>Ten tu celular en la mano y el dedo listo.</li><li>Las preguntas las lee en voz alta el celular de <b>'+esc(bzNm(g.host))+'</b>.</li></ul></section>';
+  const tips=host?'<section class="sec"><h3>Antes de empezar</h3><ul class="bztips"><li>Pongan <b>este celular en el centro</b>, con el <b>volumen alto</b> y sin modo silencio: él lee las preguntas y hace sonar el timbre.</li><li>Cada quien toma <b>su</b> celular y lo deja a mano.</li></ul></section>':'<section class="sec"><h3>Mientras esperas</h3><ul class="bztips"><li>Ten tu celular en la mano y el dedo listo.</li><li>Las preguntas las lee en voz alta el celular de <b>'+esc(bzNm(g.host))+'</b>.</li></ul></section>';
   return bzShell(top+tips+bzScoreHTML()+bzRulesHTML(),host?'<div class="lf"><div class="in"><button class="btn" data-a="bz-begin">🔴 Empezar la primera pregunta</button></div></div>':'<div class="lf"><div class="in"><p class="muted" style="text-align:center;margin:0;font-weight:800">Esperando a que '+esc(bzNm(g.host))+' empiece…</p></div></div>');
 }
 function bzBtn(st,main,sub){
@@ -6089,20 +6096,20 @@ function bzPlayHTML(){
   const hostGone=!host&&g.active.length&&g.active.indexOf(g.host)<0;
   let main='',foot='';
   if(T.stage==='read'){
-    main='<div class="bzspk"><span class="bzwave" aria-hidden="true">🔊</span><b>Escuchen la pregunta…</b><small>Cuando termine, suena la cuenta regresiva.</small></div>'+
-      (plays?bzBtn('wait','ESCUCHA','espera el ¡YA!'):'');
+    main='<div class="bzspk"><span class="bzwave" aria-hidden="true">🔊</span><b>Escuchen la pregunta…</b><small>Cuando termine, espera el timbre.</small></div>'+
+      (plays?bzBtn('wait','ESCUCHA','espera el timbre'):'');
     if(host){
       const fallback=g.cfg.read==='screen'||g.ui.voiceFail;
       if(fallback)main+='<div class="bzq"><small>'+(g.cfg.read==='screen'?'Lee esta pregunta en voz alta:':'La voz no se pudo activar. Lee esta pregunta en voz alta:')+'</small>'+esc(bzQText(q)).replace(/\n/g,'<br>')+'</div>';
-      foot='<div class="lf"><div class="in">'+(fallback?'<button class="btn" style="margin-bottom:10px" data-a="bz-go">✔ Ya la leí · ¡cuenta regresiva!</button>'+(g.ui.voiceFail&&canSpeak()?'<button class="btn ghost" style="margin-bottom:10px" data-a="bz-say">🔊 Probar la voz otra vez</button>':''):'')+'<div class="row2"><button class="btn ghost" data-a="bz-repeat">🔁 Repetir</button><button class="btn ghost" data-a="bz-skip">⏭ Saltar</button></div></div></div>';
+      foot='<div class="lf"><div class="in">'+(fallback?'<button class="btn" style="margin-bottom:10px" data-a="bz-go">✔ Ya la leí · ¡dar el timbre!</button>'+(g.ui.voiceFail&&canSpeak()?'<button class="btn ghost" style="margin-bottom:10px" data-a="bz-say">🔊 Probar la voz otra vez</button>':''):'')+'<div class="row2"><button class="btn ghost" data-a="bz-repeat">🔁 Repetir</button><button class="btn ghost" data-a="bz-skip">⏭ Saltar</button></div></div></div>';
     }
   }else if(T.stage==='cd'){
     let btn;
-    if(!plays)btn='<div class="bzcdbig"><span id="bzdig">3</span></div>';
+    if(!plays)btn='<div class="bzcdbig"><span id="bzdig">ATENTO</span></div>';
     else if(T.locked[me])btn=bzBtn('out','FUERA','no juegas esta pregunta');
     else if(T.fs[me])btn=bzBtn('fs','¡MUY PRONTO!','te adelantaste');
     else if(g.pressedK===key)btn=bzBtn('sent','¡PULSASTE!','esperando al resto…');
-    else btn=bzBtn('pre','3','');
+    else btn=bzBtn('pre','ATENTO','');
     main='<div class="bzspk small"><b>'+(T.k>1?'¡Rebote! Otra oportunidad':'¡Prepárate!')+'</b></div>'+btn+'<div class="bztime"><i id="bzopen"></i></div>';
   }else if(T.stage==='ans'){
     const w=T.win.d,mine=w===me;
@@ -6164,7 +6171,7 @@ function bzAct(a,b){
   if(a==='bz-go'){bzStopSpeak();bzGo(null);return;}
   if(a==='bz-say'){
     const T=g.st,key='r:'+T.n+':'+T.rep;g.ui.voiceFail=false;g.readKey=key;g.v++;rmRender();
-    bzSpeak(g.cfg.qs[T.n].say,ok=>{if(BZ!==g)return;if(ok)setTimeout(()=>bzGo(key),450);else{g.ui.voiceFail=true;g.v++;rmRender();}});return;
+    bzSpeak(g.cfg.qs[T.n].say,ok=>{if(BZ!==g)return;if(ok)setTimeout(()=>bzGo(key),150);else{g.ui.voiceFail=true;g.v++;rmRender();}});return;
   }
   if(a==='bz-next'){bzNext();return;}
   if(a==='bz-again'){
@@ -6177,6 +6184,105 @@ document.addEventListener('pointerdown',e=>{
   const b=e.target&&e.target.closest?e.target.closest('[data-bz="buzz"]'):null;
   if(b&&BZ){if(e.cancelable)e.preventDefault();bzPress(e);}
 },{passive:false});
+
+/* ============================================================
+   PARA CONVERSAR (con amigos) — un versículo y una pregunta para compartir
+   · El anfitrión pasa de una tarjeta a otra; todos ven la misma en su celular.
+   · Cada quien puede ocultarla en el suyo (si están juntos y prefieren solo escuchar) o hacerla leer en voz alta.
+   · Sin puntos ni tiempo. Viaja por el mismo buzón de mensajes que los otros juegos en vivo.
+   ============================================================ */
+let TK=null;
+function tkBuild(n){
+  return gTake('conv',GCONV,x=>x.ref,n).map(x=>({r:x.ref,t:x.t||VBY[x.ref].t,q:x.q}));
+}
+function tkKey(st){return st.room.code+'|'+(st.cfg&&st.cfg.id);}
+function tkInitLive(st){
+  const cfg=st.cfg,pl={};
+  st.players.forEach(p=>{pl[p.device]={name:p.name,avatar:p.avatar};});
+  TK={cfg,key:tkKey(st),me:st.me,host:st.room.host,isHost:st.me===st.room.host,pl,evs:[],after:0,n:0,over:false,v:0,hide:false,polling:false,sq:null,rewarded:false};
+  return TK;
+}
+function tkRecalc(){
+  const g=TK;let n=0,over=false;
+  for(const x of g.evs){const ev=x.ev||{};
+    if(ev.t==='q'&&x.d===g.host&&+ev.n>=0&&+ev.n<g.cfg.qs.length)n=+ev.n;
+    else if(ev.t==='over'&&x.d===g.host)over=true;}
+  if(n!==g.n||over!==g.over){g.n=n;g.over=over;g.v++;}
+  if(over&&!g.rewarded){
+    g.rewarded=true;
+    try{recordDay(10);S.gplays=(S.gplays||0)+1;S.rmplays=(S.rmplays||0)+1;
+      ACH.filter(a=>!S.ach[a.id]&&a.f(S)).forEach(a=>S.ach[a.id]=true);save();renderTop();}catch(e){}
+    beep('good');
+  }
+}
+function tkSend(ev){
+  const g=TK;if(!g)return Promise.resolve(false);
+  const run=async()=>{
+    for(let k=0;k<6;k++){
+      try{
+        const r=await rpc('fr_gw_send',frArgs({p_code:RM.code,p_ev:ev}));
+        if(r&&r.ok)return true;
+        if(r&&(r.error==='no_estas'||r.error==='sala_no_existe'||r.error==='no_permitido'||r.error==='datos_invalidos'))return false;
+      }catch(e){}
+      await new Promise(s=>setTimeout(s,450));
+    }
+    return false;
+  };
+  g.sq=(g.sq||Promise.resolve()).then(run);return g.sq;
+}
+async function tkPoll(){
+  const g=TK,code=RM.code;
+  if(!g||!code||g.polling)return;
+  g.polling=true;
+  try{
+    const r=await rpc('fr_gw_poll',frArgs({p_code:code,p_after:g.after}));
+    if(g!==TK||code!==RM.code)return;
+    if(!r||!r.ok){if(r&&(r.error==='sala_no_existe'||r.error==='no_estas'))rmEnd('La sala se cerró.');return;}
+    (r.ev||[]).forEach(x=>{if(x.seq>g.after){g.after=x.seq;g.evs.push({seq:x.seq,d:x.d,ev:x.ev});}});
+    if(r.host&&r.host!==g.host){g.host=r.host;if(RM.st)RM.st.room.host=r.host;}
+    g.isHost=g.me===g.host;
+    if(RM.st&&r.status&&RM.st.room.status!==r.status){
+      RM.st.room.status=r.status;
+      if(r.status==='lobby'){TK=null;RM.sig='';RM.lastState=0;}
+    }
+    if(TK===g)tkRecalc();
+    rmRender();
+  }catch(e){}
+  finally{g.polling=false;}
+}
+const tkNm=d=>((TK.pl[d]&&TK.pl[d].name)||'Jugador');
+function tkCardSay(c){return sayRef(c.r)+'. '+c.t+' Pregunta: '+c.q;}
+function tkView(){
+  const g=TK,qs=g.cfg.qs,nq=qs.length;
+  if(g.over){
+    const foot='<div class="lf"><div class="in"><div class="row2">'+(g.isHost?'<button class="btn" data-a="tk-again">Otra conversación</button>':'')+'<button class="btn ghost" data-a="rm-exit-yes">Salir</button></div>'+(g.isHost?'':'<p class="muted" style="text-align:center;margin:8px 0 0;font-size:13px">Quien organizó puede empezar otra.</p>')+'</div></div>';
+    return rmShell('<div style="display:flex;justify-content:center">'+mascot('cheer',110)+'</div><div class="rmwin" style="--tc:#00B894">💬 ¡Linda conversación!<small>Hoy compartieron '+nq+' preguntas.</small></div>',foot,false).replace('id="rmbar" style="width:100%','id="rmbar" style="width:100%');
+  }
+  const c=qs[g.n],pct=Math.max(4,Math.round(100*(g.n+1)/nq));
+  const body=g.hide
+    ?'<div class="tkhid"><span aria-hidden="true">🤫</span><b>Escuchen la conversación</b><small>Ocultaste la pregunta en tu celular.</small></div>'
+    :'<blockquote class="verse gbig">'+esc(c.t)+'<cite class="vref">'+esc(c.r)+'</cite></blockquote><p class="gq">'+esc(c.q)+'</p>';
+  const tools='<div class="row2" style="margin:12px 0 0"><button class="btn ghost sm" data-a="tk-hide">'+(g.hide?'👁 Mostrar en mi celular':'🙈 Ocultar en mi celular')+'</button>'+(canSpeak()?'<button class="btn ghost sm" data-a="tk-say">🔊 Leer en voz alta</button>':'')+'</div>';
+  const last=g.n===nq-1;
+  const foot=g.isHost
+    ?'<div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="tk-prev" '+(g.n?'':'disabled')+'>← Anterior</button><button class="btn" data-a="tk-next" data-primary>'+(last?'Terminar':'Siguiente →')+'</button></div></div></div>'
+    :'<div class="lf"><div class="in"><p class="muted" style="text-align:center;margin:0;font-weight:800">'+esc(tkNm(g.host))+' pasa a la siguiente.</p></div></div>';
+  return rmShell('<p class="glabel">Para conversar <span>· '+(g.n+1)+' de '+nq+'</span></p>'+body+tools,foot,false).replace('id="rmbar" style="width:100%','id="rmbar" style="width:'+pct+'%');
+}
+function tkAct(a,b){
+  const g=TK;if(!g)return;
+  if(a==='tk-hide'){g.hide=!g.hide;g.v++;rmRender();return;}
+  if(a==='tk-say'){speak(tkCardSay(g.cfg.qs[g.n]));return;}
+  if(a==='tk-again'){
+    if(!g.isHost)return;
+    rpc('fr_room_again',frArgs({p_code:RM.code})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));else{TK=null;RM.sig='';RM.lastState=0;}RM.rewarded='';rmPoll();}).catch(()=>toast('Sin conexión.'));
+    return;
+  }
+  if(!g.isHost)return;
+  const nq=g.cfg.qs.length;
+  if(a==='tk-next'){stopSpeak();tkSend(g.n+1>=nq?{t:'over'}:{t:'q',n:g.n+1}).then(()=>tkPoll());return;}
+  if(a==='tk-prev'){if(g.n>0){stopSpeak();tkSend({t:'q',n:g.n-1}).then(()=>tkPoll());}return;}
+}
 
 /* ----- preguntas ----- */
 function rmQBlank(used){
@@ -6252,6 +6358,7 @@ async function rmPoll(){
     if(GW&&!GW.solo&&RM.st&&RM.st.room.mode==='guess'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await gwPoll();return;}
     if(SP&&!SP.solo&&RM.st&&RM.st.room.mode==='sprint'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await spPoll();return;}
     if(BZ&&RM.st&&RM.st.room.mode==='buzz'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await bzPoll();return;}
+    if(TK&&RM.st&&RM.st.room.mode==='talk'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await tkPoll();return;}
     const _t0=bzLocal();
     const st=await rpc('fr_room_state',frArgs({p_code:code}));
     bzSample(_t0,bzLocal(),st&&st.now);
@@ -6271,14 +6378,19 @@ async function rmPoll(){
       if(st.room.status==='lobby'){if(BZ){bzLeft();}BZ=null;}
       else if(st.cfg&&(!BZ||BZ.key!==bzKey(st)))bzInitLive(st);
     }
+    if(st.room.mode==='talk'){
+      if(st.room.status==='lobby')TK=null;
+      else if(st.cfg&&(!TK||TK.key!==tkKey(st)))tkInitLive(st);
+    }
     rmRender();
     if(st.room.mode==='guess'&&st.room.status!=='lobby'&&GW)await gwPoll();
     if(st.room.mode==='sprint'&&st.room.status!=='lobby'&&SP)await spPoll();
     if(st.room.mode==='buzz'&&st.room.status!=='lobby'&&BZ)await bzPoll();
+    if(st.room.mode==='talk'&&st.room.status!=='lobby'&&TK)await tkPoll();
   }catch(e){RM.fails++;if(RM.fails===4)rmRender(true);}
 }
 function rmEnd(msg){
-  clearTimeout(RM.loop);try{bzLeft();}catch(e){}RM.code=null;RM.st=null;RM.sig='';GW=null;SP=null;BZ=null;
+  clearTimeout(RM.loop);try{bzLeft();}catch(e){}RM.code=null;RM.st=null;RM.sig='';GW=null;SP=null;BZ=null;TK=null;
   $('#room').hidden=true;$('#room').innerHTML='';document.body.style.overflow='';
   if(msg)toast(msg);
   render();
@@ -6347,13 +6459,14 @@ function rmView(st){
   if(r.status==='lobby')return rmLobbyHTML(st);
   if(r.mode==='sprint')return SP?spView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la carrera…</b></div>','',false);
   if(r.mode==='guess')return GW?gwView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la partida…</b></div>','',false);
+  if(r.mode==='talk')return TK?tkView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando…</b></div>','',false);
   if(r.mode==='buzz')return BZ?bzView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la partida…</b></div>','',false);
   if(r.status==='finished')return rmFinalHTML(st);
   return r.mode==='assemble'?rmAssembleHTML(st):rmQuestionHTML(st);
 }
 function rmRender(force){
   const st=RM.st;if(!st||!RM.code)return;
-  const sig=JSON.stringify([st.room.status,st.room.phase,st.room.q,st.room.host,st.players.map(p=>[p.device,p.name,p.avatar,p.team,p.score,p.answered,p.active,p.badge,p.placed]),st.q&&[st.q.slots,st.q.mine,st.q.hint,st.q.errors,st.q.a,st.q.complete],st.mine,st.answers&&st.answers.length,RM.sel,RM.my&&RM.my.i,RM.fails>=4,GW?GW.v:0,SP?SP.v:0,BZ?BZ.v:0]);
+  const sig=JSON.stringify([st.room.status,st.room.phase,st.room.q,st.room.host,st.players.map(p=>[p.device,p.name,p.avatar,p.team,p.score,p.answered,p.active,p.badge,p.placed]),st.q&&[st.q.slots,st.q.mine,st.q.hint,st.q.errors,st.q.a,st.q.complete],st.mine,st.answers&&st.answers.length,RM.sel,RM.my&&RM.my.i,RM.fails>=4,GW?GW.v:0,SP?SP.v:0,BZ?BZ.v:0,TK?TK.v:0]);
   if(!force&&sig===RM.sig)return;
   const prevPhase=RM.lastPhase,prevQ=RM.lastQ;RM.sig=sig;
   const _lb=document.querySelector('#room .lb'),_top=_lb?_lb.scrollTop:0,_pv=GW&&GW.vk;
@@ -6362,7 +6475,7 @@ function rmRender(force){
   if(RM.fails>=4){const b=document.createElement('div');b.className='banner';b.style.margin='0 0 12px';b.textContent='Reconectando…';const lb=$('#room').querySelector('.lb');if(lb)lb.prepend(b);}
   if(st.room.phase==='reveal'&&(prevPhase!=='reveal'||prevQ!==st.room.q)&&st.mine){beep(st.mine.correct?'good':'bad');haptic(st.mine.correct?15:[30,40,30]);}
   RM.lastPhase=st.room.phase;RM.lastQ=st.room.q;
-  if(st.room.status==='finished'&&st.room.mode!=='guess'&&st.room.mode!=='sprint'&&st.room.mode!=='buzz'&&RM.rewarded!==st.room.code){
+  if(st.room.status==='finished'&&st.room.mode!=='guess'&&st.room.mode!=='sprint'&&st.room.mode!=='buzz'&&st.room.mode!=='talk'&&RM.rewarded!==st.room.code){
     RM.rewarded=st.room.code;
     const x=recordDay(10);S.gplays=(S.gplays||0)+1;S.rmplays=(S.rmplays||0)+1;
     const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();renderTop();
@@ -6402,6 +6515,12 @@ async function rmStart(){
   if(st.room.mode==='buzz'){
     bzPrime();
     const cfg={id:hexr(4),qs:bzBuildQs(st.room.total,BZSET.kind),read:BZSET.read,pen:BZSET.pen,hostPlays:BZSET.hostPlays!==false};
+    try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
+    catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
+    rmPoll();return;
+  }
+  if(st.room.mode==='talk'){
+    const cfg={id:hexr(4),qs:tkBuild(st.room.total)};
     try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
     catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
     rmPoll();return;
@@ -7100,20 +7219,20 @@ function amigosHTML(){
 /* ============================================================
    JUEGOS EN VIVO: se juega con quienes sigues (invitación, sin códigos de sala)
    ============================================================ */
-function rmTilesHTML(pres){
+function rmTilesHTML(){
   if(!famOn())return '';
   const d=FR.data,inv=(d&&d.invites)||[],fol=(d&&d.following)||[];
   let out='';
-  if(inv.length&&!pres)out+='<div class="rminv">'+inv.map(i=>{
+  if(inv.length)out+='<div class="rminv">'+inv.map(i=>{
     const M=RM_MODES[i.mode]||RM_MODES.race;
     return '<div class="rminvrow"><span class="fav big">'+esc(i.avatar)+'</span><div class="minfo"><b>'+esc(i.from)+' te invita</b><span class="muted">'+esc(M.emo+' '+M.t)+'</span></div><button class="btn sm" data-a="rm-join-inv" data-code="'+esc(i.code)+'">Unirme</button></div>';
   }).join('')+'</div>';
   if(!frActive())out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Para jugar en vivo, crea tu perfil y sigue a alguien.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
   else if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Sigue al menos a una persona para invitarla a jugar.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
-  else out+='<div class="gtiles">'+Object.values(RM_MODES).filter(m=>!m.hide&&!!m.pres===!!pres).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
+  else out+='<div class="gtiles">'+['guess','sprint','buzz','talk','race','assemble'].map(k=>RM_MODES[k]).filter(m=>m&&!m.hide).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
   return out;
 }
-let GSEC={on:true,pres:true,solo:false};
+let GSEC={on:true,solo:true};
 function gSecHTML(k,title,inner,badge){return '<details class="gsec" data-k="'+k+'"'+(GSEC[k]?' open':'')+'><summary><span>'+title+'</span>'+(badge?'<em class="gbadge">'+badge+'</em>':'')+'</summary>'+inner+'</details>';}
 function rmMenuHTML(){
   const M=RM_MODES[RM.cfg.mode]||RM_MODES.race;
@@ -7200,7 +7319,7 @@ function rmLobbyHTML(st){
   const need=!enough?((r.mode==='duel'||r.mode==='guess')?'Faltan jugadores: este juego es de 2.':'Hace falta al menos otra persona. Cuando acepte la invitación, aparecerá aquí.'):(!teamsOk?'Cada equipo necesita al menos un jugador.':'');
   return rmShell('<div class="gsetup"><span style="font-size:48px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+(r.mode==='sprint'?(r.total*10)+' segundos':r.total+(r.mode==='assemble'?' versículos':r.mode==='guess'?' rondas':' preguntas'))+' · '+n+(n===1?' jugador':' jugadores')+'</p></div></div>'+
     '<h3 style="margin:6px 0 8px">Jugadores</h3>'+list+waiting+actions+
-    (r.mode==='buzz'?'<p class="muted" style="margin:14px 0 0;font-size:14px">🧑‍🤝‍🧑 Juego presencial: deben estar en el mismo lugar. Cada quien usa su celular.</p>':'')+(host?'':'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">Esperando a que empiece la partida…</p>')+
+    (r.mode==='buzz'?'<p class="muted" style="margin:14px 0 0;font-size:14px">🤝 Juego presencial: deben estar en el mismo lugar. Cada quien usa su celular.</p>':r.mode==='talk'?'<p class="muted" style="margin:14px 0 0;font-size:14px">💬 Pueden estar juntos o cada quien en su lugar: todos ven la misma pregunta en su celular, y pueden ocultarla si prefieren solo escuchar.</p>':'')+(host?'':'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">Esperando a que empiece la partida…</p>')+
     (need&&host?'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">'+esc(need)+'</p>':''),
     host?'<div class="lf"><div class="in"><button class="btn" data-a="rm-start" '+(can?'':'disabled')+'>Empezar</button></div></div>':'',false);
 }
@@ -9148,21 +9267,29 @@ const DECKS={quien:dQuien,pers:dPers,vf:dVF,comp:dComp,libros:dLibros,conv:dConv
 
 let G=null;
 function av(i){return '<span class="av" style="background:'+PCOL[i%PCOL.length]+'">'+esc(nameOf(i).charAt(0).toUpperCase())+'</span>';}
+function gSoloTiles(){
+  const fam=famOn();
+  return '<div class="gtiles">'+GAMES.filter(g=>!(fam&&g.id==='conv')).map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+
+   '<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button>'+
+   '<button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>';
+}
 function gamesHTML(){
+  const fam=famOn();
   return '<h1 class="page">Juegos</h1>'+
-   '<div class="hero">'+mascot('cheer',84)+'<div class="bubble">'+(famOn()?'¡Elijan un juego! Pueden jugar en línea, juntos con cada quien en su celular, o en un solo celular.':'¡Elijan un juego! Uno lee la pantalla y los demás responden.')+'</div></div>'+(famOn()?gSecHTML('on','🌐 En línea con tus amigos',rmTilesHTML(),(FR.data&&FR.data.invites&&FR.data.invites.length)?String(FR.data.invites.length):'')+gSecHTML('pres','🧑‍🤝‍🧑 Presencial con tus amigos',rmTilesHTML(true))+gSecHTML('solo','📱 En un solo celular','<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button><button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>'):'<div class="gtiles">'+GAMES.map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+'<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button><button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button></div>');
+   '<div class="hero">'+mascot('cheer',84)+'<div class="bubble">'+(fam?'¡Elige un juego! Juega solo o con tus amigos.':'¡Elige un juego y pon a prueba lo que sabes!')+'</div></div>'+
+   (fam?gSecHTML('on','🤝 Con amigos',rmTilesHTML(),(FR.data&&FR.data.invites&&FR.data.invites.length)?String(FR.data.invites.length):'')+gSecHTML('solo','👤 Solo',gSoloTiles()):gSoloTiles());
 }
 function gShow(){$('#game').hidden=false;document.body.style.overflow='hidden';}
 function gTheme(){const el=$('#game');el.className='overlay gamed';if(G&&G.game){el.style.setProperty('--gc',G.game.c);el.style.setProperty('--gcol',G.game.c);}}
 function gClose(){stopSpeak();$('#game').hidden=true;$('#game').innerHTML='';$('#game').className='overlay';document.body.style.overflow='';G=null;render();}
-function gSetup(id){G={id,game:GAMES.find(x=>x.id===id),deck:null};gTheme();gRenderSetup();gShow();}
+function gSetup(id){S.g.n=1;G={id,game:GAMES.find(x=>x.id===id),deck:null};gTheme();gRenderSetup();gShow();}
 function gRenderSetup(){
   const g=G.game,c=S.g,sc=g.scored,canV=canSpeak();
   const names=Array.from({length:c.n},(_,i)=>'<input class="inp" data-i="'+i+'" value="'+esc(c.names[i]||'')+'" placeholder="Jugador '+(i+1)+'" maxlength="14" aria-label="Nombre del jugador '+(i+1)+'">').join('');
   $('#game').innerHTML=
    '<div class="lh"><button class="x" data-a="g-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:0%"></i></div></div>'+
    '<div class="lb"><div class="gsetup"><span style="font-size:52px;line-height:1" aria-hidden="true">'+g.emo+'</span><div><h1>'+esc(g.t)+'</h1><p>'+esc(g.d)+'</p></div></div>'+
-   (sc?'<section class="sec"><h3>Jugadores</h3><div class="stepper"><button data-a="g-n" data-d="-1" aria-label="Menos jugadores">−</button><b>'+c.n+'</b><button data-a="g-n" data-d="1" aria-label="Más jugadores">+</button></div>'+(c.n===1?'<p class="muted" style="font-size:14px;margin:8px 0 0">Juegas solo: el teléfono te pregunta, tú respondes y marcas si acertaste.</p>':'')+'<div class="names">'+names+'</div></section>':'')+
+   (sc?'<p class="muted" style="font-size:14px;margin:0 0 4px">Juegas solo: el teléfono te pregunta, tú respondes y marcas si acertaste.</p>':'')+
    '<section class="sec"><h3>'+(sc?'Rondas':'Preguntas')+'</h3><div class="seg">'+[5,10,15].map(r=>'<button class="'+(c.rounds===r?'on':'')+'" data-a="g-r" data-r="'+r+'">'+r+'</button>').join('')+'</div></section>'+
    '<section class="sec"><h3>🔊 Leer en voz alta</h3>'+(canV?'<div class="seg"><button class="'+(c.voice?'on':'')+'" data-a="g-voice" data-v="1">Sí</button><button class="'+(!c.voice?'on':'')+'" data-a="g-voice" data-v="0">No</button></div><p class="muted" style="font-size:14px;margin:8px 0 0">El teléfono lee cada pregunta y cada respuesta.</p>':'<p class="muted" style="font-size:14px;margin:0">Este navegador no ofrece lectura en voz alta.</p>')+'</section>'+
    '<p class="muted" style="font-size:14px">Al terminar sumas +10 XP a tu racha. 🔥</p></div>'+
@@ -9386,6 +9513,7 @@ document.addEventListener('click',e=>{
   else if(a==='rf-go'){rfGo(+b.dataset.i);}
   else if(a.slice(0,3)==='sp-'){spAct(a,b);}
   else if(a.slice(0,3)==='bz-'){bzAct(a,b);}
+  else if(a.slice(0,3)==='tk-'){tkAct(a,b);}
   else if(a==='rm-size'){RM.cfg.size=+b.dataset.v;rmMenuRefresh();}
   else if(a==='rm-open'){RM.pick=[];rmOpenMenu('create',b.dataset.m);}
   else if(a==='rm-pick'){rmPickToggle(b.dataset.d);}
