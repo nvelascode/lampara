@@ -1099,6 +1099,13 @@ a.btn{text-decoration:none;text-align:center}
 .cwkb button.wide{max-width:56px}
 .cwkb button:active{transform:translateY(2px);border-bottom-width:2px}
 .cwbtns{display:flex;gap:8px}.cwbtns .btn{flex:1;width:auto}
+.cdscore{display:flex;gap:8px;margin-bottom:8px}
+.cdchip{flex:1;display:flex;justify-content:space-between;align-items:center;gap:8px;border:2px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--surface);font-size:15px}
+.cdchip.on{border-color:var(--pc);background:var(--surface2);box-shadow:0 0 0 2px var(--pc) inset}
+.cdchip span{font-weight:800;font-size:20px;color:var(--pc)}
+.cdtm{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.cdtb{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.cdtb i{display:block;height:100%;border-radius:99px}
 </style>
 </head>
 <body>
@@ -4010,7 +4017,7 @@ const RM_MODES={
   race:{id:'race',t:'Duelo',d:'Todos ven la misma pregunta a la vez. Gana más quien acierta y responde más rápido.',emo:'⚔️',c:'#FF4B4B',totals:[5,10,15],def:10,time:20,min:'2 a 8 jugadores'},
   duel:{id:'duel',t:'Duelo 1 contra 1',d:'Dos jugadores, mismas preguntas.',emo:'⚔️',c:'#FF4B4B',totals:[5,7,10],def:7,time:20,min:'2 jugadores',one:true,hide:true},
   teams:{id:'teams',t:'Equipos',d:'Azul contra Naranja: suman los puntos de todos.',emo:'🤝',c:'#1CB0F6',totals:[6,10,14],def:10,time:20,min:'4 a 8 jugadores (mínimo 2)',hide:true},
-  assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores'},
+  assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores',hide:true},
   guess:{id:'guess',t:'¿Quién es quién?',d:'Cada uno elige en secreto un personaje. ¡Adivina el del otro!',emo:'🃏',c:'#E84393',totals:[5,8,12],def:8,time:20,min:'2 jugadores',one:true},
   buzz:{id:'buzz',t:'¡Yo respondo!',d:'Se lee la pregunta en voz alta, suena un timbre y quien pulse primero el botón rojo responde.',emo:'🔴',c:'#FF4B4B',totals:[6,10,15],def:10,time:20,min:'2 a 8 jugadores, juntos en el mismo lugar'},
   talk:{id:'talk',t:'Para conversar',d:'Un versículo y una pregunta para compartir. Cada quien la ve en su celular si quiere.',emo:'💬',c:'#00B894',totals:[5,8,12],def:8,time:20,min:'2 a 8 jugadores'}
@@ -9515,12 +9522,207 @@ document.addEventListener('keydown',e=>{
   else if(CW.sel&&(k==='ArrowRight'||k==='ArrowLeft'||k==='ArrowDown'||k==='ArrowUp')){e.preventDefault();const p=CW.words[CW.sel.w];const f=(k==='ArrowRight'||k==='ArrowDown')?1:-1;CW.sel.i=Math.max(0,Math.min(p.w.length-1,CW.sel.i+f));cwRender();}
 },true);
 
+/* ===== Crucigrama a dos (un celular, turnos con tiempo) ===== */
+let CD=null,CDSET={secs:45,names:['','']};
+const CD_COL=['#FF9600','#1CB0F6'];
+function cdLocked(r,c){const x=CD.grid[r][c];return !!x&&x.in.some(i=>i>=0&&CD.solved[i]!==undefined);}
+function cdWordDone(p){for(let i=0;i<p.w.length;i++){const R=p.r+(p.d?i:0),C=p.c0+(p.d?0:i);if(CD.inp[R][C]!==p.w[i])return false;}return true;}
+function cdCell(w,i){const p=CD.words[w];return [p.r+(p.d?i:0),p.c0+(p.d?0:i)];}
+function cdSetup(){
+  const el=$('#game');el.className='overlay gamed';el.style.setProperty('--gc','#7C5CFC');el.style.setProperty('--gcol','#7C5CFC');
+  const me=(S.me&&S.me.name)||'';
+  const n=CDSET.names;if(!n[0])n[0]=me||'Jugador 1';if(!n[1])n[1]='Jugador 2';
+  el.innerHTML='<div class="lh"><button class="x" data-a="cd-leave0" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:0%"></i></div></div>'+
+   '<div class="lb"><div class="gsetup"><span style="font-size:52px;line-height:1" aria-hidden="true">🧩</span><div><h1>Crucigrama a dos</h1><p>Un solo celular. Por turnos, cada jugador escoge una palabra y tiene un tiempo para completarla. Gana quien sume más puntos.</p></div></div>'+
+   '<section class="sec"><h3>Jugadores</h3><input class="inp" id="cdn0" value="'+esc(n[0])+'" maxlength="14" aria-label="Nombre del jugador 1" style="border-color:'+CD_COL[0]+'"><input class="inp" id="cdn1" value="'+esc(n[1])+'" maxlength="14" aria-label="Nombre del jugador 2" style="margin-top:8px;border-color:'+CD_COL[1]+'"></section>'+
+   '<section class="sec"><h3>Tiempo por palabra</h3><div class="seg">'+[30,45,60].map(t=>'<button class="'+(CDSET.secs===t?'on':'')+'" data-a="cd-secs" data-s="'+t+'">'+t+' s</button>').join('')+'</div></section>'+
+   '<p class="muted" style="font-size:14px">Cada letra de la palabra vale 1 punto, y +2 si la completas en la primera mitad del tiempo. Al terminar sumas +10 XP a tu racha. 🔥</p></div>'+
+   '<div class="lf"><div class="in"><button class="btn" data-a="cd-start" data-primary>¡A jugar!</button></div></div>';
+  gShow();
+}
+function cdKeepNames(){const a=$('#cdn0'),b=$('#cdn1');if(a)CDSET.names[0]=a.value.trim()||'Jugador 1';if(b)CDSET.names[1]=b.value.trim()||'Jugador 2';}
+function cdStart(){
+  cdKeepNames();
+  const g=cwGen();
+  CD=Object.assign(g,{names:CDSET.names.slice(),secs:CDSET.secs,scores:[0,0],turn:0,turns:0,solved:{},phase:'choose',w:null,i:0,tEnd:0,tid:0,flash:0,log:[]});
+  CD.maxTurns=CD.words.length*2;
+  cdRender();gShow();
+}
+function cdStopTimer(){if(CD&&CD.tid){clearInterval(CD.tid);CD.tid=0;}}
+function cdRender(){
+  if(!CD)return;
+  const el=$('#game');
+  const avail=Math.min(window.innerWidth,640)-32;
+  const cs=Math.max(22,Math.min(40,Math.floor((avail-(CD.cols-1)*2)/CD.cols)));
+  const sp=CD.w!==null?CD.words[CD.w]:null;
+  const cur=(CD.phase==='play'&&sp)?cdCell(CD.w,CD.i):[-1,-1];
+  const pc=CD_COL[CD.turn];
+  let g='<div class="cwgrid" style="grid-template-columns:repeat('+CD.cols+','+cs+'px);--cs:'+cs+'px">';
+  for(let r=0;r<CD.rows;r++)for(let c=0;c<CD.cols;c++){
+    const x=CD.grid[r][c];
+    if(!x){g+='<i class="cwe"></i>';continue;}
+    let cls='cwc',st='';
+    const inSel=sp&&((sp.d&&c===sp.c0&&r>=sp.r&&r<sp.r+sp.w.length)||(!sp.d&&r===sp.r&&c>=sp.c0&&c<sp.c0+sp.w.length));
+    const own=x.in.map(i=>i>=0?CD.solved[i]:undefined).find(v=>v!==undefined);
+    if(own!==undefined)st='background:'+CD_COL[own]+'33;border-color:'+CD_COL[own]+';color:var(--ink)';
+    else if(inSel)st='background:'+pc+'22;border-color:'+pc;
+    if(r===cur[0]&&c===cur[1]){st='background:'+pc+';border-color:'+pc+';color:#fff';cls+=' cur';}
+    if(CD.flash&&inSel&&own===undefined)cls+=' bad';
+    const nm=CD.starts[r+','+c];
+    g+='<button class="'+cls+'"'+(st?' style="'+st+'"':'')+' data-a="cd-cell" data-r="'+r+'" data-c="'+c+'" aria-label="Casilla">'+(nm?'<small>'+nm+'</small>':'')+esc(CD.inp[r][c])+'</button>';
+  }
+  g+='</div>';
+  const chip=i=>'<div class="cdchip'+(CD.turn===i?' on':'')+'" style="--pc:'+CD_COL[i]+'"><b>'+esc(CD.names[i])+'</b><span>'+CD.scores[i]+'</span></div>';
+  const left=CD.words.length-Object.keys(CD.solved).length;
+  let msg;
+  if(CD.phase==='choose')msg=sp?'<b>'+sp.n+(sp.d?' ↓':' →')+'</b> '+esc(sp.c)+' <span class="muted">('+sp.w.length+' letras)</span>':'<b style="color:'+pc+'">Turno de '+esc(CD.names[CD.turn])+'.</b> Toca una palabra para elegirla.';
+  else msg='<div class="cdtm"><span>⏱ <b id="cdt">'+cdLeft()+'</b> s</span><div class="cdtb"><i id="cdtb" style="background:'+pc+';width:'+cdPct()+'%"></i></div></div><b>'+sp.n+(sp.d?' ↓':' →')+'</b> '+esc(sp.c)+' <span class="muted">('+sp.w.length+' letras)</span>';
+  const list=d=>CD.words.map((p,i)=>({p,i})).filter(o=>o.p.d===d).sort((a,b)=>a.p.n-b.p.n).map(o=>{
+    const ow=CD.solved[o.i];
+    return '<button class="cwli'+(CD.w===o.i?' on':'')+(ow!==undefined?' dn':'')+'" data-a="cd-word" data-w="'+o.i+'"><b>'+o.p.n+'</b><span>'+(ow!==undefined?'<s>'+esc(o.p.c)+'</s> <em style="color:'+CD_COL[ow]+'">✓ '+esc(CD.names[ow])+' · '+esc(o.p.ref)+'</em>':esc(o.p.c))+'</span></button>';}).join('');
+  const rowsK=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+  const kb='<div class="cwkb">'+rowsK.map((r,ri)=>'<div>'+r.split('').map(k=>'<button data-a="cd-key" data-k="'+k+'">'+k+'</button>').join('')+(ri===2?'<button class="wide" data-a="cd-key" data-k="⌫" aria-label="Borrar">⌫</button>':'')+'</div>').join('')+'</div>';
+  const foot=CD.phase==='play'?kb+'<div class="cwbtns"><button class="btn ghost" data-a="cd-pass">Pasar turno</button></div>'
+    :'<div class="cwbtns"><button class="btn" data-a="cd-go" data-primary '+(sp&&CD.solved[CD.w]===undefined?'':'disabled')+'>'+(sp?'¡Empezar! ('+CD.secs+' s)':'Elige una palabra')+'</button></div>';
+  el.innerHTML=
+   '<div class="lh"><button class="x" data-a="cd-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:'+Math.round((CD.words.length-left)/CD.words.length*100)+'%"></i></div></div>'+
+   '<div class="lb"><div class="cdscore">'+chip(0)+chip(1)+'</div><div class="cwclue">'+msg+'</div>'+g+
+   '<h3 class="cwh">Horizontales</h3><div class="cwlist">'+list(0)+'</div><h3 class="cwh">Verticales</h3><div class="cwlist">'+list(1)+'</div></div>'+
+   '<div class="lf"><div class="in">'+foot+'</div></div>';
+  const c0=el.querySelector('.cwc.cur');if(c0&&c0.scrollIntoView){try{c0.scrollIntoView({block:'nearest'});}catch(e){}}
+}
+function cdLeft(){return Math.max(0,Math.ceil((CD.tEnd-Date.now())/1000));}
+function cdPct(){return Math.max(0,Math.min(100,(CD.tEnd-Date.now())/(CD.secs*10)));}
+function cdTick(){
+  if(!CD||CD.phase!=='play')return;
+  const l=cdLeft(),t=document.getElementById('cdt'),b=document.getElementById('cdtb');
+  if(t)t.textContent=l;if(b)b.style.width=cdPct()+'%';
+  if(l<=5&&l>0&&t&&t.dataset.l!==String(l)){t.dataset.l=String(l);haptic([10]);beep('tick');}
+  if(l<=0)cdEndTurn('time');
+}
+function cdFirstFree(w){const p=CD.words[w];for(let j=0;j<p.w.length;j++){const [a,b]=cdCell(w,j);if(CD.inp[a][b]!==p.w[j])return j;}return 0;}
+function cdPick(w){
+  if(CD.solved[w]!==undefined){toast('Esa palabra ya está resuelta');return;}
+  CD.w=w;CD.i=cdFirstFree(w);cdRender();
+}
+function cdGo(){
+  if(CD.phase!=='choose'||CD.w===null||CD.solved[CD.w]!==undefined)return;
+  CD.phase='play';CD.tEnd=Date.now()+CD.secs*1000;CD.flash=0;
+  const p=CD.words[CD.w];
+  for(let j=0;j<p.w.length;j++){const [a,b]=cdCell(CD.w,j);if(!cdLocked(a,b))CD.inp[a][b]='';}
+  CD.i=cdFirstFree(CD.w);
+  cdStopTimer();CD.tid=setInterval(cdTick,250);
+  cdRender();
+}
+function cdNextFree(from){const p=CD.words[CD.w];for(let j=from;j<p.w.length;j++){const [a,b]=cdCell(CD.w,j);if(!cdLocked(a,b))return j;}return -1;}
+function cdType(k){
+  if(!CD||CD.phase!=='play')return;
+  const p=CD.words[CD.w];
+  if(k==='⌫'){
+    let j=CD.i;
+    if(CD.inp[cdCell(CD.w,j)[0]][cdCell(CD.w,j)[1]]&&!cdLocked(...cdCell(CD.w,j))){const [a,b]=cdCell(CD.w,j);CD.inp[a][b]='';}
+    else{j--;while(j>=0&&cdLocked(...cdCell(CD.w,j)))j--;if(j>=0){CD.i=j;const [a,b]=cdCell(CD.w,j);CD.inp[a][b]='';}}
+    CD.flash=0;cdRender();return;
+  }
+  const [R,C]=cdCell(CD.w,CD.i);
+  if(!cdLocked(R,C))CD.inp[R][C]=k;
+  const nx=cdNextFree(CD.i+1);
+  if(nx>=0)CD.i=nx;
+  CD.flash=0;
+  if(cdWordDone(p)){cdSolve(CD.w);return;}
+  // palabra llena pero incorrecta
+  let full=true;for(let j=0;j<p.w.length;j++){const [a,b]=cdCell(CD.w,j);if(!CD.inp[a][b])full=false;}
+  if(full){CD.flash=1;haptic([40,40,40]);}
+  cdRender();
+}
+function cdSolve(w){
+  const p=CD.words[w],half=cdLeft()*2>=CD.secs;
+  let pts=p.w.length+(half?2:0);
+  CD.solved[w]=CD.turn;CD.scores[CD.turn]+=pts;
+  // palabras que quedaron completas por los cruces
+  CD.words.forEach((q,qi)=>{if(CD.solved[qi]===undefined&&cdWordDone(q)){CD.solved[qi]=CD.turn;CD.scores[CD.turn]+=q.w.length;pts+=q.w.length;}});
+  toast('+'+pts+' para '+CD.names[CD.turn]+' ✓ '+p.ref);
+  beep('good');
+  cdEndTurn('solved');
+}
+function cdEndTurn(why){
+  if(!CD)return;
+  cdStopTimer();
+  // borrar letras no resueltas
+  for(let r=0;r<CD.rows;r++)for(let c=0;c<CD.cols;c++)if(CD.grid[r][c]&&!cdLocked(r,c))CD.inp[r][c]='';
+  if(why==='time')toast('⏱ Se acabó el tiempo');
+  CD.turns++;
+  const all=Object.keys(CD.solved).length>=CD.words.length;
+  if(all||CD.turns>=CD.maxTurns){cdEnd();return;}
+  CD.turn=1-CD.turn;CD.phase='choose';CD.w=null;CD.flash=0;
+  cdRender();
+}
+function cdEnd(){
+  cdStopTimer();CD.phase='over';
+  const r=recordDay(10);S.gplays=(S.gplays||0)+1;
+  const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
+  const [a,b]=CD.scores;
+  const head=a===b?'¡Empate!':'¡Ganó '+esc(CD.names[a>b?0:1])+'!';
+  const row=i=>'<div class="li rk"><span style="display:flex;align-items:center;gap:10px"><span class="medal">'+((a===b||(i===0)===(a>b))?'🥇':'🥈')+'</span><b style="color:'+CD_COL[i]+'">'+esc(CD.names[i])+'</b></span><b>'+CD.scores[i]+' pts</b></div>';
+  const lst=CD.words.slice().sort((x,y)=>x.n-y.n).map((p,i)=>{const o=CD.solved[CD.words.indexOf(p)];return '<div class="li"><span><b>'+esc(p.w)+'</b> — '+esc(p.c)+'</span><span class="muted" style="white-space:nowrap">'+(o!==undefined?'<span style="color:'+CD_COL[o]+'">'+esc(CD.names[o])+'</span> · ':'')+esc(p.ref)+'</span></div>';}).join('');
+  $('#game').innerHTML=
+   '<div class="lb"><div class="res"><div style="display:flex;justify-content:center">'+mascot('cheer',130)+'</div><h1>'+head+'</h1><p class="muted" style="margin:0">Crucigrama a dos</p>'+
+   '<div class="list" style="text-align:left;margin-top:14px">'+row(0)+row(1)+'</div>'+
+   '<div class="rs" style="grid-template-columns:1fr 1fr"><div><i>⚡</i><b>+10</b><span>XP</span></div><div><i>🔥</i><b>'+S.streak+'</b><span>Días de racha</span></div></div>'+
+   (r.newDay?'<div class="note fl">🔥 <b>¡Racha de '+S.streak+(S.streak===1?' día':' días')+'!</b></div>':'')+
+   (r.gotFreeze?'<div class="note fl">🛡️ <b>¡Ganaste un protector de racha!</b></div>':'')+
+   fresh.map(x=>'<div class="note">'+(ACH_E[x.id]||'⭐')+' <b>Logro: '+x.t+'.</b> '+x.d+'.</div>').join('')+
+   '<h3 style="text-align:left;margin:18px 0 6px">Palabras y pasajes</h3><div class="list" style="text-align:left">'+lst+'</div></div></div>'+
+   '<div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="cd-leave">Salir</button><button class="btn" data-a="cd-new" data-primary>Revancha</button></div></div></div>';
+  setTimeout(famSync,400);
+  beep('win');confetti(120);haptic([20,70,20,70,50]);
+}
+function cdExit(){cdStopTimer();CD=null;gClose();}
+function cdAct(a,b){
+  if(a==='cd-solo'){cdSetup();return;}
+  if(a==='cd-secs'){cdKeepNames();CDSET.secs=+b.dataset.s;cdSetup();return;}
+  if(a==='cd-start'){cdStart();return;}
+  if(a==='cd-leave0'){cdKeepNames();cdExit();return;}
+  if(a==='cd-leave'){cdExit();return;}
+  if(a==='cd-new'){cdStart();return;}
+  if(!CD)return;
+  if(a==='cd-cell'){
+    const r=+b.dataset.r,c=+b.dataset.c,x=CD.grid[r][c];
+    if(CD.phase==='play'){
+      const ws=x.in.filter(i=>i>=0);
+      if(ws.includes(CD.w)){const p=CD.words[CD.w];CD.i=p.d?r-p.r:c-p.c0;cdRender();}
+      return;
+    }
+    const ws=x.in.filter(i=>i>=0&&CD.solved[i]===undefined);
+    if(!ws.length){toast('Esa palabra ya está resuelta');return;}
+    let w=ws[0];if(ws.length===2&&ws.includes(CD.w))w=ws.find(i=>i!==CD.w);
+    cdPick(w);
+  }
+  else if(a==='cd-word'){if(CD.phase==='play')return;cdPick(+b.dataset.w);}
+  else if(a==='cd-go'){cdGo();}
+  else if(a==='cd-key'){cdType(b.dataset.k);}
+  else if(a==='cd-pass'){cdEndTurn('pass');}
+  else if(a==='cd-close'){
+    if(CD.phase==='over'||CD.turns===0&&CD.phase==='choose'){cdExit();}
+    else showModal('<h3>¿Salir del crucigrama?</h3><p>Se perderá la partida.</p><button class="btn" data-a="cd-stay">Seguir jugando</button><button class="btn ghost" data-a="cd-quit">Salir</button>');
+  }
+  else if(a==='cd-stay'){hideModal();}
+  else if(a==='cd-quit'){hideModal();cdExit();}
+}
+document.addEventListener('keydown',e=>{
+  if(!CD||CD.phase!=='play'||$('#game').hidden||!$('#modal').hidden||e.ctrlKey||e.metaKey||e.altKey)return;
+  const k=e.key;
+  if(/^[a-zA-ZñÑ]$/.test(k)){e.preventDefault();cdType(k.normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase());}
+  else if(k==='Backspace'){e.preventDefault();cdType('⌫');}
+},true);
+
 function gSoloTiles(){
   const fam=famOn();
   return '<div class="gtiles">'+GAMES.filter(g=>!(fam&&g.id==='conv')).map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+
    '<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button>'+
    '<button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button>'+
-   '<button class="gcard" style="--gc:#7C5CFC" data-a="cw-solo"><span class="gemo" aria-hidden="true">🧩</span><b>Crucigrama bíblico</b><span>Resuelve las pistas y descubre el pasaje de cada palabra</span></button></div>';
+   '<button class="gcard" style="--gc:#7C5CFC" data-a="cw-solo"><span class="gemo" aria-hidden="true">🧩</span><b>Crucigrama bíblico</b><span>Resuelve las pistas y descubre el pasaje de cada palabra</span></button>'+
+   '<button class="gcard" style="--gc:#E17055" data-a="cd-solo"><span class="gemo" aria-hidden="true">⏱️</span><b>Crucigrama a dos</b><span>2 jugadores, un celular: tiempo por palabra y puntos</span></button></div>';
 }
 function gamesHTML(){
   const fam=famOn();
@@ -9774,6 +9976,7 @@ document.addEventListener('click',e=>{
   else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
   else if(a.slice(0,3)==='cw-'){cwAct(a,b);}
+  else if(a.slice(0,3)==='cd-'){cdAct(a,b);}
   else if(a.slice(0,5)==='card-'){cardAct(a,b);}
   else if(a==='rf-open'){rfOpen();}
   else if(a==='rf-go'){rfGo(+b.dataset.i);}
