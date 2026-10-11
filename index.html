@@ -70,6 +70,12 @@ h1,h2,h3,h4{font-weight:900}
 .mas .tw{transform-origin:80px 49px;animation:twinkle 2.2s ease-in-out infinite}
 @keyframes twinkle{0%,100%{transform:scale(1) rotate(0);opacity:1}50%{transform:scale(.55) rotate(25deg);opacity:.7}}
 .mas.sad{animation:wiggle .9s ease-in-out 2}
+.mas .sw{animation:sweat 1.8s ease-in-out infinite}
+.mas .sw2{animation:sweat 1.4s ease-in-out .5s infinite}
+.mas.panic svg{animation:shiver .22s linear infinite}
+@keyframes sweat{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(5px);opacity:.75}}
+@keyframes shiver{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.2px)}75%{transform:translateX(1.2px)}}
+@media (prefers-reduced-motion:reduce){.mas .sw,.mas .sw2,.mas.panic svg{animation:none}}
 .pop{animation:pop .35s ease-out}
 
 /* ---------- barra superior ---------- */
@@ -202,6 +208,9 @@ h1,h2,h3,h4{font-weight:900}
 .ctile{display:grid;justify-items:center;gap:6px;padding:12px 6px;border-radius:18px;border:3px solid var(--line);border-bottom-width:5px;background:var(--surface);font-weight:900;text-align:center}
 .ctile.on{border-color:var(--blue);background:var(--blue-bg)}
 .ctile[disabled]{opacity:.55}
+.ctile{position:relative}
+.nwtag{position:absolute;top:-8px;right:-4px;background:var(--orange);color:#fff;font-weight:900;font-size:11px;padding:3px 8px;border-radius:999px;animation:pulse 1.8s ease-in-out infinite}
+.nwtag.sm{position:static;font-size:10px;padding:2px 6px;margin-left:2px}
 .ctile .ci{font-size:38px;line-height:1;height:42px;display:grid;place-items:center}
 .ctile .ci .flag{width:54px;height:36px;border-radius:6px}
 .ctile b{font-size:15px}
@@ -484,7 +493,7 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .gk{font-family:'Noto Serif','Gentium Plus','Times New Roman',Georgia,serif;font-weight:700}
 .cswitch{display:flex;gap:8px;margin:2px 0 14px}
 .cs{flex:1;padding:10px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;font-weight:900;background:var(--surface)}
-.cs{display:flex;align-items:center;justify-content:center;gap:8px}
+.cs{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 4px;font-size:14px}
 .cs .flag{width:26px;height:17px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.18);flex:none}
 .cs.on{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-ink)}
 .gkbig{margin:0 0 16px;padding:14px 12px;text-align:center;font-size:30px;line-height:1.4;border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;background:var(--surface2);letter-spacing:.02em}
@@ -1793,17 +1802,33 @@ function mascot(mood,size,flv){
     ?'<ellipse cx="38" cy="53" rx="5.6" ry="6.4" fill="'+ink+'"/><circle cx="40" cy="50.6" r="2.1" fill="#fff"/><path d="M54 54q8-9 16 0" fill="none" stroke="'+ink+'" stroke-width="3.8" stroke-linecap="round"/>'
     :mood==='cheer'
     ?'<path d="M30 52q8-10 16 0M54 52q8-10 16 0" fill="none" stroke="'+ink+'" stroke-width="3.8" stroke-linecap="round"/>'
+    :mood==='panic'
+    ?'<circle cx="38" cy="52" r="8.6" fill="#fff" stroke="'+ink+'" stroke-width="2.8"/><circle cx="62" cy="52" r="8.6" fill="#fff" stroke="'+ink+'" stroke-width="2.8"/><circle cx="38.6" cy="53" r="2.8" fill="'+ink+'"/><circle cx="61.4" cy="53" r="2.8" fill="'+ink+'"/>'
+    :mood==='worried'
+    ?'<ellipse cx="38" cy="53" rx="6.2" ry="7.2" fill="'+ink+'"/><ellipse cx="62" cy="53" rx="6.2" ry="7.2" fill="'+ink+'"/><circle cx="40.2" cy="50.2" r="2.6" fill="#fff"/><circle cx="64.2" cy="50.2" r="2.6" fill="#fff"/><circle cx="36" cy="55.6" r="1.2" fill="#fff" opacity=".8"/><circle cx="60" cy="55.6" r="1.2" fill="#fff" opacity=".8"/>'
     :'<ellipse cx="38" cy="53" rx="5.6" ry="6.4" fill="'+ink+'"/><ellipse cx="62" cy="53" rx="5.6" ry="6.4" fill="'+ink+'"/><circle cx="40" cy="50.6" r="2.1" fill="#fff"/><circle cx="64" cy="50.6" r="2.1" fill="#fff"/>';
   const brows=mood==='sad'?'<path d="M29 46l15-6M71 46l-15-6" stroke="'+ink+'" stroke-width="3.2" stroke-linecap="round"/>'
-    :mood==='think'?'<path d="M30 43h15M56 39l15-3" stroke="'+ink+'" stroke-width="3.2" stroke-linecap="round"/>':'';
+    :mood==='think'?'<path d="M30 43h15M56 39l15-3" stroke="'+ink+'" stroke-width="3.2" stroke-linecap="round"/>'
+    :mood==='curious'?'<path d="M30 42q7-4 15 0M55 40q8-5 15 0" fill="none" stroke="'+ink+'" stroke-width="3.2" stroke-linecap="round"/>'
+    :mood==='uneasy'?'<path d="M30 44l14-3M70 44l-14-3" stroke="'+ink+'" stroke-width="3.2" stroke-linecap="round"/>'
+    :mood==='worried'?'<path d="M29 46l15-7M71 46l-15-7" stroke="'+ink+'" stroke-width="3.4" stroke-linecap="round"/>'
+    :mood==='panic'?'<path d="M27 42l17-10M73 42l-17-10" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>':'';
   const mouth=mood==='wink'?'<path d="M37 63q13 15 27-3" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/><path d="M50 71q5 7 10 1" fill="#FF8FA3" stroke="#E0607A" stroke-width="1.4" stroke-linejoin="round"/>'
     :mood==='cheer'?'<path d="M36 62q14 20 28 0z" fill="#C62828"/><path d="M43 70q7 6 14 0" fill="#FF8FA3"/>'
     :mood==='sad'?'<path d="M39 72q11-11 22 0" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>'
     :mood==='think'?'<ellipse cx="54" cy="69" rx="4.4" ry="3.6" fill="'+ink+'"/>'
+    :mood==='curious'?'<path d="M41 66q9 7 18 0" fill="none" stroke="'+ink+'" stroke-width="3.4" stroke-linecap="round"/>'
+    :mood==='uneasy'?'<path d="M39 70q5.5-4 11 0t11 0" fill="none" stroke="'+ink+'" stroke-width="3.4" stroke-linecap="round"/>'
+    :mood==='worried'?'<path d="M40 72q10-9 20 0" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>'
+    :mood==='panic'?'<path d="M41 74q9-12 18 0q-9 5-18 0z" fill="#8E1B1B" stroke="'+ink+'" stroke-width="2.4" stroke-linejoin="round"/>'
     :'<path d="M38 64q12 12 24 0" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>';
   const extra=mood==='wink'?'<g class="tw" fill="#1CB0F6"><path d="M80 42l2.2 5 5 2.2-5 2.2-2.2 5-2.2-5-5-2.2 5-2.2z"/></g>'
     :mood==='sad'?'<path d="M30 59C28.4 63.4 24.6 66.6 24.6 70.6A5.4 5.4 0 0 0 35.4 70.6C35.4 66.6 31.6 63.4 30 59Z" fill="#1CB0F6"/><circle cx="28.3" cy="70.2" r="1.5" fill="#fff" opacity=".85"/>'
     :mood==='think'?'<text x="76" y="24" font-size="24" font-weight="900" fill="#1CB0F6" font-family="Nunito,sans-serif">?</text>'
+    :mood==='curious'?'<text x="78" y="30" font-size="20" font-weight="900" fill="#1CB0F6" font-family="Nunito,sans-serif">?</text>'
+    :mood==='uneasy'?'<g class="sw"><path d="M80 40C78.4 44.4 74.6 47.6 74.6 51.6A5.4 5.4 0 0 0 85.4 51.6C85.4 47.6 81.6 44.4 80 40Z" fill="#7CC8F8"/><circle cx="78.3" cy="51.2" r="1.4" fill="#fff" opacity=".85"/></g>'
+    :mood==='worried'?'<g class="sw"><path d="M81 38C79 43.4 74.4 47.4 74.4 52.4A6.6 6.6 0 0 0 87.6 52.4C87.6 47.4 83 43.4 81 38Z" fill="#7CC8F8"/><circle cx="78.6" cy="52" r="1.7" fill="#fff" opacity=".85"/></g>'
+    :mood==='panic'?'<g class="sw"><path d="M83 36C81 41.4 76.4 45.4 76.4 50.4A6.6 6.6 0 0 0 89.6 50.4C89.6 45.4 85 41.4 83 36Z" fill="#7CC8F8"/></g><g class="sw2"><path d="M16 40C14.400 44.400 10.600 47.600 10.600 51.600A5.400 5.400 0 0 0 21.400 51.600C21.400 47.600 17.600 44.400 16 40Z" fill="#7CC8F8"/></g>'
     :mood==='cheer'?'<g fill="#FFC800"><path d="M10 20l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path d="M88 10l2.5 5.5 5.5 2.5-5.5 2.5-2.5 5.5-2.5-5.5-5.5-2.5 5.5-2.5z"/></g>':'';
   const flame='<path d="M50 2C58 12 64 18 64 25C64 32 58 36 50 36C42 36 36 32 36 25C36 18 42 12 50 2Z" fill="#FF9600"/><path d="M50 15C54 21 57 24 57 28C57 32 54 34 50 34C46 34 43 32 43 28C43 24 46 21 50 15Z" fill="#FFD84D"/>';
   const live=typeof flv==='number',sc=live?flv:(mood==='sad'?.6:1);
@@ -1869,8 +1894,8 @@ function haptic(pat){
   }catch(e){}
 }
 const pickOne=a=>a[rnd(a.length)];
-const UNIT_EMO={'El alfabeto griego':'🔤','Sonidos y signos':'🔊','Primeras palabras':'📚','Leyendo el Nuevo Testamento':'📜','La creación':'🌍','La caída':'🐍','Los Diez Mandamientos':'📜','Jehová es mi pastor':'🐑','Sermón del Monte':'⛰️','El Evangelio de Juan':'📖','Salvación por gracia':'🎁','Atributos de Dios (1)':'👑','Atributos de Dios (2)':'✨','Doctrinas fundamentales':'🧭','Personajes bíblicos':'🧔','Eventos bíblicos':'🗺️',"Temas y lecturas: Nuevo Testamento":"📖","Historia Sagrada: el Nuevo Testamento":"⛪","Temas y lecturas: Génesis a Ester":"📚","Temas y lecturas: Job a Malaquías":"🔥","Historia Sagrada: el Antiguo Testamento (1)":"🏺","Historia Sagrada: el Antiguo Testamento (2)":"👑","Conoce tu Biblia":"📖","La historia y el mensaje de la Biblia":"🧭","De Caín a Babel":"🏗️","Salmos conocidos":"🎶","El Evangelio de Marcos":"🌅"};
-const ACH_E={gk1:'🔤',gkabc:'🏛️',gkw:'📚',first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑',rd1:'📖',rd7:'🔖',rd30:'🌅',rdall:'📜',gift1:'💝',gift2:'🎁',live1:'🎮',fr1:'🤝',fr2:'🌟'};
+const UNIT_EMO={'Los reformadores':'🔥','Los puritanos':'📕','Pastores bautistas':'🕊️','Misioneros':'🌍','Mujeres de fe':'🌷','Himnos y libros fieles':'🎶','El alfabeto griego':'🔤','Sonidos y signos':'🔊','Primeras palabras':'📚','Leyendo el Nuevo Testamento':'📜','La creación':'🌍','La caída':'🐍','Los Diez Mandamientos':'📜','Jehová es mi pastor':'🐑','Sermón del Monte':'⛰️','El Evangelio de Juan':'📖','Salvación por gracia':'🎁','Atributos de Dios (1)':'👑','Atributos de Dios (2)':'✨','Doctrinas fundamentales':'🧭','Personajes bíblicos':'🧔','Eventos bíblicos':'🗺️',"Temas y lecturas: Nuevo Testamento":"📖","Historia Sagrada: el Nuevo Testamento":"⛪","Temas y lecturas: Génesis a Ester":"📚","Temas y lecturas: Job a Malaquías":"🔥","Historia Sagrada: el Antiguo Testamento (1)":"🏺","Historia Sagrada: el Antiguo Testamento (2)":"👑","Conoce tu Biblia":"📖","La historia y el mensaje de la Biblia":"🧭","De Caín a Babel":"🏗️","Salmos conocidos":"🎶","El Evangelio de Marcos":"🌅"};
+const ACH_E={bio1:'🕯️',bioall:'📚',gk1:'🔤',gkabc:'🏛️',gkw:'📚',first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑',rd1:'📖',rd7:'🔖',rd30:'🌅',rdall:'📜',gift1:'💝',gift2:'🎁',live1:'🎮',fr1:'🤝',fr2:'🌟'};
 const isStandalone=()=>{try{return !!(window.navigator.standalone||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches));}catch(e){return false;}};
 const isIOS=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent||'');
 
@@ -3852,6 +3877,7 @@ function gkBuild(les){
   if(les.kind==='words')return gkWords(les);
   return gkVerse(les);
 }
+function botd(){let h=0;for(const ch of today())h=(h*31+ch.charCodeAt(0))>>>3;const L=BIO_UNITS.flatMap(u=>u.lessons),l=L[h%L.length];const f=l.intro.p.split('\n')[0].split(/(?<=\.)\s/)[0];return {n:l.intro.t,t:f};}
 function wotd(){let h=0;for(const ch of today())h=(h*31+ch.charCodeAt(0))>>>7;return GK_DICT[h%GK_DICT.length];}
 
 /* ============================================================
@@ -3937,7 +3963,7 @@ function abcHTML(){
    COMPARTIR LOGROS Y ANIMAR (tarjeta con imagen + mensaje)
    ============================================================ */
 let LASTRES=null;const SHC={};
-const lessonsDone=()=>ALLKEYS.concat(GKKEYS).filter(k=>S.done[k]).length;
+const lessonsDone=()=>ALLKEYS.concat(GKKEYS,BIOKEYS).filter(k=>S.done[k]).length;
 function appLink(){try{return /^https?:/.test(location.protocol)?location.origin+location.pathname:'';}catch(e){return '';}}
 function shareData(kind,id){
   const link=appLink(),sp=link?' '+link:'';
@@ -5778,6 +5804,277 @@ function rfGo(i){
   const hand=les.qs.map(q=>[q[0],q[1],q[2],(q[3]&&RF_V(q[3]))?q[3]:'',q[4]||'']);
   startLesson({type:'lesson',key:les.title,title:les.title,verses},buildQuestions([],hand,14,les.cx),les.intro);
 }
+
+/* ============================================================
+   CURSO «BIOGRAFÍAS» — hombres y mujeres de la iglesia
+   Reformadores, puritanos, pastores bautistas, misioneros, mujeres de fe y autores de himnos y libros fieles.
+   Cada lección: una breve biografía (tarjetas) y 8 preguntas. Solo hechos históricos; sin interpretaciones.
+   ============================================================ */
+const BIO_UNITS=[
+ {title:"Los reformadores",sub:"Volvieron a las Escrituras en el siglo XVI",lessons:[
+  {title:"Martín Lutero",kind:"hand",intro:{t:"Martín Lutero (1483–1546)",p:"Martín Lutero nació en 1483 en Eisleben, Alemania. Su padre quería que fuera abogado, pero en 1505, después de una tormenta en la que temió por su vida, entró a un monasterio agustino.\nLlegó a ser profesor de Biblia en la Universidad de Wittenberg. Al estudiar la carta a los Romanos entendió que «el justo por la fe vivirá» (Romanos 1:17): la justicia de Dios se recibe como un regalo por la fe en Cristo.\nEl 31 de octubre de 1517 publicó sus 95 tesis contra la venta de indulgencias. En 1521, ante la dieta de Worms, se negó a retractarse mientras no se le demostrara su error con la Escritura.\nTradujo el Nuevo Testamento al alemán (1522) y, con otros, toda la Biblia (1534). Murió en 1546."},qs:[
+   ["¿En qué año publicó Lutero las 95 tesis?","1517",["1453","1521","1546"],"Las 95 tesis son de 1517. Se suele recordar el 31 de octubre como el día en que se dieron a conocer."],
+   ["¿Contra qué práctica protestaban las 95 tesis?","La venta de indulgencias",["El canto congregacional","La lectura de la Biblia en alemán","El bautismo de los niños"],"Las indulgencias se vendían como si pudieran librar del castigo por los pecados."],
+   ["¿En qué ciudad fue Lutero profesor de Biblia?","Wittenberg",["Roma","Ginebra","Zúrich"],"Enseñó Biblia en la Universidad de Wittenberg, en Alemania."],
+   ["¿Qué texto de Romanos fue clave en su descubrimiento?","«El justo por la fe vivirá» (Romanos 1:17)",["«De tal manera amó Dios al mundo» (Juan 3:16)","«Jehová es mi pastor» (Salmo 23:1)","«Todo lo puedo en Cristo» (Filipenses 4:13)"],"Romanos 1:17 le mostró que la justicia que Dios da se recibe por la fe."],
+   ["¿Ante qué asamblea se negó a retractarse en 1521?","La dieta de Worms",["El concilio de Nicea","El sínodo de Dort","El Parlamento de Escocia"],"En Worms dijo que no podía retractarse si no se le convencía con la Escritura y con argumentos claros."],
+   ["¿Qué hizo Lutero para que el pueblo pudiera leer la Biblia en su idioma?","La tradujo al alemán",["La copió a mano en el monasterio","La resumió en latín","La imprimió solo en hebreo"],"Su traducción al alemán ayudó a que la gente común leyera la Palabra de Dios."],
+   ["«Solo la Escritura» (sola Scriptura) enseña que la autoridad final para la fe y la vida es…","La Palabra de Dios escrita",["La tradición de la iglesia","La razón humana","La decisión del papa"],"Fue uno de los grandes principios de la Reforma."],
+   ["¿De qué país era Lutero?","Alemania",["Francia","Suiza","Inglaterra"],"Nació en Eisleben, en lo que hoy es Alemania."]
+  ]},
+  {title:"Juan Calvino",kind:"hand",intro:{t:"Juan Calvino (1509–1564)",p:"Juan Calvino nació en 1509 en Noyon, Francia. Estudió humanidades y derecho antes de dedicarse a la teología. Hacia 1533 pasó por un cambio profundo y empezó a seguir la fe reformada; por eso tuvo que salir de Francia.\nEn 1536 publicó en Basilea la primera edición de la «Institución de la religión cristiana», que revisó y amplió hasta su edición final de 1559.\nFue pastor en Ginebra, Suiza, donde predicaba casi a diario y escribió comentarios sobre la mayor parte de los libros de la Biblia.\nEn 1559 fundó la Academia de Ginebra para preparar pastores. Murió en 1564."},qs:[
+   ["¿De qué país era originario Calvino?","Francia",["Alemania","Escocia","Italia"],"Nació en Noyon, Francia, en 1509."],
+   ["¿Cómo se llama su obra principal?","Institución de la religión cristiana",["Del libre albedrío","Los cuatro libros de las Sentencias","El progreso del peregrino"],"La publicó por primera vez en 1536 y la fue ampliando durante toda su vida."],
+   ["¿En qué ciudad fue pastor la mayor parte de su vida?","Ginebra",["Wittenberg","Estrasburgo","Londres"],"Pastoreó en Ginebra; estuvo unos años fuera, en Estrasburgo, y regresó en 1541."],
+   ["¿Qué estudió antes de dedicarse a la teología?","Derecho y humanidades",["Medicina","Navegación","Arquitectura"],"Su padre quería que fuera abogado."],
+   ["¿En qué año se publicó la primera edición de la Institución?","1536",["1517","1559","1564"],"La primera edición era breve; la edición definitiva, de 1559, es mucho más extensa."],
+   ["Además de predicar, Calvino escribió…","Comentarios sobre la mayor parte de la Biblia",["Una novela de caballería","Un tratado de navegación","Solo cartas privadas"],"Sus comentarios bíblicos se siguen leyendo hoy."],
+   ["¿Qué fundó en Ginebra en 1559 para preparar pastores?","La Academia de Ginebra",["La Universidad de Oxford","El Colegio de Wittenberg","La Escuela de Westminster"],"De la Academia salieron pastores que fueron enviados a varios países de Europa."],
+   ["¿En qué año murió Calvino?","1564",["1546","1536","1572"],"Murió en Ginebra en 1564, a los 54 años."]
+  ]},
+  {title:"John Knox",kind:"hand",intro:{t:"John Knox (hacia 1514–1572)",p:"John Knox nació en Escocia hacia 1514. Fue sacerdote católico y después abrazó la fe reformada, influido por la predicación de George Wishart.\nEn 1547 los franceses tomaron el castillo de St Andrews, donde Knox había predicado, y lo condenaron a remar como esclavo en sus galeras durante unos diecinueve meses.\nEstuvo exiliado en Inglaterra y en el continente, y pasó un tiempo en Ginebra junto a Calvino, a quien consideraba un gran maestro.\nVolvió a Escocia en 1559. En 1560 el Parlamento escocés adoptó la Confesión escocesa y la Reforma se estableció en el país. Knox predicó en la catedral de St Giles, en Edimburgo, hasta su muerte en 1572."},qs:[
+   ["¿De qué país era John Knox?","Escocia",["Irlanda","Inglaterra","Países Bajos"],"Knox es el reformador de Escocia."],
+   ["¿Qué le hicieron los franceses en 1547?","Lo condenaron a remar en las galeras",["Lo nombraron obispo","Lo expulsaron a Roma","Lo hicieron rector de una universidad"],"Pasó unos diecinueve meses como esclavo en las galeras."],
+   ["¿En qué ciudad estuvo junto a Calvino durante su exilio?","Ginebra",["Wittenberg","París","Viena"],"En Ginebra aprendió de Calvino y vio la iglesia reformada en acción."],
+   ["¿En qué año adoptó el Parlamento escocés la Reforma?","1560",["1517","1536","1611"],"En 1560 el Parlamento aprobó la Confesión escocesa."],
+   ["¿Cómo se llama el documento de fe que se aprobó en Escocia en 1560?","Confesión escocesa",["Confesión de Augsburgo","Catecismo de Heidelberg","Confesión de 1689"],"Fue redactada en pocos días por Knox y otros cinco ministros."],
+   ["¿En qué ciudad predicaba Knox, en la catedral de St Giles?","Edimburgo",["Londres","Glasgow","Dublín"],"St Giles está en Edimburgo, la capital de Escocia."],
+   ["La iglesia reformada que se formó en Escocia se llama…","Presbiteriana",["Anglicana","Luterana","Anabaptista"],"En Escocia, la iglesia reformada es gobernada por ancianos (presbíteros)."],
+   ["¿En qué año murió Knox?","1572",["1546","1560","1603"],"Murió en Edimburgo en 1572."]
+  ]},
+  {title:"William Tyndale",kind:"hand",intro:{t:"William Tyndale (hacia 1494–1536)",p:"William Tyndale fue un inglés estudioso de las lenguas. Quería que la gente común leyera la Biblia en su propio idioma, y se dice que prometió que hasta un muchacho que guiaba el arado llegaría a saber más de la Escritura que algunos clérigos.\nComo en Inglaterra estaba prohibido traducir la Biblia, se fue al continente. Tradujo el Nuevo Testamento del griego al inglés, y en 1526 se imprimió en Worms, Alemania.\nLos ejemplares se introducían a Inglaterra a escondidas. Tyndale fue traicionado, arrestado cerca de Bruselas y condenado. En 1536 fue estrangulado y quemado.\nSu traducción influyó mucho en las versiones inglesas posteriores, como la del rey Jacobo (1611)."},qs:[
+   ["¿A qué idioma tradujo Tyndale el Nuevo Testamento?","Inglés",["Alemán","Francés","Latín"],"Lo tradujo al inglés para que la gente común pudiera leerlo."],
+   ["¿De qué idioma original tradujo el Nuevo Testamento?","Griego",["Latín","Hebreo","Arameo"],"Tradujo del griego, no solo de la traducción latina."],
+   ["¿Qué quería lograr con su traducción?","Que la gente común leyera la Biblia",["Que solo los sacerdotes la leyeran","Que se escribiera un diccionario","Que se prohibiera el latín"],"Su deseo era que hasta un muchacho que guiaba el arado conociera la Escritura."],
+   ["¿Dónde se imprimió su Nuevo Testamento en 1526?","Worms, Alemania",["Londres, Inglaterra","Roma, Italia","Ginebra, Suiza"],"Se imprimió fuera de Inglaterra porque allí estaba prohibido."],
+   ["¿Cómo llegaban sus Nuevos Testamentos a Inglaterra?","Se introducían a escondidas",["Los traía el rey en persona","Se vendían en las iglesias","Los repartía el obispo"],"Los ejemplares se escondían entre mercancías y se pasaban en secreto."],
+   ["¿Qué le ocurrió en 1536?","Fue ejecutado por su obra",["Fue nombrado obispo","Volvió a Inglaterra como héroe","Fundó una universidad"],"Murió estrangulado y quemado cerca de Bruselas."],
+   ["¿Qué versión inglesa posterior se apoyó mucho en su trabajo?","La del rey Jacobo (1611)",["La Vulgata","La Biblia de Lutero","La Septuaginta"],"Gran parte de su redacción pasó a las versiones inglesas posteriores."],
+   ["¿Cuál era la situación de la Biblia en inglés en su época?","Estaba prohibido traducirla",["Todos tenían una","Se leía en todas las escuelas","Ya existía una versión oficial en cada casa"],"Por eso Tyndale tuvo que trabajar en el exilio."]
+  ]}
+ ]},
+ {title:"Los puritanos",sub:"Piedad, predicación y Escritura en Inglaterra y América",lessons:[
+  {title:"John Bunyan",kind:"hand",intro:{t:"John Bunyan (1628–1688)",p:"John Bunyan nació en 1628 en Elstow, Inglaterra. Era calderero: reparaba ollas y utensilios de metal. Tuvo poca escuela, pero llegó a conocer muy bien la Biblia.\nTras una larga lucha interior encontró paz en Cristo y fue miembro de una iglesia bautista en Bedford, donde empezó a predicar.\nEn 1660 lo encarcelaron por predicar sin licencia de la iglesia oficial. Estuvo preso unos doce años y no quiso dejar de predicar.\nEscribió «Gracia abundante para el mayor de los pecadores» (1666) y, en 1678, la primera parte de «El progreso del peregrino», que sigue siendo uno de los libros cristianos más leídos. Murió en 1688."},qs:[
+   ["¿Cuál era el oficio de Bunyan?","Calderero",["Panadero","Soldado de carrera","Abogado"],"Reparaba ollas y objetos de metal."],
+   ["¿En qué país nació?","Inglaterra",["Escocia","Francia","Países Bajos"],"Nació en Elstow, cerca de Bedford."],
+   ["¿Por qué estuvo preso unos doce años?","Por predicar sin licencia oficial",["Por robar","Por no pagar sus deudas","Por escribir novelas"],"Se negó a dejar de predicar."],
+   ["¿Cuál es su obra más famosa?","El progreso del peregrino",["La institución de la religión cristiana","La mortificación del pecado","Los pecadores en las manos de un Dios airado"],"Cuenta el viaje de Cristiano hacia la Ciudad Celestial."],
+   ["¿Qué narra «El progreso del peregrino»?","El viaje de Cristiano desde la Ciudad de Destrucción hasta la Ciudad Celestial",["Un viaje de Inglaterra a América","La historia de Moisés","La vida de un rey inglés"],"Es una alegoría de la vida cristiana."],
+   ["¿Cómo se llama su libro sobre su propia conversión?","Gracia abundante para el mayor de los pecadores",["Confesiones","Los sermones de Elstow","El tesoro de David"],"Es la historia de su vida y de su búsqueda de la paz con Dios."],
+   ["¿En qué ciudad inglesa estaba la iglesia donde Bunyan predicó?","Bedford",["Londres","Oxford","Cambridge"],"Bunyan fue pastor de la iglesia de Bedford."],
+   ["¿Dónde escribió gran parte de sus obras?","En la cárcel, entre otros lugares",["En un barco","En una universidad","En un monasterio"],"Parte de su obra nació durante sus años de prisión."]
+  ]},
+  {title:"John Owen",kind:"hand",intro:{t:"John Owen (1616–1683)",p:"John Owen nació en 1616 en Inglaterra y estudió en Oxford. Fue pastor, teólogo y uno de los autores más profundos entre los puritanos; por eso a veces se le llama «el príncipe de los puritanos».\nFue capellán de Oliver Cromwell y, más tarde, decano del Christ Church College y vicerrector de la Universidad de Oxford.\nEscribió obras como «La muerte de la muerte en la muerte de Cristo» (1647) y «La mortificación del pecado en los creyentes» (1656). Su exposición de la carta a los Hebreos ocupa siete tomos.\nDespués de 1660, como otros pastores no conformistas, perdió sus cargos. Murió en 1683."},qs:[
+   ["¿Con qué título se recuerda a veces a John Owen?","El príncipe de los puritanos",["El padre de las misiones","El apóstol de las Indias","El reformador de Ginebra"],"Se le considera uno de los teólogos más importantes del puritanismo."],
+   ["¿En qué universidad estudió y más tarde fue una de las autoridades?","Oxford",["Wittenberg","Harvard","Basilea"],"Fue decano de Christ Church y vicerrector de Oxford."],
+   ["¿Qué libro de la Biblia expuso en siete tomos?","Hebreos",["Romanos","Apocalipsis","Salmos"],"Su exposición de Hebreos es una de sus obras más extensas."],
+   ["¿Cuál es el tema de «La mortificación del pecado en los creyentes»?","Cómo luchar contra el pecado que queda en el creyente",["La traducción de la Biblia","El gobierno de la iglesia","La vida de los reformadores"],"Es un libro práctico sobre la lucha contra el pecado."],
+   ["¿Quién fue el gobernante inglés del que Owen fue capellán?","Oliver Cromwell",["Enrique VIII","Isabel I","Jacobo I"],"Acompañó a Cromwell como capellán."],
+   ["¿En qué año murió John Owen?","1683",["1616","1647","1700"],"Murió en 1683, ya mayor."],
+   ["¿Qué obra suya trata del propósito de la muerte de Cristo?","La muerte de la muerte en la muerte de Cristo",["La santidad","El camino del peregrino","El cumplimiento de los tiempos"],"La publicó en 1647."],
+   ["¿Qué ocurrió con muchos pastores puritanos en 1662?","Perdieron sus iglesias por no aceptar la ley de uniformidad",["Fueron nombrados obispos","Se fueron todos a Roma","Se hicieron soldados"],"A los que no se sometieron se les llamó no conformistas."]
+  ]},
+  {title:"Matthew Henry",kind:"hand",intro:{t:"Matthew Henry (1662–1714)",p:"Matthew Henry nació en 1662, el mismo año en que su padre, el pastor Philip Henry, perdió su iglesia por no aceptar la ley de uniformidad. Creció en un hogar donde se leía la Biblia y se oraba cada día.\nFue pastor presbiteriano en Chester durante más de veinte años y después en Hackney, cerca de Londres.\nEscribió una exposición de toda la Biblia, el «Comentario exegético y devocional», que comenzó en 1704. Él alcanzó a escribir hasta Hechos; otros pastores completaron el resto con sus notas.\nMurió en 1714 durante un viaje. Su comentario sigue siendo muy leído en los hogares y las iglesias."},qs:[
+   ["¿Qué escribió Matthew Henry?","Un comentario de toda la Biblia",["Un himnario","Un diccionario de griego","Una novela alegórica"],"Su obra más conocida es su comentario bíblico."],
+   ["¿Hasta qué libro del Nuevo Testamento llegó a comentar él mismo?","Hechos",["Mateo","Romanos","Apocalipsis"],"Después de su muerte, otros completaron la obra."],
+   ["¿Quién era su padre?","Philip Henry, pastor",["Oliver Cromwell","John Owen","Richard Baxter"],"Philip Henry perdió su iglesia en 1662."],
+   ["¿En qué ciudad fue pastor durante más de veinte años?","Chester",["Edimburgo","Oxford","Ginebra"],"Pastoreó en Chester y luego en Hackney."],
+   ["¿Cuál era su tradición eclesiástica?","Presbiteriana (no conformista)",["Católica romana","Luterana","Cuáquera"],"Fue un pastor no conformista, de tradición presbiteriana."],
+   ["¿Qué se hacía cada día en el hogar donde creció?","Leer la Biblia y orar en familia",["Cantar ópera","Estudiar astronomía","Copiar manuscritos"],"El culto familiar era parte de la vida de la casa."],
+   ["¿En qué siglo vivió Matthew Henry?","Entre los siglos XVII y XVIII",["En el siglo XIV","En el siglo XX","En el siglo XII"],"Nació en 1662 y murió en 1714."],
+   ["¿Cómo se completó su comentario después de su muerte?","Otros pastores lo terminaron usando sus notas",["Nunca se completó","Lo terminó el rey","Se tradujo del latín"],"Trece pastores continuaron la obra."]
+  ]},
+  {title:"Jonathan Edwards",kind:"hand",intro:{t:"Jonathan Edwards (1703–1758)",p:"Jonathan Edwards nació en 1703 en Connecticut, en las colonias inglesas de América. Estudió en Yale y fue un joven muy aplicado: se propuso por escrito vivir cada día para la gloria de Dios.\nFue pastor en Northampton, Massachusetts, y vio un avivamiento en su iglesia que formó parte del Gran Despertar. Su sermón «Pecadores en las manos de un Dios airado» (1741) es uno de los más conocidos.\nEn 1750 su iglesia lo despidió, en parte por una discusión sobre quiénes podían participar de la Cena del Señor. Fue entonces misionero entre los indígenas y pastor en Stockbridge.\nEn 1758 lo nombraron presidente de la Universidad de Nueva Jersey (hoy Princeton), pero murió ese mismo año."},qs:[
+   ["¿En qué colonia nació Jonathan Edwards?","Connecticut",["Virginia","Georgia","Florida"],"Nació en East Windsor, Connecticut."],
+   ["¿En qué universidad estudió?","Yale",["Oxford","Harvard","Princeton"],"Estudió en Yale y allí se destacó desde joven."],
+   ["¿Cuál es su sermón más conocido?","Pecadores en las manos de un Dios airado",["El sermón del monte","La muerte de la muerte","Gracia abundante"],"Lo predicó en 1741."],
+   ["¿Qué movimiento espiritual se asocia con Edwards?","El Gran Despertar",["La Contrarreforma","El Concilio de Nicea","Las cruzadas"],"Fue un avivamiento que alcanzó a muchas iglesias de las colonias."],
+   ["¿En qué ciudad fue pastor durante más de veinte años?","Northampton",["Boston","Filadelfia","Nueva York"],"Era la iglesia de su abuelo Solomon Stoddard."],
+   ["¿Qué hizo después de dejar Northampton?","Fue pastor y misionero en Stockbridge entre indígenas",["Se fue a Inglaterra","Fundó una colonia","Se hizo capitán de barco"],"En Stockbridge escribió algunas de sus obras más profundas."],
+   ["¿Qué cargo recibió en 1758?","Presidente de la Universidad de Nueva Jersey (Princeton)",["Obispo de Londres","Gobernador de Massachusetts","Rector de Oxford"],"Murió pocas semanas después de llegar."],
+   ["¿Qué se propuso al escribir sus «Resoluciones»?","Vivir para la gloria de Dios",["Hacerse rico","Ganar elecciones","Viajar por el mundo"],"Escribió resoluciones para guiar su vida cristiana."]
+  ]}
+ ]},
+ {title:"Pastores bautistas",sub:"Predicadores fieles a las Escrituras",lessons:[
+  {title:"Benjamin Keach",kind:"hand",intro:{t:"Benjamin Keach (1640–1704)",p:"Benjamin Keach fue pastor bautista en Londres en una época en que los no conformistas eran perseguidos.\nEn 1664 publicó «La instrucción del niño», un libro para enseñar a los niños que explicaba la doctrina bautista. Por escribirlo lo condenaron a estar en la picota, y casi lo ejecutan.\nFue pastor durante más de treinta años de una iglesia en Horsleydown, en el sur de Londres. Defendió que la congregación pudiera cantar himnos en el culto y escribió muchos himnos.\nSe le atribuye el «Catecismo bautista» (1693), conocido también como el Catecismo de Keach. Murió en 1704."},qs:[
+   ["¿En qué ciudad fue pastor Benjamin Keach?","Londres",["Boston","Ginebra","Edimburgo"],"Pastoreó una iglesia en Horsleydown, en el sur de Londres."],
+   ["¿A qué denominación pertenecía?","Bautista",["Luterana","Católica","Metodista"],"Fue un pastor bautista de su tiempo."],
+   ["¿Qué libro publicó en 1664?","La instrucción del niño",["El progreso del peregrino","La mortificación del pecado","La institución"],"Era un libro para enseñar a los niños."],
+   ["¿Qué castigo recibió por publicar ese libro?","Lo pusieron en la picota",["Lo nombraron obispo","Lo enviaron a un barco","Lo hicieron profesor"],"Fue un castigo público por sus convicciones."],
+   ["¿Qué práctica defendió Keach en el culto?","Cantar himnos en congregación",["Callar durante el culto","Leer solo en latín","Predicar de pie siempre"],"Fue uno de los pioneros del canto congregacional entre los bautistas."],
+   ["¿Cómo se conoce el catecismo que se le atribuye?","Catecismo de Keach (Catecismo bautista)",["Catecismo de Heidelberg","Catecismo de Ginebra","Catecismo menor de Westminster"],"Fue publicado en 1693."],
+   ["¿En qué siglo vivió principalmente?","Siglo XVII",["Siglo XV","Siglo XIX","Siglo XXI"],"Nació en 1640 y murió en 1704."],
+   ["¿Qué pastor famoso de Londres vino de la congregación que Keach pastoreó?","Charles Spurgeon",["John Bunyan","William Carey","Martyn Lloyd-Jones"],"La iglesia de Keach, después de varios pastores, llegó a ser la de Spurgeon."]
+  ]},
+  {title:"John Gill",kind:"hand",intro:{t:"John Gill (1697–1771)",p:"John Gill nació en 1697 en Kettering, Inglaterra. Era hijo de un comerciante y pasó muchas horas estudiando por su cuenta; aprendió latín, griego y hebreo.\nA los veintidós años empezó a pastorear una iglesia bautista en el sur de Londres y siguió allí más de cincuenta años.\nEscribió una exposición de toda la Biblia, publicada entre 1746 y 1763, y un tratado de teología llamado «Un cuerpo de divinidad doctrinal y práctica».\nSu iglesia, después de varios pastores, fue más tarde la de Charles Spurgeon. Gill murió en 1771."},qs:[
+   ["¿En qué país vivió John Gill?","Inglaterra",["Escocia","Alemania","Estados Unidos"],"Nació en Kettering y pastoreó en Londres."],
+   ["¿Cómo aprendió gran parte de sus conocimientos?","Estudiando por su cuenta",["En una universidad inglesa","En un monasterio","Con tutores del rey"],"Siendo joven aprendió latín, griego y hebreo con mucho esfuerzo."],
+   ["¿Qué lenguas bíblicas llegó a conocer bien?","Hebreo y griego",["Chino y japonés","Sánscrito y árabe","Francés y alemán"],"Eso le permitió escribir sobre el texto original."],
+   ["¿Cuánto tiempo pastoreó su iglesia en Londres?","Más de cincuenta años",["Cinco años","Unos diez años","Menos de un año"],"Fue pastor desde 1719 hasta su muerte en 1771."],
+   ["¿Qué escribió sobre toda la Biblia?","Una exposición",["Un himnario","Un libro de cartas","Un diccionario"],"Comentó la Biblia versículo a versículo."],
+   ["¿Cómo se llama su gran obra de teología?","Un cuerpo de divinidad doctrinal y práctica",["La institución de la religión cristiana","El tesoro de David","La santidad"],"Se publicó en 1769."],
+   ["¿Quién fue más tarde pastor de la misma congregación?","Charles Spurgeon",["William Carey","Jonathan Edwards","John Knox"],"Spurgeon dirigió la iglesia que antes habían pastoreado Keach y Gill."],
+   ["¿En qué año murió John Gill?","1771",["1697","1746","1800"],"Murió en 1771 a los 73 años."]
+  ]},
+  {title:"Andrew Fuller",kind:"hand",intro:{t:"Andrew Fuller (1754–1815)",p:"Andrew Fuller nació en 1754 en Inglaterra y fue pastor bautista durante más de treinta años en Kettering.\nEn 1785 publicó «El evangelio digno de toda aceptación», donde sostuvo que el evangelio debe predicarse a todas las personas y que todos deben responder con arrepentimiento y fe en Cristo.\nCuando William Carey quiso ir a la India, Fuller fue uno de los fundadores de la Sociedad Misionera Bautista (1792) y su secretario hasta su muerte. Se cuenta que Carey le dijo que él bajaba a la mina, pero que los demás debían sostener las cuerdas.\nMurió en 1815."},qs:[
+   ["¿En qué ciudad inglesa fue pastor Andrew Fuller?","Kettering",["Bedford","Londres","Oxford"],"Pastoreó allí desde 1782 hasta su muerte."],
+   ["¿Qué libro publicó en 1785?","El evangelio digno de toda aceptación",["El progreso del peregrino","La santidad","Gracia abundante"],"Defendió que el evangelio debe predicarse a todos."],
+   ["¿A qué sociedad ayudó a fundar en 1792?","La Sociedad Misionera Bautista",["La Sociedad Bíblica Británica","La Universidad de Oxford","La Compañía de las Indias"],"Fue su primer secretario."],
+   ["¿A qué misionero apoyó desde Inglaterra?","William Carey",["Adoniram Judson","Hudson Taylor","Jim Elliot"],"Fuller sostenía el trabajo de Carey en la India."],
+   ["¿Qué imagen usó Carey para describir la labor de Fuller y los demás?","Sostener las cuerdas de quien baja a la mina",["Remar el barco","Plantar un huerto","Edificar un puente"],"Los que se quedaban en Inglaterra sostenían la misión con oración y ofrendas."],
+   ["¿En qué siglo vivió?","Siglo XVIII y principios del XIX",["Siglo XIV","Siglo XVI","Siglo XXI"],"Nació en 1754 y murió en 1815."],
+   ["¿Qué enseñaba que debe hacerse con el evangelio?","Predicarlo a todas las personas",["Guardarlo para unos pocos","Solo escribirlo","No predicarlo fuera del templo"],"Sostenía que todos están llamados a creer."],
+   ["¿Cómo se llama el grupo que fundó el trabajo misionero bautista inglés?","Sociedad Misionera Bautista",["Sociedad Bíblica","Misión al Interior de la China","Sociedad de Jesús"],"Se fundó en 1792 en Kettering."]
+  ]},
+  {title:"Charles Spurgeon",kind:"hand",intro:{t:"Charles Spurgeon (1834–1892)",p:"Charles Haddon Spurgeon nació en 1834 en Kelvedon, Inglaterra. El 6 de enero de 1850, en una mañana de nieve, entró a una pequeña capilla en Colchester y oyó un sermón sobre Isaías 45:22: «Mirad a mí, y sed salvos». Allí creyó en Cristo.\nA los diecinueve años fue llamado a pastorear la iglesia de New Park Street, en Londres. La congregación creció tanto que en 1861 se inauguró el Tabernáculo Metropolitano, con espacio para miles de personas.\nFundó un colegio para pastores (1856) y un orfanato (1867). Publicó cada semana un sermón impreso, y escribió «Mañana y tarde» y «El tesoro de David».\nMurió en 1892 en Menton, Francia."},qs:[
+   ["¿En qué país nació Spurgeon?","Inglaterra",["Escocia","Gales","Irlanda"],"Nació en Kelvedon, condado de Essex."],
+   ["¿Qué pasaje bíblico oyó el día en que creyó en Cristo?","Isaías 45:22",["Juan 3:16","Salmo 23","Romanos 8:28"],"Isaías 45:22 invita a mirar a Dios para ser salvo."],
+   ["¿Cómo estaba el clima el día de su conversión?","Había nieve",["Hacía mucho calor","Había un terremoto","Era de noche y llovía a cántaros"],"Una tormenta de nieve lo llevó a entrar a esa capilla."],
+   ["¿En qué ciudad fue pastor famoso?","Londres",["Edimburgo","Bedford","Ginebra"],"Pastoreó en el Tabernáculo Metropolitano de Londres."],
+   ["¿Qué obra de comentario sobre los Salmos escribió?","El tesoro de David",["La institución","El peregrino","La santidad"],"Le tomó más de veinte años escribirla."],
+   ["¿Qué fundó en 1867 para ayudar a niños sin padres?","Un orfanato",["Una universidad estatal","Un banco","Un hospital militar"],"El orfanato de Stockwell cuidó a muchos niños."],
+   ["¿Para qué fundó un colegio en 1856?","Para preparar pastores",["Para formar soldados","Para enseñar medicina","Para formar marineros"],"Los llamó «pastores» que debían predicar con fidelidad."],
+   ["¿En qué país murió Spurgeon, de viaje?","Francia",["Alemania","Escocia","Suiza"],"Murió en Menton, Francia, en 1892."]
+  ]}
+ ]},
+ {title:"Misioneros",sub:"Llevaron el evangelio hasta los confines",lessons:[
+  {title:"William Carey",kind:"hand",intro:{t:"William Carey (1761–1834)",p:"William Carey nació en 1761 en un pueblo de Inglaterra y trabajó como zapatero. Mientras remendaba zapatos tenía un mapa del mundo a su lado y oraba por los pueblos que no conocían a Cristo.\nEn 1792 publicó un libro en el que mostraba que los cristianos tenían el deber de llevar el evangelio a todo el mundo, y predicó un sermón con la idea de esperar grandes cosas de Dios e intentar grandes cosas para Dios.\nEse mismo año se fundó la Sociedad Misionera Bautista. En 1793 Carey viajó a la India, donde trabajó el resto de su vida.\nTradujo la Biblia, o partes de ella, a varios idiomas de la India, fundó escuelas y enseñó. Murió en 1834. Se le llama «el padre de las misiones modernas»."},qs:[
+   ["¿Cuál era el oficio de William Carey?","Zapatero",["Médico","Marinero","Escribano"],"Remendaba zapatos antes de ser pastor y misionero."],
+   ["¿A qué país viajó como misionero en 1793?","La India",["China","Japón","Birmania"],"Trabajó en la India más de cuarenta años."],
+   ["¿Qué sociedad se fundó en 1792 para apoyarlo?","La Sociedad Misionera Bautista",["La Sociedad Bíblica Británica","La Misión al Interior de la China","La Compañía de Jesús"],"Andrew Fuller fue su primer secretario."],
+   ["¿Qué hizo Carey con la Biblia en la India?","La tradujo a varios idiomas",["La quemó","La copió solo en inglés","La guardó en una biblioteca"],"Tradujo toda la Biblia o partes de ella a muchos idiomas."],
+   ["¿Cómo se le llama a veces?","El padre de las misiones modernas",["El apóstol de los gentiles","El reformador de Escocia","El príncipe de los puritanos"],"Su ejemplo animó a muchos misioneros."],
+   ["¿Qué tenía Carey junto a su banco de zapatero?","Un mapa del mundo",["Una espada","Un reloj de arena","Un telescopio"],"Lo usaba para orar por los pueblos del mundo."],
+   ["¿En qué año murió Carey?","1834",["1761","1793","1850"],"Murió en la India en 1834."],
+   ["¿Cómo se llamaba la ciudad de la India donde se estableció con su equipo?","Serampore",["Calcuta, solo de paso","Rangún","Shanghái"],"En Serampore tuvo imprenta y escuela."]
+  ]},
+  {title:"Adoniram Judson",kind:"hand",intro:{t:"Adoniram Judson (1788–1850)",p:"Adoniram Judson nació en 1788 en Massachusetts, Estados Unidos. Se casó con Ann Hasseltine y en 1812 partieron como misioneros hacia la India.\nDurante el viaje estudió lo que enseña la Biblia sobre el bautismo y cambió su parecer: al llegar a Calcuta fue bautizado como creyente y se hizo bautista.\nSe estableció en Birmania (hoy Myanmar), donde aprendió el idioma. Tuvo que esperar seis años para ver al primer creyente bautizado.\nDurante la guerra de 1824 lo encarcelaron cerca de dos años, en condiciones terribles. Terminó la traducción de la Biblia al birmano en 1834. Murió en 1850 en el mar."},qs:[
+   ["¿En qué país nació Judson?","Estados Unidos",["Inglaterra","Escocia","Canadá"],"Nació en Massachusetts en 1788."],
+   ["¿A qué país llegó a servir como misionero?","Birmania (Myanmar)",["China","Japón","Brasil"],"Llegó a Rangún en 1813."],
+   ["¿Qué cambió en su manera de pensar durante el viaje?","Su parecer sobre el bautismo",["Su nacionalidad","Su profesión","Su idioma"],"Estudió el Nuevo Testamento y fue bautizado como creyente."],
+   ["¿Cuánto tuvo que esperar para ver al primer creyente bautizado en Birmania?","Unos seis años",["Unos seis días","Unos dos meses","Unos cuarenta años"],"Su perseverancia es famosa."],
+   ["¿Qué le ocurrió durante la guerra de 1824?","Lo encarcelaron",["Lo nombraron gobernador","Lo expulsaron a Inglaterra","Lo premiaron"],"Estuvo cerca de dos años preso."],
+   ["¿Qué terminó de traducir en 1834?","La Biblia al birmano",["La Biblia al chino","Un himnario al inglés","Un diccionario de latín"],"Su traducción sigue siendo muy valorada."],
+   ["¿Cómo se llamaba su primera esposa?","Ann Hasseltine",["Katharina von Bora","Amy Carmichael","Lottie Moon"],"Ann sirvió con él y sufrió mucho en Birmania."],
+   ["¿Dónde murió Judson?","En el mar",["En una prisión","En su casa en Boston","En una universidad"],"Murió en 1850 en un viaje y fue sepultado en el mar."]
+  ]},
+  {title:"Hudson Taylor",kind:"hand",intro:{t:"Hudson Taylor (1832–1905)",p:"James Hudson Taylor nació en 1832 en Barnsley, Inglaterra. Siendo joven creyó en Cristo y sintió el deseo de servir en China.\nEstudió medicina y viajó a China en 1853, llegando a Shanghái en 1854. Vio que el evangelio había llegado solo a las ciudades de la costa.\nEn 1865 fundó la Misión al Interior de la China para llevar el mensaje a las provincias del interior. Adoptó la ropa y las costumbres chinas para acercarse a la gente.\nNo pidió dinero a nadie: confió en que Dios supliría. Murió en 1905 en Changsha, China."},qs:[
+   ["¿De qué país era Hudson Taylor?","Inglaterra",["Escocia","Estados Unidos","Alemania"],"Nació en Barnsley."],
+   ["¿A qué país fue como misionero?","China",["India","Japón","Brasil"],"Llegó a Shanghái en 1854."],
+   ["¿Qué fundó en 1865?","La Misión al Interior de la China",["La Sociedad Misionera Bautista","La Sociedad Bíblica Británica","El colegio de pastores"],"Quería llegar a las provincias del interior."],
+   ["¿Qué estudió antes de ir a China?","Medicina",["Derecho","Navegación","Arquitectura"],"Fue misionero médico."],
+   ["¿Qué hizo para acercarse a la gente en China?","Adoptó su ropa y costumbres",["Se fue a vivir al palacio","Habló solo inglés","Evitó salir de la ciudad"],"Se vistió como los chinos para ser un puente."],
+   ["¿Cómo sostenía su misión?","Confiando en Dios sin pedir dinero a nadie",["Cobrando por los servicios","Con un impuesto","Con el apoyo del gobierno"],"Es un ejemplo de lo que se llamó «misiones de fe»."],
+   ["¿En qué ciudad china llegó en 1854?","Shanghái",["Pekín","Hong Kong, de paso","Cantón"],"Allí empezó su trabajo."],
+   ["¿Cuál era el propósito de su misión?","Llevar el evangelio al interior de China",["Construir un puerto","Abrir un banco","Fundar una universidad inglesa"],"El nombre de la misión lo dice."]
+  ]},
+  {title:"Jim Elliot",kind:"hand",intro:{t:"Jim Elliot (1927–1956)",p:"Jim Elliot nació en 1927 en Portland, Oregón, Estados Unidos. En la universidad se propuso vivir para Cristo y escribió en su diario sobre dejar lo que no se puede conservar para ganar lo que no se puede perder.\nEn 1952 viajó con su esposa Elisabeth a Ecuador. Allí trabajó entre los quichuas y soñó con llevar el evangelio a los waorani, un pueblo aislado en la selva.\nEn enero de 1956, él y otros cuatro misioneros fueron atacados y murieron a manos de algunos waorani en el río Curaray.\nDespués, Elisabeth Elliot y otras personas siguieron el trabajo y vieron creyentes entre ese pueblo."},qs:[
+   ["¿A qué país viajó Jim Elliot como misionero?","Ecuador",["India","China","Birmania"],"Llegó en 1952."],
+   ["¿Con qué pueblo de la selva soñaba llegar?","Los waorani",["Los mayas","Los quechuas del Perú","Los aztecas"],"Era un pueblo aislado en la selva ecuatoriana."],
+   ["¿De qué país era Jim Elliot?","Estados Unidos",["Inglaterra","Canadá","Escocia"],"Nació en Portland, Oregón."],
+   ["¿En qué año murió?","1956",["1927","1952","1980"],"Murió junto a otros cuatro misioneros."],
+   ["¿Cuántos misioneros fueron atacados en total en ese suceso?","Cinco",["Dos","Doce","Cien"],"Eran Jim Elliot y cuatro compañeros."],
+   ["¿Quién fue su esposa?","Elisabeth Elliot",["Ann Judson","Lottie Moon","Amy Carmichael"],"Siguió trabajando en Ecuador y escribió sobre la historia."],
+   ["¿En qué río ocurrió el ataque?","El Curaray",["El Amazonas en Brasil","El Nilo","El Misisipi"],"Está en la selva ecuatoriana."],
+   ["¿Qué ocurrió después con el trabajo misionero entre los waorani?","Continuó, y hubo creyentes",["Se detuvo para siempre","Nadie volvió","Se prohibió la Biblia"],"Algunos waorani llegaron a creer."]
+  ]}
+ ]},
+ {title:"Mujeres de fe",sub:"Su servicio también marcó la historia de la iglesia",lessons:[
+  {title:"Katharina von Bora",kind:"hand",intro:{t:"Katharina von Bora (1499–1552)",p:"Katharina von Bora nació en 1499 en Alemania. Desde niña vivió en un convento y llegó a ser monja.\nAl leer los escritos de la Reforma, ella y otras monjas dejaron el convento en 1523. Se cuenta que salieron escondidas en un carro de arenques.\nSe casó con Martín Lutero en 1525. Administró la casa de Wittenberg, que era un antiguo monasterio: cuidó el huerto, los animales y a los muchos huéspedes y estudiantes que llegaban.\nTuvieron seis hijos. Murió en 1552, tras un accidente en un viaje."},qs:[
+   ["¿Con quién se casó Katharina von Bora?","Martín Lutero",["Juan Calvino","John Knox","Ulrico Zuinglio"],"Se casaron en 1525."],
+   ["¿Qué eran Katharina y sus compañeras antes de la Reforma?","Monjas",["Maestras de escuela","Médicas","Campesinas"],"Vivían en un convento."],
+   ["¿En qué año dejó el convento?","1523",["1483","1546","1600"],"Salió con otras monjas."],
+   ["¿Cómo se cuenta que salieron del convento?","Escondidas en un carro de arenques",["En un barco","En un tren","Con una escolta del rey"],"Es una tradición muy conocida."],
+   ["¿En qué ciudad vivía con su familia?","Wittenberg",["Ginebra","Londres","París"],"Su casa era un antiguo monasterio."],
+   ["¿Cuántos hijos tuvieron ella y Lutero?","Seis",["Ninguno","Uno","Veinte"],"Criaron además a otros niños de la familia."],
+   ["¿Qué tareas cumplía en la casa?","Cuidaba el huerto, los animales y a los huéspedes",["Solo cosía","Solo cantaba","Trabajaba en una imprenta"],"Administraba una casa muy concurrida."],
+   ["¿En qué año murió Katharina?","1552",["1499","1525","1580"],"Murió en Torgau."]
+  ]},
+  {title:"Ann Judson",kind:"hand",intro:{t:"Ann Hasseltine Judson (1789–1826)",p:"Ann Hasseltine nació en 1789 en Massachusetts. Se casó con Adoniram Judson en 1812 y, pocos días después, salieron juntos hacia Asia: fue una de las primeras mujeres estadounidenses en ir como misionera al extranjero.\nEn Birmania aprendió el idioma, enseñó a mujeres y niños y ayudó en la traducción.\nCuando su esposo estuvo preso durante la guerra, ella le llevaba comida, pidió su liberación a los oficiales y guardó escondidos los manuscritos de la traducción del Nuevo Testamento.\nMurió en 1826 de fiebre, a los 37 años."},qs:[
+   ["¿Con quién se casó Ann Hasseltine?","Adoniram Judson",["William Carey","Hudson Taylor","Jim Elliot"],"Se casaron en 1812."],
+   ["¿A qué país llegaron a servir como misioneros?","Birmania (Myanmar)",["India","China","Japón"],"Se establecieron en Rangún."],
+   ["¿Qué hizo Ann mientras Adoniram estaba preso?","Le llevó comida y gestionó su liberación",["Se fue a vivir a otro país","Dejó de ayudar","Abandonó el trabajo"],"Su valentía ayudó a su esposo a sobrevivir."],
+   ["¿Qué protegió escondiéndolo?","Los manuscritos de la traducción",["Una joya","Un mapa","Una espada"],"Se dice que los ocultó dentro de una almohada."],
+   ["¿De qué país era Ann?","Estados Unidos",["Inglaterra","Birmania","Alemania"],"Nació en Massachusetts."],
+   ["¿En qué siglo murió?","Siglo XIX",["Siglo XV","Siglo XVII","Siglo XXI"],"Murió en 1826."],
+   ["¿Qué aprendió para poder servir mejor?","El idioma birmano",["El latín","El hebreo","El árabe"],"Enseñó a mujeres y niños."],
+   ["¿Cuántos años tenía cuando murió?","37 años",["17 años","60 años","90 años"],"Murió joven, de fiebre."]
+  ]},
+  {title:"Lottie Moon",kind:"hand",intro:{t:"Lottie Moon (1840–1912)",p:"Charlotte Digges «Lottie» Moon nació en 1840 en Virginia, Estados Unidos. Fue una mujer culta, que hablaba varios idiomas, y llegó a ser maestra.\nEn 1873 viajó a China como misionera bautista y trabajó durante casi cuarenta años, sobre todo en la región de Shandong. Aprendió el chino, enseñó y visitó aldeas donde nunca había estado una mujer extranjera.\nEscribió cartas a su país pidiendo oración y apoyo para las misiones. La ofrenda de Navidad para las misiones bautistas lleva su nombre desde 1888.\nMurió en 1912 a bordo de un barco, en el puerto de Kobe, Japón."},qs:[
+   ["¿A qué país viajó Lottie Moon como misionera?","China",["India","Birmania","Brasil"],"Llegó en 1873."],
+   ["¿De qué país era?","Estados Unidos",["Inglaterra","Canadá","Alemania"],"Nació en Virginia."],
+   ["¿Qué escribió a su país para pedir ayuda?","Cartas",["Poemas de amor","Novelas","Himnos"],"Sus cartas movieron a muchas iglesias a orar y dar."],
+   ["¿Qué lleva su nombre?","La ofrenda de Navidad para las misiones bautistas",["Una universidad en Londres","Una montaña","Un barco de guerra"],"Se recoge cada año desde 1888."],
+   ["¿Qué era Lottie antes de ser misionera?","Maestra",["Soldado","Marinera","Reina"],"Era una mujer muy estudiosa."],
+   ["¿Cuánto tiempo, aproximadamente, sirvió en China?","Casi cuarenta años",["Un mes","Un año","Unos ochenta años"],"Llegó en 1873 y murió en 1912."],
+   ["¿Dónde murió?","A bordo de un barco en Kobe, Japón",["En su casa en Virginia","En una prisión","En Londres"],"Murió en la Navidad de 1912."],
+   ["¿Qué ofrecía al pueblo chino?","El evangelio y la enseñanza",["Solo dinero","Solo medicinas","Solo armas"],"Enseñó, visitó aldeas y predicó."]
+  ]},
+  {title:"Amy Carmichael",kind:"hand",intro:{t:"Amy Carmichael (1867–1951)",p:"Amy Carmichael nació en 1867 en Millisle, Irlanda del Norte. Desde joven se interesó en los más necesitados.\nEn 1895 viajó a la India y se estableció en el sur, en Dohnavur. Allí conoció a niñas entregadas al servicio de los templos hindúes, donde sufrían. Comenzó a rescatarlas y a cuidarlas.\nEn 1901 se formó la comunidad de Dohnavur, que llegó a atender a cientos de niños. Ellos la llamaban «Amma», que significa «madre».\nEn 1931 se cayó y quedó casi inválida; durante unos veinte años siguió escribiendo desde su cama más de treinta libros y poemas. Murió en 1951."},qs:[
+   ["¿A qué país viajó Amy Carmichael como misionera?","La India",["China","Japón","Egipto"],"Llegó en 1895."],
+   ["¿Dónde nació?","Irlanda del Norte",["Escocia","Francia","Estados Unidos"],"Nació en Millisle."],
+   ["¿A quiénes rescató y cuidó?","A niñas y niños en riesgo",["A soldados heridos","A reyes","A marineros"],"Rescató sobre todo a niñas entregadas a los templos."],
+   ["¿Cómo la llamaban los niños?","Amma (madre)",["Reina","Doctora","Capitana"],"Amma significa «madre» en tamil."],
+   ["¿Cómo se llama el lugar de la India donde estableció su obra?","Dohnavur",["Serampore","Rangún","Pekín"],"Allí vivió y trabajó el resto de su vida."],
+   ["¿Qué hizo desde la cama durante sus últimos años?","Escribió libros y poemas",["Dirigió un ejército","Navegó el mundo","Construyó puentes"],"Siguió sirviendo con su pluma."],
+   ["¿En qué año murió Amy Carmichael?","1951",["1867","1895","2000"],"Murió en Dohnavur."],
+   ["¿Qué le pasó en 1931?","Se cayó y quedó casi inválida",["Ganó un premio","Se fue a Inglaterra","Fue nombrada reina"],"Estuvo unos veinte años limitada."]
+  ]},
+  {title:"Mary Jones",kind:"hand",intro:{t:"Mary Jones (1784–1864)",p:"Mary Jones nació en 1784 en Gales, una región de Gran Bretaña. Era hija de unos tejedores pobres. Desde niña aprendió a leer en galés y quería tener una Biblia propia.\nCuando tenía unos quince años, después de ahorrar durante seis años, caminó unos cuarenta kilómetros, según la tradición descalza, hasta la ciudad de Bala para comprar una Biblia a Thomas Charles, un pastor.\nCharles se conmovió porque ya no le quedaban ejemplares, pero le dio una. Esa historia lo animó a promover que hubiera Biblias para todos.\nEn 1804 se fundó la Sociedad Bíblica Británica y Extranjera, que sigue repartiendo Biblias hoy."},qs:[
+   ["¿De qué región era Mary Jones?","Gales",["Escocia","Irlanda","Cornualles"],"Hablaba galés."],
+   ["¿Qué quería tener Mary?","Una Biblia propia",["Un caballo","Un anillo","Un libro de cuentos"],"Quería leer la Palabra de Dios por sí misma."],
+   ["¿Cuánto tiempo ahorró para comprarla?","Unos seis años",["Unos seis días","Una semana","Cuarenta años"],"Era de familia pobre."],
+   ["¿Cuánto caminó, aproximadamente, hasta la ciudad de Bala?","Unos cuarenta kilómetros",["Un kilómetro","Cinco kilómetros","Cuatrocientos kilómetros"],"Lo recuerda la tradición."],
+   ["¿A quién fue a ver para conseguir una Biblia?","A Thomas Charles",["A John Gill","A Charles Spurgeon","A William Carey"],"Charles era un pastor de Bala."],
+   ["¿Qué sociedad se fundó en 1804 animada por esta historia?","La Sociedad Bíblica Británica y Extranjera",["La Sociedad Misionera Bautista","La Misión al Interior de la China","La Orden de San Agustín"],"Hoy se reparten Biblias en muchos idiomas."],
+   ["¿En qué idioma quería leer Mary la Biblia?","En galés",["En latín","En francés","En griego"],"Era su idioma."],
+   ["¿Qué quería promover Charles después de esa historia?","Que más personas tuvieran Biblias",["Que las Biblias estuvieran prohibidas","Que se vendieran solo a los ricos","Que se guardaran bajo llave"],"Esa historia impulsó la distribución de Biblias."]
+  ]}
+ ]},
+ {title:"Himnos y libros fieles",sub:"Pastores y escritores que sirvieron con la pluma",lessons:[
+  {title:"Isaac Watts",kind:"hand",intro:{t:"Isaac Watts (1674–1748)",p:"Isaac Watts nació en 1674 en Southampton, Inglaterra. Su familia era no conformista, y su padre estuvo preso por su fe cuando él era pequeño.\nDe joven se quejó de que los cantos de la iglesia eran pobres, y su padre le dijo que escribiera algo mejor. Así empezó a escribir himnos.\nFue pastor de una iglesia en Londres. Escribió cientos de himnos, entre ellos «Cuando contemplo la maravillosa cruz» y «Joy to the World», basado en el Salmo 98. También escribió libros para niños y de lógica.\nSe le llama «el padre del himno inglés». Murió en 1748."},qs:[
+   ["¿De qué país era Isaac Watts?","Inglaterra",["Escocia","Alemania","Francia"],"Nació en Southampton."],
+   ["¿Qué escribió principalmente?","Himnos",["Novelas","Obras de teatro","Leyes"],"Escribió cientos de himnos."],
+   ["¿Cuál de estos himnos escribió?","Cuando contemplo la maravillosa cruz",["Sublime gracia","Castillo fuerte","Oh Dios, nuestra ayuda en los siglos pasados fue de Lutero"],"El himno medita en la cruz de Cristo."],
+   ["¿En qué Salmo se basa «Joy to the World»?","Salmo 98",["Salmo 1","Salmo 23","Salmo 150"],"Es una paráfrasis del Salmo 98."],
+   ["¿Qué título se le da por su influencia en el canto cristiano en inglés?","El padre del himno inglés",["El príncipe de los puritanos","El apóstol de la India","El reformador de Escocia"],"Cambió la forma de cantar en las iglesias inglesas."],
+   ["¿Qué le dijo su padre cuando se quejó de los cantos?","Que escribiera algo mejor",["Que se callara","Que se hiciera marinero","Que fuera abogado"],"Así empezó su carrera como escritor de himnos."],
+   ["¿Qué fue Watts en Londres?","Pastor",["Soldado","Médico","Marino"],"Pastoreó una iglesia no conformista."],
+   ["¿En qué año murió?","1748",["1674","1700","1800"],"Murió en 1748."]
+  ]},
+  {title:"John Newton",kind:"hand",intro:{t:"John Newton (1725–1807)",p:"John Newton nació en 1725 en Londres. Su madre le enseñó la Biblia, pero murió cuando él era niño. De joven fue marinero y llegó a ser capitán de barcos dedicados al comercio de esclavos.\nEn 1748, en medio de una gran tormenta en el mar, clamó a Dios. Esa fecha marcó el inicio de su cambio. Años después dejó el comercio de esclavos y más tarde lo llamó un pecado.\nFue ordenado ministro anglicano y sirvió en Olney, donde escribió himnos junto con su amigo William Cowper, entre ellos «Sublime gracia». Luego fue pastor en Londres y aconsejó al político William Wilberforce.\nMurió en 1807, el mismo año en que Inglaterra abolió el comercio de esclavos."},qs:[
+   ["¿Cuál era la ocupación de Newton antes de ser ministro?","Marinero y capitán de barcos",["Médico","Maestro de escuela","Abogado"],"Navegó desde joven."],
+   ["¿Con qué comercio estuvo vinculado antes de su cambio?","Con el de esclavos",["Con el de especias solamente","Con el de libros","Con el de relojes"],"Más tarde se arrepintió y lo llamó un pecado."],
+   ["¿Qué ocurrió en 1748?","Clamó a Dios en una tormenta en el mar",["Fue ordenado obispo","Se hizo soldado","Viajó a la India"],"La tormenta marcó el comienzo de su cambio."],
+   ["¿Qué himno famoso se le atribuye?","Sublime gracia",["Castillo fuerte","Cuando contemplo la maravillosa cruz","Santo, santo, santo"],"«Amazing Grace» apareció en los Himnos de Olney (1779)."],
+   ["¿En qué iglesia sirvió primero como ministro?","En Olney",["En Ginebra","En Wittenberg","En Edimburgo"],"Allí escribió himnos con William Cowper."],
+   ["¿A qué político aconsejó contra el comercio de esclavos?","William Wilberforce",["Oliver Cromwell","Enrique VIII","Winston Churchill"],"Wilberforce lideró la lucha por abolirlo."],
+   ["¿Qué ocurrió en Inglaterra el año en que murió Newton (1807)?","Se abolió el comercio de esclavos",["Se inventó la imprenta","Se publicó la Biblia del rey Jacobo","Se fundó Harvard"],"La ley aprobó prohibir el comercio de esclavos."],
+   ["¿De qué iglesia fue ministro?","Anglicana",["Presbiteriana de Escocia","Bautista de Londres","Luterana de Alemania"],"Fue ministro de la Iglesia de Inglaterra."]
+  ]},
+  {title:"J. C. Ryle",kind:"hand",intro:{t:"J. C. Ryle (1816–1900)",p:"John Charles Ryle nació en 1816 en Macclesfield, Inglaterra. Era hijo de un banquero y estudió en Eton y Oxford. Fue un buen deportista y se preparaba para una carrera pública.\nSu familia perdió su fortuna en 1841 y él entonces fue ordenado ministro anglicano. Sirvió durante casi cuarenta años como pastor rural y escribió muchos folletos sencillos y directos.\nEscribió «Pensamientos expositivos sobre los Evangelios» y «Santidad», una obra sobre la vida cristiana.\nEn 1880, ya mayor, fue nombrado el primer obispo de Liverpool. Murió en 1900."},qs:[
+   ["¿De qué país era J. C. Ryle?","Inglaterra",["Escocia","Estados Unidos","Alemania"],"Nació en Macclesfield."],
+   ["¿Qué cargo recibió en 1880?","Primer obispo de Liverpool",["Rector de Oxford","Presidente de Harvard","Capellán del rey"],"Fue obispo hasta poco antes de su muerte."],
+   ["¿Qué ocurrió con su familia en 1841?","Perdió su fortuna",["Ganó una herencia","Se mudó a América","Fundó un banco nuevo"],"Eso lo llevó a ser ministro."],
+   ["¿Cómo se llama una de sus obras sobre la vida cristiana?","Santidad",["La institución","El peregrino","Gracia abundante"],"Habla de cómo vivir una vida santa."],
+   ["¿Qué libros de la Biblia comentó en sus «Pensamientos expositivos»?","Los Evangelios",["Los Salmos","Las cartas de Pablo","Los profetas"],"Sus pensamientos sobre los Evangelios se siguen leyendo."],
+   ["¿Cómo era su estilo de escribir?","Sencillo y directo",["Muy técnico","Solo en latín","Siempre en verso"],"Escribió folletos para el pueblo."],
+   ["¿A qué iglesia pertenecía?","Anglicana",["Bautista","Presbiteriana","Luterana"],"Fue ministro de la Iglesia de Inglaterra."],
+   ["¿En qué año murió?","1900",["1816","1841","1950"],"Murió a los 83 años."]
+  ]},
+  {title:"Martyn Lloyd-Jones",kind:"hand",intro:{t:"Martyn Lloyd-Jones (1899–1981)",p:"David Martyn Lloyd-Jones nació en 1899 en Cardiff, Gales. Estudió medicina en Londres y trabajó como ayudante de un médico muy reconocido de la casa real.\nEn 1927 dejó la medicina para ser pastor de una pequeña iglesia en Aberavon, en Gales. Decía que la mayor necesidad de las personas era el evangelio.\nDesde 1938 hasta 1968 fue pastor de la Capilla de Westminster, en Londres, donde predicó en forma de exposición bíblica, versículo por versículo, durante años: series sobre Romanos, Efesios y otros libros.\nEscribió «Depresión espiritual» y «La predicación y los predicadores». Murió en 1981."},qs:[
+   ["¿De qué país era Martyn Lloyd-Jones?","Gales",["Escocia","Irlanda","Francia"],"Nació en Cardiff."],
+   ["¿Qué profesión dejó para ser pastor?","Médico",["Abogado","Maestro","Marino"],"Era médico en Londres."],
+   ["¿En qué ciudad fue pastor desde 1938 hasta 1968?","Londres",["Cardiff","Edimburgo","Oxford"],"Pastoreó la Capilla de Westminster."],
+   ["¿Qué libros de la Biblia expuso en series de muchos sermones?","Romanos y Efesios",["Solo los Salmos","Solo Génesis","Solo Apocalipsis"],"Sus sermones sobre Romanos ocupan varios tomos."],
+   ["¿Cómo se llama su libro sobre cómo predicar?","La predicación y los predicadores",["La institución","El tesoro de David","Pensamientos expositivos"],"Reúne lo que enseñó sobre la predicación."],
+   ["¿Cómo predicaba la Biblia?","De forma expositiva, versículo por versículo",["Solo con historias de ficción","Solo con música","Sin usar la Biblia"],"Predicaba explicando el texto bíblico."],
+   ["¿Cuál es el título de uno de sus libros?","Depresión espiritual",["Gracia abundante","Santidad","El peregrino"],"Escribió sobre cómo ayudar al creyente abatido."],
+   ["¿En qué año murió?","1981",["1899","1927","2005"],"Murió en 1981."]
+  ]}
+ ]}
+];
+const BIOKEYS=[];BIO_UNITS.forEach(u=>u.lessons.forEach(l=>BIOKEYS.push(l.title)));
 
 /* ============================================================
    ¡YO RESPONDO! — juego presencial del botón rojo (2 a 8 jugadores, en el mismo lugar)
@@ -7758,6 +8055,8 @@ const ACH=[
  {id:'v20',t:'Veinte versículos',d:'Practica 20 versículos distintos',f:s=>Object.keys(s.verses).length>=20},
  {id:'unit',t:'Unidad completa',d:'Termina todas las lecciones de una unidad',f:s=>UNITS.some((u,ui)=>u.lessons.every((_,li)=>s.done[lk(ui,li)]))},
  {id:'group',t:'Noche en familia',d:'Termina un juego en grupo',f:s=>(s.gplays||0)>=1},
+ {id:'bio1',t:'Memoria de la iglesia',d:'Completa tu primera biografía',f:s=>BIOKEYS.some(k=>s.done[k])},
+ {id:'bioall',t:'Nube de testigos',d:'Termina todas las biografías',f:s=>BIOKEYS.every(k=>s.done[k])},
  {id:'gk1',t:'Alfa',d:'Completa tu primera lección de griego',f:s=>GKKEYS.some(k=>s.done[k])},
  {id:'gkabc',t:'De alfa a omega',d:'Termina las lecciones del alfabeto griego',f:s=>GK_UNITS[0].lessons.every(l=>s.done[l.title])},
  {id:'gkw',t:'Vocabulario griego',d:'Termina las 7 lecciones de palabras',f:s=>GK_UNITS[2].lessons.every(l=>s.done[l.title])},
@@ -8519,28 +8818,30 @@ function buildQuestions(verses,hand,max=10,cx){
    ============================================================ */
 let TAB='path',resetArmed=false;
 
-const curUnits=()=>S.course==='gk'?GK_UNITS:UNITS;
+const curUnits=()=>S.course==='gk'?GK_UNITS:S.course==='bio'?BIO_UNITS:UNITS;
+const CINFO=c=>c==='gk'?{n:'Griego',i:flagGR()}:c==='bio'?{n:'Biografías',i:'🕯️'}:{n:'Biblia',i:'📖'};
+const bioDone=()=>BIOKEYS.filter(k=>S.done[k]).length;
 function firstUndone(U){const keys=U.flatMap(u=>u.lessons.map(l=>l.title));const i=keys.findIndex(k=>!S.done[k]);return i<0?keys.length:i;}
 const PCOL=['#1CB0F6','#FF9600','#58CC02','#A560E8','#FF4B4B','#00B894','#E91E8C','#2B70C9'];
 
 let CMENU=false;
-function courseProg(c){const keys=c==='gk'?GKKEYS:ALLKEYS;const d=keys.filter(k=>S.done[k]).length;return d+' de '+keys.length;}
+function courseProg(c){const keys=c==='gk'?GKKEYS:c==='bio'?BIOKEYS:ALLKEYS;const d=keys.filter(k=>S.done[k]).length;return d+' de '+keys.length;}
 function renderCmenu(){
   const el=document.getElementById('cmenu');if(!el)return;
   if(!CMENU){el.hidden=true;el.innerHTML='';return;}
-  const gk=S.course==='gk';
+  const gk=S.course==='gk',bio=S.course==='bio';
   el.hidden=false;
   el.innerHTML='<div class="cmenu-bg" data-a="cmenu-close"></div><div class="cmenu" role="dialog" aria-label="Mis cursos"><div class="in"><div style="display:flex;align-items:center;gap:12px">'+mascot('wink',56)+'<h2 style="margin:0">Mis cursos</h2></div><p class="sub">Elige en qué curso quieres estar. Cada curso tiene su ruta y su repaso.</p><div class="ctiles">'+
-   '<button class="ctile '+(!gk?'on':'')+'" data-a="course" data-c="bib"><span class="ci">📖</span><b>Biblia</b><small>'+courseProg('bib')+' lecciones</small></button>'+
+   '<button class="ctile '+(!gk&&!bio?'on':'')+'" data-a="course" data-c="bib"><span class="ci">📖</span><b>Biblia</b><small>'+courseProg('bib')+' lecciones</small></button>'+
    '<button class="ctile '+(gk?'on':'')+'" data-a="course" data-c="gk"><span class="ci">'+flagGR()+'</span><b>Griego</b><small>'+courseProg('gk')+' lecciones</small></button>'+
-   '<button class="ctile" disabled><span class="ci">🕎</span><b>Hebreo</b><small>Próximamente</small></button>'+
+   '<button class="ctile '+(bio?'on':'')+'" data-a="course" data-c="bio">'+(bioDone()<3?'<span class="nwtag">NUEVO</span>':'')+'<span class="ci">🕯️</span><b>Biografías</b><small>'+courseProg('bio')+' lecciones</small></button>'+
    '</div><button class="cl" data-a="cmenu-close">Cerrar</button></div></div>';
 }
 function setCmenu(v){CMENU=!!v;renderCmenu();renderTop();}
 function renderTop(){
   const t=today(),doneToday=S.lastDay===t,alive=S.streak>0;
   $('#top').innerHTML=
-   '<button class="cbtn" data-a="cmenu" aria-haspopup="true" aria-expanded="'+(typeof CMENU!=='undefined'&&CMENU)+'" aria-label="Curso actual: '+(S.course==='gk'?'Griego':'Biblia')+'. Cambiar de curso"><span class="ci">'+(S.course==='gk'?flagGR():'📖')+'</span><span>'+(S.course==='gk'?'Griego':'Biblia')+'</span><span class="car" aria-hidden="true">▼</span></button>'+
+   '<button class="cbtn" data-a="cmenu" aria-haspopup="true" aria-expanded="'+(typeof CMENU!=='undefined'&&CMENU)+'" aria-label="Curso actual: '+CINFO(S.course).n+'. Cambiar de curso"><span class="ci">'+CINFO(S.course).i+'</span><span>'+CINFO(S.course).n+'</span>'+(!S.bioSeen&&S.course!=='bio'?'<span class="nwtag sm">NUEVO</span>':'')+'<span class="car" aria-hidden="true">▼</span></button>'+
    '<div class="chips">'+
    (S.freezes?'<span class="chip shield" title="Protectores de racha" aria-label="'+S.freezes+' protectores de racha">'+IC.shield+S.freezes+'</span>':'')+
    '<span class="chip streak '+(doneToday?'on':alive?'risk':'off')+'" aria-label="Racha de '+S.streak+' días">'+IC.flame+S.streak+'</span>'+
@@ -8548,7 +8849,10 @@ function renderTop(){
 }
 function renderTabs(){
   const gk=S.course==='gk';
-  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review],gk?['dic','Palabras',IC.book]:['read','Lectura',IC.read],['games','Juegos',IC.users]];
+  const bio=S.course==='bio';
+  const tabs=[['path','Ruta',IC.path],['review','Repaso',IC.review]];
+  if(!bio)tabs.push(gk?['dic','Palabras',IC.book]:['read','Lectura',IC.read]);
+  tabs.push(['games','Juegos',IC.users]);
   if(famOn())tabs.push(['fr','Amigos',IC.heart]);
   tabs.push(['me','Perfil',IC.trophy]);
   const pend=(typeof giftN==='function'?giftN():0)+(typeof frPend==='function'?frPend():0);
@@ -8575,9 +8879,18 @@ function flameLeft(d){
   const n=Math.floor(left);return (n===1?'Te queda 1 hora':'Te quedan '+n+' horas');
 }
 const flameAtRisk=()=>S.streak>0&&S.lastDay!==dstr(flameNow());
+/* La carita de Lampy se va preocupando a lo largo del día (la llamita se achica a la vez) */
+function riskMood(d){
+  d=d||flameNow();const hh=d.getHours()+d.getMinutes()/60;
+  return hh<10?'happy':hh<14?'curious':hh<18?'uneasy':hh<21.5?'worried':'panic';
+}
 function flameMsg(){
-  const n=S.streak;
-  return '¡Cuida tu llamita! Tu racha de '+n+(n===1?' día':' días')+' se apaga a medianoche. '+flameLeft()+' para hacer una lección.';
+  const n=S.streak,dd=n+(n===1?' día':' días'),m=riskMood();
+  if(m==='happy')return '¡Buen día! Tu racha de '+dd+' está esperando tu lección de hoy.';
+  if(m==='curious')return 'Tu racha de '+dd+' sigue viva. ¿Hacemos una lección hoy?';
+  if(m==='uneasy')return 'El día va pasando… Tu llamita de '+dd+' necesita tu lección. '+flameLeft()+'.';
+  if(m==='worried')return '¡Cuida tu llamita! Tu racha de '+dd+' se apaga a medianoche. '+flameLeft()+' para hacer una lección.';
+  return '¡Ya casi se apaga! Una lección rápida salva tu racha de '+dd+'. '+flameLeft()+'.';
 }
 function flameTick(){
   try{
@@ -8587,41 +8900,46 @@ function flameTick(){
       g.setAttribute('opacity',(.55+.45*Math.min(1,v)).toFixed(2));
     });
     const b=document.getElementById('homebub');
-    if(b&&b.dataset.fl&&flameAtRisk())b.textContent=flameMsg();
+    if(b&&b.dataset.fl&&flameAtRisk()){
+      b.textContent=flameMsg();
+      const m=document.querySelector('.hero .mas[data-live]'),mm=riskMood();
+      if(m&&!m.classList.contains(mm)){m.outerHTML=mascot(mm,parseInt(m.style.width)||84,v);}
+    }
   }catch(e){}
 }
 try{setInterval(flameTick,60000);}catch(e){}
 function homeHTML(){
-  const gk=S.course==='gk',U=curUnits(),t=today(),xpT=S.days[t]||0,pct=Math.min(1,xpT/S.goal),C=175.9;
+  const gk=S.course==='gk',bio=S.course==='bio',U=curUnits(),t=today(),xpT=S.days[t]||0,pct=Math.min(1,xpT/S.goal),C=175.9;
   let msg,mood='happy';
   if(xpT>=S.goal){msg='¡Meta cumplida! Tu racha está a salvo por hoy.';mood='cheer';}
-  else if(S.streak>0&&S.lastDay!==t){msg=flameMsg();mood='think';}
+  else if(S.streak>0&&S.lastDay!==t){msg=flameMsg();mood=riskMood();}
   else if(S.streak>0){msg='Llevas '+S.streak+' días seguidos. Te faltan '+(S.goal-xpT)+' XP para tu meta.';mood='wink';}
-  else{mood='wink';msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':'¡Hola'+(S.me&&S.me.name?', '+S.me.name:'')+'! Haz tu primera lección y empieza tu racha.';}
+  else{mood='wink';msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':bio?'¡Conoce a los hombres y mujeres que Dios usó en su iglesia! Haz tu primera lección.':'¡Hola'+(S.me&&S.me.name?', '+S.me.name:'')+'! Haz tu primera lección y empieza tu racha.';}
   const week=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');week.push('<div class="day"><div class="dot '+((S.days[d]||0)>0?'on':'')+(i===0?' today':'')+'">'+IC.check+'</div>'+DOW[dt.getDay()]+'</div>');}
   const cur=firstUndone(U);let flat=0;
   const offs=[0,46,0,-46];
   const units=U.map((u,ui)=>{
     const dn=u.lessons.filter(l=>S.done[l.title]).length,u0=flat,full=dn===u.lessons.length,isNew=!full&&dn===0&&u0>0&&cur>=u0&&cur<u0+u.lessons.length;
     const emo=UNIT_EMO[u.title]||'📖';
-    return '<section class="unit" style="--u:'+COLORS[(gk?ui+4:ui)%COLORS.length]+'"><div class="unit-h"><div><h2>'+esc(u.title)+(isNew?'<span class="newtag">¡Nueva unidad!</span>':'')+'</h2><p>'+esc(u.sub)+'</p><span class="count'+(full?' full':'')+'">'+(full?'🏅 Unidad completa':dn+' de '+u.lessons.length)+'</span></div><div class="uemo" aria-hidden="true">'+emo+'</div></div><div class="path">'+
+    return '<section class="unit" style="--u:'+COLORS[(gk?ui+4:bio?ui+2:ui)%COLORS.length]+'"><div class="unit-h"><div><h2>'+esc(u.title)+(isNew?'<span class="newtag">¡Nueva unidad!</span>':'')+'</h2><p>'+esc(u.sub)+'</p><span class="count'+(full?' full':'')+'">'+(full?'🏅 Unidad completa':dn+' de '+u.lessons.length)+'</span></div><div class="uemo" aria-hidden="true">'+emo+'</div></div><div class="path">'+
     u.lessons.map((l,li)=>{
       const idx=flat++,isDone=!!S.done[l.title],locked=idx>cur&&!isDone,isCur=idx===cur;
       const inner=isDone?IC.check:locked?IC.lock:'<span class="e">'+emo+'</span>';
       return '<div class="stop '+(isCur?'cur':'')+'" style="--off:'+offs[li%4]+'px">'+(isCur?'<div class="start-tip">¡EMPIEZA!</div>':'')+
-      '<button class="node '+(isDone?'done ':'')+(locked?'locked':'')+(isCur?' current':'')+'" data-a="lesson" data-c="'+(gk?'gk':'bib')+'" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+inner+'</button><span>'+esc(l.title)+'</span></div>';
+      '<button class="node '+(isDone?'done ':'')+(locked?'locked':'')+(isCur?' current':'')+'" data-a="lesson" data-c="'+(gk?'gk':bio?'bio':'bib')+'" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+inner+'</button><span>'+esc(l.title)+'</span></div>';
     }).join('')+'</div></section>';
   }).join('');
   const tip=(!isStandalone()&&!S.tipHide)?'<div class="install"><b>📲 Instala Lampy en tu teléfono</b><br>'+(isIOS()?'En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Úsala siempre desde ese ícono para que no se borre tu progreso.':'Abre el menú del navegador y elige <b>Añadir a pantalla de inicio</b> o <b>Instalar app</b>. Así se abre como una app y guarda tu progreso.')+'<br>'+(INSTALL_EVT?'<button class="btn sm" data-a="install" style="margin-right:8px">Instalar ahora</button>':'')+'<button class="btn sm purple" data-a="tip">Entendido</button></div>':'';
-  const sw='<div class="cswitch"><button class="cs '+(!gk?'on':'')+'" data-a="course" data-c="bib">📖 Biblia</button><button class="cs '+(gk?'on':'')+'" data-a="course" data-c="gk">'+flagGR()+' Griego</button></div>';
+  const sw='<div class="cswitch"><button class="cs '+(!gk&&!bio?'on':'')+'" data-a="course" data-c="bib">📖 Biblia</button><button class="cs '+(gk?'on':'')+'" data-a="course" data-c="gk">'+flagGR()+' Griego</button><button class="cs '+(bio?'on':'')+'" data-a="course" data-c="bio">🕯️ Biografías</button></div>';
   let daily;
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
+  else if(bio){const w=botd();daily='<section class="card votd"><span class="tagv">🕯️ Persona del día</span><q>'+esc(w.t)+'</q><cite>'+esc(w.n)+'</cite></section>';}
   else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
   '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rfCardHTML()+rdHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
-  '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
+  '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':bio?'Biografías: datos históricos resumidos de fuentes de dominio público. Textos bíblicos citados: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
 }
 function lvlOf(r){
   const s=S.verses[r].c-S.verses[r].w*1.5;
@@ -8643,8 +8961,16 @@ function gkReviewHTML(){
    '<button class=\"btn orange\" data-a=\"review\" '+(ready?'':'disabled')+'>'+(ready?'Empezar repaso':'Bloqueado')+'</button></div></section>'+
    (ready?'<h3 style=\"margin:18px 0 8px\">Las que más te cuestan</h3><div class=\"list\">'+weak.map(w=>{const e=GK_BY[w.id],l=lvlScore(w.s);return '<div class=\"li\"><cite class=\"gk\">'+esc(e.g)+'</cite> <span class=\"lvl\" style=\"background:'+l.c+'\">'+l.t+'</span><p>'+esc(e.tr+' — '+e.es)+'</p><div class=\"meter\"><i style=\"width:'+l.w+'%;background:'+l.c+'\"></i></div></div>';}).join('')+'</div>':'');
 }
+function bioPool(){const o=[];BIO_UNITS.forEach(u=>u.lessons.forEach(l=>{if(S.done[l.title])l.qs.forEach(q=>o.push({l:l.title,q}));}));return o;}
+function bioReviewHTML(){
+  const n=bioDone(),ready=n>=1;
+  return '<h1 class="page">Repaso</h1>'+
+   '<section class="revhero">'+mascot(ready?'think':'happy',90)+'<div style="flex:1"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Repasa preguntas de las biografías que ya estudiaste. Llevas <b>'+n+'</b> de '+BIOKEYS.length+' lecciones.':'Completa tu primera biografía y aquí podrás repasarla.')+'</p>'+
+   '<button class="btn orange" data-a="review" '+(ready?'':'disabled')+'>'+(ready?'Empezar repaso':'Bloqueado')+'</button></div></section>';
+}
 function reviewHTML(){
   if(S.course==='gk')return gkReviewHTML();
+  if(S.course==='bio')return bioReviewHTML();
   const seen=Object.keys(S.verses).filter(r=>VBY[r]);
   const ready=seen.length>=3;
   const weak=seen.map(r=>({r,s:S.verses[r].c-S.verses[r].w*1.5})).sort((a,b)=>a.s-b.s).slice(0,6);
@@ -8672,12 +8998,12 @@ function achWatch(){
 }
 {const _aw=setInterval(achWatch,900);try{if(_aw&&_aw.unref)_aw.unref();}catch(e){}}
 function meHTML(){
-  const ld=ALLKEYS.concat(GKKEYS).filter(k=>S.done[k]).length;
+  const ld=ALLKEYS.concat(GKKEYS,BIOKEYS).filter(k=>S.done[k]).length;
   return '<div class="phead"><h1 class="page">Tu perfil</h1><button class="gear" data-a="settings" aria-label="Ajustes" title="Ajustes">⚙️</button></div><div class="stats">'+
    '<div class="stat s1"><span class="se">🔥</span><div><b>'+S.streak+'</b><span>Racha actual</span></div></div>'+
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
-   '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+cloudCardHTML()+
+   '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length+BIOKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+cloudCardHTML()+
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
    '<section class="card"><b>🛡️ Protectores de racha</b><p class="muted" style="margin:2px 0 0;font-size:14px">Tienes '+S.freezes+' de 2. Ganas uno cada 7 días de racha y se usa solo si un día no alcanzas a practicar.</p></section>'+
@@ -8720,6 +9046,7 @@ function render(){
   if(TAB==='fr'&&!famOn())TAB='path';
   if(S.course==='gk'&&TAB==='read')TAB='path';
   if(S.course!=='gk'&&TAB==='dic')TAB='path';
+  if(S.course==='bio'&&TAB==='read')TAB='path';
   applyTheme();refreshStreak();renderTop();renderTabs();
   if(frActive())setTimeout(()=>frPoll(false,TAB==='fr'),80);
   if(TAB==='me')setTimeout(()=>{prepShare('streak').catch(()=>{});},150);
@@ -9015,9 +9342,9 @@ function unitDone(u){return u.lessons.every(l=>S.done[l.title]);}
 function nextUnitIdx(U){for(let i=0;i<U.length;i++)if(!unitDone(U[i]))return i;return -1;}
 function showUnitCel(uc){
   const el=document.getElementById('ucel');if(!el)return;
-  const U=uc.gk?GK_UNITS:UNITS,u=U[uc.ui],col=c=>COLORS[((uc.gk?c+4:c))%COLORS.length];
+  const uk=uc.c||(uc.gk?'gk':'bib'),U=uk==='gk'?GK_UNITS:uk==='bio'?BIO_UNITS:UNITS,u=U[uc.ui],col=c=>COLORS[((uk==='gk'?c+4:uk==='bio'?c+2:c))%COLORS.length];
   const total=U.length,doneN=U.filter(unitDone).length,ni=nextUnitIdx(U),nu=ni>=0?U[ni]:null;
-  const curso=uc.gk?'Griego':'Biblia';
+  const curso=CINFO(uk).n;
   el.style.setProperty('--u',col(uc.ui));
   el.innerHTML=
    '<span class="uctag">¡UNIDAD COMPLETADA!</span>'+
@@ -9046,8 +9373,8 @@ function finishLesson(){
   if(isReview)S.reviews++;
   else{const p=S.done[L.meta.key]||{n:0};S.done[L.meta.key]={n:p.n+1,acc:Math.max(p.acc||0,L.firstTry/L.total)};}
   if(!isReview){
-    const gkc=L.meta.course==='gk',UU=gkc?GK_UNITS:UNITS,ui0=unitOf(UU,L.meta.key);
-    if(!L.wasDone&&ui0>=0&&unitDone(UU[ui0])&&!(S.cel&&S.cel[UU[ui0].title])){S.cel=S.cel||{};S.cel[UU[ui0].title]=1;L.unitCel={ui:ui0,gk:gkc};}
+    const gkc=L.meta.course==='gk',cc=L.meta.course||'bib',UU=gkc?GK_UNITS:cc==='bio'?BIO_UNITS:UNITS,ui0=unitOf(UU,L.meta.key);
+    if(!L.wasDone&&ui0>=0&&unitDone(UU[ui0])&&!(S.cel&&S.cel[UU[ui0].title])){S.cel=S.cel||{};S.cel[UU[ui0].title]=1;L.unitCel={ui:ui0,gk:gkc,c:cc};}
   }
   S.lessons++;if(L.mistakes===0)S.perfect++;
   if(S.lessons===1&&!S.cloudAsked&&cloudOn()&&!signedIn())L.offerCloud=true;
@@ -9546,10 +9873,18 @@ document.addEventListener('click',e=>{
     if(b.dataset.c==='gk'){
       const les=GK_UNITS[ui].lessons[li];
       startLesson({type:'lesson',key:les.title,title:les.title,verses:[],words:les.wordIds||[],course:'gk'},gkBuild(les),les.intro);
+    }else if(b.dataset.c==='bio'){
+      const les=BIO_UNITS[ui].lessons[li];
+      startLesson({type:'lesson',key:les.title,title:les.title,verses:[],words:[],course:'bio'},gkHand(les),les.intro);
     }else{
       const les=UNITS[ui].lessons[li];
       startLesson({type:'lesson',key:lk(ui,li),title:les.title,verses:les.verses},buildQuestions(les.verses,les.qs,les.max||10,les.cx),les.intro);
     }
+  }
+  else if(a==='review'&&S.course==='bio'){
+    const pool=bioPool();if(!pool.length)return;
+    const sel=shuffle(pool).slice(0,8);
+    startLesson({type:'review',title:'Repaso de biografías',verses:[],words:[],course:'bio'},gkHand({qs:sel.map(x=>x.q)}));
   }
   else if(a==='review'&&S.course==='gk'){
     const seen=gkSeen();if(seen.length<3)return;
@@ -9662,7 +9997,7 @@ document.addEventListener('click',e=>{
   else if(a==='goal'){S.goal=+b.dataset.g;save();render();}
   else if(a==='cmenu'){setCmenu(!CMENU);}
   else if(a==='cmenu-close'){setCmenu(false);}
-  else if(a==='course'){S.course=b.dataset.c;TAB='path';CMENU=false;save();render();window.scrollTo(0,0);}
+  else if(a==='course'){S.course=b.dataset.c;if(S.course==='bio')S.bioSeen=true;TAB='path';CMENU=false;save();render();window.scrollTo(0,0);}
   else if(a==='dic-open'||a==='dic-peek'){dicOpen(b.dataset.w);}
   else if(a==='dic-close'){dicClose();}
   else if(a==='abc-go'){DICV='a';S.course='gk';TAB='dic';render();window.scrollTo(0,0);}
