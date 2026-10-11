@@ -580,6 +580,12 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .fpanel .chb{margin-top:8px}
 .fpanel .frun{margin-top:8px}
 .fradd2{margin-top:14px}
+.fnb{flex:1;min-width:0;display:grid;line-height:1.15}
+.fnb .fnm{flex:none}
+.fsub{font-size:12px;font-weight:800;color:var(--muted)}
+.fsub .frpill{font-size:11px;padding:1px 8px}
+.fsep{border-top:2px dashed var(--line);margin:8px 0 0}
+.fsep+.frm .frow{border-top:0}
 @media (prefers-reduced-motion:reduce){.frm .fcv{transition:none}}
 .mrow{background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;padding:12px 14px}
 .mrow.me{border-color:var(--blue);background:var(--blue-bg)}
@@ -7585,13 +7591,19 @@ function frBoardHTML(d,limit){
 }
 let FRX='',FRALL=false;
 function frRowHTML(m,i){
-  const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name),open=FRX===m.device;
-  return '<div class="frm'+(open?' open':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+': racha '+frStreak(m)+', '+frWeek(m)+' XP esta semana. Ver opciones"><span class="fpos">'+(i===0&&frWeek(m)>0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><b class="fnm">'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b>'+(frToday(m)?'<span class="ftd" title="Ya practicó hoy" aria-label="Ya practicó hoy">✔</span>':'')+'<span class="fst">🔥 '+frStreak(m)+'</span><span class="fxp">⚡ '+frWeek(m)+'</span><span class="fcv" aria-hidden="true">▾</span></button>'+
+  const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name),open=FRX===m.device,fw=((FR.data&&FR.data.followers)||[]).find(f=>f.device===m.device),isNew=fw&&FR.recvNew.indexOf(m.device)>=0;
+  return '<div class="frm'+(open?' open':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+': racha '+frStreak(m)+', '+frWeek(m)+' XP esta semana. Ver opciones"><span class="fpos">'+(i===0&&frWeek(m)>0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><span class="fnb"><b class="fnm">'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b>'+(fw?'<small class="fsub">'+(isNew?'<span class="frpill new">Nuevo</span> ':'')+'Te sigue</small>':'')+'</span>'+(frToday(m)?'<span class="ftd" title="Ya practicó hoy" aria-label="Ya practicó hoy">✔</span>':'')+'<span class="fst">🔥 '+frStreak(m)+'</span><span class="fxp">⚡ '+frWeek(m)+'</span><span class="fcv" aria-hidden="true">▾</span></button>'+
     '<div class="fpanel"'+(open?'':' hidden')+'><div class="fmeta muted">'+esc(frWhen(m.last_day))+' · 📚 '+(m.lessons||0)+' lecciones'+(frNoName(m)?' · Aún no puso su nombre':'')+'</div>'+
     '<div class="chb">'+['animo','fuego','oracion'].map(k=>'<button class="chbtn" data-a="fr-cheer" data-to="'+to+'" data-k="'+k+'" aria-label="'+esc(KIND_T[k])+' a '+nm+'" title="'+esc(KIND_T[k])+'">'+KIND_E[k]+'</button>').join('')+
     '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar">🎁</button>'+
     '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar">🎮</button></div>'+
-    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+own+'">'+(frAlias(m)?'Cambiar apodo':'Poner apodo')+'</button><button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button></div></div></div>';
+    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+own+'">'+(frAlias(m)?'Cambiar apodo':'Poner apodo')+'</button><button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button>'+(fw?'<button class="frun" data-a="fr-rem" data-to="'+to+'" data-n="'+nm+'">Quitar de mis seguidores</button>':'')+'</div></div></div>';
+}
+function frOnlyHTML(f){
+  const to=esc(f.device),nm=esc(frName(f)),open=FRX===f.device,isNew=FR.recvNew.indexOf(f.device)>=0;
+  return '<div class="frm'+(open?' open':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+' te sigue. Ver opciones"><span class="fpos"></span><span class="fav">'+esc(f.avatar)+'</span><span class="fnb"><b class="fnm">'+nm+(f.badge?' '+badgeE(f.badge):'')+'</b><small class="fsub">'+(isNew?'<span class="frpill new">Nuevo</span> ':'')+'Te sigue</small></span><span class="fcv" aria-hidden="true">▾</span></button>'+
+    '<div class="fpanel"'+(open?'':' hidden')+'><button class="btn sm" data-a="fr-back" data-to="'+to+'" aria-label="Seguir también a '+nm+'">Seguir también</button>'+
+    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+esc(f.name)+'">Poner apodo</button><button class="frun" data-a="fr-rem" data-to="'+to+'" data-n="'+nm+'">Quitar de mis seguidores</button></div></div></div>';
 }
 function frListHTML(d){
   const mine=famStats();
@@ -7603,8 +7615,10 @@ function frListHTML(d){
   const rows=shown.map(x=>{const i=all.indexOf(x);
     if(x.me)return '<div class="frow frme"><span class="fpos">'+(i===0&&x.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc((d.me&&d.me.avatar)||'🙂')+'</span><b class="fnm">Tú'+(S.badge?' '+badgeE(S.badge):'')+'</b>'+(S.lastDay===today()?'<span class="ftd" aria-label="Ya practicaste hoy">✔</span>':'')+'<span class="fst">🔥 '+x.st+'</span><span class="fxp">⚡ '+x.wk+'</span><span class="fcv" aria-hidden="true"></span></div>';
     return frRowHTML(x.m,i);}).join('');
-  return '<section class="card famcard frlist2"><div class="famh"><b>🏆 Esta semana</b><span class="muted">🔥 racha · ⚡ XP</span></div>'+rows+
-    (all.length>LIM+1?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-all">'+(FRALL?'Ver menos':'Ver todos ('+(all.length-1)+')')+'</button>':'')+'</section>';
+  const only=(d.followers||[]).filter(f=>!d.following.some(m=>m.device===f.device)),OL=3,olim=!FRALL&&only.length>OL;
+  const onlyRows=(olim?only.slice(0,OL):only).map(frOnlyHTML).join('');
+  return '<section class="card famcard frlist2"><div class="famh"><b>🏆 Esta semana</b><span class="muted">🔥 racha · ⚡ XP</span></div>'+rows+(onlyRows?'<div class="fsep"></div>'+onlyRows:'')+
+    ((all.length>LIM+1||only.length>OL)?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-all">'+(FRALL?'Ver menos':'Ver todos ('+(all.length-1+only.length)+')')+'</button>':'')+'</section>';
 }
 function frFollowingHTML(m){
   const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name);
@@ -7643,9 +7657,6 @@ function frHTML(){
     '<div class="fradd-sep"></div>'+
     '<div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de usuario que te pasó.</small></div></div>'+
     '<div class="jr-in" style="margin-top:10px"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></section></details>';
-  /* 3. Te siguen (plegado) */
-  out+='<details class="gsec frfw" data-k="fw"'+(GSEC.fw?' open':'')+'><summary><span>👣 Te siguen</span><em class="gbadge" style="background:var(--surface2);color:var(--ink)">'+fws.length+'</em></summary>'+
-    (fws.length?'<section class="card" style="padding:6px 14px">'+fws.map(frFollowerHTML).join('')+'</section>':'<p class="muted" style="margin:6px 0 0;font-size:14px;font-weight:800">Cuando alguien escriba tu código, aparecerá aquí.</p>')+'</details>';
   /* 4. Regalos y tarjetas */
   const gn=giftN();
   out+='<div class="frtiles"><button class="frtile" data-a="'+(gn?'gift-inbox':'gift-mine')+'"><span class="te" aria-hidden="true">🎁</span><b>Regalos</b><small>'+(gn?'Tienes '+gn+' por abrir':'Mis regalos')+'</small>'+(gn?'<em class="gbadge">'+gn+'</em>':'')+'</button>'+
