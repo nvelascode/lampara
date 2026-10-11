@@ -5576,6 +5576,8 @@ function bzPrime(){
 }
 function bzStopSpeak(){try{if(BZ)BZ.spk++;if(canSpeak())speechSynthesis.cancel();}catch(e){}}
 function bzLeft(){bzStopSpeak();bzWake(false);}
+const BZDIAG={err:''};
+function bzDiag(){let n='?';try{n=(speechSynthesis.getVoices()||[]).length;}catch(e){}let es='?';try{es=(speechSynthesis.getVoices()||[]).filter(v=>/^es/i.test(v.lang)).length;}catch(e){}return 'Diagnóstico: voces '+n+' (en español '+es+')'+(BZDIAG.err?', error: '+BZDIAG.err:', sin respuesta del motor de voz');}
 function bzSpeak(text,done){
   /* Android/Chrome: la voz a veces no arranca si se habla justo después de cancelar, si las voces aún no cargaron o si el idioma elegido no está instalado.
      Por eso: se espera un instante tras cancelar, se reintenta con la voz por defecto y solo se rinde si de verdad no suena. */
@@ -5595,7 +5597,7 @@ function bzSpeak(text,done){
       const retry=()=>{if(ended)return;ended=true;if(mode==='voz'&&!begun){say(t,'plain',after);}else if(mode==='voz'||mode==='plain'){after(begun);}};
       u.onstart=()=>{begun=true;started=true;};
       u.onend=()=>{if(ended)return;ended=true;after(true);};
-      u.onerror=()=>{if(token!==g.spk)return;retry();};
+      u.onerror=ev=>{BZDIAG.err=(ev&&ev.error)||'error';if(token!==g.spk)return;retry();};
       try{speechSynthesis.resume();speechSynthesis.speak(u);}catch(e){retry();return;}
       /* si no arrancó en 2,5 s, probar con la voz por defecto */
       setTimeout(()=>{if(!begun&&!ended&&token===g.spk&&!finished){try{speechSynthesis.cancel();}catch(e){}ended=true;if(mode==='voz')setTimeout(()=>say(t,'plain',after),150);else after(false);}},2500);
@@ -5888,7 +5890,7 @@ function bzPlayHTML(){
       (plays?bzBtn('wait','ESCUCHA','espera el timbre'):'');
     if(host){
       const fallback=g.cfg.read==='screen'||g.ui.voiceFail;
-      if(fallback)main+='<div class="bzq"><small>'+(g.cfg.read==='screen'?'Lee esta pregunta en voz alta:':'La voz no se pudo activar. Lee esta pregunta en voz alta:')+'</small>'+esc(bzQText(q)).replace(/\n/g,'<br>')+'</div>';
+      if(fallback)main+='<div class="bzq"><small>'+(g.cfg.read==='screen'?'Lee esta pregunta en voz alta:':'La voz no se pudo activar. Lee esta pregunta en voz alta:')+'</small>'+esc(bzQText(q)).replace(/\n/g,'<br>')+(g.ui.voiceFail?'<small style="display:block;margin-top:8px;opacity:.7">'+esc(bzDiag())+'</small>':'')+'</div>';
       foot='<div class="lf"><div class="in">'+(fallback?'<button class="btn" style="margin-bottom:10px" data-a="bz-go">✔ Ya la leí · ¡dar el timbre!</button>'+(g.ui.voiceFail&&canSpeak()?'<button class="btn ghost" style="margin-bottom:10px" data-a="bz-say">🔊 Probar la voz otra vez</button>':''):'')+'<div class="row2"><button class="btn ghost" data-a="bz-repeat">🔁 Repetir</button><button class="btn ghost" data-a="bz-skip">⏭ Saltar</button></div></div></div>';
     }
   }else if(T.stage==='cd'){
@@ -7455,6 +7457,31 @@ function authSignOut(){
 let INSTALL_EVT=null;
 const UPD={tag:null,shown:false,last:0};
 const swReady=()=>{try{return !!(navigator.serviceWorker&&navigator.serviceWorker.controller);}catch(e){return false;}};
+function vozCardHTML(){return '<section class="card"><b>🔊 Probar la voz</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Lampy lee en voz alta con la voz de tu teléfono. Si no suena, aquí se ve por qué.</p><button class="btn blue sm" data-a="voz-test">🔊 Probar la voz</button><div id="voztest" class="muted" style="margin-top:10px;font-size:13px;word-break:break-word"></div></section>';}
+function vozTest(){
+  const out=document.getElementById('voztest');const say=t=>{if(out)out.innerHTML=t;};
+  if(!canSpeak()){say('Este navegador no tiene voz (speechSynthesis no existe).');return;}
+  let vs=[];try{vs=speechSynthesis.getVoices()||[];}catch(e){}
+  const es=vs.filter(v=>/^es/i.test(v.lang));
+  const info='Voces: '+vs.length+' · en español: '+es.length+(es.length?' ('+es.slice(0,4).map(v=>esc(v.name+' '+v.lang)).join(', ')+')':'');
+  say(info+'<br>Probando…');
+  const steps=[];let n=0;
+  const tryOne=(label,mk)=>new Promise(res=>{
+    let done=false,begun=false;const fin=r=>{if(done)return;done=true;steps.push(label+': '+r);res();};
+    try{
+      try{speechSynthesis.cancel();}catch(e){}
+      const u=mk();u.onstart=()=>{begun=true;};u.onend=()=>fin(begun?'sonó':'terminó sin empezar');u.onerror=ev=>fin('error '+((ev&&ev.error)||'?'));
+      speechSynthesis.speak(u);
+      setTimeout(()=>fin(begun?'empezó (sin fin)':'no arrancó en 4 s'),4000);
+    }catch(e){fin('excepción '+e.message);}
+  });
+  (async()=>{
+    await tryOne('1) voz por defecto',()=>new SpeechSynthesisUtterance('Hola, esta es la voz de Lampy.'));
+    await tryOne('2) idioma es',()=>{const u=new SpeechSynthesisUtterance('Hola, esta es la voz de Lampy.');u.lang='es';return u;});
+    if(es[0])await tryOne('3) voz '+es[0].lang,()=>{const u=new SpeechSynthesisUtterance('Hola, esta es la voz de Lampy.');u.voice=es[0];u.lang=es[0].lang;return u;});
+    say(info+'<br>'+steps.map(esc).join('<br>')+'<br><i>Cuéntale a Claude lo que dice aquí.</i>');
+  })();
+}
 function installCardHTML(){
   const ok=swReady();
   const st='<p class="muted" style="margin:8px 0 0;font-size:13px">Sin internet: '+(ok?'<b>listo ✓</b> La app abre y puedes estudiar sin señal.':'se activará la próxima vez que abras la app con internet.')+'</p>';
@@ -8504,7 +8531,7 @@ function meHTML(){
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
-  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+meCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
+  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+meCardHTML()+vozCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lampy.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    (signedIn()?'':'<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
@@ -9538,6 +9565,7 @@ document.addEventListener('click',e=>{
   else if(a==='fr-unf-yes'){frUnfollow(b.dataset.to);}
   else if(a==='fr-rem'){frAskRem(b.dataset.to,b.dataset.n);}
   else if(a==='fr-rem-yes'){frRemove(b.dataset.to);}
+  else if(a==='voz-test'){vozTest();}
   else if(a==='fr-invite'){frInvite();}
   else if(a==='fr-copy'){frCopy();}
   else if(a==='fr-reload'){FR.err='';frPoll(true,TAB==='fr');}
