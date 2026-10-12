@@ -3529,14 +3529,54 @@ function rpInfo(){
   const m=L.meta||{};
   return {prompt:String(q.prompt||''),correct:String(correct),given:String(given),ref:String(q.ref||''),lesson:String(m.title||m.t||''),course:String(S.course||'bib'),ok:!!ui.ok};
 }
+async function rpCanvas(i,vt){
+  try{if(document.fonts&&document.fonts.load){await Promise.race([document.fonts.load('900 60px Nunito'),new Promise(r=>setTimeout(r,800))]);}}catch(e){}
+  const W=1080,H=1920,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  const F='Nunito, system-ui, -apple-system, Segoe UI, Roboto, sans-serif',th=VS_TH[1];
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,th[0]);g.addColorStop(1,th[1]);x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle='rgba(255,255,255,.10)';[[110,300,170],[980,560,120],[930,1500,190],[90,1380,110],[540,1900,160]].forEach(o=>{x.beginPath();x.arc(o[0],o[1],o[2],0,7);x.fill();});
+  x.textAlign='center';x.textBaseline='alphabetic';
+  x.fillStyle='#fff';x.font='900 60px '+F;x.fillText('Lampy',W/2,130);
+  const tag='💡 Pregunta de la lección';x.font='900 38px '+F;const tw=x.measureText(tag).width+70;
+  rrect(x,W/2-tw/2,170,tw,76,38,'rgba(255,255,255,.95)');x.fillStyle=th[1];x.fillText(tag,W/2,223);
+  const sv=(mascot('cheer',240).match(/<svg[\s\S]*<\/svg>/)||[''])[0].replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" ');
+  const im=await svgToImage(sv);if(im)x.drawImage(im,W/2-120,265,240,240);
+  const top=530,bot=1690;let k=1,L;
+  const lay=()=>{
+    const qf=Math.round(54*k),af=Math.round(50*k),vf=Math.round(40*k),o={};
+    x.font='900 '+qf+'px '+F;o.ql=vsLines(x,i.prompt,W-240);o.qf=qf;o.qh=o.ql.length*qf*1.3+80;
+    o.al=[];o.ah=0;if(i.correct){x.font='900 '+af+'px '+F;o.al=vsLines(x,i.correct,W-240);o.af=af;o.ah=o.al.length*af*1.3+135;}
+    o.vl=[];o.vh=0;if(vt){x.font='italic 800 '+vf+'px '+F;o.vl=vsLines(x,'«'+vt+'»',W-200);o.vf=vf;o.vh=o.vl.length*vf*1.34+110;}
+    o.tot=o.qh+(o.ah?o.ah+24:0)+(o.vh?o.vh+24:0);return o;};
+  for(k=1;k>=0.5;k-=0.05){L=lay();if(L.tot<=bot-top)break;}
+  let y=top+Math.max(0,(bot-top-L.tot)/2);
+  // pregunta
+  rrect(x,70,y+8,W-140,L.qh,48,'rgba(0,0,0,.14)');rrect(x,70,y,W-140,L.qh,48,'#fff');
+  x.fillStyle='#3C3C3C';x.font='900 '+L.qf+'px '+F;L.ql.forEach((l,n)=>x.fillText(l,W/2,y+40+L.qf+n*L.qf*1.3-8));y+=L.qh+24;
+  // respuesta
+  if(L.ah){rrect(x,70,y,W-140,L.ah,48,'#D7FFB8');x.strokeStyle='#58CC02';x.lineWidth=6;x.beginPath();x.moveTo(0,0);x.stroke();
+    x.fillStyle='#2F7A00';x.font='900 32px '+F;x.fillText('✅ Respuesta',W/2,y+62);
+    x.font='900 '+L.af+'px '+F;x.fillStyle='#2B6A00';L.al.forEach((l,n)=>x.fillText(l,W/2,y+88+L.af+n*L.af*1.3-8));y+=L.ah+24;}
+  // versículo
+  if(L.vh){rrect(x,60,y,W-120,L.vh,56,'rgba(0,0,0,.20)');x.fillStyle='#fff';x.font='italic 800 '+L.vf+'px '+F;
+    L.vl.forEach((l,n)=>x.fillText(l,W/2,y+36+L.vf+n*L.vf*1.34-6));x.font='900 38px '+F;x.fillText(i.ref+' · RVR1960',W/2,y+L.vh-24);}
+  else if(i.ref){x.fillStyle='#fff';x.font='900 40px '+F;x.fillText(i.ref+' · RVR1960',W/2,y+40);}
+  const link=appLink();x.fillStyle='rgba(255,255,255,.95)';x.font='900 40px '+F;x.fillText('Aprende la Biblia cada día',W/2,1790);
+  if(link){x.font='800 32px '+F;x.fillStyle='rgba(255,255,255,.85)';x.fillText(link.replace(/^https?:\/\//,''),W/2,1840);}
+  return c;
+}
 async function rpShare(){
   const i=rpInfo();if(!i)return;
-  const link=appLink();
-  const text='🕯️ '+i.prompt+(i.correct?'\n✅ '+i.correct:'')+(i.ref?' ('+i.ref+')':'')+(link?'\n\n'+link:'');
+  const link=appLink()||'';
+  let vt='';try{const q=L.cur;vt=(VBY[q.ref]&&VBY[q.ref].t)||'';}catch(e){}
+  const plain='🕯️ '+i.prompt+(i.correct?'\n✅ '+i.correct:'')+(i.ref?' ('+i.ref+')':'')+(link?'\n\n'+link:'');
   try{
-    if(navigator.share){await navigator.share({text:text,title:'Lampy'});return;}
-    window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
-  }catch(e){if(e&&e.name==='AbortError')return;try{await navigator.clipboard.writeText(text);toast('Texto copiado.');}catch(x){}}
+    const c=await rpCanvas(i,vt);const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+    let file=null;try{file=new File([blob],'pregunta-lampy.png',{type:'image/png'});}catch(e){}
+    if(file&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text:link,title:'Lampy'});return;}
+    if(navigator.share){await navigator.share({text:plain,title:'Lampy'});return;}
+    downloadBlob(blob);toast('Imagen guardada. ¡Compártela donde quieras!');
+  }catch(e){if(e&&e.name==='AbortError')return;try{await navigator.clipboard.writeText(plain);toast('Texto copiado.');}catch(x){toast('No se pudo compartir.');}}
 }
 function rpOpen(){
   const i=rpInfo();if(!i)return;
