@@ -1158,6 +1158,13 @@ a.btn{text-decoration:none;text-align:center}
 .trref{display:block;width:100%;margin:2px 0 10px;background:linear-gradient(135deg,#FFE680,#FFC800);color:#3C3C3C;border-radius:12px;padding:8px 12px;font-weight:900;text-align:left}
 .trera{display:inline-block;font-size:11px;font-weight:900;border-radius:999px;padding:0 8px;margin-left:4px;background:var(--surface2);color:var(--muted)}
 .trera.e-c{background:var(--gold-bg);color:var(--gold-ink)}
+.votd{position:relative}
+.vshare{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:50%;background:var(--surface);color:var(--blue-ink);border:2px solid var(--blue);border-bottom-width:4px;display:grid;place-items:center}
+.vshare svg{width:20px;height:20px}.vshare:active{transform:translateY(2px)}
+.vsprev{display:flex;justify-content:center}.vsprev img{width:min(46vw,200px);height:auto;aspect-ratio:9/16;border-radius:18px;border:2px solid var(--line);background:var(--surface2);object-fit:cover}
+.vsdots{display:flex;gap:12px;justify-content:center}.vsdot{width:34px;height:34px;border-radius:50%;border:3px solid var(--line)}.vsdot.on{border-color:var(--ink);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--ink)}
+.vsinc{display:flex;gap:8px;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.vsta{width:100%;resize:none;font-size:15px;text-align:left}
 </style>
 </head>
 <body>
@@ -3402,6 +3409,102 @@ function sayLetter(i){
   if(info)info.innerHTML='<span class="gk">'+esc(L[0]+' '+L[1])+'</span> <b>'+esc(capw(L[2]))+'</b> suena '+esc(L[4])+', como en la palabra griega <span class="gk">'+esc(s[1])+'</span> ('+esc(s[2])+', «'+esc(s[3])+'»).'+(GK_NOTE[i]?'<br><span class="muted">'+esc(GK_NOTE[i])+'</span>':'');
   document.querySelectorAll('.atile').forEach((t,k)=>t.classList.toggle('on',k===i));
 }
+/* ============================================================
+   VERSÍCULO DEL DÍA PARA COMPARTIR (formato vertical para estados)
+   ============================================================ */
+const VS={v:null,txt:'',inc:true,th:0,t:0};
+const VS_TH=[['#FFB84D','#E8590C'],['#6BD70A','#2F7A00'],['#1CB0F6','#0B5C94'],['#7C5CFC','#3B1F9E']];
+function vsLines(x,text,maxW){const words=String(text).split(' ');let line='';const out=[];words.forEach(w=>{const t=line?line+' '+w:w;if(x.measureText(t).width>maxW&&line){out.push(line);line=w;}else line=t;});if(line)out.push(line);return out;}
+async function vsCanvas(){
+  try{if(document.fonts&&document.fonts.load){await Promise.race([document.fonts.load('900 60px Nunito'),new Promise(r=>setTimeout(r,800))]);}}catch(e){}
+  const W=1080,H=1920,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  const F='Nunito, system-ui, -apple-system, Segoe UI, Roboto, sans-serif',th=VS_TH[VS.th]||VS_TH[0],v=VS.v;
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,th[0]);g.addColorStop(1,th[1]);x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle='rgba(255,255,255,.10)';[[110,300,170],[980,560,120],[930,1500,190],[90,1380,110],[540,1900,160]].forEach(o=>{x.beginPath();x.arc(o[0],o[1],o[2],0,7);x.fill();});
+  x.textAlign='center';x.textBaseline='alphabetic';
+  x.fillStyle='#fff';x.font='900 60px '+F;x.fillText('Lampy',W/2,140);
+  const tag='✨ Versículo del día';x.font='900 38px '+F;const tw=x.measureText(tag).width+70;
+  rrect(x,W/2-tw/2,185,tw,76,38,'rgba(255,255,255,.95)');x.fillStyle=th[1];x.fillText(tag,W/2,238);
+  const sv=(mascot('happy',300).match(/<svg[\s\S]*<\/svg>/)||[''])[0].replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" ');
+  const im=await svgToImage(sv);if(im)x.drawImage(im,W/2-150,290,300,300);
+  const refl=VS.inc&&VS.txt.trim()?VS.txt.trim():'';
+  // reflexión (tarjeta inferior)
+  let rl=[],rfs=40,cardH=0;
+  if(refl){
+    for(rfs=42;rfs>=28;rfs-=2){x.font='800 '+rfs+'px '+F;rl=vsLines(x,refl,W-260);if(rl.length<=4)break;}
+    cardH=70+rl.length*(rfs*1.35)+50;
+  }
+  const top=640,bot=refl?(1700-cardH-50):1700;
+  // versículo: tamaño automático
+  const txt='«'+v.t+'»';let fs=76,lines=[];
+  for(fs=76;fs>=34;fs-=2){x.font='italic 800 '+fs+'px '+F;lines=vsLines(x,txt,W-200);if(lines.length*fs*1.34<=bot-top-120)break;}
+  const bh=lines.length*fs*1.34+120;const by=top+(bot-top-bh)/2;
+  rrect(x,60,by,W-120,bh,56,'rgba(0,0,0,.20)');
+  x.fillStyle='#fff';x.font='italic 800 '+fs+'px '+F;
+  lines.forEach((l,i)=>x.fillText(l,W/2,by+50+fs+i*fs*1.34-fs*0.2));
+  x.font='900 46px '+F;x.fillStyle='#fff';x.fillText(v.r+' · RVR1960',W/2,by+bh-26);
+  if(refl){
+    const cy=1700-cardH;
+    rrect(x,70,cy+10,W-140,cardH,48,'rgba(0,0,0,.14)');rrect(x,70,cy,W-140,cardH,48,'#fff');
+    x.fillStyle=th[1];x.font='900 34px '+F;x.fillText('Para pensar',W/2,cy+58);
+    x.fillStyle='#3C3C3C';x.font='800 '+rfs+'px '+F;rl.forEach((l,i)=>x.fillText(l,W/2,cy+58+22+rfs+i*rfs*1.35-6));
+  }
+  const link=appLink();x.fillStyle='rgba(255,255,255,.95)';x.font='900 40px '+F;x.fillText('Aprende la Biblia cada día',W/2,1790);
+  if(link){x.font='800 32px '+F;x.fillStyle='rgba(255,255,255,.85)';x.fillText(link.replace(/^https?:\/\//,''),W/2,1840);}
+  return c;
+}
+function vsModal(keepTxt){
+  const dots=VS_TH.map((t,i)=>'<button class="vsdot'+(VS.th===i?' on':'')+'" data-a="vs-th" data-i="'+i+'" style="background:linear-gradient('+t[0]+','+t[1]+')" aria-label="Color '+(i+1)+'"></button>').join('');
+  showModal('<h3>Compartir el versículo</h3><div class="vsprev"><img id="vsimg" alt="Vista previa" width="270" height="480"></div>'+
+   '<div class="vsdots">'+dots+'</div>'+
+   '<label class="vsinc"><input type="checkbox" id="vsinc" '+(VS.inc?'checked':'')+'> Incluir reflexión</label>'+
+   '<textarea id="vsr" class="inp vsta" maxlength="160" rows="3" placeholder="Escribe tu reflexión…" '+(VS.inc?'':'disabled')+'>'+esc(VS.txt)+'</textarea>'+
+   '<div class="row2"><button class="btn ghost" data-a="vs-reset">Reflexión original</button><button class="btn" data-a="vs-go">Compartir</button></div>'+
+   '<button class="btn ghost" data-a="vs-x">Cerrar</button>');
+  vsPreview();
+}
+async function vsPreview(){
+  const n=++VS.t;
+  try{const c=await vsCanvas();if(n!==VS.t)return;const im=document.getElementById('vsimg');if(im)im.src=c.toDataURL('image/jpeg',.88);}catch(e){}
+}
+let vsTimer=0;
+function vsDebounce(){clearTimeout(vsTimer);vsTimer=setTimeout(vsPreview,250);}
+function vsText(){const v=VS.v;return '✨ «'+v.t+'» — '+v.r+' (RVR1960)'+(VS.inc&&VS.txt.trim()?'\n\n'+VS.txt.trim():'')+(appLink()?'\n\n'+appLink():'');}
+async function vsShare(){
+  const text=vsText();
+  try{
+    const c=await vsCanvas();const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+    let file=null;try{file=new File([blob],'versiculo-lampy.png',{type:'image/png'});}catch(e){}
+    if(file&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text:text,title:'Lampy'});return;}
+    if(navigator.share){await navigator.share({text:text,title:'Lampy'});return;}
+    downloadBlob(blob);try{await navigator.clipboard.writeText(text);}catch(e){}
+    toast('Imagen guardada y texto copiado. ¡Súbela a tu estado!');
+  }catch(e){if(e&&e.name==='AbortError')return;toast('No se pudo compartir. Inténtalo de nuevo.');}
+}
+function vsAct(a,b){
+  if(a==='vs-open'){VS.v=votd();VS.txt=VS.v.p;VS.inc=true;VS.th=0;vsModal();}
+  else if(a==='vs-th'){VS.th=+b.dataset.i;const ta=document.getElementById('vsr');if(ta)VS.txt=ta.value;vsModal();}
+  else if(a==='vs-reset'){VS.txt=VS.v.p;VS.inc=true;vsModal();}
+  else if(a==='vs-go'){vsShare();}
+  else if(a==='vs-x'){hideModal();}
+}
+/* La carita de Lampy también se preocupa en la pestaña del navegador y en el ícono instalado (punto de aviso) */
+function stressIcon(){
+  try{
+    const noLesson=S.lastDay!==dstr(flameNow()),mood=noLesson?riskMood():'happy';
+    if(stressIcon.k!==mood){
+      stressIcon.k=mood;
+      const svg=(mascot(mood,64).match(/<svg[\s\S]*<\/svg>/)||[''])[0];
+      const l=document.querySelector('link[rel="icon"]');
+      if(svg&&l){l.type='image/svg+xml';l.href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" '));}
+    }
+    const bad=noLesson&&(mood==='uneasy'||mood==='worried'||mood==='panic');
+    if(bad&&navigator.setAppBadge)navigator.setAppBadge(1).catch(()=>{});
+    else if(!bad&&navigator.clearAppBadge)navigator.clearAppBadge().catch(()=>{});
+  }catch(e){}
+}
+try{setInterval(stressIcon,60000);setTimeout(stressIcon,1500);document.addEventListener('visibilitychange',()=>{if(!document.hidden)stressIcon();});}catch(e){}
+
 function sayWord(id){const e=GK_BY[id];if(e)gkSpeak(sayGk(e.pr),{rate:.7});}
 let DICV='w';
 function abcHTML(){
@@ -8554,7 +8657,7 @@ function homeHTML(){
   let daily;
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else if(bio){const w=botd();daily='<section class="card votd"><span class="tagv">🕯️ Persona del día</span><q>'+esc(w.t)+'</q><cite>'+esc(w.n)+'</cite></section>';}
-  else{const v=votd();daily='<section class="card votd"><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
+  else{const v=votd();daily='<section class="card votd"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
   '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rfCardHTML()+rdHomeHTML()+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
@@ -8663,6 +8766,7 @@ let _gtRaf=0;
 window.addEventListener('scroll',()=>{if(_gtRaf)return;_gtRaf=requestAnimationFrame(()=>{_gtRaf=0;updateGoto();});},{passive:true});
 window.addEventListener('resize',()=>updateGoto());
 function render(){
+  try{stressIcon();}catch(e){}
   if(TAB==='fr'&&!famOn())TAB='path';
   if(S.course==='gk'&&TAB==='read')TAB='path';
   if(S.course!=='gk'&&TAB==='dic')TAB='path';
@@ -9244,7 +9348,7 @@ const GPERS=[
  {a:"Jonás",c:[["Jehová le mandó ir a Nínive.","Jonás 1:2"],["Jehová tenía preparado un gran pez que lo tragase.","Jonás 1:17"],["Estuvo tres días y tres noches en el vientre del pez.","Jonás 1:17"]]},
  {a:"María",c:[["Vivía en Nazaret, una ciudad de Galilea.","Lucas 1:26"],["Un ángel le anunció que daría a luz un hijo llamado JESÚS.","Lucas 1:31"],["Respondió: «He aquí la sierva del Señor».","Lucas 1:38"]]},
  {a:"Pedro",c:[["Era pescador y se llamaba Simón.","Mateo 4:18"],["Confesó: «Tú eres el Cristo, el Hijo del Dios viviente».","Mateo 16:16"],["Antes de que cantara el gallo, negó tres veces a Jesús.","Lucas 22:61"]]},
- {a:"Pablo",c:[["Antes se llamaba Saulo.","Hechos 13:9"],["Comenzó una de sus cartas: «Pablo, siervo de Jesucristo, llamado a ser apóstol».","Romanos 1:1"],["Escribió: «Para mí el vivir es Cristo, y el morir es ganancia».","Filipenses 1:21"]]},
+ {a:"Pablo",c:[["Antes se llamaba Saulo.","Hechos 13:9"],["Comenzó una de sus cartas llamándose «siervo de Jesucristo, llamado a ser apóstol».","Romanos 1:1"],["Escribió: «Para mí el vivir es Cristo, y el morir es ganancia».","Filipenses 1:21"]]},
  {a:"Juan el Bautista",c:[["Predicaba en el desierto de Judea.","Mateo 3:1"],["Bautizó a Jesús en el Jordán.","Mateo 3:13"],["Dijo de Jesús: «He aquí el Cordero de Dios».","Juan 1:29"]]},
  {a:"Eva",c:[["Fue llamada así por ser madre de todos los vivientes.","Génesis 3:20"],["Dios la formó de una costilla que tomó del hombre.","Génesis 2:22"],["Tomó del fruto del árbol y dio también a su marido.","Génesis 3:6"]]},
  {a:"Job",c:[["Era un hombre de la tierra de Uz.","Job 1:1"],["Al perderlo todo, se postró en tierra y adoró.","Job 1:20"],["Dijo: «Yo sé que mi Redentor vive».","Job 19:25"]]},
@@ -9254,7 +9358,7 @@ const GPERS=[
  {a:"Jairo",c:[["Era uno de los principales de la sinagoga.", "Marcos 5:22"], ["Rogó a Jesús: «Mi hija está agonizando; ven y pon las manos sobre ella».", "Marcos 5:23"], ["Jesús le dijo: «No temas, cree solamente».", "Marcos 5:36"]]},
  {a:"Bartimeo",c:[["Estaba sentado junto al camino mendigando, a la salida de Jericó.", "Marcos 10:46"], ["Dio voces: «¡Jesús, Hijo de David, ten misericordia de mí!».", "Marcos 10:47"], ["Jesús le dijo: «Vete, tu fe te ha salvado». Y en seguida recobró la vista.", "Marcos 10:52"]]},
  {a:"José",c:[["Su padre lo amaba más que a todos sus hijos y le hizo una túnica de diversos colores.","Génesis 37:3"],["Sus hermanos lo vendieron por veinte piezas de plata y lo llevaron a Egipto.","Génesis 37:28"],["Dijo a sus hermanos: «Dios lo encaminó a bien, para mantener en vida a mucho pueblo».","Génesis 50:20"]]},
- {a:"Jacob",c:[["Soñó con una escalera apoyada en la tierra, cuyo extremo tocaba el cielo.","Génesis 28:12"],["Dios le cambió el nombre: «No se dirá más tu nombre Jacob, sino Israel».","Génesis 32:28"],["Anunció que el cetro no sería quitado de Judá.","Génesis 49:10"]]},
+ {a:"Jacob",c:[["Soñó con una escalera apoyada en la tierra, cuyo extremo tocaba el cielo.","Génesis 28:12"],["Dios le cambió el nombre: «Israel será tu nombre».","Génesis 35:10"],["Anunció que el cetro no sería quitado de Judá.","Génesis 49:10"]]},
  {a:"Josué",c:[["Dios le dijo: «Esfuérzate y sé valiente; no temas ni desmayes».","Josué 1:9"],["Los sacerdotes con el arca estuvieron firmes y todo Israel pasó en seco el Jordán.","Josué 3:17"],["Dijo: «Yo y mi casa serviremos a Jehová».","Josué 24:15"]]},
  {a:"Rahab",c:[["Dijo a los espías: «Jehová vuestro Dios es Dios arriba en los cielos y abajo en la tierra».","Josué 2:11"],["Por la fe no pereció juntamente con los incrédulos.","Hebreos 11:31"],["Su nombre aparece en la genealogía de Jesús.","Mateo 1:5"]]},
  {a:"Rut",c:[["Dijo a su suegra: «Tu pueblo será mi pueblo, y tu Dios mi Dios».","Rut 1:16"],["Booz la tomó por mujer.","Rut 4:13"],["Su nieto Isaí fue padre de David.","Rut 4:17"]]},
@@ -9381,7 +9485,7 @@ const DECKS={quien:dQuien,pers:dPers,vf:dVF,comp:dComp,libros:dLibros,conv:dConv
 let G=null;
 function av(i){return '<span class="av" style="background:'+PCOL[i%PCOL.length]+'">'+esc(nameOf(i).charAt(0).toUpperCase())+'</span>';}
 /* ===== Crucigrama bíblico ===== */
-const CW_BANK=[["NOE","Varón justo que halló gracia ante los ojos de Jehová antes del diluvio","Génesis 6:8"],["ADAN","El primer hombre, formado del polvo de la tierra","Génesis 2:7"],["EVA","Nombre que Adán dio a su mujer, madre de todos los vivientes","Génesis 3:20"],["ABEL","Hijo de Adán cuya ofrenda agradó a Dios y que murió a manos de su hermano","Génesis 4:4"],["CAIN","Primer hijo de Adán y Eva; mató a su hermano","Génesis 4:8"],["SARA","Esposa de Abraham; dio a luz a Isaac en su vejez","Génesis 21:2"],["ABRAHAM","A él Dios le prometió una descendencia como las estrellas del cielo","Génesis 15:5"],["ISAAC","Hijo de la promesa, nacido a Abraham y Sara","Génesis 21:3"],["JACOB","A él se le dijo: No se dirá más tu nombre Jacob, sino Israel","Génesis 32:28"],["JOSE","Hijo de Jacob, vendido por sus hermanos, llegó a gobernar en Egipto","Génesis 41:41"],["MOISES","Dios lo llamó para sacar a Israel de Egipto","Éxodo 3:10"],["AARON","Hermano de Moisés; fue el primer sumo sacerdote de Israel","Éxodo 28:1"],["JOSUE","Sucedió a Moisés y llevó al pueblo a la tierra prometida","Josué 1:2"],["RAHAB","Mujer que escondió a los espías enviados a Jericó","Josué 2:4"],["GEDEON","Juez que venció a Madián con trescientos hombres","Jueces 7:7"],["SANSON","Juez de fuerza extraordinaria, traicionado por Dalila","Jueces 16:4"],["RUT","Moabita que dijo a Noemí: Tu pueblo será mi pueblo","Rut 1:16"],["BOOZ","Pariente redentor que se casó con Rut","Rut 4:13"],["ANA","Mujer que oró a Jehová pidiendo un hijo y lo consagró a él","1 Samuel 1:28"],["SAMUEL","Profeta que ungió a Saúl y a David como reyes","1 Samuel 16:13"],["SAUL","Primer rey de Israel","1 Samuel 10:1"],["DAVID","Pastor que venció al gigante Goliat y llegó a ser rey","1 Samuel 17:50"],["SALOMON","Pidió a Dios un corazón entendido para juzgar al pueblo","1 Reyes 3:9"],["ELIAS","Profeta que fue arrebatado al cielo en un torbellino","2 Reyes 2:11"],["ESDRAS","Escriba que preparó su corazón para inquirir la ley de Jehová, cumplirla y enseñarla","Esdras 7:10"],["NEHEMIAS","Dirigió la reconstrucción de los muros de Jerusalén","Nehemías 6:15"],["ESTER","Reina que intercedió ante el rey por su pueblo","Ester 4:16"],["JOB","Varón de Uz que lo perdió todo y aun así no pecó con sus labios","Job 1:22"],["ISAIAS","Profeta que anunció al Siervo herido por nuestras rebeliones","Isaías 53:5"],["DANIEL","Fue echado al foso de los leones, pero Dios cerró la boca de ellos","Daniel 6:22"],["JONAS","Profeta que estuvo tres días y tres noches en el vientre de un gran pez","Jonás 1:17"],["MARIA","Joven a quien el ángel anunció que daría a luz al Hijo del Altísimo","Lucas 1:35"],["ZAQUEO","Cobrador de impuestos que subió a un sicómoro para ver a Jesús","Lucas 19:4"],["NICODEMO","Fariseo, principal entre los judíos, que vino a Jesús de noche","Juan 3:1"],["LAZARO","Amigo de Jesús, de Betania, a quien llamó a salir del sepulcro","Juan 11:43"],["PEDRO","Apóstol que confesó: Tú eres el Cristo, el Hijo del Dios viviente","Mateo 16:16"],["JUAN","Apóstol amado que escribió un evangelio y tres cartas","Juan 20:31"],["ESTEBAN","Primer mártir de la iglesia, apedreado mientras oraba","Hechos 7:59"],["PABLO","Antes perseguidor de la iglesia; escribió varias cartas del Nuevo Testamento","Hechos 9:15"],["TIMOTEO","Joven colaborador a quien Pablo escribió dos cartas","2 Timoteo 1:2"],["BELEN","Ciudad de Judea donde nació Jesús","Mateo 2:1"],["NAZARET","Ciudad de Galilea donde Jesús se crió","Lucas 4:16"],["JERICO","Ciudad cuyos muros cayeron ante Israel","Josué 6:20"],["JORDAN","Río que Israel cruzó para entrar en la tierra prometida","Josué 3:17"],["SINAI","Monte donde Jehová descendió para dar la ley a Israel","Éxodo 19:20"],["EGIPTO","Tierra de donde Jehová sacó a Israel con mano fuerte","Éxodo 13:3"],["BABILONIA","Imperio de Nabucodonosor, adonde fue llevado cautivo el pueblo de Judá","2 Crónicas 36:20"],["JERUSALEN","Ciudad del gran Rey","Mateo 5:35"],["EDEN","Huerto donde Dios puso al hombre que había formado","Génesis 2:8"],["MORIAH","Tierra a donde Abraham fue para ofrecer a su hijo","Génesis 22:2"],["CANAAN","Tierra prometida a los descendientes de Abraham","Génesis 17:8"],["GALILEA","Región junto a un mar donde Jesús llamó a sus primeros discípulos","Mateo 4:18"],["DAMASCO","Camino a esta ciudad, Saulo vio una gran luz del cielo","Hechos 9:3"],["PATMOS","Isla donde estaba Juan cuando recibió la revelación","Apocalipsis 1:9"],["CARMELO","Monte donde cayó fuego de Jehová sobre el holocausto, ante todo el pueblo","1 Reyes 18:38"],["ARARAT","Montes donde reposó el barco que salvó a ocho personas del diluvio","Génesis 8:4"],["BABEL","Ciudad donde Jehová confundió el lenguaje de toda la tierra","Génesis 11:9"],["GOLGOTA","Lugar de la Calavera donde Jesús fue crucificado","Mateo 27:33"],["SODOMA","Ciudad sobre la cual Jehová hizo llover azufre y fuego","Génesis 19:24"],["NINIVE","Gran ciudad que se arrepintió ante la predicación de un profeta","Jonás 3:5"],["EFESO","Ciudad a la que Pablo escribió una carta sobre la gracia","Efesios 1:1"],["ARCA","Embarcación de madera de gofer construida por mandato de Dios para salvar a una familia","Génesis 6:14"],["ARCO","Señal puesta en las nubes como pacto de que no habría otro diluvio","Génesis 9:13"],["PASCUA","Fiesta en que la sangre del cordero en las puertas libró a Israel del juicio","Éxodo 12:13"],["MANA","Alimento que Jehová hizo llover del cielo para Israel en el desierto","Éxodo 16:15"],["TABERNACULO","Santuario portátil que Israel llevó por el desierto","Éxodo 25:8"],["TEMPLO","Casa de oración para todas las naciones","Marcos 11:17"],["CORDERO","He aquí el ___ de Dios, que quita el pecado del mundo","Juan 1:29"],["PACTO","Alianza que Dios establece con su pueblo","Génesis 17:7"],["GRACIA","Favor inmerecido de Dios: por ella somos salvos","Efesios 2:8"],["FE","Es la certeza de lo que se espera, la convicción de lo que no se ve","Hebreos 11:1"],["EVANGELIO","Buenas nuevas: poder de Dios para salvación a todo aquel que cree","Romanos 1:16"],["SALVADOR","El que salva; título que el ángel dio a quien había nacido","Lucas 2:11"],["REDENTOR","Job dijo: Yo sé que mi ___ vive","Job 19:25"],["CRISTO","Significa «ungido»; título de Jesús","Mateo 16:16"],["JESUS","Nombre dado al Hijo, porque salvará a su pueblo de sus pecados","Mateo 1:21"],["ESPIRITU","Jesús prometió enviar al Consolador, el ___ Santo","Juan 14:26"],["PENTECOSTES","Fiesta en la cual los discípulos hablaron en otras lenguas, en Hechos 2","Hechos 2:1"],["BIBLIA","Colección de 66 libros: la Escritura inspirada por Dios","2 Timoteo 3:16"],["SALMOS","Libro de oraciones y cantos, el más extenso de la Biblia","Lucas 24:44"],["PROVERBIOS","Libro de sabiduría que enseña que el temor de Jehová es su principio","Proverbios 1:7"],["GENESIS","Primer libro de la Biblia","Génesis 1:1"],["EXODO","Segundo libro de la Biblia","Éxodo 1:1"],["LEVITICO","Tercer libro de la Biblia","Levítico 1:1"],["NUMEROS","Cuarto libro de la Biblia","Números 1:1"],["MATEO","Primer evangelio del Nuevo Testamento","Mateo 1:1"],["MARCOS","Segundo evangelio del Nuevo Testamento","Marcos 1:1"],["LUCAS","Médico amado, autor del tercer evangelio y de Hechos","Colosenses 4:14"],["HECHOS","Libro que narra el comienzo de la iglesia después de la ascensión","Hechos 1:1"],["ROMANOS","Carta de Pablo cuyo capítulo 8 comienza: Ninguna condenación hay","Romanos 8:1"],["APOCALIPSIS","Último libro de la Biblia","Apocalipsis 1:1"],["ALFA","Primera letra del alfabeto griego; Cristo es la ___ y la Omega","Apocalipsis 22:13"],["OMEGA","Última letra del alfabeto griego; Cristo es el Alfa y la ___","Apocalipsis 22:13"],["PASTOR","Jehová es mi ___; nada me faltará","Salmos 23:1"],["LEY","¡Oh, cuánto amo yo tu ___!","Salmos 119:97"],["ZARZA","Arbusto que ardía en el fuego sin consumirse","Éxodo 3:2"],["SERPIENTE","El más astuto de los animales del campo, que habló a la mujer en el huerto","Génesis 3:1"],["FARAON","Título de los reyes de Egipto","Éxodo 5:2"],["PAN","Jesús dijo: Yo soy el ___ de vida","Juan 6:35"],["LUZ","Dijo Dios: Sea la ___; y fue la ___","Génesis 1:3"],["VID","Jesús dijo: Yo soy la ___ verdadera","Juan 15:1"],["PUERTA","Jesús dijo: Yo soy la ___ de las ovejas","Juan 10:7"],["CAMINO","Jesús dijo: Yo soy el ___, y la verdad, y la vida","Juan 14:6"],["VERDAD","Conoceréis la ___, y la ___ os hará libres","Juan 8:32"],["AMOR","Dios es ___","1 Juan 4:8"],["CRUZ","Llevando su ___, salió al lugar llamado de la Calavera","Juan 19:17"],["ANGEL","Mensajero celestial que anunció a los pastores el nacimiento del Salvador","Lucas 2:10-11"],["OVEJA","Animal al que Isaías compara con quienes nos descarriamos","Isaías 53:6"],["ESTRELLA","Los magos dijeron: Su ___ hemos visto en el oriente","Mateo 2:2"],["REY","Los magos preguntaron: ¿Dónde está el ___ de los judíos, que ha nacido?","Mateo 2:2"],["IGLESIA","Congregación de los creyentes que perseveraban en la doctrina de los apóstoles","Hechos 2:42"],["ORACION","Los discípulos pidieron a Jesús: Señor, enséñanos a hacer ___","Lucas 11:1"]];
+const CW_BANK=[["NOE","Varón justo que halló gracia ante los ojos de Jehová antes del diluvio","Génesis 6:8"],["ADAN","El primer hombre, formado del polvo de la tierra","Génesis 2:7"],["EVA","Nombre que Adán dio a su mujer, madre de todos los vivientes","Génesis 3:20"],["ABEL","Hijo de Adán cuya ofrenda agradó a Dios y que murió a manos de su hermano","Génesis 4:4"],["CAIN","Primer hijo de Adán y Eva; mató a su hermano","Génesis 4:8"],["SARA","Esposa de Abraham; dio a luz a Isaac en su vejez","Génesis 21:2"],["ABRAHAM","A él Dios le prometió una descendencia como las estrellas del cielo","Génesis 15:5"],["ISAAC","Hijo de la promesa, nacido a Abraham y Sara","Génesis 21:3"],["JACOB","Luchó con un varón hasta que rayaba el alba, y Dios le dio el nombre de Israel","Génesis 32:24-28"],["JOSE","Hijo de Jacob, vendido por sus hermanos, llegó a gobernar en Egipto","Génesis 41:41"],["MOISES","Dios lo llamó para sacar a Israel de Egipto","Éxodo 3:10"],["AARON","Hermano de Moisés; fue el primer sumo sacerdote de Israel","Éxodo 28:1"],["JOSUE","Sucedió a Moisés y llevó al pueblo a la tierra prometida","Josué 1:2"],["RAHAB","Mujer que escondió a los espías enviados a Jericó","Josué 2:4"],["GEDEON","Juez que venció a Madián con trescientos hombres","Jueces 7:7"],["SANSON","Juez de fuerza extraordinaria, traicionado por Dalila","Jueces 16:4"],["RUT","Moabita que dijo a Noemí: Tu pueblo será mi pueblo","Rut 1:16"],["BOOZ","Pariente redentor que se casó con Rut","Rut 4:13"],["ANA","Mujer que oró a Jehová pidiendo un hijo y lo consagró a él","1 Samuel 1:28"],["SAMUEL","Profeta que ungió a Saúl y a David como reyes","1 Samuel 16:13"],["SAUL","Primer rey de Israel","1 Samuel 10:1"],["DAVID","Pastor que venció al gigante Goliat y llegó a ser rey","1 Samuel 17:50"],["SALOMON","Pidió a Dios un corazón entendido para juzgar al pueblo","1 Reyes 3:9"],["ELIAS","Profeta que fue arrebatado al cielo en un torbellino","2 Reyes 2:11"],["ESDRAS","Escriba que preparó su corazón para inquirir la ley de Jehová, cumplirla y enseñarla","Esdras 7:10"],["NEHEMIAS","Dirigió la reconstrucción de los muros de Jerusalén","Nehemías 6:15"],["ESTER","Reina que intercedió ante el rey por su pueblo","Ester 4:16"],["JOB","Varón de Uz que lo perdió todo y aun así no pecó con sus labios","Job 1:22"],["ISAIAS","Profeta que anunció al Siervo herido por nuestras rebeliones","Isaías 53:5"],["DANIEL","Fue echado al foso de los leones, pero Dios cerró la boca de ellos","Daniel 6:22"],["JONAS","Profeta que estuvo tres días y tres noches en el vientre de un gran pez","Jonás 1:17"],["MARIA","Joven a quien el ángel anunció que daría a luz al Hijo del Altísimo","Lucas 1:35"],["ZAQUEO","Cobrador de impuestos que subió a un sicómoro para ver a Jesús","Lucas 19:4"],["NICODEMO","Fariseo, principal entre los judíos, que vino a Jesús de noche","Juan 3:1"],["LAZARO","Amigo de Jesús, de Betania, a quien llamó a salir del sepulcro","Juan 11:43"],["PEDRO","Apóstol que confesó: Tú eres el Cristo, el Hijo del Dios viviente","Mateo 16:16"],["JUAN","Apóstol amado que escribió un evangelio y tres cartas","Juan 20:31"],["ESTEBAN","Primer mártir de la iglesia, apedreado mientras oraba","Hechos 7:59"],["PABLO","Antes perseguidor de la iglesia; escribió varias cartas del Nuevo Testamento","Hechos 9:15"],["TIMOTEO","Joven colaborador a quien Pablo escribió dos cartas","2 Timoteo 1:2"],["BELEN","Ciudad de Judea donde nació Jesús","Mateo 2:1"],["NAZARET","Ciudad de Galilea donde Jesús se crió","Lucas 4:16"],["JERICO","Ciudad cuyos muros cayeron ante Israel","Josué 6:20"],["JORDAN","Río que Israel cruzó para entrar en la tierra prometida","Josué 3:17"],["SINAI","Monte donde Jehová descendió para dar la ley a Israel","Éxodo 19:20"],["EGIPTO","Tierra de donde Jehová sacó a Israel con mano fuerte","Éxodo 13:3"],["BABILONIA","Imperio de Nabucodonosor, adonde fue llevado cautivo el pueblo de Judá","2 Crónicas 36:20"],["JERUSALEN","Ciudad del gran Rey","Mateo 5:35"],["EDEN","Huerto donde Dios puso al hombre que había formado","Génesis 2:8"],["MORIAH","Tierra a donde Abraham fue para ofrecer a su hijo","Génesis 22:2"],["CANAAN","Tierra prometida a los descendientes de Abraham","Génesis 17:8"],["GALILEA","Región junto a un mar donde Jesús llamó a sus primeros discípulos","Mateo 4:18"],["DAMASCO","Camino a esta ciudad, Saulo vio una gran luz del cielo","Hechos 9:3"],["PATMOS","Isla donde estaba Juan cuando recibió la revelación","Apocalipsis 1:9"],["CARMELO","Monte donde cayó fuego de Jehová sobre el holocausto, ante todo el pueblo","1 Reyes 18:38"],["ARARAT","Montes donde reposó el barco que salvó a ocho personas del diluvio","Génesis 8:4"],["BABEL","Ciudad donde Jehová confundió el lenguaje de toda la tierra","Génesis 11:9"],["GOLGOTA","Lugar de la Calavera donde Jesús fue crucificado","Mateo 27:33"],["SODOMA","Ciudad sobre la cual Jehová hizo llover azufre y fuego","Génesis 19:24"],["NINIVE","Gran ciudad que se arrepintió ante la predicación de un profeta","Jonás 3:5"],["EFESO","Ciudad a la que Pablo escribió una carta sobre la gracia","Efesios 1:1"],["ARCA","Embarcación de madera de gofer construida por mandato de Dios para salvar a una familia","Génesis 6:14"],["ARCO","Señal puesta en las nubes como pacto de que no habría otro diluvio","Génesis 9:13"],["PASCUA","Fiesta en que la sangre del cordero en las puertas libró a Israel del juicio","Éxodo 12:13"],["MANA","Alimento que Jehová hizo llover del cielo para Israel en el desierto","Éxodo 16:15"],["TABERNACULO","Santuario portátil que Israel llevó por el desierto","Éxodo 25:8"],["TEMPLO","Casa de oración para todas las naciones","Marcos 11:17"],["CORDERO","He aquí el ___ de Dios, que quita el pecado del mundo","Juan 1:29"],["PACTO","Alianza que Dios establece con su pueblo","Génesis 17:7"],["GRACIA","Favor inmerecido de Dios: por ella somos salvos","Efesios 2:8"],["FE","Es la certeza de lo que se espera, la convicción de lo que no se ve","Hebreos 11:1"],["EVANGELIO","Buenas nuevas: poder de Dios para salvación a todo aquel que cree","Romanos 1:16"],["SALVADOR","El que salva; título que el ángel dio a quien había nacido","Lucas 2:11"],["REDENTOR","Job dijo: Yo sé que mi ___ vive","Job 19:25"],["CRISTO","Significa «ungido»; título de Jesús","Mateo 16:16"],["JESUS","Nombre dado al Hijo, porque salvará a su pueblo de sus pecados","Mateo 1:21"],["ESPIRITU","Jesús prometió enviar al Consolador, el ___ Santo","Juan 14:26"],["PENTECOSTES","Fiesta en la cual los discípulos hablaron en otras lenguas, en Hechos 2","Hechos 2:1"],["BIBLIA","Colección de 66 libros: la Escritura inspirada por Dios","2 Timoteo 3:16"],["SALMOS","Libro de oraciones y cantos, el más extenso de la Biblia","Lucas 24:44"],["PROVERBIOS","Libro de sabiduría que enseña que el temor de Jehová es su principio","Proverbios 1:7"],["GENESIS","Primer libro de la Biblia","Génesis 1:1"],["EXODO","Segundo libro de la Biblia","Éxodo 1:1"],["LEVITICO","Tercer libro de la Biblia","Levítico 1:1"],["NUMEROS","Cuarto libro de la Biblia","Números 1:1"],["MATEO","Primer evangelio del Nuevo Testamento","Mateo 1:1"],["MARCOS","Segundo evangelio del Nuevo Testamento","Marcos 1:1"],["LUCAS","Médico amado, autor del tercer evangelio y de Hechos","Colosenses 4:14"],["HECHOS","Libro que narra el comienzo de la iglesia después de la ascensión","Hechos 1:1"],["ROMANOS","Carta de Pablo cuyo capítulo 8 comienza: Ninguna condenación hay","Romanos 8:1"],["APOCALIPSIS","Último libro de la Biblia","Apocalipsis 1:1"],["ALFA","Primera letra del alfabeto griego; Cristo se llama «el principio y el fin»","Apocalipsis 22:13"],["OMEGA","Última letra del alfabeto griego; Cristo se llama «el primero y el último»","Apocalipsis 22:13"],["PASTOR","Jehová es mi ___; nada me faltará","Salmos 23:1"],["LEY","¡Oh, cuánto amo yo tu ___!","Salmos 119:97"],["ZARZA","Arbusto que ardía en el fuego sin consumirse","Éxodo 3:2"],["SERPIENTE","El más astuto de los animales del campo, que habló a la mujer en el huerto","Génesis 3:1"],["FARAON","Título de los reyes de Egipto","Éxodo 5:2"],["PAN","Jesús dijo: Yo soy el ___ de vida","Juan 6:35"],["LUZ","Dijo Dios: Sea la ___; y fue la ___","Génesis 1:3"],["VID","Jesús dijo: Yo soy la ___ verdadera","Juan 15:1"],["PUERTA","Jesús dijo: Yo soy la ___ de las ovejas","Juan 10:7"],["CAMINO","Jesús dijo: Yo soy el ___, y la verdad, y la vida","Juan 14:6"],["VERDAD","Conoceréis la ___, y la ___ os hará libres","Juan 8:32"],["AMOR","Dios es ___","1 Juan 4:8"],["CRUZ","Llevando su ___, salió al lugar llamado de la Calavera","Juan 19:17"],["ANGEL","Mensajero celestial que anunció a los pastores el nacimiento del Salvador","Lucas 2:10-11"],["OVEJA","Animal al que Isaías compara con quienes nos descarriamos","Isaías 53:6"],["ESTRELLA","Los magos dijeron: Su ___ hemos visto en el oriente","Mateo 2:2"],["REY","Los magos preguntaron: ¿Dónde está el ___ de los judíos, que ha nacido?","Mateo 2:2"],["IGLESIA","Congregación de los creyentes que perseveraban en la doctrina de los apóstoles","Hechos 2:42"],["ORACION","Los discípulos pidieron a Jesús: Señor, enséñanos a hacer ___","Lucas 11:1"]];
 let CW=null;
 function cwGen(){
   const N=33,O=16;
@@ -9471,6 +9575,7 @@ function cwStart(){
 function cwCellPos(w,i){const p=CW.words[w];return [p.r+(p.d?i:0),p.c0+(p.d?0:i)];}
 function cwWordDone(p){for(let i=0;i<p.w.length;i++){const R=p.r+(p.d?i:0),C=p.c0+(p.d?0:i);if(CW.inp[R][C]!==p.w[i])return false;}return true;}
 function cwCount(){let ok=0,tot=0;for(let r=0;r<CW.rows;r++)for(let c=0;c<CW.cols;c++){const g=CW.grid[r][c];if(g){tot++;if(CW.inp[r][c]===g.ch)ok++;}}return [ok,tot];}
+function cwLocked(r,c){const x=CW.grid[r][c];return !!x&&x.in.some(i=>i>=0&&cwWordDone(CW.words[i]));}
 function cwRender(){
   const el=$('#game');
   if(!CW){return;}
@@ -9489,7 +9594,7 @@ function cwRender(){
     if(r===selCell[0]&&c===selCell[1])cls+=' cur';
     if(CW.wrong[r+','+c])cls+=' bad';
     else if(CW.rev[r+','+c])cls+=' hint';
-    else if(x.in.every(i=>i<0||cwWordDone(CW.words[i]))&&CW.inp[r][c]===x.ch)cls+=' ok';
+    else if(cwLocked(r,c))cls+=' ok';
     const nm=CW.starts[r+','+c];
     g+='<button class="'+cls+'" data-a="cw-cell" data-r="'+r+'" data-c="'+c+'" aria-label="Casilla">'+(nm?'<small>'+nm+'</small>':'')+esc(CW.inp[r][c])+'</button>';
   }
@@ -9513,12 +9618,13 @@ function cwType(k){
   const p=CW.words[CW.sel.w];
   const [R,C]=cwCellPos(CW.sel.w,CW.sel.i);
   delete CW.wrong[R+','+C];
+  const lkI=j=>{const [a2,b2]=cwCellPos(CW.sel.w,j);return cwLocked(a2,b2)||!!CW.rev[a2+','+b2];};
   if(k==='⌫'){
-    if(CW.inp[R][C]&&!CW.rev[R+','+C])CW.inp[R][C]='';
-    else if(CW.sel.i>0){CW.sel.i--;const [r2,c2]=cwCellPos(CW.sel.w,CW.sel.i);if(!CW.rev[r2+','+c2])CW.inp[r2][c2]='';}
+    if(CW.inp[R][C]&&!lkI(CW.sel.i))CW.inp[R][C]='';
+    else{let j=CW.sel.i-1;while(j>=0&&lkI(j))j--;if(j>=0){CW.sel.i=j;const [r2,c2]=cwCellPos(CW.sel.w,j);CW.inp[r2][c2]='';}}
   }else{
-    if(!CW.rev[R+','+C])CW.inp[R][C]=k;
-    if(CW.sel.i<p.w.length-1)CW.sel.i++;
+    if(!lkI(CW.sel.i))CW.inp[R][C]=k;
+    if(CW.sel.i<p.w.length-1){let j=CW.sel.i+1;while(j<p.w.length-1&&lkI(j))j++;CW.sel.i=j;}
     else{ // palabra completa: salta a la siguiente incompleta
       if(cwWordDone(p)){const nx=CW.words.findIndex((q,qi)=>qi!==CW.sel.w&&!cwWordDone(q));if(nx>=0){const q=CW.words[nx];let j=0;while(j<q.w.length-1){const [a,b]=cwCellPos(nx,j);if(CW.inp[a][b]!==q.w[j])break;j++;}CW.sel={w:nx,i:j};}}
     }
@@ -9550,6 +9656,7 @@ function cwAct(a,b){
   else if(a==='cw-hint'){
     if(!CW.sel)return;
     const [R,C]=cwCellPos(CW.sel.w,CW.sel.i);
+    if(cwLocked(R,C)){const p0=CW.words[CW.sel.w];if(CW.sel.i<p0.w.length-1)CW.sel.i++;cwRender();return;}
     CW.inp[R][C]=CW.grid[R][C].ch;CW.rev[R+','+C]=1;delete CW.wrong[R+','+C];CW.hints++;
     const p=CW.words[CW.sel.w];if(CW.sel.i<p.w.length-1)CW.sel.i++;
     if(CW.words.every(cwWordDone)){cwEnd();return;}
@@ -10377,10 +10484,11 @@ function gAct(a,b){
   else if(a==='g-again'){const id=G.id,game=G.game;G={id,game};gStart();}
   else if(a==='g-exit')gClose();
 }
-document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rdother'){RDSET.other=t.value;render();}if(t&&t.id==='pushhr'){pushPref('hour',+t.value);}});
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='vsinc'){VS.inc=t.checked;const ta=document.getElementById('vsr');if(ta)ta.disabled=!t.checked;vsPreview();return;}if(t&&t.id==='rdother'){RDSET.other=t.value;render();}if(t&&t.id==='pushhr'){pushPref('hour',+t.value);}});
   document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('rdmon')&&t.dataset.k)RD_OPEN[t.dataset.k]=t.open;},true);
   document.addEventListener('input',e=>{
   const t=e.target;
+  if(t&&t.id==='vsr'){VS.txt=t.value;vsDebounce();return;}
   if(t&&t.id==='trq'){TR.q=t.value;const l=$('#trlist');if(l)l.innerHTML=trListHTML();return;}
   if(t&&t.id==='dicq'){const l=$('#diclist');if(l)l.innerHTML=dicList(t.value);return;}
   if(t.classList&&t.classList.contains('inp')){const i=+t.dataset.i;S.g.names[i]=t.value;save();}
@@ -10527,6 +10635,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='cd-'){cdAct(a,b);}
   else if(a.slice(0,3)==='xw-'){xwAct(a,b);}
   else if(a.slice(0,3)==='tr-'){trAct(a,b);}
+  else if(a.slice(0,3)==='vs-'){vsAct(a,b);}
   else if(a.slice(0,5)==='card-'){cardAct(a,b);}
   else if(a==='rf-open'){rfOpen();}
   else if(a==='rf-go'){rfGo(+b.dataset.i);}
