@@ -1165,6 +1165,7 @@ a.btn{text-decoration:none;text-align:center}
 .vsdots{display:flex;gap:12px;justify-content:center}.vsdot{width:34px;height:34px;border-radius:50%;border:3px solid var(--line)}.vsdot.on{border-color:var(--ink);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--ink)}
 .vsinc{display:flex;gap:8px;align-items:center;justify-content:center;font-weight:800;font-size:15px}
 .vsta{width:100%;resize:none;font-size:15px;text-align:left}
+.x.trback{width:48px;height:48px;border-radius:50%;background:var(--surface2);color:var(--ink);border:2px solid var(--line);border-bottom-width:4px}.x.trback svg{width:26px;height:26px}.x.trback:active{transform:translateY(2px)}
 </style>
 </head>
 <body>
@@ -10306,7 +10307,7 @@ function trShow(){
   const el=$('#tree');
   const inner=TR.view==='quiz'?trQuizHTML():TR.view==='person'?trPersonHTML(TR.id):trHomeHTML();
   const canBack=TR.view!=='home';
-  el.innerHTML='<div class="lh">'+(canBack?'<button class="x" data-a="tr-back" aria-label="Volver">←</button>':'<button class="x" data-a="tr-close" aria-label="Cerrar">'+IC.close+'</button>')+
+  el.innerHTML='<div class="lh">'+(canBack?'<button class="x trback" data-a="tr-back" aria-label="Volver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'<button class="x" data-a="tr-close" aria-label="Cerrar">'+IC.close+'</button>')+
    '<div class="bar"><i style="width:100%;background:var(--yellow)"></i></div>'+(!(TR.view==='person'&&TR.id==='jesus')?'<button class="trjbtn" data-a="tr-p" data-id="jesus" aria-label="Ir a Jesús">✨ Jesús</button>':'')+(canBack?'<button class="x" data-a="tr-close" aria-label="Cerrar">'+IC.close+'</button>':'')+'</div>'+
    '<div class="lb">'+(TR.view==='home'?'<h1 class="page" style="margin-top:0">🌳 Árbol bíblico</h1>':'')+inner+'</div>';
   el.hidden=false;document.body.style.overflow='hidden';
