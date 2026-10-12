@@ -1166,6 +1166,10 @@ a.btn{text-decoration:none;text-align:center}
 .vsinc{display:flex;gap:8px;align-items:center;justify-content:center;font-weight:800;font-size:15px}
 .vsta{width:100%;resize:none;font-size:15px;text-align:left}
 .x.trback{width:48px;height:48px;border-radius:50%;background:var(--surface2);color:var(--ink);border:2px solid var(--line);border-bottom-width:4px}.x.trback svg{width:26px;height:26px}.x.trback:active{transform:translateY(2px)}
+.fbtools{margin-left:auto;display:flex;gap:6px;align-self:flex-start}
+.fbtools button{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--ink);opacity:.75}
+.fbtools button:active{opacity:1;transform:translateY(1px)}.fbtools svg{width:22px;height:22px}
+.rpopt{display:flex;gap:10px;align-items:center;text-align:left;font-weight:700;font-size:15px;padding:6px 2px}.rpopt input{width:22px;height:22px;flex:none}
 </style>
 </head>
 <body>
@@ -3470,7 +3474,7 @@ async function vsPreview(){
 }
 let vsTimer=0;
 function vsDebounce(){clearTimeout(vsTimer);vsTimer=setTimeout(vsPreview,250);}
-function vsText(){const v=VS.v;return '✨ «'+v.t+'» — '+v.r+' (RVR1960)'+(VS.inc&&VS.txt.trim()?'\n\n'+VS.txt.trim():'')+(appLink()?'\n\n'+appLink():'');}
+function vsText(){return appLink()||'';}
 async function vsShare(){
   const text=vsText();
   try{
@@ -3478,8 +3482,8 @@ async function vsShare(){
     let file=null;try{file=new File([blob],'versiculo-lampy.png',{type:'image/png'});}catch(e){}
     if(file&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text:text,title:'Lampy'});return;}
     if(navigator.share){await navigator.share({text:text,title:'Lampy'});return;}
-    downloadBlob(blob);try{await navigator.clipboard.writeText(text);}catch(e){}
-    toast('Imagen guardada y texto copiado. ¡Súbela a tu estado!');
+    downloadBlob(blob);try{if(text)await navigator.clipboard.writeText(text);}catch(e){}
+    toast('Imagen guardada. ¡Súbela a tu estado!');
   }catch(e){if(e&&e.name==='AbortError')return;toast('No se pudo compartir. Inténtalo de nuevo.');}
 }
 function vsAct(a,b){
@@ -3505,6 +3509,60 @@ function stressIcon(){
   }catch(e){}
 }
 try{setInterval(stressIcon,60000);setTimeout(stressIcon,1500);document.addEventListener('visibilitychange',()=>{if(!document.hidden)stressIcon();});}catch(e){}
+
+/* ============================================================
+   COMPARTIR PREGUNTA Y REPORTAR UN PROBLEMA (como en Duolingo)
+   ============================================================ */
+function rpInfo(){
+  const q=L&&L.cur,ui=L&&L.ui;if(!q||!ui)return null;
+  let correct='',given='';
+  try{
+    if(q.type==='order'){correct=(q.toks||[]).join(' ');given=(ui.placed||[]).map(id=>{const b=q.bank.find(x=>x.id===id);return b?b.w:'';}).join(' ');}
+    else if(q.opts){correct=q.opts[q.a]!=null?q.opts[q.a]:'';given=ui.sel!=null&&ui.sel>=0&&q.opts[ui.sel]!=null?q.opts[ui.sel]:'';}
+  }catch(e){}
+  const m=L.meta||{};
+  return {prompt:String(q.prompt||''),correct:String(correct),given:String(given),ref:String(q.ref||''),lesson:String(m.title||m.t||''),course:String(S.course||'bib'),ok:!!ui.ok};
+}
+async function rpShare(){
+  const i=rpInfo();if(!i)return;
+  const link=appLink();
+  const text='🕯️ '+i.prompt+(i.correct?'\n✅ '+i.correct:'')+(i.ref?' ('+i.ref+')':'')+(link?'\n\n'+link:'');
+  try{
+    if(navigator.share){await navigator.share({text:text,title:'Lampy'});return;}
+    window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+  }catch(e){if(e&&e.name==='AbortError')return;try{await navigator.clipboard.writeText(text);toast('Texto copiado.');}catch(x){}}
+}
+function rpOpen(){
+  const i=rpInfo();if(!i)return;
+  showModal('<h3>Reportar un problema</h3>'+
+   '<label class="rpopt"><input type="checkbox" id="rpk1"> <span>Mi respuesta no debió ser incorrecta.</span></label>'+
+   '<label class="rpopt"><input type="checkbox" id="rpk2"> <span>Hay un error en la pregunta o en la respuesta.</span></label>'+
+   '<label class="rpopt"><input type="checkbox" id="rpk3"> <span>Algo más salió mal.</span></label>'+
+   '<textarea id="rpn" class="inp vsta" maxlength="400" rows="3" placeholder="Cuéntanos qué pasó (opcional)"></textarea>'+
+   '<div class="row2"><button class="btn ghost" data-a="rp-x">Cancelar</button><button class="btn" data-a="rp-send">Enviar</button></div>');
+}
+async function rpSend(){
+  const i=rpInfo();if(!i)return;
+  const kinds=[];['rpk1','rpk2','rpk3'].forEach((id,k)=>{const e=document.getElementById(id);if(e&&e.checked)kinds.push(['no_debio_ser_incorrecta','error_en_pregunta','otro'][k]);});
+  const note=((document.getElementById('rpn')||{}).value||'').trim();
+  if(!kinds.length&&!note){toast('Marca una opción o escribe qué pasó.');return;}
+  hideModal();
+  const pay={p_kinds:kinds,p_note:note,p_course:i.course,p_lesson:i.lesson,p_prompt:i.prompt,p_given:i.given,p_correct:i.correct,p_ref:i.ref,p_app:'v13'};
+  try{
+    if(!famOn())throw new Error('sin servidor');
+    const r=await rpc('lampy_report',Object.assign({p_device:famState().device},pay));
+    if(r&&r.ok){toast('¡Gracias! Lo vamos a revisar.');return;}
+    if(r&&r.error==='demasiados'){toast('Ya enviaste varios reportes hoy. ¡Gracias!');return;}
+    throw new Error('rechazado');
+  }catch(e){
+    const body='Reporte de Lampy\n\nTipo: '+(kinds.join(', ')||'-')+'\nCurso: '+i.course+'\nLección: '+i.lesson+'\nPregunta: '+i.prompt+'\nRespondí: '+(i.given||'-')+'\nCorrecta: '+(i.correct||'-')+'\nVersículo: '+(i.ref||'-')+'\nComentario: '+(note||'-');
+    toast('No se pudo enviar. Se abrirá tu correo para mandarlo.');
+    setTimeout(()=>{try{location.href='mailto:cursolampy@gmail.com?subject='+encodeURIComponent('Reporte de Lampy')+'&body='+encodeURIComponent(body);}catch(x){}},900);
+  }
+}
+function rpAct(a){
+  if(a==='rp-share')rpShare();else if(a==='rp-flag')rpOpen();else if(a==='rp-send')rpSend();else if(a==='rp-x')hideModal();
+}
 
 function sayWord(id){const e=GK_BY[id];if(e)gkSpeak(sayGk(e.pr),{rate:.7});}
 let DICV='w';
@@ -9030,7 +9088,7 @@ function renderLesson(){
     if(!ui.ok&&q.type!=='order')ans='Respuesta correcta: <b>'+esc(q.opts[q.a])+'</b><br>';
     const sub=ui.ok?(ui.fresh?'+2 XP':(q.tries>0?'¡Repasada! Ya la tienes':'')):'Volverá a salir al final para repasarla';
     foot='<div class="lf '+(ui.ok?'good':'bad')+'" role="status"><div class="in">'+(ui.fresh?'<div class="xpfloat">+2 XP</div>':'')+
-     '<div class="fbhead">'+mascot(ui.ok?'cheer':'sad',58)+'<div><h4>'+esc(ui.head||'')+'</h4>'+(sub?'<div class="sub">'+esc(sub)+'</div>':'')+'</div></div>'+
+     '<div class="fbhead">'+mascot(ui.ok?'cheer':'sad',58)+'<div><h4>'+esc(ui.head||'')+'</h4>'+(sub?'<div class="sub">'+esc(sub)+'</div>':'')+'</div><div class="fbtools"><button data-a="rp-share" aria-label="Compartir esta pregunta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button><button data-a="rp-flag" aria-label="Reportar un problema"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 5h12l-2.500 4L17 13H5" fill="none" stroke="currentColor" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>'+
      '<div class="fbox">'+fbHTML(q,v,fbk,ans)+(q.nota?'<div class="nota"><b>Nota:</b> '+esc(q.nota)+'</div>':'')+'</div>'+
      '<button class="btn '+(ui.ok?'good':'bad')+'" data-a="next">Continuar</button></div></div>';
   }
@@ -10637,6 +10695,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='xw-'){xwAct(a,b);}
   else if(a.slice(0,3)==='tr-'){trAct(a,b);}
   else if(a.slice(0,3)==='vs-'){vsAct(a,b);}
+  else if(a.slice(0,3)==='rp-'){rpAct(a);}
   else if(a.slice(0,5)==='card-'){cardAct(a,b);}
   else if(a==='rf-open'){rfOpen();}
   else if(a==='rf-go'){rfGo(+b.dataset.i);}
