@@ -93,8 +93,8 @@ h1,h2,h3,h4{font-weight:900}
 .mas.happy{cursor:pointer;transform-origin:50% 92%;-webkit-tap-highlight-color:transparent}
 .mas.sway{animation:sway 1.1s ease-in-out}
 @keyframes sway{0%{transform:rotate(0)}18%{transform:rotate(-9deg)}42%{transform:rotate(8deg)}64%{transform:rotate(-5deg)}82%{transform:rotate(3deg)}100%{transform:rotate(0)}}
-.bubble .tw{display:inline-block;transition:opacity .45s ease-out,filter .45s ease-out}
-.bubble .tw0{opacity:0;filter:blur(5px)}
+.bubble .tw{display:inline-block;transition:opacity .8s ease-out,filter .8s ease-out}
+.bubble .tw0{opacity:0;filter:blur(6px)}
 @media (prefers-reduced-motion:reduce){.mas.lev .body,.mas .st,.mas .qm,.mas.sway{animation:none}}
 .pop{animation:pop .35s ease-out}
 
@@ -1411,10 +1411,13 @@ function lampyTalk(root){
     const set=(v,w)=>{tk.style.transform='scaleY('+(smile?Math.max(.32,v):v)+') scaleX('+(smile?1:(w||1))+')';};
     const syl=w=>Math.max(1,(w.toLowerCase().match(/[aáeéiíoóuúü]+/g)||['a']).length);
     el.classList.add('talking');
+    /* ritmo del texto: casi al de la boca, pero con tope para frases largas */
+    let tot=0;words.forEach(w=>{tot+=syl(w)*SY+(/[,;:]$/.test(w)?SY*.9:/[.!?…]$/.test(w)?SY*1.6:SY*.25);});
+    const RT=Math.min(.92,6500/tot);
     let at=0;
     words.forEach((w,wi)=>{
       const n=syl(w);
-      sched(at*.62,()=>{spans[wi].classList.remove('tw0');});   /* el texto va más rápido que la boca */
+      sched(at*RT,()=>{spans[wi].classList.remove('tw0');});   /* el texto va más rápido que la boca */
       for(let k=0;k<n;k++){
         const open=(smile?.7:.55)+Math.random()*.3,wide=/[oóuú]/i.test(w)?.82:1;
         sched(at+k*SY,()=>set(open.toFixed(2),wide));
@@ -1424,7 +1427,7 @@ function lampyTalk(root){
       at+=/[,;:]$/.test(w)?SY*.9:/[.!?…]$/.test(w)?SY*1.6:SY*.25;
       sched(at-SY*.2,()=>set(.08,1));
     });
-    setTimeout(()=>{if(b._tk===tok){el.classList.remove('talking');b.textContent=txt;}},at+120);
+    setTimeout(()=>{if(b._tk===tok)el.classList.remove('talking');},at+120);setTimeout(()=>{if(b._tk===tok)b.textContent=txt;},at+1000);
     /* el globo ya está completo antes de que la boca termine: se limpia al final */
   }catch(e){}
 }
