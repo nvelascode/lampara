@@ -158,6 +158,7 @@ h1,h2,h3,h4{font-weight:900}
 .donkey{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px;text-align:center;margin:0 0 12px}
 .donkey small{display:block;color:var(--muted);font-weight:800;font-size:13px;margin-bottom:4px}
 .donkey b{font-size:26px;letter-spacing:.5px}
+.shline{margin:-4px 2px 14px;font-size:13px;font-weight:800;color:var(--muted)}
 .cbtn.cpulse{border-color:var(--blue);animation:pulse 1.6s infinite}
 .cminv{display:flex;align-items:center;gap:6px;padding:0;background:var(--blue-bg,#E1F3FF);border-color:var(--blue)}
 .cminv .cmgo{flex:1;display:flex;align-items:center;gap:10px;text-align:left;padding:12px 6px 12px 14px;font:inherit;color:inherit}
@@ -4096,7 +4097,7 @@ function readSetupHTML(){
    (RDSET.mode==='other'?'<input type="date" id="rdother" class="rdinp" value="'+esc(RDSET.other||t)+'" min="'+addDays(t,-365)+'" max="'+addDays(t,730)+'" aria-label="Fecha de inicio">':'')+'</section>'+
    '<div class="rdsum"><b>'+esc(rdDate(st))+'</b> → <b>'+esc(rdDate(sp.end))+'</b><br>'+rdNd(sp.n)+'. '+esc(perDay)+'<br><span class="muted">🗓️ '+esc(leap)+'</span>'+(diffDays(t,st)>0?'<br><span class="muted">Empiezas en '+rdNd(diffDays(t,st))+'.</span>':'')+(diffDays(t,st)<0?'<br><span class="muted">Empezaste hace '+rdNd(-diffDays(t,st))+': podrás marcar las lecturas que ya hiciste.</span>':'')+'</div>'+
    '<button class="btn" data-a="rd-start">Comenzar mi plan</button>'+
-   '<p class="foot">Cada plan lee los 66 libros una sola vez, de Génesis a Apocalipsis, sin repetir ningún capítulo. Esta racha es aparte de la de tus lecciones.</p>';
+   '<p class="foot">Cada plan lee los 66 libros una sola vez, de Génesis a Apocalipsis, sin repetir ningún capítulo. Cada día que leas también mantiene viva tu racha 🔥.</p>';
 }
 function rdRowHTML(R,P,i,idx){
   const d=addDays(R.start,i),dt=rdDt(d),done=!!R.done[i],fut=i>idx;
@@ -7990,7 +7991,7 @@ function cloudCardHTML(){
 function accountCardHTML(){
   if(!cloudOn())return '';
   if(!signedIn())return '<section class="card"><b>☁️ Cuenta</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Aún no has guardado tu progreso en la nube.</p><button class="btn sm" data-a="auth-open">Guardar con mi correo</button></section>';
-  return '<section class="card"><b>☁️ Cuenta</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Entraste con <b>'+esc(AU.email||'')+'</b>.</p><button class="link-danger" data-a="auth-out">Cerrar sesión</button></section>';
+  return '<section class="card"><b>☁️ Cuenta y progreso</b><p class="muted" style="margin:2px 0 4px;font-size:14px">Entraste con <b>'+esc(AU.email||'')+'</b>.</p><p class="muted" style="margin:0 0 10px;font-size:13px" id="cloudstat">'+esc(cloudStatText())+'</p><div class="row2" style="margin:0"><button class="btn ghost sm" data-a="cloud-now">Sincronizar ahora</button><button class="link-danger" data-a="auth-out">Cerrar sesión</button></div></section>';
 }
 function cloudBannerHTML(){
   if(!cloudOn()||signedIn()||(S.lessons||0)<1||(S.cloudSnooze||'')>today())return '';
@@ -9222,17 +9223,18 @@ function meHTML(){
    '<div class="stat s1"><span class="se">🔥</span><div><b>'+S.streak+'</b><span>Racha actual</span></div></div>'+
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
-   '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length+BIOKEYS.length+LIBKEYS.length+PASKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+cloudCardHTML()+
-   '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
-   [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
-   '<section class="card"><b>🛡️ Protectores de racha</b><p class="muted" style="margin:2px 0 0;font-size:14px">Tienes '+S.freezes+' de 2. Ganas uno cada 7 días de racha y se usa solo si un día no alcanzas a practicar ni a leer.</p></section>'+
+   '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length+BIOKEYS.length+LIBKEYS.length+PASKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+(signedIn()?'':cloudCardHTML())+
+   '<p class="shline" title="Ganas uno cada 7 días de racha; se usa solo si un día no alcanzas a practicar ni a leer.">🛡️ <b>'+S.freezes+'</b> de 2 protectores de racha · ganas uno cada 7 días y se usa solo si un día no practicas ni lees.</p>'+
    '<section class="card"><b>📣 Compartir mi progreso</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha. Se envía por WhatsApp o por donde quieras.</p><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button></section>'+
    '<h3 style="margin:18px 0 2px">Logros</h3><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
    '<section class="card don"><b>💛 Apoya a Lampy</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Lampy es gratis y no tiene anuncios. Si te sirve y quieres ayudar a mantenerla, puedes dejar un aporte voluntario.</p><button class="btn ghost sm" data-a="don-open">Ver cómo aportar</button></section>'+
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
-  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+meCardHTML()+vozCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
+  return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+
+   '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
+   [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
+   meCardHTML()+vozCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lampy.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    (signedIn()?'':'<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
@@ -11010,7 +11012,7 @@ function gSoloTiles(){
 }
 function gamesHTML(){
   const fam=famOn();
-  return '<h1 class="page">Juegos</h1>'+trCardHTML()+
+  return '<h1 class="page">Juegos</h1>'+
    '<div class="hero">'+mascot('cheer',84)+'<div class="bubble">'+(fam?'¡Elige un juego! Juega solo o con tus amigos.':'¡Elige un juego y pon a prueba lo que sabes!')+'</div></div>'+
    (fam?gSecHTML('on','🤝 Con amigos',rmTilesHTML(),(FR.data&&FR.data.invites&&FR.data.invites.length)?String(FR.data.invites.length):'')+gSecHTML('solo','👤 Solo',gSoloTiles()):gSoloTiles());
 }
