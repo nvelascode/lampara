@@ -104,6 +104,9 @@ h1,h2,h3,h4{font-weight:900}
 .rsb{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:6px 6px 6px 14px;margin:6px 0 14px}
 .rsb:focus-within{border-color:var(--blue)}
 .rsb input{flex:1;min-width:0;border:0;background:none;font:inherit;font-weight:800;font-size:17px;color:var(--ink);outline:none;padding:6px 0;-webkit-appearance:none;appearance:none}
+.rsb input::-webkit-search-cancel-button,.rsb input::-webkit-search-decoration{-webkit-appearance:none;display:none}
+.rclr{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);color:var(--ink);border:2px solid var(--line);border-bottom-width:3px}
+.rclr[hidden]{display:none}.rclr svg{width:16px;height:16px}
 .rsb input::placeholder{color:var(--muted);font-weight:700}
 .rmic,.rgo{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:#fff;border-bottom:4px solid var(--blue-d)}
 .rmic[hidden],.rgo[hidden]{display:none}
@@ -1165,7 +1168,7 @@ a.btn{text-decoration:none;text-align:center}
 .cdtm{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .cdtb{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
 .cdtb i{display:block;height:100%;border-radius:99px}
-/* ---- Árbol bíblico ---- */
+/* ---- Árbol genealógico ---- */
 :root{--gold:#E5A600;--gold-bg:#FFF6CC;--gold-ink:#7A5A00}
 :root[data-theme="dark"]{--gold-bg:#3D3410;--gold-ink:#FFD84D}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gold-bg:#3D3410;--gold-ink:#FFD84D}}
@@ -1269,7 +1272,7 @@ button.cog.trref{display:inline-block;background:var(--yellow-bg);border:2px sol
 <div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
 <div id="dic" class="overlay" role="dialog" aria-modal="true" aria-label="Diccionario" hidden></div>
 <div id="rlib" class="overlay" role="dialog" aria-modal="true" aria-label="Biblioteca" hidden></div>
-<div id="tree" class="overlay" role="dialog" aria-modal="true" aria-label="Árbol bíblico" hidden></div>
+<div id="tree" class="overlay" role="dialog" aria-modal="true" aria-label="Árbol genealógico" hidden></div>
 <div id="fam" class="overlay" role="dialog" aria-modal="true" aria-label="Grupo familiar" hidden></div>
 <div id="room" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en vivo" hidden></div>
 <div id="modal" class="modal" hidden></div>
@@ -1510,22 +1513,36 @@ function rlBooks(){
 }
 function rlPrep(q){
   let s=rlNorm(q);
-  s=s.replace(/\b(primera|primer|primero|1ra|1era)\b\s*(de\s+)?/g,'1 ').replace(/\b(segunda|segundo|2da|2do)\b\s*(de\s+)?/g,'2 ').replace(/\b(tercera|tercero|tercer|3ra|3er)\b\s*(de\s+)?/g,'3 ');
+  s=s.replace(/\b(primera|primer|primero|1ra|1era)\b/g,'1').replace(/\b(segunda|segundo|2da|2do)\b/g,'2').replace(/\b(tercera|tercero|tercer|3ra|3er)\b/g,'3');
   s=s.replace(/\b(uno|dos|tres)\s+(?=(corintios|tesalonicenses|timoteo|pedro|juan|samuel|reyes|cronicas)\b)/g,(x,w)=>({uno:'1',dos:'2',tres:'3'}[w])+' ');
-  s=s.replace(/\b([123])([a-z])/g,'$1 $2').replace(/\b([123])\s+de\s+/g,'$1 ');
+  s=s.replace(/\b([123])([a-z])/g,'$1 $2').replace(/\b([123])\s+(?:(?:carta|cartas|epistola|epistolas|libro)\s+)?(?:(?:de|a)\s+)?(?:(?:los|las|la|el)\s+)?(?=[a-z])/g,'$1 ');
   return s;
 }
+const RL_AMB={corintios:['1 Corintios','2 Corintios'],tesalonicenses:['1 Tesalonicenses','2 Tesalonicenses'],timoteo:['1 Timoteo','2 Timoteo'],pedro:['1 Pedro','2 Pedro']};
 function rlFindBook(s){
   let best=null,bl=0;
   rlBooks().forEach(b=>b.al.forEach(a=>{
     if(a.length>bl&&new RegExp('(^| )'+a+'( |$)').test(s)){best=b;bl=a.length;}
   }));
+  if(best&&best.t==='Juan'&&/\b(carta|cartas|epistola|epistolas)\b/.test(s))return {amb:['1 Juan','2 Juan','3 Juan']};
+  if(!best){for(const k in RL_AMB){if(new RegExp('(^| )'+k+'( |$)').test(s))return {amb:RL_AMB[k]};}}
   return best;
 }
-function rlFindPerson(s){
+function rlAutorX(b){
+  const n=rlName(b);
+  if(n==='Hebreos')return {h:'<p class="muted" style="font-size:14px">Esto no lo dice la Biblia: son nombres que la iglesia ha propuesto a lo largo de la historia, sin poder confirmarlos. Se ha pensado en <b>Pablo</b> (la tradición más antigua, sobre todo en Oriente), <b>Bernabé</b>, <b>Apolos</b>, <b>Lucas</b> y <b>Clemente de Roma</b>. El texto no nombra a su autor.</p>',say:' Se ha propuesto a Pablo, Bernabé, Apolos, Lucas y Clemente de Roma.'};
+  if(n==='2 Juan'||n==='3 Juan')return {t:'El apóstol Juan, el mismo que escribió 1 Juan, según la tradición de la iglesia.',h:'<p class="muted" style="font-size:14px">En el texto no pone su nombre: se presenta como <i>el anciano</i> ('+n+' 1:1).</p>',sayt:'el apóstol Juan, el mismo de 1 Juan.'};
+  return {};
+}
+function rlFindPerson(s,loose){
   if(typeof TREE==='undefined')return null;
   let best=null,bl=0;
   TREE.forEach(p=>{const n=rlNorm(p.n);if(n&&n.length>bl&&new RegExp('(^| )'+n+'( |$)').test(s)){best=p;bl=n.length;}});
+  if(best||!loose)return best;
+  /* «quién fue Pedro»: el nombre sin apellido o título, si solo lo lleva una persona */
+  const cnt={};
+  TREE.forEach(p=>{new Set(rlNorm(p.n.replace(/\(.*?\)/g,'').split(',')[0]).split(' ').filter(w=>w.length>=4)).forEach(w=>{cnt[w]=(cnt[w]||0)+1;});});
+  TREE.forEach(p=>{rlNorm(p.n.replace(/\(.*?\)/g,'').split(',')[0]).split(' ').forEach(w=>{if(w.length>=4&&cnt[w]===1&&w.length>bl&&new RegExp('(^| )'+w+'( |$)').test(s)){best=p;bl=w.length;}});});
   return best;
 }
 function rlIntent(s){
@@ -1569,11 +1586,12 @@ function rlMd(t){
 }
 function rlSay(a){
   const cut=t=>t.length>150?t.slice(0,147).replace(/\s+\S*$/,'')+'…':t;
+  if(a.k==='amb')return '¿Cuál de estos libros? Elige uno.';
   if(a.k==='none')return 'No encontré eso. Prueba con el nombre de un libro, como «Romanos», o de una persona, como «Abraham».';
   if(a.k==='p')return cut(a.p.n+': '+a.p.d);
   const b=a.b,n=rlName(b),it=a.it||'resumen',f=k=>rlField(b.l,k);
   const miss='En la ficha de '+n+' no hay ese dato.';
-  if(it==='autor')return f('autor')?cut(n+'. Autor: '+f('autor')):miss;
+  if(it==='autor'){const ax=rlAutorX(b);return (ax.t||f('autor'))?cut(n+'. Autor: '+(ax.sayt||ax.t||f('autor'))+(ax.say||'')):miss;}
   if(it==='fecha')return f('fecha')?cut(n+'. '+f('fecha')):miss;
   if(it==='lugar')return f('lugar')?cut(n+'. Lugar: '+f('lugar')):miss;
   if(it==='dest')return f('dest')?cut(n+'. Para quiénes: '+f('dest')):miss;
@@ -1584,6 +1602,7 @@ function rlSay(a){
 function rlAnsHTML(){
   const a=RL.ans;
   if(a.k==='none')return '<section class="card rla"><b>No encontré eso.</b><p class="muted" style="margin:4px 0 0">Escribe el nombre de un libro, como «Romanos» o «1 Corintios», o de una persona, como «Abraham». También puedes tocar una pregunta rápida.</p></section>';
+  if(a.k==='amb')return '<section class="card rla"><b>¿Cuál de estos libros?</b><div class="rchips" style="margin-top:10px">'+a.opts.map(t=>'<button class="rch" data-a="rlib-pickb" data-t="'+esc(t)+'">'+esc(t)+'</button>').join('')+'</div></section>';
   if(a.k==='p'){
     const p=a.p;
     return '<section class="card rla"><div class="big">'+esc(p.n)+'</div><p>'+esc(p.d)+'</p>'+(p.b?'<p class="muted"><b>Nacimiento:</b> '+esc(p.b)+'</p>':'')+(p.x?'<p class="muted"><b>Muerte:</b> '+esc(p.x)+'</p>':'')+
@@ -1593,13 +1612,13 @@ function rlAnsHTML(){
   const row=(lab,v)=>v?'<p><span class="rlab">'+lab+'</span>'+esc(v)+'</p>':'';
   const miss='<p class="muted">La ficha de '+esc(n)+' no incluye ese dato.</p>';
   let main='';
-  if(it==='autor')main=f('autor')?row('Autor',f('autor')):miss;
+  if(it==='autor'){const ax=rlAutorX(b);main=(ax.t||f('autor'))?row('Autor',ax.t||f('autor'))+(ax.h||''):miss;}
   else if(it==='fecha')main=f('fecha')?row('Fecha',f('fecha'))+'<p class="muted" style="font-size:13px">La Biblia no da la fecha exacta: es la que traen las fichas del curso.</p>':miss;
   else if(it==='lugar')main=f('lugar')?row('Lugar',f('lugar')):miss;
   else if(it==='dest')main=f('dest')?row('Para quiénes',f('dest')):miss;
   else if(it==='prop'){const s=rlSection(b.l,/propósito/i);main=s?rlMd(s):miss;}
   else if(it==='div'){const s=rlSection(b.l,/divisiones/i);main=s?rlMd(s):miss;}
-  else{const t=rlTema(b.l);main=(t.t?'<p class="big2">'+esc(t.t)+'</p>':'')+(it==='tema'?'<p>'+esc(t.txt)+'</p>':row('Autor',f('autor'))+row('Fecha',f('fecha')));}
+  else{const t=rlTema(b.l);main=(t.t?'<p class="big2">'+esc(t.t)+'</p>':'')+(it==='tema'?'<p>'+esc(t.txt)+'</p>':row('Autor',rlAutorX(b).t||f('autor'))+row('Fecha',f('fecha')));}
   const its=[['autor','Autor'],['fecha','Fecha'],['tema','Tema'],['prop','Propósito'],['div','Divisiones']];
   if(f('lugar'))its.push(['lugar','Lugar']);
   return '<section class="card rla"><div class="big">'+esc(n)+'</div><div class="rchips">'+its.map(x=>'<button class="rch'+(it===x[0]?' on':'')+'" data-a="rlib-it" data-k="'+x[0]+'">'+x[1]+'</button>').join('')+'</div>'+main+
@@ -1630,14 +1649,23 @@ function rlShow(){
 function rlAsk(q){
   q=(q||'').trim();if(!q)return;
   const s=rlPrep(q),personQ=/\b(quien|quienes)\s+(fue|fueron|es|era|son)\b/.test(s);
-  const per=rlFindPerson(s),bk=rlFindBook(s);
+  const per=rlFindPerson(s,personQ),bk=rlFindBook(s);
   RL.view='home';RL.full=false;
   if(per&&(personQ||!bk))RL.ans={k:'p',p:per};
+  else if(bk&&bk.amb)RL.ans={k:'amb',opts:bk.amb,it:rlIntent(s)};
   else if(bk)RL.ans={k:'b',b:bk,it:rlIntent(s)};
   else RL.ans={k:'none'};
   rlShow();
 }
-function rlSync(){const i=$('#rlq'),g=$('#rlgo');if(g&&i)g.hidden=!i.value.trim();}
+function rlSync(){const i=$('#rlq'),g=$('#rlgo'),c=$('#rlclr');if(i){if(g)g.hidden=!i.value.trim();if(c)c.hidden=!i.value;}}
+function rlClear(){
+  const i=$('#rlq'),root=$('#rlib');if(i)i.value='';
+  RL.ans=null;RL.view='home';RL.full=false;RL.intent=null;rlSync();rlBody();
+  if(root){const bub=root.querySelector('.hero .bubble');if(bub){bub._tk=(bub._tk||0)+1;bub.textContent='Pregúntame por un libro de la Biblia: quién lo escribió, cuándo y de qué trata.';}
+    const m=root.querySelector('.hero .mas');if(m){m.classList.remove('talking');if(!m.classList.contains('contento'))m.outerHTML=rollo('contento',84);}
+    const lb=root.querySelector('.lb');if(lb)lb.scrollTop=0;}
+  if(i){try{i.focus();}catch(e){}}
+}
 const rlSR=()=>window.SpeechRecognition||window.webkitSpeechRecognition;
 function rlMic(){
   const SR=rlSR();if(!SR)return;
@@ -1657,6 +1685,7 @@ function rlOpen(){
   el.innerHTML='<div class="lh"><button class="x" data-a="rlib-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:100%;background:var(--blue)"></i></div></div>'+
    '<div class="lb"><h1 class="page" style="margin-top:0">Biblioteca</h1><div class="hero">'+rollo('guiño',84)+'<div class="bubble">Pregúntame por un libro de la Biblia: quién lo escribió, cuándo y de qué trata.</div></div>'+
    '<div class="rsb"><input id="rlq" type="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Pregúntale a Rollo…" aria-label="Pregúntale a Rollo">'+
+   '<button class="rclr" id="rlclr" data-a="rlib-clear" aria-label="Borrar la pregunta y empezar de nuevo" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></button>'+
    '<button class="rgo" id="rlgo" data-a="rlib-go" aria-label="Preguntar" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
    (rlSR()?'<button class="rmic" id="rlmic" data-a="rlib-mic" aria-label="Dictar la pregunta"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor"/><path d="M5 11.5a7 7 0 0 0 14 0M12 18.5V21.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>':'')+
    '</div><div id="rlbody"></div></div>';
@@ -1672,10 +1701,12 @@ function rlAct(a,b){
   else if(a==='rlib-close')rlClose();
   else if(a==='rlib-go'){const i=$('#rlq');rlAsk(i?i.value:'');}
   else if(a==='rlib-mic')rlMic();
+  else if(a==='rlib-clear')rlClear();
   else if(a==='rlib-int'){RL.intent=b.dataset.k;RL.view='pick';rlBody();}
   else if(a==='rlib-books'){RL.intent=null;RL.view='pick';rlBody();}
   else if(a==='rlib-back'){RL.view='home';rlBody();}
   else if(a==='rlib-book'){const bk=rlBooks().find(x=>x.ui===+b.dataset.ui&&x.li===+b.dataset.li);if(bk){RL.ans={k:'b',b:bk,it:RL.intent||null};RL.view='home';RL.full=false;rlShow();}}
+  else if(a==='rlib-pickb'){const bk=rlBooks().find(x=>x.t===b.dataset.t);if(bk){RL.ans={k:'b',b:bk,it:RL.ans&&RL.ans.it||null};RL.full=false;rlShow();}}
   else if(a==='rlib-it'){if(RL.ans&&RL.ans.k==='b'){RL.ans.it=b.dataset.k;RL.full=false;rlShow();}}
   else if(a==='rlib-full'){RL.full=!RL.full;rlBody();}
 }
@@ -11299,7 +11330,7 @@ function trShow(){
   const canBack=TR.view!=='home';
   el.innerHTML='<div class="lh">'+(canBack?'<button class="x trback" data-a="tr-back" aria-label="Volver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'<button class="x" data-a="tr-close" aria-label="Cerrar">'+IC.close+'</button>')+
    '<div class="bar"><i style="width:100%;background:var(--yellow)"></i></div>'+(!(TR.view==='person'&&TR.id==='jesus')?'<button class="trjbtn" data-a="tr-p" data-id="jesus" aria-label="Ir a Jesús">✨ Jesús</button>':'')+(canBack?'<button class="x" data-a="tr-close" aria-label="Cerrar">'+IC.close+'</button>':'')+'</div>'+
-   '<div class="lb">'+(TR.view==='home'?'<h1 class="page" style="margin-top:0">🌳 Árbol bíblico</h1>':'')+inner+'</div>';
+   '<div class="lb">'+(TR.view==='home'?'<h1 class="page" style="margin-top:0">🌳 Árbol genealógico</h1>':'')+inner+'</div>';
   el.hidden=false;document.body.style.overflow='hidden';
 }
 function trOpen(id){TR.open=trOpenLoad();TR.stack=[];TR.q='';if(id){TR.view='person';TR.id=id;}else{TR.view='home';}trShow();const lb=document.querySelector('#tree .lb');if(lb)lb.scrollTop=0;}
@@ -11361,7 +11392,7 @@ function trAct(a,b){
   else if(a==='tr-next'){const Q=TR.quiz;Q.i++;Q.sel=-1;if(Q.i>=Q.qs.length){Q.done=true;recordDay(10);if(Q.score>=Q.qs.length*0.7){confetti();beep('win');}}trShow();}
 }
 function trCardHTML(){
-  return '<section class="card trentry"><div class="tre">🌳</div><div class="trt"><b>Árbol bíblico</b><p>Quién es quién en la Biblia, con su nacimiento y muerte. La línea de Cristo, resaltada.</p></div><button class="btn blue sm" data-a="tr-open">Abrir</button></section>';
+  return '<section class="card trentry"><div class="tre">🌳</div><div class="trt"><b>Árbol genealógico</b><p>Quién es quién en la Biblia, con su nacimiento y muerte. La línea de Cristo, resaltada.</p></div><button class="btn blue sm" data-a="tr-open">Abrir</button></section>';
 }
 
 function gSoloTiles(){
