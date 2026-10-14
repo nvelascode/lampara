@@ -11332,12 +11332,11 @@ function trBranchesHTML(){
 function trHomeHTML(){
   const v=TR.line;
   if(TR.mode==='bio')return '<div class="hero">'+mascot('think',76)+'<div class="bubble">Busca a una persona o abre una época. Toca a cualquiera para ver quién es, cuándo vivió y su familia, según la Biblia.</div></div>'+
-   '<button class="btn ghost" style="margin:0 0 12px" data-a="tr-mode" data-m="tree">🌳 Ver el árbol genealógico de Jesús</button>'+
+   '<h3 style="margin:0 0 6px">Buscar a una persona</h3>'+
+   '<input id="trq" class="inp dsearch" type="search" placeholder="Buscar: Abraham, Rut, Pablo…" autocomplete="off" value="'+esc(TR.q)+'" aria-label="Buscar persona">'+
+   '<div id="trlist" style="margin-bottom:12px">'+trListHTML()+'</div>'+
    trBranchesHTML()+
    '<button class="btn purple" style="margin:4px 0 14px" data-a="tr-quiz">🧠 Ponte a prueba</button>'+
-   '<h3 style="margin:18px 0 6px">Buscar a una persona</h3>'+
-   '<input id="trq" class="inp dsearch" type="search" placeholder="Buscar: Abraham, Rut, Pablo…" autocomplete="off" value="'+esc(TR.q)+'" aria-label="Buscar persona">'+
-   '<div id="trlist">'+trListHTML()+'</div>'+
    '<p class="foot">'+TREE.length+' personas. Los nombres, parentescos, edades y citas salen de la Biblia (RVR1960). Las fechas marcadas como aproximadas son cálculos de historiadores, no vienen en el texto bíblico. Cuando la Biblia no cuenta algo, aquí también lo decimos.</p>';
   return '<div class="hero">'+mascot('think',76)+'<div class="bubble">Aquí ves la genealogía de Jesús. Toca un nombre para ver su ficha.</div></div>'+
    '<section class="card trgold"><div class="trgt">✨ La línea de Jesucristo</div>'+
@@ -11345,8 +11344,7 @@ function trHomeHTML(){
    '<div class="abcseg"><button class="cs '+(v==='mt'?'on':'')+'" data-a="tr-line" data-v="mt">Según Mateo</button><button class="cs '+(v==='lc'?'on':'')+'" data-a="tr-line" data-v="lc">Según Lucas</button></div>'+
    '<p class="muted" style="font-size:13px;margin:8px 0 2px">'+(v==='mt'?'Mateo 1:1-17 empieza en Abraham y va hasta Jesús, bajando por la casa real de David. Aquí se completa con Génesis desde Adán.':'Lucas 3:23-38 va de Jesús hacia atrás hasta Adán, «hijo de Dios».')+'</p>'+
    trLineHTML(v)+'</section>'+
-   '<button class="btn purple" style="margin:4px 0 10px" data-a="tr-quiz">🧠 Ponte a prueba</button>'+
-   '<button class="btn ghost" style="margin:0 0 14px" data-a="tr-mode" data-m="bio">🧔 Ver las biografías bíblicas</button>'+
+   '<button class="btn purple" style="margin:4px 0 14px" data-a="tr-quiz">🧠 Ponte a prueba</button>'+
    '<p class="foot">Los nombres, parentescos y citas salen de la Biblia (RVR1960). Mateo y Lucas no siempre coinciden: aquí se muestran las dos genealogías tal como están escritas.</p>';
 }
 const TRBK='(?:[123] )?[A-ZÁÉÍÓÚ][a-záéíóúñ]+';
