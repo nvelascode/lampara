@@ -11316,7 +11316,7 @@ function trListHTML(){
 }
 function trBranchesHTML(){
   const open=TR.open;
-  const head='<b>📖 Personajes por época</b><p class="muted" style="margin:4px 0 10px;font-size:14px">Abre una época para ver a sus personajes. Toca «✨ Jesús» arriba para ir a Jesús.</p>';
+  const head='<b>📖 Personajes por época</b><p class="muted" style="margin:4px 0 10px;font-size:14px">Abre una época para ver a sus personajes.</p>';
   const ctl='<div class="trctl">'+(open.length?'<button class="btn ghost sm" data-a="tr-closeall">Cerrar todas</button>':'')+(open.length<TRBR.length?'<button class="btn ghost sm" data-a="tr-openall">Abrir todas</button>':'')+'</div>';
   const rows=TRBR.map(b=>{
     const on=open.indexOf(b[0])>=0,l=trBranch(b[0]);
@@ -11331,10 +11331,7 @@ function trBranchesHTML(){
 }
 function trHomeHTML(){
   const v=TR.line;
-  if(TR.mode==='bio')return '<div class="hero">'+mascot('think',76)+'<div class="bubble">Busca a una persona o abre una época. Toca a cualquiera para ver quién es, cuándo vivió y su familia, según la Biblia.</div></div>'+
-   '<h3 style="margin:0 0 6px">Buscar a una persona</h3>'+
-   '<input id="trq" class="inp dsearch" type="search" placeholder="Buscar: Abraham, Rut, Pablo…" autocomplete="off" value="'+esc(TR.q)+'" aria-label="Buscar persona">'+
-   '<div id="trlist" style="margin-bottom:12px">'+trListHTML()+'</div>'+
+  if(TR.mode==='bio')return '<div class="hero">'+mascot('think',76)+'<div class="bubble">Abre una época y toca a cualquier persona para ver quién es, cuándo vivió y su familia, según la Biblia.</div></div>'+
    trBranchesHTML()+
    '<button class="btn purple" style="margin:4px 0 14px" data-a="tr-quiz">🧠 Ponte a prueba</button>'+
    '<p class="foot">'+TREE.length+' personas. Los nombres, parentescos, edades y citas salen de la Biblia (RVR1960). Las fechas marcadas como aproximadas son cálculos de historiadores, no vienen en el texto bíblico. Cuando la Biblia no cuenta algo, aquí también lo decimos.</p>';
@@ -11453,7 +11450,7 @@ function trShow(){
     if(lb&&up){const f=()=>up.classList.toggle('on',lb.scrollTop>600);lb.addEventListener('scroll',f,{passive:true});f();}
   }
 }
-function trOpen(id,mode){if(mode)TR.mode=mode;else if(id)TR.mode='bio';TR.open=trOpenLoad();TR.stack=[];TR.q='';if(id){TR.view='person';TR.id=id;}else{TR.view='home';}trShow();const lb=document.querySelector('#tree .lb');if(lb)lb.scrollTop=0;}
+function trOpen(id,mode){if(mode)TR.mode=mode;else if(id)TR.mode='bio';TR.open=[];TR.stack=[];TR.q='';if(id){TR.view='person';TR.id=id;}else{TR.view='home';}trShow();const lb=document.querySelector('#tree .lb');if(lb)lb.scrollTop=0;}
 function trClose(){const el=$('#tree');el.hidden=true;el.innerHTML='';document.body.style.overflow='';TR.quiz=null;}
 function trSc(){const lb=document.querySelector('#tree .lb');return lb?lb.scrollTop:0;}
 function trGoPerson(id){TR.stack.push({view:TR.view,id:TR.id,sc:trSc()});TR.view='person';TR.id=id;trShow();const lb=document.querySelector('#tree .lb');if(lb)lb.scrollTop=0;}
