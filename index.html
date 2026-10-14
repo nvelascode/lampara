@@ -159,6 +159,7 @@ h1,h2,h3,h4{font-weight:900}
 .donkey small{display:block;color:var(--muted);font-weight:800;font-size:13px;margin-bottom:4px}
 .donkey b{font-size:26px;letter-spacing:.5px}
 .shline{margin:-4px 2px 14px;font-size:13px;font-weight:800;color:var(--muted)}
+.note .dlink{font-weight:900;color:var(--blue-ink);text-decoration:underline;margin-left:6px}
 .cbtn.cpulse{border-color:var(--blue);animation:pulse 1.6s infinite}
 .cminv{display:flex;align-items:center;gap:6px;padding:0;background:var(--blue-bg,#E1F3FF);border-color:var(--blue)}
 .cminv .cmgo{flex:1;display:flex;align-items:center;gap:10px;text-align:left;padding:12px 6px 12px 14px;font:inherit;color:inherit}
@@ -9226,8 +9227,8 @@ function meHTML(){
    '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length+BIOKEYS.length+LIBKEYS.length+PASKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+(signedIn()?'':cloudCardHTML())+
    '<p class="shline" title="Ganas uno cada 7 días de racha; se usa solo si un día no alcanzas a practicar ni a leer.">🛡️ <b>'+S.freezes+'</b> de 2 protectores de racha · ganas uno cada 7 días y se usa solo si un día no practicas ni lees.</p>'+
    '<section class="card"><b>📣 Compartir mi progreso</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha. Se envía por WhatsApp o por donde quieras.</p><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button></section>'+
-   '<h3 style="margin:18px 0 2px">Logros</h3><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
    '<section class="card don"><b>💛 Apoya a Lampy</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Lampy es gratis y no tiene anuncios. Si te sirve y quieres ayudar a mantenerla, puedes dejar un aporte voluntario.</p><button class="btn ghost sm" data-a="don-open">Ver cómo aportar</button></section>'+
+   '<h3 style="margin:18px 0 2px">Logros</h3><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
@@ -9607,6 +9608,8 @@ function finishLesson(){
   if(S.lessons>=2&&!L.offerCloud&&pushCanOffer())L.offerPush=true;
   S.froze=0;
   const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);
+  /* Una sola vez en la vida: al llegar a 7 días de racha, un mensaje discreto de apoyo */
+  const donAsk=r.newDay&&S.streak>=7&&!S.donAsk&&!L.offerCloud;if(donAsk)S.donAsk=true;
   save();
   const acc=Math.round(100*L.firstTry/L.total);
   const vs=L.meta.verses||[];
@@ -9619,6 +9622,7 @@ function finishLesson(){
    (r.newDay?'<div class="note fl">🔥 <b>¡Racha de '+S.streak+(S.streak===1?' día':' días')+'!</b> Vuelve mañana para mantenerla.</div>':'<div class="note">Hoy tu racha ya estaba asegurada. ¡Sigue sumando!</div>')+
    (r.gotFreeze?'<div class="note fl">🛡️ <b>¡Ganaste un protector de racha!</b> Cubre un día si no puedes practicar.</div>':'')+
    (r.goalHit?'<div class="note">🎯 <b>¡Meta diaria cumplida!</b> '+S.days[today()]+' XP hoy.</div>':'')+
+   (donAsk?'<div class="note">💛 <b>Si Lampy te está bendiciendo</b>, puedes ayudar a mantenerla.<button class="dlink" data-a="don-open">Ver cómo</button></div>':'')+
    fresh.map(a=>'<div class="note">'+(ACH_E[a.id]||'⭐')+' <b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join('')+
    (gws.length?'<div class="vs"><h3>Palabras de esta lección</h3><div class="dlist">'+gws.map(e=>'<button class="dentry" data-a="dic-peek" data-w="'+e.id+'"><span class="dg gk">'+esc(e.g)+'</span><span class="dm"><b>'+esc(e.tr)+'</b> '+esc(e.es)+'</span></button>').join('')+'</div></div>':'')+
    (vs.length?'<div class="vs"><h3>Versículos de esta lección</h3><div class="list">'+vs.map(v=>'<div class="li"><cite>'+esc(v.r)+'</cite><p>'+esc(v.t)+'</p></div>').join('')+'</div></div>':'')+
