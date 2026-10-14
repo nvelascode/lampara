@@ -1045,7 +1045,11 @@ a.btn{text-decoration:none;text-align:center}
 .bzspk b{font-size:20px}
 .bzspk small{color:var(--muted);font-weight:800;font-size:14px}
 .bzspk.small b{font-size:18px}
-.bzwave{font-size:52px;line-height:1;animation:bzw 1.2s ease-in-out infinite}
+.bzeq{display:flex;align-items:center;justify-content:center;gap:6px;height:48px}
+.bzeq i{display:block;width:8px;height:14px;border-radius:5px;background:var(--red);opacity:.9;animation:bzeq 1.05s ease-in-out infinite}
+.bzeq i:nth-child(2){animation-delay:.15s}.bzeq i:nth-child(3){animation-delay:.3s}.bzeq i:nth-child(4){animation-delay:.45s}.bzeq i:nth-child(5){animation-delay:.6s}
+@keyframes bzeq{0%,100%{height:12px}50%{height:42px}}
+@media (prefers-reduced-motion:reduce){.bzeq i{animation:none;height:24px}}
 @keyframes bzw{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
 .bzbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:min(64vw,236px);height:min(64vw,236px);margin:16px auto;border-radius:50%;border:0;background:#E5322D;color:#fff;box-shadow:0 10px 0 #A8201C,0 18px 28px rgba(0,0,0,.25);font-weight:900;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .06s,box-shadow .06s,background .15s}
 .bzbtn .bzmain{font-size:52px;line-height:1;letter-spacing:.01em}
@@ -1474,7 +1478,7 @@ function lampyTalk(root,force){
 }
 document.addEventListener('click',e=>{
   const m=e.target.closest&&e.target.closest('.mas.happy');if(!m)return;
-  m.classList.remove('sway');void m.offsetWidth;m.classList.add('sway');setTimeout(()=>m.classList.remove('sway'),1150);
+  beep('twinkle');m.classList.remove('sway');void m.offsetWidth;m.classList.add('sway');setTimeout(()=>m.classList.remove('sway'),1150);
 });
 /* ===== Rollo, el bibliotecario ===== */
 function rollo(mood,size){
@@ -1710,7 +1714,7 @@ function rlBodyHTML(){
 }
 function rlBody(){const el=$('#rlbody');if(el)el.innerHTML=rlBodyHTML();}
 function rlShow(){
-  rlBody();
+  rlBody();if(RL.ans&&RL.ans.k!=='none')beep('page');
   const root=$('#rlib');if(!root||!RL.ans)return;
   const bub=root.querySelector('.hero .bubble');if(bub)bub.textContent=rlSay(RL.ans);
   const mood=RL.ans.k==='none'?'pensando':'contento',m=root.querySelector('.hero .mas');
@@ -1755,7 +1759,7 @@ function rlMic(){
   try{r.start();}catch(e){RL.rec=null;toast('No pude iniciar el dictado.');}
 }
 function rlOpen(){
-  RL.view='home';RL.ans=null;RL.full=false;RL.intent=null;
+  beep('pop');RL.view='home';RL.ans=null;RL.full=false;RL.intent=null;
   const el=$('#rlib');
   el.innerHTML='<div class="lh"><button class="x" data-a="rlib-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:100%;background:var(--blue)"></i></div></div>'+
    '<div class="lb"><h1 class="page" style="margin-top:0">Biblioteca</h1><div class="hero">'+rollo('guiño',84)+'<div class="bubble">Pregúntame por un libro de la Biblia: quién lo escribió, cuándo y de qué trata.</div></div>'+
@@ -1801,24 +1805,55 @@ function confetti(n){
     fx.appendChild(d);setTimeout(()=>{try{d.remove();}catch(e){}},3400);
   }
 }
-let AC=null;
-function beep(kind){
-  if(!S.sound)return;
+let AC=null,SK_T=0;
+function beep(kind,delay,force){
+  if(!S.sound&&!force)return;
   try{
     AC=AC||new (window.AudioContext||window.webkitAudioContext)();
     if(AC.state==='suspended')AC.resume();
-    const t=AC.currentTime;
-    const seq=kind==='good'?[[660,0,.09],[880,.09,.16]]
-      :kind==='bad'?[[250,0,.14],[180,.14,.24]]
-      :kind==='fan'?[[523,0,.1],[659,.1,.1],[784,.2,.1],[1047,.3,.16],[784,.52,.1],[1047,.62,.1],[1319,.74,.5]]
-      :kind==='win'?[[523,0,.11],[659,.11,.11],[784,.22,.11],[1047,.33,.34]]
-      :kind==='tick'?[[900,0,.035]]:kind==='tock'?[[1250,0,.07]]:kind==='go'?[[1047,0,.28]]:[[600,0,.05]];
-    seq.forEach(([f,s,d])=>{
-      const o=AC.createOscillator(),g=AC.createGain();
-      o.type=kind==='bad'?'sawtooth':'triangle';o.frequency.value=f;
-      g.gain.setValueAtTime(.0001,t+s);g.gain.exponentialRampToValueAtTime(.16,t+s+.02);g.gain.exponentialRampToValueAtTime(.0001,t+s+d);
-      o.connect(g);g.connect(AC.destination);o.start(t+s);o.stop(t+s+d+.03);
-    });
+    if(kind==='win'&&SK_T&&Date.now()-SK_T<4000){kind='streak';SK_T=0;}
+    const t=AC.currentTime+(delay||0),master=AC.createGain();master.gain.value=.85;master.connect(AC.destination);
+    /* una nota hecha de parciales: [razón, volumen, duración relativa] */
+    const note=(f,s,d,v,parts,att)=>{
+      parts.forEach(([r,g,dm])=>{
+        const o=AC.createOscillator(),e=AC.createGain(),dd=Math.max(.05,d*dm);
+        o.type='sine';o.frequency.value=f*r;
+        e.gain.setValueAtTime(.0001,t+s);e.gain.exponentialRampToValueAtTime(Math.max(.0002,v*g),t+s+(att||.006));e.gain.exponentialRampToValueAtTime(.0001,t+s+dd);
+        o.connect(e);e.connect(master);o.start(t+s);o.stop(t+s+dd+.04);
+      });
+    };
+    const MAR=[[1,1,1],[4,.28,.22],[9.2,.07,.1]];                 /* marimba: seca y cálida */
+    const BEL=[[1,1,1],[2.76,.42,.6],[5.4,.18,.35],[8.93,.07,.2]];  /* campana: brillante y larga */
+    const mar=(f,s,d,v)=>note(f,s,d,v||.2,MAR,.004);
+    const bel=(f,s,d,v)=>note(f,s,d,v||.14,BEL,.008);
+    const noise=(s,d,fc,q,v)=>{
+      const n=Math.floor(AC.sampleRate*d),b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);
+      for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);
+      const src=AC.createBufferSource();src.buffer=b;
+      const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=fc;f.Q.value=q;
+      const e=AC.createGain();e.gain.setValueAtTime(.0001,t+s);e.gain.exponentialRampToValueAtTime(v,t+s+.03);e.gain.exponentialRampToValueAtTime(.0001,t+s+d);
+      src.connect(f);f.connect(e);e.connect(master);src.start(t+s);
+    };
+    switch(kind){
+      case 'good': mar(659,0,.2,.2);mar(988,.09,.34,.2);break;                                   /* acierto: dos notas de marimba, subiendo */
+      case 'bad': mar(494,0,.22,.2);mar(370,.12,.4,.2);break;                                   /* error: «uh-oh» suave, dos notas de marimba bajando */
+      case 'win': mar(523,0,.25,.18);mar(659,.1,.25,.18);mar(784,.2,.25,.18);bel(1047,.32,.9,.16);bel(1319,.34,.8,.08);break;   /* lección terminada */
+      case 'streak': mar(523,0,.2,.16);mar(659,.09,.2,.16);mar(784,.18,.2,.16);mar(1047,.27,.25,.16);                       /* racha: arpegio y destello de campanas */
+        bel(1568,.4,.9,.12);bel(2093,.5,.9,.1);bel(2637,.6,1.1,.08);break;
+      case 'fan': [[523,0],[659,.1],[784,.2],[1047,.3],[784,.52],[1047,.62]].forEach(z=>mar(z[0],z[1],.22,.17));                /* unidad terminada */
+        bel(1319,.74,1.4,.16);bel(1568,.78,1.3,.1);bel(2093,.84,1.5,.08);break;
+      case 'twinkle': bel(1568,0,.7,.1);bel(2093,.09,.8,.09);bel(2637,.18,1.0,.08);break;                                       /* Lampy: destello al tocarlo */
+      case 'page': noise(0,.22,3200,.9,.07);noise(.1,.16,5200,1.2,.04);bel(1760,.2,.5,.05);break;                                /* Rollo: roce de pergamino y una campanita */
+      case 'pop': note(520,0,.14,.12,[[1,1,1]],.01);note(780,.06,.16,.1,[[1,1,1]],.01);break;                                    /* Rollo: abrir */
+      case 'tick': note(1500,0,.05,.12,[[1,1,1],[2.4,.3,.5]],.002);break;
+      case 'tock': note(1000,0,.07,.13,[[1,1,1],[2.4,.3,.5]],.002);break;
+      case 'go': {const o=AC.createOscillator(),e=AC.createGain(),v=AC.createOscillator(),vg=AC.createGain();                  /* salida y llegada: silbato corto */
+        o.type='sine';o.frequency.setValueAtTime(2100,t);o.frequency.linearRampToValueAtTime(2500,t+.3);v.frequency.value=28;vg.gain.value=90;v.connect(vg);vg.connect(o.frequency);
+        e.gain.setValueAtTime(.0001,t);e.gain.exponentialRampToValueAtTime(.16,t+.02);e.gain.setValueAtTime(.16,t+.28);e.gain.exponentialRampToValueAtTime(.0001,t+.4);
+        o.connect(e);e.connect(master);o.start(t);v.start(t);o.stop(t+.45);v.stop(t+.45);noise(0,.3,3500,2,.03);break;}
+      case 'ring': bel(2093,0,1.4,.42);bel(1568,.01,1.0,.12);break;                                                       /* timbre del botón rojo: campanilla de mostrador */
+      default: mar(700,0,.12,.14);
+    }
   }catch(e){}
 }
 function toast(msg){
@@ -6696,7 +6731,7 @@ function bzTone(freq,whenMs,dur,vol){
 /* el timbre: dos notas altas, justo en el ¡YA! */
 function bzBeeps(T0){
   const ms=T0-BZCLK.off-bzLocal();
-  if(ms>-80){bzTone(1175,ms,.5,.65);bzTone(1568,ms+140,.7,.6);}
+  if(ms>-80)beep('ring',Math.max(0,ms)/1000,true);   /* suena aunque el sonido general esté apagado: es parte del juego */
 }
 const bzLead=base=>Math.round(base+Math.random()*BZ_LEADR);
 
@@ -6954,7 +6989,7 @@ function bzPlayHTML(){
   const hostGone=!host&&g.active.length&&g.active.indexOf(g.host)<0;
   let main='',foot='';
   if(T.stage==='read'){
-    main='<div class="bzspk"><span class="bzwave" aria-hidden="true">🔊</span><b>Escuchen la pregunta…</b><small>Cuando termine, espera el timbre.</small></div>'+
+    main='<div class="bzspk"><span class="bzeq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><b>Escuchen la pregunta…</b><small>Cuando termine, espera el timbre.</small></div>'+
       (plays?bzBtn('wait','ESCUCHA','espera el timbre'):'');
     if(host){
       const fallback=g.cfg.read==='screen'||g.ui.voiceFail;
@@ -8643,6 +8678,7 @@ function recordDay(xp){
   }
   const before=S.days[t]||0;
   S.days[t]=before+xp;S.xp+=xp;
+  if(newDay&&S.streak>1)SK_T=Date.now();
   return {newDay,gotFreeze,goalHit:before<S.goal&&S.days[t]>=S.goal};
 }
 
