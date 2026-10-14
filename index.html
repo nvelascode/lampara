@@ -1197,6 +1197,9 @@ a.btn{text-decoration:none;text-align:center}
 .trhead{text-align:center;margin:4px 0 10px;position:relative}
 .trflag{position:absolute;top:0;right:0;width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:var(--surface);color:var(--muted);display:grid;place-items:center;padding:0}
 .trflag svg{width:20px;height:20px}.trflag:active{background:var(--surface2)}
+.trup{position:absolute;right:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:54px;height:54px;border-radius:50%;background:var(--gold-bg);color:var(--gold-ink);border:2px solid var(--gold);border-bottom-width:4px;display:grid;place-items:center;padding:0;opacity:0;pointer-events:none;transform:scale(.8);transition:opacity .2s,transform .2s;z-index:3;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.trup svg{width:24px;height:24px}.trup.on{opacity:1;pointer-events:auto;transform:none}
+.trentry[data-a]{cursor:pointer}.trentry[data-a]:active{filter:brightness(.97)}
 .trrel.neu{border-color:var(--line);background:var(--surface)}
 .trrow:has(+.trwn){border-bottom:0}
 .trwn{font-size:12.5px;line-height:1.35;margin:-4px 0 6px 34px}.trhead h2{margin:8px 0 6px}
@@ -1277,7 +1280,7 @@ button.cog.trref{display:inline-block;background:var(--yellow-bg);border:2px sol
 <div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
 <div id="dic" class="overlay" role="dialog" aria-modal="true" aria-label="Diccionario" hidden></div>
 <div id="rlib" class="overlay" role="dialog" aria-modal="true" aria-label="Biblioteca" hidden></div>
-<div id="tree" class="overlay" role="dialog" aria-modal="true" aria-label="Árbol genealógico" hidden></div>
+<div id="tree" class="overlay" role="dialog" aria-modal="true" aria-label="Biografías bíblicas" hidden></div>
 <div id="fam" class="overlay" role="dialog" aria-modal="true" aria-label="Grupo familiar" hidden></div>
 <div id="room" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en vivo" hidden></div>
 <div id="modal" class="modal" hidden></div>
@@ -1670,12 +1673,12 @@ function rlAnsHTML(){
     const p=a.p,nm=rlShort(p),tit=(a.rel==='esposos'?(p.s==='H'?'Esposas':'Esposos'):RL_RELT[a.rel])+' de '+nm;
     const body=a.l.length?'<div class="rchips" style="margin-top:10px">'+a.l.map(x=>'<button class="rch" data-a="rlib-per" data-id="'+esc(x.id)+'">'+esc(rlShort(x))+'</button>').join('')+'</div>'+(a.l.length===1?'<p style="margin:12px 0 0">'+esc(a.l[0].d)+'</p>':''):(a.fb?'<p style="margin:8px 0 0">'+esc(a.fb)+'</p><p class="muted" style="font-size:13px;margin:6px 0 0">Esto sale de la ficha de '+esc(nm)+'; esa persona no está como tarjeta propia en el árbol.</p>':'<p class="muted" style="margin:6px 0 0">El árbol de este curso no registra ese dato de '+esc(nm)+'. La Biblia no siempre lo menciona.</p>');
     const note=(a.rel==='padre'&&p.lf)?'<p class="muted" style="font-size:13px;margin:10px 0 0">Mateo y Lucas dan nombres distintos para el padre de José: son las dos genealogías de Jesús, que el árbol muestra.</p>':'';
-    return '<section class="card rla"><b>'+esc(tit)+'</b>'+body+note+'<button class="btn blue sm" style="margin-top:12px" data-a="tr-open" data-id="'+esc(p.id)+'">Ver a '+esc(nm)+' en el árbol</button></section>';
+    return '<section class="card rla"><b>'+esc(tit)+'</b>'+body+note+'<button class="btn blue sm" style="margin-top:12px" data-a="tr-open" data-id="'+esc(p.id)+'">Ver la biografía de '+esc(nm)+'</button></section>';
   }
   if(a.k==='p'){
     const p=a.p;
     return '<section class="card rla"><div class="big">'+esc(p.n)+'</div><p>'+esc(p.d)+'</p>'+(p.b?'<p class="muted"><b>Nacimiento:</b> '+esc(p.b)+'</p>':'')+(p.x?'<p class="muted"><b>Muerte:</b> '+esc(p.x)+'</p>':'')+
-      '<button class="btn blue sm" data-a="tr-open" data-id="'+esc(p.id)+'">Ver en el árbol</button></section>';
+      '<button class="btn blue sm" data-a="tr-open" data-id="'+esc(p.id)+'">Ver su biografía</button></section>';
   }
   const b=a.b,n=rlName(b),it=a.it||'resumen',f=k=>rlField(b.l,k);
   const row=(lab,v)=>v?'<p><span class="rlab">'+lab+'</span>'+esc(v)+'</p>':'';
@@ -1703,7 +1706,7 @@ function rlBodyHTML(){
   const qs=[['autor','¿Quién lo escribió?'],['fecha','¿Cuándo se escribió?'],['tema','¿De qué trata?'],['prop','¿Para qué se escribió?'],['div','¿Cómo se divide?']];
   return (RL.ans?rlAnsHTML():'')+'<h4 class="rlh">Preguntas rápidas</h4><div class="rchips">'+qs.map(x=>'<button class="rch" data-a="rlib-int" data-k="'+x[0]+'">'+x[1]+'</button>').join('')+'</div>'+
     '<h4 class="rlh">Para explorar</h4>'+trCardHTML()+
-    '<section class="card trentry" style="border-color:var(--blue)"><div class="tre">📚</div><div class="trt"><b>Los libros de la Biblia</b><p>Autor, fecha y tema de cada libro, según las fichas del curso.</p></div><button class="btn blue sm" data-a="rlib-books">Ver</button></section>';
+    '<section class="card trentry" data-a="rlib-books" style="border-color:var(--blue)"><div class="tre">📚</div><div class="trt"><b>Los libros de la Biblia</b><p>Autor, fecha y tema de cada libro, según las fichas del curso.</p></div><button class="btn blue sm" data-a="rlib-books">Ver</button></section>';
 }
 function rlBody(){const el=$('#rlbody');if(el)el.innerHTML=rlBodyHTML();}
 function rlShow(){
@@ -11439,13 +11442,19 @@ function trShow(){
   const canBack=TR.view!=='home';
   el.innerHTML='<div class="lh">'+(canBack?'<button class="x trback" data-a="tr-back" aria-label="Volver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'<button class="x" data-a="tr-close" aria-label="Cerrar">'+IC.close+'</button>')+
    '<div class="bar"><i style="width:100%;background:var(--yellow)"></i></div>'+(!(TR.view==='person'&&TR.id==='jesus')?'<button class="trjbtn" data-a="tr-p" data-id="jesus" aria-label="Ir a Jesús">✨ Jesús</button>':'')+(canBack?'<button class="x" data-a="tr-close" aria-label="Cerrar">'+IC.close+'</button>':'')+'</div>'+
-   '<div class="lb">'+(TR.view==='home'?'<h1 class="page" style="margin-top:0">🌳 Árbol genealógico</h1>':'')+inner+'</div>';
+   '<div class="lb">'+(TR.view==='home'?'<h1 class="page" style="margin-top:0">🧔 Biografías bíblicas</h1>':'')+inner+'</div>';
   el.hidden=false;document.body.style.overflow='hidden';
+  if(TR.view==='home'){
+    el.insertAdjacentHTML('beforeend','<button type="button" class="trup" id="trup" data-a="tr-up" aria-label="Subir a la genealogía de Jesús"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>');
+    const lb=el.querySelector('.lb'),up=el.querySelector('#trup');
+    if(lb&&up){const f=()=>up.classList.toggle('on',lb.scrollTop>600);lb.addEventListener('scroll',f,{passive:true});f();}
+  }
 }
 function trOpen(id){TR.open=trOpenLoad();TR.stack=[];TR.q='';if(id){TR.view='person';TR.id=id;}else{TR.view='home';}trShow();const lb=document.querySelector('#tree .lb');if(lb)lb.scrollTop=0;}
 function trClose(){const el=$('#tree');el.hidden=true;el.innerHTML='';document.body.style.overflow='';TR.quiz=null;}
-function trGoPerson(id){TR.stack.push({view:TR.view,id:TR.id});TR.view='person';TR.id=id;trShow();const lb=document.querySelector('#tree .lb');if(lb)lb.scrollTop=0;}
-function trBack(){const p=TR.stack.pop();if(p){TR.view=p.view;TR.id=p.id;}else{TR.view='home';}TR.quiz=null;trShow();}
+function trSc(){const lb=document.querySelector('#tree .lb');return lb?lb.scrollTop:0;}
+function trGoPerson(id){TR.stack.push({view:TR.view,id:TR.id,sc:trSc()});TR.view='person';TR.id=id;trShow();const lb=document.querySelector('#tree .lb');if(lb)lb.scrollTop=0;}
+function trBack(){const p=TR.stack.pop();if(p){TR.view=p.view;TR.id=p.id;}else{TR.view='home';}TR.quiz=null;trShow();if(p&&p.sc){const lb=document.querySelector('#tree .lb');if(lb)lb.scrollTop=p.sc;}}
 function trInline(id,v){TR.stack=[];TR.view='home';TR.line=v;trShow();const n=document.getElementById('trn-'+id);if(n){n.scrollIntoView({block:'center'});n.classList.add('flash');}}
 /* ---- Ponte a prueba ---- */
 function trMakeQuiz(){
@@ -11493,18 +11502,19 @@ function trAct(a,b){
   else if(a==='tr-closeall'){TR.open=[];trOpenSave();trShow();const lb=document.querySelector('#tree .lb');if(lb)lb.scrollTop=0;}
   else if(a==='tr-openall'){TR.open=TRBR.map(z=>z[0]);trOpenSave();trShow();}
   else if(a==='tr-v')trV(b.dataset.r);
+  else if(a==='tr-up'){const lb=document.querySelector('#tree .lb');if(lb)lb.scrollTo({top:0,behavior:'smooth'});}
   else if(a==='tr-vx')hideModal();
   else if(a==='tr-flag')trFlagOpen(b.dataset.id);
   else if(a==='tr-fx')hideModal();
   else if(a==='tr-fsend')trFlagSend();
   else if(a==='tr-line'){TR.line=b.dataset.v;trShow();}
   else if(a==='tr-inline')trInline(b.dataset.id,b.dataset.v);
-  else if(a==='tr-quiz'){if(TR.view!=='quiz')TR.stack.push({view:TR.view,id:TR.id});TR.view='quiz';TR.quiz=trMakeQuiz();trShow();}
+  else if(a==='tr-quiz'){if(TR.view!=='quiz')TR.stack.push({view:TR.view,id:TR.id,sc:trSc()});TR.view='quiz';TR.quiz=trMakeQuiz();trShow();}
   else if(a==='tr-ans'){const Q=TR.quiz;if(!Q||Q.sel>=0)return;Q.sel=+b.dataset.i;const q=Q.qs[Q.i];if(q.all[Q.sel]===q.ok){Q.score++;beep('good');haptic&&haptic();}else beep('bad');trShow();}
   else if(a==='tr-next'){const Q=TR.quiz;Q.i++;Q.sel=-1;if(Q.i>=Q.qs.length){Q.done=true;recordDay(10);if(Q.score>=Q.qs.length*0.7){confetti();beep('win');}}trShow();}
 }
 function trCardHTML(){
-  return '<section class="card trentry"><div class="tre">🌳</div><div class="trt"><b>Árbol genealógico</b><p>Quién es quién en la Biblia, con su nacimiento y muerte. La línea de Cristo, resaltada.</p></div><button class="btn blue sm" data-a="tr-open">Abrir</button></section>';
+  return '<section class="card trentry" data-a="tr-open"><div class="tre">🧔</div><div class="trt"><b>Biografías bíblicas</b><p>Quién es quién en la Biblia: su familia, cuándo vivió y dónde está en la línea de Cristo.</p></div><button class="btn blue sm" data-a="tr-open">Abrir</button></section>';
 }
 
 function gSoloTiles(){
