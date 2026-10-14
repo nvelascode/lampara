@@ -76,6 +76,8 @@ h1,h2,h3,h4{font-weight:900}
 @keyframes sweat{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(5px);opacity:.75}}
 @keyframes shiver{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.2px)}75%{transform:translateX(1.2px)}}
 @media (prefers-reduced-motion:reduce){.mas .sw,.mas .sw2,.mas.panic svg{animation:none}}
+.mas .eyes{transform-box:fill-box;transform-origin:50% 50%;transition:transform .05s}
+.mas.blinking .eyes{transform:scaleY(.08)}
 .pop{animation:pop .35s ease-out}
 
 /* ---------- barra superior ---------- */
@@ -1327,7 +1329,8 @@ function mascot(mood,size,flv){
   const flame='<path d="M50 2C58 12 64 18 64 25C64 32 58 36 50 36C42 36 36 32 36 25C36 18 42 12 50 2Z" fill="#FF9600"/><path d="M50 15C54 21 57 24 57 28C57 32 54 34 50 34C46 34 43 32 43 28C43 24 46 21 50 15Z" fill="#FFD84D"/>';
   const live=typeof flv==='number',sc=live?flv:(mood==='sad'?.6:1);
   const fl='<g class="flw" transform="translate(50 36) scale('+sc.toFixed(2)+') translate(-50 -36)"'+(live?' opacity="'+(.55+.45*Math.min(1,sc)).toFixed(2)+'"':'')+'><g class="fl">'+flame+'</g></g>';
-  return '<span class="mas '+mood+'"'+(live?' data-live="1"':'')+' style="width:'+size+'px;height:'+size+'px"><svg viewBox="0 0 100 100" aria-hidden="true">'+
+  const blk=!(mood==='wink'||mood==='cheer'||mood==='panic');
+  return '<span class="mas '+mood+(blk?' blk':'')+'"'+(live?' data-live="1"':'')+' style="width:'+size+'px;height:'+size+'px"><svg viewBox="0 0 100 100" aria-hidden="true">'+
    '<path d="M17 56C5 54 3 70 15 73" fill="none" stroke="#E5A600" stroke-width="6" stroke-linecap="round"/>'+
    '<path d="M83 50C93 46 98 40 96 33C91 39 87 41 80 42Z" fill="#E5A600"/>'+
    '<path d="M12 62C12 42 28 37 50 37C72 37 88 42 88 62C88 80 72 92 50 92C28 92 12 80 12 62Z" fill="#FFC800"/>'+
@@ -1335,8 +1338,27 @@ function mascot(mood,size,flv){
    '<path d="M22 53q4-9 13-12" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="4" stroke-linecap="round"/>'+
    '<rect x="41" y="28" width="18" height="13" rx="4" fill="#E5A600"/>'+fl+
    '<circle cx="27" cy="63" r="5.6" fill="#FF8FA3" opacity=".65"/><circle cx="73" cy="63" r="5.6" fill="#FF8FA3" opacity=".65"/>'+
-   brows+eyes+mouth+extra+'</svg></span>';
+   brows+'<g class="eyes">'+eyes+'</g>'+mouth+extra+'</svg></span>';
 }
+/* Parpadeo natural: uno o dos parpadeos seguidos, a intervalos al azar. Solo con ambos ojos abiertos. */
+(function(){
+  let rm=false;try{rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+  if(rm)return;
+  const next=el=>{el._nb=Date.now()+2500+Math.random()*4500;};
+  function blink(el,n){
+    if(!el.isConnected)return;
+    el.classList.add('blinking');
+    setTimeout(()=>{el.classList.remove('blinking');if(n>1)setTimeout(()=>blink(el,n-1),150);},110);
+  }
+  setInterval(()=>{
+    if(document.hidden)return;
+    const now=Date.now();
+    document.querySelectorAll('.mas.blk').forEach(el=>{
+      if(!el._nb){el._nb=now+800+Math.random()*3000;return;}
+      if(now>=el._nb){next(el);blink(el,Math.random()<.35?2:1);}
+    });
+  },150);
+})();
 function confetti(n){
   const fx=$('#fx');if(!fx)return;
   const cols=['#58CC02','#1CB0F6','#FF9600','#FFC800','#CE82FF','#FF4B4B'];
