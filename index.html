@@ -1545,6 +1545,37 @@ function rlFindPerson(s,loose){
   TREE.forEach(p=>{rlNorm(p.n.replace(/\(.*?\)/g,'').split(',')[0]).split(' ').forEach(w=>{if(w.length>=4&&cnt[w]===1&&w.length>bl&&new RegExp('(^| )'+w+'( |$)').test(s)){best=p;bl=w.length;}});});
   return best;
 }
+function rlShort(p){return p.n.split(',')[0].replace(/\s*\(.*?\)/,'');}
+function rlRel(s){
+  if(/\bde quien\s+(fue|es|era)\s+(hijo|hija)\b/.test(s))return 'padres';
+  if(/\b(abuelo|abuela|abuelos|abuelas)\b/.test(s))return 'abuelos';
+  if(/\b(nieto|nieta|nietos|nietas)\b/.test(s))return 'nietos';
+  if(/\b(hermano|hermana|hermanos|hermanas)\b/.test(s))return 'hermanos';
+  if(/\b(hijo|hija|hijos|hijas|descendientes)\b/.test(s))return 'hijos';
+  if(/\b(esposa|esposas|esposo|esposos|mujer|mujeres|marido|casado|casada|caso|cason|conyuge|conyuges)\b/.test(s))return 'esposos';
+  if(/\b(padres)\b/.test(s))return 'padres';
+  if(/\b(padre|papa)\b/.test(s))return 'padre';
+  if(/\b(madre|mama)\b/.test(s))return 'madre';
+  return null;
+}
+function rlRelList(p,rel,raw){
+  const g=id=>id&&TRB[id]?TRB[id]:null,uniq=a=>a.filter((x,i)=>x&&a.indexOf(x)===i);
+  const sexo=/\b(hija|hijas|hermana|hermanas|nieta|nietas)\b/.test(raw)&&!/\b(hijo|hijos|hermano|hermanos|nieto|nietos)\b/.test(raw)?'M':(/\b(hijo|hermano|nieto)\b/.test(raw)&&!/\b(hijas|hijos|hermanas|hermanos|nietas|nietos|hija|hermana|nieta)\b/.test(raw)?'H':null);
+  const kids=x=>TREE.filter(y=>y.f===x.id||y.m===x.id||y.lf===x.id);
+  let l=[];
+  if(rel==='padre')l=[g(p.f),g(p.lf)];
+  else if(rel==='madre')l=[g(p.m)];
+  else if(rel==='padres')l=[g(p.f),g(p.m),g(p.lf)];
+  else if(rel==='esposos')l=uniq((p.sp||[]).map(g).concat(TREE.filter(y=>(y.sp||[]).indexOf(p.id)>=0)));
+  else if(rel==='hijos')l=kids(p);
+  else if(rel==='hermanos')l=TREE.filter(y=>y.id!==p.id&&((p.f&&y.f===p.f)||(p.m&&y.m===p.m)));
+  else if(rel==='abuelos'){const ps=[g(p.f),g(p.m)].filter(Boolean);ps.forEach(q=>{l.push(g(q.f),g(q.m));});}
+  else if(rel==='nietos'){kids(p).forEach(k=>kids(k).forEach(n=>l.push(n)));}
+  l=uniq(l);
+  if(sexo&&rel!=='padre'&&rel!=='madre'&&rel!=='esposos')l=l.filter(x=>x.s===sexo);
+  return l;
+}
+const RL_RELT={padre:'Padre',madre:'Madre',padres:'Padres',esposos:'Esposos',hijos:'Hijos',hermanos:'Hermanos',abuelos:'Abuelos',nietos:'Nietos'};
 function rlIntent(s){
   if(/\b(donde|lugar|ciudad)\b/.test(s))return 'lugar';
   if(/\b(cuando|fecha|ano|anos|epoca|siglo|siglos|tiempo)\b/.test(s))return 'fecha';
@@ -1594,7 +1625,13 @@ function rlSh(t,max){
 function rlSay(a){
   if(a.k==='amb')return '¿Cuál de estos libros? Elige uno.';
   if(a.k==='none')return 'No encontré eso. Prueba con «Romanos» o con «Abraham».';
-  if(a.k==='p')return a.p.n.split(',')[0].replace(/\s*\(.*?\)/,'')+': '+rlSh(a.p.d,80);
+  if(a.k==='rel'){
+    const nm=rlShort(a.p),L=a.l.map(rlShort),r=a.rel;
+    if(!L.length)return 'El árbol no registra ese dato de '+nm+'.';
+    const j=L.length>4?L.slice(0,3).join(', ')+' y '+(L.length-3)+' más':L.length>1?L.slice(0,-1).join(', ')+' y '+L[L.length-1]:L[0];
+    return ((r==='esposos'?(a.p.s==='H'?{esposos:'Esposas'}:{esposos:'Esposos'}):{padre:'Padre',madre:'Madre',padres:'Padres',esposos:'Esposos',hijos:'Hijos',hermanos:'Hermanos',abuelos:'Abuelos',nietos:'Nietos'})[r])+' de '+nm+': '+j+'.';
+  }
+  if(a.k==='p')return rlShort(a.p)+': '+rlSh(a.p.d,80);
   const b=a.b,n=rlName(b),it=a.it||'resumen',f=k=>rlField(b.l,k);
   const miss='En la ficha de '+n+' no hay ese dato.';
   if(it==='autor'){const ax=rlAutorX(b);return (ax.t||f('autor'))?n+'. Autor: '+rlSh(ax.sayt||ax.t||f('autor'),80)+(ax.say||''):miss;}
@@ -1609,6 +1646,12 @@ function rlAnsHTML(){
   const a=RL.ans;
   if(a.k==='none')return '<section class="card rla"><b>No encontré eso.</b><p class="muted" style="margin:4px 0 0">Escribe el nombre de un libro, como «Romanos» o «1 Corintios», o de una persona, como «Abraham». También puedes tocar una pregunta rápida.</p></section>';
   if(a.k==='amb')return '<section class="card rla"><b>¿Cuál de estos libros?</b><div class="rchips" style="margin-top:10px">'+a.opts.map(t=>'<button class="rch" data-a="rlib-pickb" data-t="'+esc(t)+'">'+esc(t)+'</button>').join('')+'</div></section>';
+  if(a.k==='rel'){
+    const p=a.p,nm=rlShort(p),tit=(a.rel==='esposos'?(p.s==='H'?'Esposas':'Esposos'):RL_RELT[a.rel])+' de '+nm;
+    const body=a.l.length?'<div class="rchips" style="margin-top:10px">'+a.l.map(x=>'<button class="rch" data-a="rlib-per" data-id="'+esc(x.id)+'">'+esc(rlShort(x))+'</button>').join('')+'</div>'+(a.l.length===1?'<p style="margin:12px 0 0">'+esc(a.l[0].d)+'</p>':''):'<p class="muted" style="margin:6px 0 0">El árbol de este curso no registra ese dato de '+esc(nm)+'. La Biblia no siempre lo menciona.</p>';
+    const note=(a.rel==='padre'&&p.lf)?'<p class="muted" style="font-size:13px;margin:10px 0 0">Mateo y Lucas dan nombres distintos para el padre de José: son las dos genealogías de Jesús, que el árbol muestra.</p>':'';
+    return '<section class="card rla"><b>'+esc(tit)+'</b>'+body+note+'<button class="btn blue sm" style="margin-top:12px" data-a="tr-open" data-id="'+esc(p.id)+'">Ver a '+esc(nm)+' en el árbol</button></section>';
+  }
   if(a.k==='p'){
     const p=a.p;
     return '<section class="card rla"><div class="big">'+esc(p.n)+'</div><p>'+esc(p.d)+'</p>'+(p.b?'<p class="muted"><b>Nacimiento:</b> '+esc(p.b)+'</p>':'')+(p.x?'<p class="muted"><b>Muerte:</b> '+esc(p.x)+'</p>':'')+
@@ -1655,9 +1698,10 @@ function rlShow(){
 function rlAsk(q){
   q=(q||'').trim();if(!q)return;
   const s=rlPrep(q),personQ=/\b(quien|quienes)\s+(fue|fueron|es|era|son)\b/.test(s);
-  const per=rlFindPerson(s,personQ),bk=rlFindBook(s);
+  const rel0=rlRel(s),per=rlFindPerson(s,personQ||!!rel0),bk=rlFindBook(s),rel=per?rel0:null;
   RL.view='home';RL.full=false;
-  if(per&&(personQ||!bk))RL.ans={k:'p',p:per};
+  if(per&&rel&&!(bk&&!personQ&&rlNorm(per.n).length<rlNorm(bk.al[0]||'').length))RL.ans={k:'rel',p:per,rel:rel,l:rlRelList(per,rel,s)};
+  else if(per&&(personQ||!bk))RL.ans={k:'p',p:per};
   else if(bk&&bk.amb)RL.ans={k:'amb',opts:bk.amb,it:rlIntent(s)};
   else if(bk)RL.ans={k:'b',b:bk,it:rlIntent(s)};
   else RL.ans={k:'none'};
@@ -1713,6 +1757,7 @@ function rlAct(a,b){
   else if(a==='rlib-back'){RL.view='home';rlBody();}
   else if(a==='rlib-book'){const bk=rlBooks().find(x=>x.ui===+b.dataset.ui&&x.li===+b.dataset.li);if(bk){RL.ans={k:'b',b:bk,it:RL.intent||null};RL.view='home';RL.full=false;rlShow();}}
   else if(a==='rlib-pickb'){const bk=rlBooks().find(x=>x.t===b.dataset.t);if(bk){RL.ans={k:'b',b:bk,it:RL.ans&&RL.ans.it||null};RL.full=false;rlShow();}}
+  else if(a==='rlib-per'){const p=TRB[b.dataset.id];if(p){RL.ans={k:'p',p:p};RL.full=false;rlShow();}}
   else if(a==='rlib-it'){if(RL.ans&&RL.ans.k==='b'){RL.ans.it=b.dataset.k;RL.full=false;rlShow();}}
   else if(a==='rlib-full'){RL.full=!RL.full;rlBody();}
 }
