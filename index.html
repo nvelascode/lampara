@@ -1584,20 +1584,26 @@ function rlMd(t){
   });
   fl();return out.join('');
 }
+/* lo que Rollo dice en su globo: una sola frase corta; el detalle va en la tarjeta */
+function rlSh(t,max){
+  max=max||95;t=String(t||'').trim();
+  const m=t.match(/^.+?[.!?](?=\s|$)/);let f=m?m[0]:t;
+  if(f.length>max)f=f.slice(0,max).replace(/[\s,;:]+\S*$/,'')+'…';
+  return f;
+}
 function rlSay(a){
-  const cut=t=>t.length>150?t.slice(0,147).replace(/\s+\S*$/,'')+'…':t;
   if(a.k==='amb')return '¿Cuál de estos libros? Elige uno.';
-  if(a.k==='none')return 'No encontré eso. Prueba con el nombre de un libro, como «Romanos», o de una persona, como «Abraham».';
-  if(a.k==='p')return cut(a.p.n+': '+a.p.d);
+  if(a.k==='none')return 'No encontré eso. Prueba con «Romanos» o con «Abraham».';
+  if(a.k==='p')return a.p.n.split(',')[0].replace(/\s*\(.*?\)/,'')+': '+rlSh(a.p.d,80);
   const b=a.b,n=rlName(b),it=a.it||'resumen',f=k=>rlField(b.l,k);
   const miss='En la ficha de '+n+' no hay ese dato.';
-  if(it==='autor'){const ax=rlAutorX(b);return (ax.t||f('autor'))?cut(n+'. Autor: '+(ax.sayt||ax.t||f('autor'))+(ax.say||'')):miss;}
-  if(it==='fecha')return f('fecha')?cut(n+'. '+f('fecha')):miss;
-  if(it==='lugar')return f('lugar')?cut(n+'. Lugar: '+f('lugar')):miss;
-  if(it==='dest')return f('dest')?cut(n+'. Para quiénes: '+f('dest')):miss;
+  if(it==='autor'){const ax=rlAutorX(b);return (ax.t||f('autor'))?n+'. Autor: '+rlSh(ax.sayt||ax.t||f('autor'),80)+(ax.say||''):miss;}
+  if(it==='fecha')return f('fecha')?n+'. '+rlSh(f('fecha')):miss;
+  if(it==='lugar')return f('lugar')?n+'. '+rlSh(f('lugar')):miss;
+  if(it==='dest')return f('dest')?n+'. '+rlSh(f('dest')):miss;
   if(it==='prop')return rlSection(b.l,/propósito/i)?'Estos son los propósitos de '+n+'.':miss;
   if(it==='div')return rlSection(b.l,/divisiones/i)?'Así se divide '+n+'.':miss;
-  const t=rlTema(b.l);return cut(n+'. Tema: '+(t.t||t.txt));
+  const t=rlTema(b.l);return t.t?n+'. Tema: '+rlSh(t.t,80):'Te muestro el resumen de '+n+'.';
 }
 function rlAnsHTML(){
   const a=RL.ans;
