@@ -93,7 +93,8 @@ h1,h2,h3,h4{font-weight:900}
 .mas.happy{cursor:pointer;transform-origin:50% 92%;-webkit-tap-highlight-color:transparent}
 .mas.sway{animation:sway 1.1s ease-in-out}
 @keyframes sway{0%{transform:rotate(0)}18%{transform:rotate(-9deg)}42%{transform:rotate(8deg)}64%{transform:rotate(-5deg)}82%{transform:rotate(3deg)}100%{transform:rotate(0)}}
-.bubble .tw0{visibility:hidden}
+.bubble .tw{display:inline-block;transition:opacity .45s ease-out,filter .45s ease-out}
+.bubble .tw0{opacity:0;filter:blur(5px)}
 @media (prefers-reduced-motion:reduce){.mas.lev .body,.mas .st,.mas .qm,.mas.sway{animation:none}}
 .pop{animation:pop .35s ease-out}
 
@@ -1378,7 +1379,6 @@ function mascot(mood,size,flv){
   },150);
 })();
 /* Lampy habla: mueve la boquita por sílabas mientras aparece el texto del globo (solo globos de texto simple). */
-let _lastTalk={k:'',t:0};
 function lampyTalk(root){
   try{
     let rm=false;try{rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
@@ -1387,13 +1387,24 @@ function lampyTalk(root){
     if(!hero)return;
     const el=hero.querySelector('.mas'),b=hero.querySelector('.bubble');
     if(!el||!b||b.children.length||!b.textContent.trim())return;
-    const txt=b.textContent,key=txt,now=Date.now();
-    if(_lastTalk.k===key&&now-_lastTalk.t<20000)return;
-    _lastTalk={k:key,t:now};
+    const txt=b.textContent,key=txt;
+    if(b.id==='homebub'){
+      /* Inicio: una vez por mensaje y por día */
+      const td=today();
+      if(!S.talkSeen||S.talkSeen.d!==td)S.talkSeen={d:td,k:[]};
+      if(S.talkSeen.k.indexOf(key)>=0)return;
+      S.talkSeen.k.push(key);if(S.talkSeen.k.length>40)S.talkSeen.k.shift();
+    }else{
+      /* Demás pestañas: una sola vez en la vida de la app por mensaje */
+      if(!Array.isArray(S.talkEver))S.talkEver=[];
+      if(S.talkEver.indexOf(key)>=0)return;
+      S.talkEver.push(key);if(S.talkEver.length>200)S.talkEver.shift();
+    }
+    save();
     const tk=el.querySelector('.tk');if(!tk)return;
     const smile=tk.classList.contains('smile');
     const words=txt.split(' '),SY=210;
-    b.innerHTML=words.map(w=>'<span class="tw0">'+esc(w)+'</span>').join(' ');
+    b.innerHTML=words.map(w=>'<span class="tw tw0">'+esc(w)+'</span>').join(' ');
     const spans=b.querySelectorAll('.tw0');
     const tok=(b._tk||0)+1;b._tk=tok;
     const sched=(ms,fn)=>setTimeout(()=>{if(b._tk===tok&&b.isConnected)fn();},ms);
@@ -1403,7 +1414,7 @@ function lampyTalk(root){
     let at=0;
     words.forEach((w,wi)=>{
       const n=syl(w);
-      sched(at,()=>{spans[wi].classList.remove('tw0');});
+      sched(at*.62,()=>{spans[wi].classList.remove('tw0');});   /* el texto va más rápido que la boca */
       for(let k=0;k<n;k++){
         const open=(smile?.7:.55)+Math.random()*.3,wide=/[oóuú]/i.test(w)?.82:1;
         sched(at+k*SY,()=>set(open.toFixed(2),wide));
@@ -1414,6 +1425,7 @@ function lampyTalk(root){
       sched(at-SY*.2,()=>set(.08,1));
     });
     setTimeout(()=>{if(b._tk===tok){el.classList.remove('talking');b.textContent=txt;}},at+120);
+    /* el globo ya está completo antes de que la boca termine: se limpia al final */
   }catch(e){}
 }
 document.addEventListener('click',e=>{
@@ -9207,7 +9219,7 @@ function flameTick(){
     if(b&&b.dataset.fl&&flameAtRisk()){
       b.textContent=flameMsg();
       const m=document.querySelector('.hero .mas[data-live]'),mm=riskMood();
-      if(m&&!m.classList.contains(mm)){m.outerHTML=mascot(mm,parseInt(m.style.width)||84,v);_lastTalk={k:'',t:0};lampyTalk(document.getElementById('main'));}
+      if(m&&!m.classList.contains(mm)){m.outerHTML=mascot(mm,parseInt(m.style.width)||84,v);lampyTalk(document.getElementById('main'));}
     }
   }catch(e){}
 }
