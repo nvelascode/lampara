@@ -155,6 +155,12 @@ h1,h2,h3,h4{font-weight:900}
 .cbtn{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-weight:900;font-size:17px;color:var(--ink)}
 .cbtn .ci{font-size:24px;line-height:1;display:grid;place-items:center}
 .cbtn .ci .flag{width:30px;height:20px;border-radius:4px;display:block}
+.cbtn.cpulse{border-color:var(--blue);animation:pulse 1.6s infinite}
+.cminv{display:flex;align-items:center;gap:6px;padding:0;background:var(--blue-bg,#E1F3FF);border-color:var(--blue)}
+.cminv .cmgo{flex:1;display:flex;align-items:center;gap:10px;text-align:left;padding:12px 6px 12px 14px;font:inherit;color:inherit}
+.cminv .cmem{font-size:28px}
+.cminv small{font-weight:800;color:var(--muted);font-size:13px}
+.cminv .cmx{padding:12px 14px;color:var(--muted);font-weight:900}
 .cbtn .car{font-size:12px;color:var(--muted);transition:transform .2s}
 .cbtn[aria-expanded="true"] .car{transform:rotate(180deg)}
 .ucel{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:calc(env(safe-area-inset-top,0px) + 22px) 22px calc(env(safe-area-inset-bottom,0px) + 22px);background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--u) 13%,var(--bg)),var(--bg) 72%);text-align:center;overflow:auto;animation:ucin .35s ease-out}
@@ -4136,7 +4142,7 @@ function readHTML(){
   const late=(pend.n>0&&dn<R.n&&idx>=0&&idx<R.n)?'<section class="card"><b>📚 Tienes '+pend.n+(pend.n===1?' lectura atrasada':' lecturas atrasadas')+'</b><p class="muted" style="margin:4px 0 10px;font-size:14px">No pasa nada: puedes ponerte al día cuando quieras.</p><button class="btn ghost sm" data-a="rd-day" data-i="'+pend.first+'">Ver la más antigua</button></section>':'';
   const st=rdStreak();
   return '<h1 class="page">Lectura</h1>'+trCardHTML()+rcHTML()+'<p class="rdmeta">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+' · '+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+
-   rdStreakCardHTML()+repCardHTML()+card+late+
+   rdStreakCardHTML()+repCardHTML()+repBookCardHTML()+card+late+
    '<section class="card"><b>Tu avance</b><div class="rdbarrow"><span>Días leídos</span><b>'+dn+' de '+R.n+'</b></div><div class="rdbw"><div class="bar" style="--gcol:var(--blue)"><i style="width:'+pctD+'%"></i></div></div>'+
    '<div class="rdbarrow" style="margin-top:12px"><span>Biblia leída</span><b>'+pctV+'%</b></div><div class="rdbw"><div class="bar"><i style="width:'+pctV+'%"></i></div></div></section>'+
    rdBooksHTML(R,P)+
@@ -4205,7 +4211,36 @@ const REPASO=[[0,1,14,19,"¿En cuál día de la creación hizo Dios el sol, la l
 /* ============================================================
    REPASO (preguntas sobre la lectura reciente · Pentateuco)
    ============================================================ */
-const REP={j:-1,free:false,qs:[],i:0,opts:[],ans:-1,ok:0};
+const REP={j:-1,free:false,book:-1,qs:[],i:0,opts:[],ans:-1,ok:0};
+/* Banco derivado de las fichas de «Libro por libro»: una sola fuente de preguntas.
+   Con versículo → se activa el día que lees ese pasaje. Sin versículo (autor, fecha, tema…) → al terminar el libro. */
+function repHash(t){let h=5381;for(let i=0;i<t.length;i++)h=((h<<5)+h+t.charCodeAt(i))|0;return (h>>>0).toString(36);}
+let REP_INIT=false;
+function repInit(){
+  if(REP_INIT)return;REP_INIT=true;
+  const names=RD_B.map(b=>b[0]);
+  const booksOf=t=>{
+    let m=t.match(/^(\d) y (\d) (.+)$/);if(m)return [names.indexOf(m[1]+' '+m[3]),names.indexOf(m[2]+' '+m[3])].filter(i=>i>=0);
+    m=t.match(/^(.+) y (.+)$/);if(m&&names.indexOf(m[1])>=0&&names.indexOf(m[2])>=0)return [names.indexOf(m[1]),names.indexOf(m[2])];
+    t=t.replace(/^El libro de /,'');const i=names.indexOf(t);return i>=0?[i]:[];
+  };
+  LIB_UNITS.forEach(u=>u.lessons.forEach(l=>{
+    const bs=booksOf(l.title);if(!bs.length)return;
+    l.qs.forEach(q=>{
+      let bi=bs[bs.length-1],c=0,v1=0,v2=0,ref='',txt='';
+      const m=(q[3]||'').match(/^(.+?) (\d+):(\d+)(?:\s*[-–]\s*(\d+))?$/);
+      if(m&&names.indexOf(m[1])>=0){
+        const b2=names.indexOf(m[1]),ch=RD_B[b2][2],cc=+m[2],a=+m[3],e=+(m[4]||m[3]);
+        if(cc>=1&&cc<=ch.length&&a>=1&&e>=a&&e<=ch[cc-1]){
+          const lv=l.verses.find(v=>v.r===q[3])||VBY[q[3]];
+          bi=b2;c=cc;v1=a;v2=e;ref=q[3].replace('-','–');txt=lv?lv.t:'';
+        }
+      }
+      REPASO.push([bi,c,v1,v2,q[0],q[1],q[2],ref,txt,0,c?'v':'b',repHash(q[0])]);
+    });
+  }));
+}
+const repKey=n=>REPASO[n][11]||('p'+n);
 function repSegs(part){
   const F=rdFlat(),s=part[0],e=part[1],out=[];
   for(let i=rdChIdx(s);i<F.ch.length&&F.ch[i].s<e;i++){const c=F.ch[i];out.push({bi:c.bi,c:c.c,a:Math.max(s,c.s)-c.s+1,b:Math.min(e,c.e)-c.s});}
@@ -4215,8 +4250,11 @@ function repEligible(j){
   const R=S.rd;if(!R)return [];
   const day=rdPlan(R.plan,R.n).days[j];if(!day)return [];
   const segs=[];rdDayParts(R.plan,day).forEach(p=>repSegs(p[1]).forEach(g=>segs.push(g)));
-  const out=[];
-  REPASO.forEach((x,n)=>{if(segs.some(g=>g.bi===x[0]&&g.c===x[1]&&x[2]>=g.a&&x[3]<=g.b))out.push(n);});
+  const out=[];repInit();
+  REPASO.forEach((x,n)=>{
+    if(x[10]==='b'){const L=RD_B[x[0]][2],nc=L.length;if(segs.some(g=>g.bi===x[0]&&g.c===nc&&g.b>=L[nc-1]))out.push(n);}
+    else if(segs.some(g=>g.bi===x[0]&&g.c===x[1]&&x[2]>=g.a&&x[3]<=g.b))out.push(n);
+  });
   return out;
 }
 function repSeeded(arr,seed){
@@ -4225,14 +4263,29 @@ function repSeeded(arr,seed){
   return a;
 }
 function repPick(list,n,seed){
-  const sh=repSeeded(list,seed),ord=sh.filter(x=>REPASO[x][9]).concat(sh.filter(x=>!REPASO[x][9])),out=[];
-  ord.forEach(x=>{
-    if(out.length>=n)return;
-    if(out.some(y=>REPASO[y][0]===REPASO[x][0]&&REPASO[y][1]===REPASO[x][1])&&ord.some(z=>out.indexOf(z)<0&&z!==x&&!out.some(y=>REPASO[y][0]===REPASO[z][0]&&REPASO[y][1]===REPASO[z][1])))return;
-    out.push(x);
-  });
-  ord.forEach(x=>{if(out.length<n&&out.indexOf(x)<0)out.push(x);});
+  const seen=S.repSeen||{},ok=S.libOk||{};
+  const rank=x=>{const k=repKey(x);return (seen[k]?2:0)+(ok[k]?1:0);};
+  const ord=repSeeded(list,seed).sort((a,b)=>rank(a)-rank(b)||(REPASO[b][9]?1:0)-(REPASO[a][9]?1:0)),out=[];
+  const pass=f=>ord.forEach(x=>{if(out.length<n&&out.indexOf(x)<0&&f(x))out.push(x);});
+  pass(x=>!out.some(y=>REPASO[y][0]===REPASO[x][0]));
+  pass(x=>!out.some(y=>REPASO[y][0]===REPASO[x][0]&&REPASO[y][1]===REPASO[x][1]));
+  pass(()=>true);
   return out.slice(0,n);
+}
+/* Cierre de libro: libro terminado en las últimas 2 semanas y aún sin cerrar */
+function repBookCand(){
+  const R=S.rd;if(!R)return null;repInit();
+  const t=today(),closed=S.repClosed||{};let best=null;
+  Object.keys(R.done).forEach(k=>{
+    const d=R.done[k];if(diffDays(d,t)>14)return;
+    repEligible(+k).forEach(n=>{const x=REPASO[n];
+      if(x[10]==='b'&&!closed[x[0]]&&(!best||d>best.d)&&REPASO.filter(y=>y[0]===x[0]).length>=4)best={bi:x[0],d};});
+  });
+  return best;
+}
+function repBookCardHTML(){
+  const c=repBookCand();if(!c)return '';
+  return '<section class="card repc"><b>📕 Terminaste '+esc(RD_B[c.bi][0])+'</b><p class="muted" style="margin:4px 0 10px;font-size:14px">Cinco preguntas para cerrar el libro. Sin XP y sin presión.</p><button class="btn ghost sm" data-a="rv-book" data-i="'+c.bi+'">Cerrar el libro</button></section>';
 }
 function repDay(){
   const R=S.rd;if(!R)return null;
@@ -4246,7 +4299,7 @@ function repDay(){
   return best;
 }
 function repPool(){
-  const R=S.rd;if(!R)return [];
+  const R=S.rd;if(!R)return [];repInit();
   const set={};Object.keys(R.done).forEach(k=>repEligible(+k).forEach(n=>set[n]=1));
   return Object.keys(set).map(Number);
 }
@@ -4258,12 +4311,13 @@ function repCardHTML(home){
   const day=rdPlan(R.plan,R.n).days[b.j],when=diffDays(b.d,today())===1?'ayer':'el '+rdDate(b.d);
   return '<section class="card repc"><b>🧠 Repaso de '+(when==='ayer'?'ayer':'tu lectura')+'</b><p class="muted" style="margin:4px 0 10px;font-size:14px">Leíste '+esc(rdDayParts(R.plan,day).map(p=>rdPartText(p[1])).join(' · '))+' '+esc(when)+'. Dos preguntas rápidas:</p><button class="btn blue sm" data-a="rv-go" data-i="'+b.j+'">Responder</button>'+(!home&&pool.length>=4?' <button class="btn ghost sm" data-a="rv-free">Practicar más</button>':'')+'</section>';
 }
-function repOpen(j,free){
-  let ids;
-  if(free)ids=repPick(repSeeded(repPool(),Date.now()%100000),5,Date.now()%9973);
+function repOpen(j,free,book){
+  repInit();let ids;
+  if(book>=0)ids=repPick(REPASO.map((x,n)=>n).filter(n=>REPASO[n][0]===book),5,book+1);
+  else if(free)ids=repPick(repSeeded(repPool(),Date.now()%100000),5,Date.now()%9973);
   else ids=repPick(repEligible(j),2,j+1);
   if(!ids.length)return;
-  REP.j=j;REP.free=!!free;REP.qs=ids;REP.i=0;REP.ok=0;repQ();
+  REP.j=j;REP.free=!!free||book>=0;REP.book=book>=0?book:-1;REP.qs=ids;REP.i=0;REP.ok=0;repQ();
 }
 function repQ(){
   const x=REPASO[REP.qs[REP.i]];
@@ -4278,14 +4332,16 @@ function repDraw(){
   let fb='';
   if(answered){
     const right=REP.opts[REP.ans]===x[5];
-    fb='<div class="rvfb '+(right?'ok':'no')+'"><b>'+(right?'¡Correcto!':'Respuesta: '+esc(x[5]))+'</b>'+(x[9]?'<span class="rvcr">✝️ El Nuevo Testamento lo relaciona con Cristo:</span>':'')+'<p><i>«'+esc(x[8])+'»</i></p><small>'+esc(x[7])+' · RVR1960</small></div>'+
+    fb='<div class="rvfb '+(right?'ok':'no')+'"><b>'+(right?'¡Correcto!':'Respuesta: '+esc(x[5]))+'</b>'+(x[9]?'<span class="rvcr">✝️ El Nuevo Testamento lo relaciona con Cristo:</span>':'')+(x[8]?'<p><i>«'+esc(x[8])+'»</i></p>':'')+(x[7]?'<small>'+esc(x[7])+' · RVR1960</small>':'')+'</div>'+
       '<button class="btn" data-a="rv-next">'+(REP.i+1<n?'Siguiente':'Terminar')+'</button>';
   }
-  showModal('<p class="muted" style="margin:0 0 6px;font-weight:900">'+(REP.free?'Practicar':'Repaso')+' · '+(REP.i+1)+' de '+n+'</p><h3 style="margin:0 0 12px">'+esc(x[4])+'</h3><div class="opts">'+opts+'</div>'+fb+(answered?'':'<button class="btn ghost" data-a="stay" style="margin-top:12px">Salir</button>'));
+  showModal('<p class="muted" style="margin:0 0 6px;font-weight:900">'+(REP.book>=0?'Cierre de '+esc(RD_B[REP.book][0]):REP.free?'Practicar':'Repaso')+' · '+(REP.i+1)+' de '+n+'</p>'+(REP.book<0?'<p class="muted" style="margin:0 0 6px;font-size:13px;font-weight:800">📖 '+esc(RD_B[x[0]][0])+'</p>':'')+'<h3 style="margin:0 0 12px">'+esc(x[4])+'</h3><div class="opts">'+opts+'</div>'+fb+(answered?'':'<button class="btn ghost" data-a="stay" style="margin-top:12px">Salir</button>'));
 }
 function repEnd(){
-  const n=REP.qs.length,ok=REP.ok,xp=ok*(REP.free?2:5);
+  const n=REP.qs.length,ok=REP.ok,xp=REP.book>=0?0:ok*(REP.free?2:5);
   if(!REP.free){S.rdRev=S.rdRev||{};S.rdRev[REP.j]=1;}
+  S.repSeen=S.repSeen||{};REP.qs.forEach(q=>{S.repSeen[repKey(q)]=1;});
+  if(REP.book>=0){S.repClosed=S.repClosed||{};S.repClosed[REP.book]=1;}
   if(xp>0)recordDay(xp);
   const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);
   save();
@@ -4296,6 +4352,7 @@ function repEnd(){
 function repAct(a,b){
   if(a==='rv-go')repOpen(+b.dataset.i,false);
   else if(a==='rv-free')repOpen(-1,true);
+  else if(a==='rv-book')repOpen(-1,false,+b.dataset.i);
   else if(a==='rv-ans'){if(REP.ans>=0)return;REP.ans=+b.dataset.i;const x=REPASO[REP.qs[REP.i]];if(REP.opts[REP.ans]===x[5]){REP.ok++;beep('good');}else beep('bad');repDraw();}
   else if(a==='rv-next'){if(REP.i+1<REP.qs.length){REP.i++;repQ();}else repEnd();}
 }
@@ -8983,17 +9040,24 @@ function renderCmenu(){
   el.hidden=false;
   el.innerHTML='<div class="cmenu-bg" data-a="cmenu-close"></div><div class="cmenu" role="dialog" aria-label="Mis cursos"><div class="in"><div style="display:flex;align-items:center;gap:12px">'+mascot('wink',56)+'<h2 style="margin:0">Mis cursos</h2></div><p class="sub">Elige en qué curso quieres estar. Cada curso tiene su ruta y su repaso.</p><div class="ctiles">'+
    '<button class="ctile '+(!gk&&!bio&&!lib&&!pas?'on':'')+'" data-a="course" data-c="bib"><span class="ci">📖</span><b>Biblia</b><small>'+courseProg('bib')+' lecciones</small></button>'+
+   '<button class="ctile '+(lib?'on':'')+'" data-a="course" data-c="lib">'+(!S.libSeen?'<span class="nwtag">NUEVO</span>':'')+'<span class="ci">📚</span><b>Libro por libro</b><small>'+courseProg('lib')+' lecciones</small></button>'+
+   '<button class="ctile '+(bio?'on':'')+'" data-a="course" data-c="bio">'+(bioDone()<3?'<span class="nwtag">NUEVO</span>':'')+'<span class="ci">🕯️</span><b>Biografías</b><small>'+courseProg('bio')+' lecciones</small></button>'+
    '<button class="ctile '+(pas?'on':'')+'" data-a="course" data-c="pas">'+(!S.pasSeen?'<span class="nwtag">NUEVO</span>':'')+'<span class="ci">🗝️</span><b>Pasajes clave</b><small>'+courseProg('pas')+' lecciones</small></button>'+
    '<button class="ctile '+(gk?'on':'')+'" data-a="course" data-c="gk"><span class="ci">'+flagGR()+'</span><b>Griego</b><small>'+courseProg('gk')+' lecciones</small></button>'+
-   '<button class="ctile '+(bio?'on':'')+'" data-a="course" data-c="bio">'+(bioDone()<3?'<span class="nwtag">NUEVO</span>':'')+'<span class="ci">🕯️</span><b>Biografías</b><small>'+courseProg('bio')+' lecciones</small></button>'+
-   '<button class="ctile '+(lib?'on':'')+'" data-a="course" data-c="lib">'+(!S.libSeen?'<span class="nwtag">NUEVO</span>':'')+'<span class="ci">📚</span><b>Libro por libro</b><small>'+courseProg('lib')+' lecciones</small></button>'+
    '</div><button class="cl" data-a="cmenu-close">Cerrar</button></div></div>';
 }
-function setCmenu(v){CMENU=!!v;renderCmenu();renderTop();}
+/* ¿Ya exploró el menú de cursos? (quien ya entró a otro curso cuenta como que sí) */
+const cmSeen=()=>!!(S.cmSeen||S.bioSeen||S.libSeen||S.pasSeen);
+const cmInvite=()=>!cmSeen()&&lessonsDone()>=1&&!CMENU;
+function cmInviteHTML(){
+  if(!cmInvite())return '';
+  return '<div class="banner cminv"><button class="cmgo" data-a="cmenu"><span class="cmem">🧭</span><span><b>¡Hay más cursos!</b><br><small>Toca aquí y explora: Libro por libro, Biografías, Pasajes clave y Griego.</small></span></button><button class="cmx" data-a="cm-hide" aria-label="Ahora no">✕</button></div>';
+}
+function setCmenu(v){CMENU=!!v;if(CMENU&&!S.cmSeen){S.cmSeen=true;save();}renderCmenu();renderTop();}
 function renderTop(){
   const t=today(),doneToday=S.lastDay===t,alive=S.streak>0;
   $('#top').innerHTML=
-   '<button class="cbtn" data-a="cmenu" aria-haspopup="true" aria-expanded="'+(typeof CMENU!=='undefined'&&CMENU)+'" aria-label="Curso actual: '+CINFO(S.course).n+'. Cambiar de curso"><span class="ci">'+CINFO(S.course).i+'</span><span>'+CINFO(S.course).n+'</span>'+((!S.bioSeen&&S.course!=='bio')||(!S.libSeen&&S.course!=='lib')||(!S.pasSeen&&S.course!=='pas')?'<span class="nwtag sm">NUEVO</span>':'')+'<span class="car" aria-hidden="true">▼</span></button>'+
+   '<button class="cbtn'+(cmInvite()?' cpulse':'')+'" data-a="cmenu" aria-haspopup="true" aria-expanded="'+(typeof CMENU!=='undefined'&&CMENU)+'" aria-label="Curso actual: '+CINFO(S.course).n+'. Cambiar de curso"><span class="ci">'+CINFO(S.course).i+'</span><span>'+CINFO(S.course).n+'</span>'+((!S.bioSeen&&S.course!=='bio')||(!S.libSeen&&S.course!=='lib')||(!S.pasSeen&&S.course!=='pas')?'<span class="nwtag sm">NUEVO</span>':'')+'<span class="car" aria-hidden="true">▼</span></button>'+
    '<div class="chips">'+
    (S.freezes?'<span class="chip shield" title="Protectores de racha" aria-label="'+S.freezes+' protectores de racha">'+IC.shield+S.freezes+'</span>':'')+
    '<span class="chip streak '+(doneToday?'on':alive?'risk':'off')+'" aria-label="Racha de '+S.streak+' días">'+IC.flame+S.streak+'</span>'+
@@ -9087,7 +9151,7 @@ function homeHTML(){
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else if(bio){const w=botd();daily='<section class="card votd"><span class="tagv">🕯️ Persona del día</span><q>'+esc(w.t)+'</q><cite>'+esc(w.n)+'</cite></section>';}
   else{const v=votd();daily='<section class="card votd"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button><span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
-  return (S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
+  return cmInviteHTML()+(S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
   '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rfCardHTML()+rdHomeHTML()+repCardHTML(true)+
   '<section class="card"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b>'+Math.min(xpT,S.goal)+'/'+S.goal+'</b></div><div><h3>Meta de hoy</h3><p>'+(xpT>=S.goal?'¡La cumpliste! Sigue sumando.':'Gana '+S.goal+' XP para cumplirla.')+'</p></div></div><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
@@ -9475,7 +9539,8 @@ function check(){
   const st=q.ref?(S.verses[q.ref]||(S.verses[q.ref]={c:0,w:0})):{c:0,w:0};
   const gw=q.wid?((S.gw=S.gw||{})[q.wid]||(S.gw[q.wid]={c:0,w:0})):null;
   if(ok){
-    if(q.tries===0){L.firstTry++;L.xp+=2;st.c++;if(gw)gw.c++;L.combo++;ui.fresh=true;}
+    if(q.tries===0){L.firstTry++;L.xp+=2;st.c++;if(gw)gw.c++;L.combo++;ui.fresh=true;
+      if(L.meta&&L.meta.course==='lib'&&q.type==='mc'&&q.prompt){S.libOk=S.libOk||{};S.libOk[repHash(q.prompt)]=1;}}
     L.done++;
     ui.head=L.combo>=3&&q.tries===0?'¡'+L.combo+' seguidas!':pickOne(['¡Eso es!','¡Perfecto!','¡Muy bien!','¡Así se hace!','¡Genial!','¡Excelente!']);
     beep('good');
@@ -11263,6 +11328,7 @@ document.addEventListener('click',e=>{
   else if(a==='fam-leave-yes'){famLeave();}
   else if(a==='goal'){S.goal=+b.dataset.g;save();render();}
   else if(a==='cmenu'){setCmenu(!CMENU);}
+  else if(a==='cm-hide'){S.cmSeen=true;save();render();}
   else if(a==='cmenu-close'){setCmenu(false);}
   else if(a==='course'){S.course=b.dataset.c;if(S.course==='bio')S.bioSeen=true;if(S.course==='lib')S.libSeen=true;if(S.course==='pas')S.pasSeen=true;TAB='path';CMENU=false;save();render();window.scrollTo(0,0);}
   else if(a==='dic-open'||a==='dic-peek'){dicOpen(b.dataset.w);}
