@@ -96,6 +96,32 @@ h1,h2,h3,h4{font-weight:900}
 .bubble .tw{display:inline-block;transition:opacity .5s ease-out}
 .bubble .tw0{opacity:0}
 @media (prefers-reduced-motion:reduce){.mas.lev .body,.mas .st,.mas .qm,.mas.sway{animation:none}}
+.askb{flex:none;width:46px;height:46px;border-radius:50%;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);display:grid;place-items:center;padding:0;margin-right:2px}
+.askb .mas{width:38px!important;height:38px!important}
+.askb:active{transform:translateY(2px)}
+.top{gap:8px}.cbtn{min-width:0;flex:0 1 auto}.cbtn>span:nth-child(2){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .chips{flex:none}
+@media (max-width:389px){.cbtn .nwtag{display:none}}
+.rsb{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:6px 6px 6px 14px;margin:6px 0 14px}
+.rsb:focus-within{border-color:var(--blue)}
+.rsb input{flex:1;min-width:0;border:0;background:none;font:inherit;font-weight:800;font-size:17px;color:var(--ink);outline:none;padding:6px 0;-webkit-appearance:none;appearance:none}
+.rsb input::placeholder{color:var(--muted);font-weight:700}
+.rmic,.rgo{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:#fff;border-bottom:4px solid var(--blue-d)}
+.rmic[hidden],.rgo[hidden]{display:none}
+.rmic svg,.rgo svg{width:22px;height:22px}
+.rmic.on{animation:rlpu 1s ease-in-out infinite}
+@keyframes rlpu{0%,100%{box-shadow:0 0 0 0 rgba(28,176,246,.5)}50%{box-shadow:0 0 0 9px rgba(28,176,246,0)}}
+.rchips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.rch{border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;padding:7px 12px;font-weight:800;font-size:14px;background:var(--surface);color:var(--blue)}
+.rch.on{background:var(--blue);color:#fff;border-color:var(--blue-d)}
+.rlh{margin:14px 0 8px;font-weight:900;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.rla .big{font-size:22px;font-weight:900;margin:0 0 8px}
+.rla .big2{font-size:19px;font-weight:900;margin:4px 0 8px}
+.rla p{margin:6px 0}.rla h4{margin:12px 0 4px;font-size:15px}
+.rla ul,.rla ol{margin:6px 0;padding-left:22px}.rla li{margin:3px 0}
+.rlab{display:block;font-size:12px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.rlq{font-weight:900}
+.rlfull{margin-top:6px;color:var(--blue);font-weight:900;font-size:14px;padding:6px 0}
+.rlficha{margin-top:6px;padding-top:6px;border-top:2px solid var(--line);font-size:15px}
 .pop{animation:pop .35s ease-out}
 
 /* ---------- barra superior ---------- */
@@ -1242,6 +1268,7 @@ button.cog.trref{display:inline-block;background:var(--yellow-bg);border:2px sol
 <div id="lesson" class="overlay" role="dialog" aria-modal="true" aria-label="Lección" hidden></div>
 <div id="game" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en grupo" hidden></div>
 <div id="dic" class="overlay" role="dialog" aria-modal="true" aria-label="Diccionario" hidden></div>
+<div id="rlib" class="overlay" role="dialog" aria-modal="true" aria-label="Biblioteca" hidden></div>
 <div id="tree" class="overlay" role="dialog" aria-modal="true" aria-label="Árbol bíblico" hidden></div>
 <div id="fam" class="overlay" role="dialog" aria-modal="true" aria-label="Grupo familiar" hidden></div>
 <div id="room" class="overlay" role="dialog" aria-modal="true" aria-label="Juego en vivo" hidden></div>
@@ -1381,7 +1408,7 @@ function mascot(mood,size,flv){
   },150);
 })();
 /* Lampy habla: mueve la boquita por sílabas mientras aparece el texto del globo (solo globos de texto simple). */
-function lampyTalk(root){
+function lampyTalk(root,force){
   try{
     let rm=false;try{rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
     if(rm)return;
@@ -1390,7 +1417,8 @@ function lampyTalk(root){
     const el=hero.querySelector('.mas'),b=hero.querySelector('.bubble');
     if(!el||!b||b.children.length||!b.textContent.trim())return;
     const txt=b.textContent,key=txt;
-    if(b.id==='homebub'){
+    if(force){}
+    else if(b.id==='homebub'){
       /* Inicio: una vez por mensaje y por día */
       const td=today();
       if(!S.talkSeen||S.talkSeen.d!==td)S.talkSeen={d:td,k:[]};
@@ -1437,6 +1465,222 @@ document.addEventListener('click',e=>{
   const m=e.target.closest&&e.target.closest('.mas.happy');if(!m)return;
   m.classList.remove('sway');void m.offsetWidth;m.classList.add('sway');setTimeout(()=>m.classList.remove('sway'),1150);
 });
+/* ===== Rollo, el bibliotecario ===== */
+function rollo(mood,size){
+  mood=mood||'contento';size=size||80;
+  const ink='#3C3C3C';
+  const eyeN='<ellipse cx="40" cy="52" rx="4.8" ry="5.8" fill="'+ink+'"/><ellipse cx="60" cy="52" rx="4.8" ry="5.8" fill="'+ink+'"/><circle cx="41.8" cy="49.8" r="1.9" fill="#fff"/><circle cx="61.8" cy="49.8" r="1.9" fill="#fff"/>';
+  const eyes=mood==='guiño'?'<ellipse cx="40" cy="52" rx="4.8" ry="5.8" fill="'+ink+'"/><circle cx="41.8" cy="49.8" r="1.9" fill="#fff"/><path d="M53 53q7-9 14 0" fill="none" stroke="'+ink+'" stroke-width="3.4" stroke-linecap="round"/>':eyeN;
+  const brows=mood==='pensando'?'<path d="M33 42h14M54 38l14-3" stroke="'+ink+'" stroke-width="3" stroke-linecap="round"/>':'';
+  const mouth=mood==='pensando'?'<ellipse cx="55" cy="68" rx="3.6" ry="3" fill="'+ink+'"/>'
+    :mood==='guiño'?'<path d="M39 62q11 13 22 0z" fill="#7A1F1F" stroke="'+ink+'" stroke-width="2.4" stroke-linejoin="round"/><path d="M45 68.5q5 4 10 0" fill="#FF8FA3"/>'
+    :'<path d="M41 63q9 9 18 0" fill="none" stroke="'+ink+'" stroke-width="3.4" stroke-linecap="round"/>';
+  const tk='<g class="tkw" opacity="0"><g class="tk"><ellipse cx="50" cy="67" rx="6" ry="5" fill="#7A1F1F" stroke="'+ink+'" stroke-width="2.2"/><ellipse cx="50" cy="69.6" rx="3.4" ry="1.7" fill="#FF8FA3"/></g></g>';
+  const q=mood==='pensando'?'<text class="qm" x="87" y="24" font-size="26" font-weight="900" fill="#FF4B4B" font-family="Nunito,system-ui,sans-serif">?</text>':'';
+  return '<span class="mas rl '+mood+(mood==='guiño'?'':' blk')+'" style="width:'+size+'px;height:'+size+'px"><svg viewBox="0 -10 100 106" aria-hidden="true"><g class="body">'+
+   '<rect x="18" y="74" width="64" height="16" rx="8" fill="#D9B26A"/><ellipse cx="20" cy="82" rx="4.4" ry="8" fill="#B98A3E"/><ellipse cx="80" cy="82" rx="4.4" ry="8" fill="#C79A4B"/><ellipse cx="20" cy="82" rx="1.8" ry="3.4" fill="#8A6226"/>'+
+   '<rect x="26" y="22" width="48" height="60" fill="#FBEFCB"/><rect x="26" y="22" width="48" height="60" fill="none" stroke="#EBD9A6" stroke-width="2"/><path d="M26 76q24 5 48 0v6H26z" fill="#EBD9A6" opacity=".7"/>'+
+   '<rect x="16" y="10" width="68" height="16" rx="8" fill="#D9B26A"/><ellipse cx="20" cy="18" rx="4.4" ry="8" fill="#B98A3E"/><ellipse cx="80" cy="18" rx="4.4" ry="8" fill="#C79A4B"/><ellipse cx="20" cy="18" rx="1.8" ry="3.4" fill="#8A6226"/>'+
+   '<circle cx="32" cy="62" r="5" fill="#FF8FA3" opacity=".6"/><circle cx="68" cy="62" r="5" fill="#FF8FA3" opacity=".6"/>'+
+   brows+'<g class="eyes">'+eyes+'</g><g class="mth">'+mouth+'</g>'+tk+'</g>'+q+'</svg></span>';
+}
+
+/* ===== Biblioteca: buscador sin IA sobre las fichas de «Libro por libro» y el árbol ===== */
+const RL={q:'',ans:null,view:'home',intent:null,full:false,rec:null};
+const rlNorm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+const rlName=b=>b.t.replace(/^El libro de /,'');
+let _rlBooks=null;
+function rlBooks(){
+  if(_rlBooks)return _rlBooks;
+  const out=[];
+  LIB_UNITS.forEach((u,ui)=>u.lessons.forEach((l,li)=>{
+    const n=rlNorm(l.title.replace(/^El libro de /,''));let al;
+    const m=n.match(/^(\d) y (\d) (.+)$/);
+    if(m)al=[m[1]+' '+m[3],m[2]+' '+m[3],m[3],n];
+    else if(n==='esdras y nehemias')al=['esdras','nehemias',n];
+    else al=[n];
+    if(n==='salmos')al.push('salmo');
+    if(n==='cantares')al.push('cantar de los cantares','cantar');
+    if(n==='hechos')al.push('hechos de los apostoles');
+    if(n==='apocalipsis')al.push('revelacion');
+    if(n==='proverbios')al.push('proverbio');
+    out.push({t:l.title,ui:ui,li:li,al:al,l:l});
+  }));
+  _rlBooks=out;return out;
+}
+function rlPrep(q){
+  let s=rlNorm(q);
+  s=s.replace(/\b(primera|primer|primero|1ra|1era)\b\s*(de\s+)?/g,'1 ').replace(/\b(segunda|segundo|2da|2do)\b\s*(de\s+)?/g,'2 ').replace(/\b(tercera|tercero|tercer|3ra|3er)\b\s*(de\s+)?/g,'3 ');
+  s=s.replace(/\b(uno|dos|tres)\s+(?=(corintios|tesalonicenses|timoteo|pedro|juan|samuel|reyes|cronicas)\b)/g,(x,w)=>({uno:'1',dos:'2',tres:'3'}[w])+' ');
+  s=s.replace(/\b([123])([a-z])/g,'$1 $2').replace(/\b([123])\s+de\s+/g,'$1 ');
+  return s;
+}
+function rlFindBook(s){
+  let best=null,bl=0;
+  rlBooks().forEach(b=>b.al.forEach(a=>{
+    if(a.length>bl&&new RegExp('(^| )'+a+'( |$)').test(s)){best=b;bl=a.length;}
+  }));
+  return best;
+}
+function rlFindPerson(s){
+  if(typeof TREE==='undefined')return null;
+  let best=null,bl=0;
+  TREE.forEach(p=>{const n=rlNorm(p.n);if(n&&n.length>bl&&new RegExp('(^| )'+n+'( |$)').test(s)){best=p;bl=n.length;}});
+  return best;
+}
+function rlIntent(s){
+  if(/\b(donde|lugar|ciudad)\b/.test(s))return 'lugar';
+  if(/\b(cuando|fecha|ano|anos|epoca|siglo|siglos|tiempo)\b/.test(s))return 'fecha';
+  if(/\b(para quien|a quien|a quienes|destinatario|destinatarios)\b/.test(s))return 'dest';
+  if(/\b(proposito|propositos|para que|objetivo|por que)\b/.test(s))return 'prop';
+  if(/\b(quien|quienes|autor|escritor|escribio|redacto|escrito)\b/.test(s))return 'autor';
+  if(/\b(division\w*|divid\w*|estructura|partes|esquema|capitulos|secciones|contenido)\b/.test(s))return 'div';
+  if(/\b(tema|trata|mensaje|resumen|de que)\b/.test(s))return 'tema';
+  return null;
+}
+function rlField(l,key){
+  const rx={autor:/\*\*Autor:\*\*\s*(.+)/,fecha:/\*\*Fecha:\*\*\s*(.+)/,lugar:/\*\*Lugar:\*\*\s*(.+)/,dest:/\*\*Para quiénes:\*\*\s*(.+)/}[key];
+  const m=rx&&l.intro.p.match(rx);return m?m[1].trim():null;
+}
+function rlSection(l,re){
+  const out=[];
+  l.intro.p.split(/\n---\n/).forEach(seg=>{const t=seg.trim(),h=t.match(/^##\s+(.*)/);if(h&&re.test(h[1]))out.push(t);});
+  return out.length?out.join('\n'):null;
+}
+function rlTema(l){
+  const m=l.intro.p.match(/Tema del libro:\s*\*\*(.+?)\*\*/);
+  const txt=l.intro.p.split(/\n---\n/)[0].split('\n').filter(x=>x.trim()&&!/^>/.test(x.trim())).join(' ');
+  return {t:m?m[1]:null,txt:txt};
+}
+function rlMd(t){
+  const out=[];let list=null;
+  const fl=()=>{if(list){out.push('</'+list+'>');list=null;}};
+  const bd=x=>esc(x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  t.split('\n').forEach(raw=>{
+    const s=raw.trim();let m;
+    if(!s||s==='---'){fl();return;}
+    if((m=s.match(/^##\s+(.*)/))){fl();out.push('<h4>'+bd(m[1])+'</h4>');}
+    else if((m=s.match(/^>\s*(.*)/))){fl();out.push('<p class="rlq">'+bd(m[1])+'</p>');}
+    else if((m=s.match(/^-\s+(.*)/))){if(list!=='ul'){fl();out.push('<ul>');list='ul';}out.push('<li>'+bd(m[1])+'</li>');}
+    else if((m=s.match(/^\d+\.\s+(.*)/))){if(list!=='ol'){fl();out.push('<ol>');list='ol';}out.push('<li>'+bd(m[1])+'</li>');}
+    else{fl();out.push('<p>'+bd(s)+'</p>');}
+  });
+  fl();return out.join('');
+}
+function rlSay(a){
+  const cut=t=>t.length>150?t.slice(0,147).replace(/\s+\S*$/,'')+'…':t;
+  if(a.k==='none')return 'No encontré eso. Prueba con el nombre de un libro, como «Romanos», o de una persona, como «Abraham».';
+  if(a.k==='p')return cut(a.p.n+': '+a.p.d);
+  const b=a.b,n=rlName(b),it=a.it||'resumen',f=k=>rlField(b.l,k);
+  const miss='En la ficha de '+n+' no hay ese dato.';
+  if(it==='autor')return f('autor')?cut(n+'. Autor: '+f('autor')):miss;
+  if(it==='fecha')return f('fecha')?cut(n+'. '+f('fecha')):miss;
+  if(it==='lugar')return f('lugar')?cut(n+'. Lugar: '+f('lugar')):miss;
+  if(it==='dest')return f('dest')?cut(n+'. Para quiénes: '+f('dest')):miss;
+  if(it==='prop')return rlSection(b.l,/propósito/i)?'Estos son los propósitos de '+n+'.':miss;
+  if(it==='div')return rlSection(b.l,/divisiones/i)?'Así se divide '+n+'.':miss;
+  const t=rlTema(b.l);return cut(n+'. Tema: '+(t.t||t.txt));
+}
+function rlAnsHTML(){
+  const a=RL.ans;
+  if(a.k==='none')return '<section class="card rla"><b>No encontré eso.</b><p class="muted" style="margin:4px 0 0">Escribe el nombre de un libro, como «Romanos» o «1 Corintios», o de una persona, como «Abraham». También puedes tocar una pregunta rápida.</p></section>';
+  if(a.k==='p'){
+    const p=a.p;
+    return '<section class="card rla"><div class="big">'+esc(p.n)+'</div><p>'+esc(p.d)+'</p>'+(p.b?'<p class="muted"><b>Nacimiento:</b> '+esc(p.b)+'</p>':'')+(p.x?'<p class="muted"><b>Muerte:</b> '+esc(p.x)+'</p>':'')+
+      '<button class="btn blue sm" data-a="tr-open" data-id="'+esc(p.id)+'">Ver en el árbol</button></section>';
+  }
+  const b=a.b,n=rlName(b),it=a.it||'resumen',f=k=>rlField(b.l,k);
+  const row=(lab,v)=>v?'<p><span class="rlab">'+lab+'</span>'+esc(v)+'</p>':'';
+  const miss='<p class="muted">La ficha de '+esc(n)+' no incluye ese dato.</p>';
+  let main='';
+  if(it==='autor')main=f('autor')?row('Autor',f('autor')):miss;
+  else if(it==='fecha')main=f('fecha')?row('Fecha',f('fecha'))+'<p class="muted" style="font-size:13px">La Biblia no da la fecha exacta: es la que traen las fichas del curso.</p>':miss;
+  else if(it==='lugar')main=f('lugar')?row('Lugar',f('lugar')):miss;
+  else if(it==='dest')main=f('dest')?row('Para quiénes',f('dest')):miss;
+  else if(it==='prop'){const s=rlSection(b.l,/propósito/i);main=s?rlMd(s):miss;}
+  else if(it==='div'){const s=rlSection(b.l,/divisiones/i);main=s?rlMd(s):miss;}
+  else{const t=rlTema(b.l);main=(t.t?'<p class="big2">'+esc(t.t)+'</p>':'')+(it==='tema'?'<p>'+esc(t.txt)+'</p>':row('Autor',f('autor'))+row('Fecha',f('fecha')));}
+  const its=[['autor','Autor'],['fecha','Fecha'],['tema','Tema'],['prop','Propósito'],['div','Divisiones']];
+  if(f('lugar'))its.push(['lugar','Lugar']);
+  return '<section class="card rla"><div class="big">'+esc(n)+'</div><div class="rchips">'+its.map(x=>'<button class="rch'+(it===x[0]?' on':'')+'" data-a="rlib-it" data-k="'+x[0]+'">'+x[1]+'</button>').join('')+'</div>'+main+
+    '<button class="rlfull" data-a="rlib-full">'+(RL.full?'Ocultar la ficha ▲':'Ver la ficha completa ▼')+'</button>'+(RL.full?'<div class="rlficha">'+rlMd(b.l.intro.p)+'</div>':'')+'</section>';
+}
+function rlPickHTML(){
+  const titles={autor:'¿Quién lo escribió?',fecha:'¿Cuándo se escribió?',tema:'¿De qué trata?',prop:'¿Para qué se escribió?',div:'¿Cómo se divide?'};
+  return '<button class="rch" data-a="rlib-back">← Volver</button><h2 style="margin:12px 0 4px">'+(titles[RL.intent]||'Los libros de la Biblia')+'</h2><p class="muted" style="margin:0 0 8px">Elige el libro.</p>'+
+    LIB_UNITS.map((u,ui)=>'<h4 class="rlh">'+esc(u.title)+'</h4><div class="rchips">'+u.lessons.map((l,li)=>'<button class="rch" data-a="rlib-book" data-ui="'+ui+'" data-li="'+li+'">'+esc(rlName({t:l.title}))+'</button>').join('')+'</div>').join('');
+}
+function rlBodyHTML(){
+  if(RL.view==='pick')return rlPickHTML();
+  const qs=[['autor','¿Quién lo escribió?'],['fecha','¿Cuándo se escribió?'],['tema','¿De qué trata?'],['prop','¿Para qué se escribió?'],['div','¿Cómo se divide?']];
+  return (RL.ans?rlAnsHTML():'')+'<h4 class="rlh">Preguntas rápidas</h4><div class="rchips">'+qs.map(x=>'<button class="rch" data-a="rlib-int" data-k="'+x[0]+'">'+x[1]+'</button>').join('')+'</div>'+
+    '<h4 class="rlh">Para explorar</h4>'+trCardHTML()+
+    '<section class="card trentry" style="border-color:var(--blue)"><div class="tre">📚</div><div class="trt"><b>Los libros de la Biblia</b><p>Autor, fecha y tema de cada libro, según las fichas del curso.</p></div><button class="btn blue sm" data-a="rlib-books">Ver</button></section>';
+}
+function rlBody(){const el=$('#rlbody');if(el)el.innerHTML=rlBodyHTML();}
+function rlShow(){
+  rlBody();
+  const root=$('#rlib');if(!root||!RL.ans)return;
+  const bub=root.querySelector('.hero .bubble');if(bub)bub.textContent=rlSay(RL.ans);
+  const mood=RL.ans.k==='none'?'pensando':'contento',m=root.querySelector('.hero .mas');
+  if(m&&!m.classList.contains(mood))m.outerHTML=rollo(mood,84);
+  lampyTalk(root,true);
+  const lb=root.querySelector('.lb');if(lb)lb.scrollTop=0;
+}
+function rlAsk(q){
+  q=(q||'').trim();if(!q)return;
+  const s=rlPrep(q),personQ=/\b(quien|quienes)\s+(fue|fueron|es|era|son)\b/.test(s);
+  const per=rlFindPerson(s),bk=rlFindBook(s);
+  RL.view='home';RL.full=false;
+  if(per&&(personQ||!bk))RL.ans={k:'p',p:per};
+  else if(bk)RL.ans={k:'b',b:bk,it:rlIntent(s)};
+  else RL.ans={k:'none'};
+  rlShow();
+}
+function rlSync(){const i=$('#rlq'),g=$('#rlgo');if(g&&i)g.hidden=!i.value.trim();}
+const rlSR=()=>window.SpeechRecognition||window.webkitSpeechRecognition;
+function rlMic(){
+  const SR=rlSR();if(!SR)return;
+  if(RL.rec){try{RL.rec.stop();}catch(e){}return;}
+  let r;try{r=new SR();}catch(e){toast('El dictado no está disponible aquí. Escribe tu pregunta.');return;}
+  RL.rec=r;r.lang='es-CO';r.interimResults=true;r.continuous=false;
+  let fin='';
+  r.onstart=()=>{const b=$('#rlmic');if(b)b.classList.add('on');};
+  r.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript;fin=t;const inp=$('#rlq');if(inp){inp.value=t;rlSync();}};
+  r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')toast('Para dictar, permite el micrófono en tu navegador.');else if(e.error!=='no-speech'&&e.error!=='aborted')toast('No pude usar el dictado. Escribe tu pregunta.');};
+  r.onend=()=>{RL.rec=null;const b=$('#rlmic');if(b)b.classList.remove('on');if(fin)rlAsk(fin);};
+  try{r.start();}catch(e){RL.rec=null;toast('No pude iniciar el dictado.');}
+}
+function rlOpen(){
+  RL.view='home';RL.ans=null;RL.full=false;RL.intent=null;
+  const el=$('#rlib');
+  el.innerHTML='<div class="lh"><button class="x" data-a="rlib-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:100%;background:var(--blue)"></i></div></div>'+
+   '<div class="lb"><h1 class="page" style="margin-top:0">Biblioteca</h1><div class="hero">'+rollo('guiño',84)+'<div class="bubble">Pregúntame por un libro de la Biblia: quién lo escribió, cuándo y de qué trata.</div></div>'+
+   '<div class="rsb"><input id="rlq" type="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Pregúntale a Rollo…" aria-label="Pregúntale a Rollo">'+
+   '<button class="rgo" id="rlgo" data-a="rlib-go" aria-label="Preguntar" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
+   (rlSR()?'<button class="rmic" id="rlmic" data-a="rlib-mic" aria-label="Dictar la pregunta"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor"/><path d="M5 11.5a7 7 0 0 0 14 0M12 18.5V21.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>':'')+
+   '</div><div id="rlbody"></div></div>';
+  el.hidden=false;document.body.style.overflow='hidden';
+  rlBody();lampyTalk(el);
+}
+function rlClose(){
+  if(RL.rec){try{RL.rec.stop();}catch(e){}}
+  const el=$('#rlib');el.hidden=true;el.innerHTML='';document.body.style.overflow='';
+}
+function rlAct(a,b){
+  if(a==='rlib-open')rlOpen();
+  else if(a==='rlib-close')rlClose();
+  else if(a==='rlib-go'){const i=$('#rlq');rlAsk(i?i.value:'');}
+  else if(a==='rlib-mic')rlMic();
+  else if(a==='rlib-int'){RL.intent=b.dataset.k;RL.view='pick';rlBody();}
+  else if(a==='rlib-books'){RL.intent=null;RL.view='pick';rlBody();}
+  else if(a==='rlib-back'){RL.view='home';rlBody();}
+  else if(a==='rlib-book'){const bk=rlBooks().find(x=>x.ui===+b.dataset.ui&&x.li===+b.dataset.li);if(bk){RL.ans={k:'b',b:bk,it:RL.intent||null};RL.view='home';RL.full=false;rlShow();}}
+  else if(a==='rlib-it'){if(RL.ans&&RL.ans.k==='b'){RL.ans.it=b.dataset.k;RL.full=false;rlShow();}}
+  else if(a==='rlib-full'){RL.full=!RL.full;rlBody();}
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='rlq'){e.preventDefault();rlAsk(e.target.value);try{e.target.blur();}catch(x){}}});
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='rlq')rlSync();});
 function confetti(n){
   const fx=$('#fx');if(!fx)return;
   const cols=['#58CC02','#1CB0F6','#FF9600','#FFC800','#CE82FF','#FF4B4B'];
@@ -4190,7 +4434,7 @@ function readSetupHTML(){
   const opts=Object.values(RD_PLANS).map(p=>'<button class="rdopt '+(RDSET.plan===p.id?'on':'')+'" data-a="rd-plan" data-p="'+p.id+'"><span class="ri">'+p.icon+'</span><span><b>'+esc(p.name)+'</b><span class="rd-d">'+esc(p.desc)+'</span></span></button>').join('');
   const pills=[1,2].map(y=>{const s=y===1?sp1:sp2;return '<button class="rdpill '+(RDSET.yrs===y?'on':'')+'" data-a="rd-yrs" data-y="'+y+'">'+(y===1?'1 año':'2 años')+'<small>'+s.n+' días</small></button>';}).join('');
   const modes=[['today','Hoy ('+rdShort(t)+')'],['jan1','1 de enero de '+jan1.slice(0,4)],['other','Otra fecha']].map(m=>'<button class="rdpill '+(RDSET.mode===m[0]?'on':'')+'" data-a="rd-mode" data-m="'+m[0]+'">'+m[1]+'</button>').join('');
-  return '<h1 class="page">Lectura de la Biblia</h1>'+trCardHTML()+rcHTML()+
+  return '<h1 class="page">Lectura de la Biblia</h1>'+rcHTML()+
    '<div class="hero">'+mascot('happy',84)+'<div class="bubble">Lee toda la Biblia, un día a la vez, sin repetir ningún libro. Tú marcas cada lectura.</div></div>'+
    '<section class="sec"><h3>1. Elige tu plan</h3><div class="rdopts">'+opts+'</div></section>'+
    '<section class="sec"><h3>2. ¿En cuánto tiempo?</h3><div class="rdpills">'+pills+'</div></section>'+
@@ -4246,7 +4490,7 @@ function readHTML(){
   }
   const late=(pend.n>0&&dn<R.n&&idx>=0&&idx<R.n)?'<section class="card"><b>📚 Tienes '+pend.n+(pend.n===1?' lectura atrasada':' lecturas atrasadas')+'</b><p class="muted" style="margin:4px 0 10px;font-size:14px">No pasa nada: puedes ponerte al día cuando quieras.</p><button class="btn ghost sm" data-a="rd-day" data-i="'+pend.first+'">Ver la más antigua</button></section>':'';
   const st=rdStreak();
-  return '<h1 class="page">Lectura</h1>'+trCardHTML()+rcHTML()+'<p class="rdmeta">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+' · '+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+
+  return '<h1 class="page">Lectura</h1>'+rcHTML()+'<p class="rdmeta">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+' · '+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+
    rdStreakCardHTML()+repCardHTML()+repBookCardHTML()+card+late+
    '<section class="card"><b>Tu avance</b><div class="rdbarrow"><span>Días leídos</span><b>'+dn+' de '+R.n+'</b></div><div class="rdbw"><div class="bar" style="--gcol:var(--blue)"><i style="width:'+pctD+'%"></i></div></div>'+
    '<div class="rdbarrow" style="margin-top:12px"><span>Biblia leída</span><b>'+pctV+'%</b></div><div class="rdbw"><div class="bar"><i style="width:'+pctV+'%"></i></div></div></section>'+
@@ -9167,13 +9411,17 @@ function streakInfo(){
     row('🔥','Racha','Los días seguidos en que practicas. Cuenta cualquier actividad: una lección, un juego o la lectura. Tu mejor racha: '+S.best+'.')+
     row('🛡️','Protectores: '+(S.freezes||0)+' de 2','Cuidan tu racha si un día no practicas ni lees. Ganas uno cada 7 días de racha.')+
     row('⚡','XP total: '+S.xp,'Los puntos que sumas con cada lección o juego. Hoy llevas '+Math.min(xpT,S.goal)+' de '+S.goal+' (tu meta diaria).')+
-    '<button class="btn" data-a="stay">Entendido</button>');
+    '<button class="btn" data-a="info-x">Entendido</button>');
+  $('#modal').dataset.dismiss='1';
 }
+/* el cuadro de la racha también se cierra tocando fuera de él */
+document.addEventListener('click',e=>{const m=document.getElementById('modal');if(m&&e.target===m&&m.dataset.dismiss==='1')hideModal();});
 function renderTop(){
   const t=today(),doneToday=S.lastDay===t,alive=S.streak>0;
   $('#top').innerHTML=
    '<button class="cbtn'+(cmInvite()?' cpulse':'')+'" data-a="cmenu" aria-haspopup="true" aria-expanded="'+(typeof CMENU!=='undefined'&&CMENU)+'" aria-label="Curso actual: '+CINFO(S.course).n+'. Cambiar de curso"><span class="ci">'+CINFO(S.course).i+'</span><span>'+CINFO(S.course).n+'</span>'+((!S.bioSeen&&S.course!=='bio')||(!S.libSeen&&S.course!=='lib')||(!S.pasSeen&&S.course!=='pas')?'<span class="nwtag sm">NUEVO</span>':'')+'<span class="car" aria-hidden="true">▼</span></button>'+
    '<div class="chips">'+
+   '<button class="askb" data-a="rlib-open" aria-label="Biblioteca: pregúntale a Rollo">'+rollo('contento',38)+'</button>'+
    '<button class="chip streak '+(doneToday?'on':alive?'risk':'off')+'" data-a="streak-info" aria-haspopup="dialog" aria-label="Racha de '+S.streak+' días. Toca para ver tu racha, protectores y puntos">'+IC.flame+S.streak+'</button></div>';
 }
 function renderTabs(){
@@ -9761,7 +10009,7 @@ async function donCopy(){
   if(!ok){try{const t=document.createElement('textarea');t.value=DON_LLAVE;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();ok=document.execCommand('copy');t.remove();}catch(e){}}
   toast(ok?'Llave copiada: '+DON_LLAVE:'No se pudo copiar. La llave es @DAVILAMPY');
 }
-function showModal(html){const m=$('#modal');m.innerHTML='<div class="box" role="alertdialog" aria-modal="true">'+html+'</div>';m.hidden=false;}
+function showModal(html){const m=$('#modal');delete m.dataset.dismiss;m.innerHTML='<div class="box" role="alertdialog" aria-modal="true">'+html+'</div>';m.hidden=false;}
 function hideModal(){$('#modal').hidden=true;$('#modal').innerHTML='';}
 
 /* ============================================================
@@ -11364,6 +11612,7 @@ document.addEventListener('click',e=>{
   else if(a==='close'){showModal('<h3>¿Salir de la lección?</h3><p>Perderás el avance de esta lección.</p><button class="btn" data-a="stay">Seguir aprendiendo</button><button class="btn ghost" data-a="leave">Salir</button>');}
   else if(a==='stay')hideModal();
   else if(a==='streak-info')streakInfo();
+  else if(a==='info-x')hideModal();
   else if(a==='don-open')donModal();
   else if(a==='don-copy')donCopy();
   else if(a==='leave'){hideModal();closeLesson();}
@@ -11382,6 +11631,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='cw-'){cwAct(a,b);}
   else if(a.slice(0,3)==='cd-'){cdAct(a,b);}
   else if(a.slice(0,3)==='xw-'){xwAct(a,b);}
+  else if(a.slice(0,5)==='rlib-'){rlAct(a,b);}
   else if(a.slice(0,3)==='tr-'){trAct(a,b);}
   else if(a.slice(0,3)==='vs-'){vsAct(a,b);}
   else if(a.slice(0,3)==='rp-'){rpAct(a);}
