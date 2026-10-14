@@ -155,6 +155,9 @@ h1,h2,h3,h4{font-weight:900}
 .cbtn{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-weight:900;font-size:17px;color:var(--ink)}
 .cbtn .ci{font-size:24px;line-height:1;display:grid;place-items:center}
 .cbtn .ci .flag{width:30px;height:20px;border-radius:4px;display:block}
+.donkey{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px;text-align:center;margin:0 0 12px}
+.donkey small{display:block;color:var(--muted);font-weight:800;font-size:13px;margin-bottom:4px}
+.donkey b{font-size:26px;letter-spacing:.5px}
 .cbtn.cpulse{border-color:var(--blue);animation:pulse 1.6s infinite}
 .cminv{display:flex;align-items:center;gap:6px;padding:0;background:var(--blue-bg,#E1F3FF);border-color:var(--blue)}
 .cminv .cmgo{flex:1;display:flex;align-items:center;gap:10px;text-align:left;padding:12px 6px 12px 14px;font:inherit;color:inherit}
@@ -9225,6 +9228,7 @@ function meHTML(){
    '<section class="card"><b>🛡️ Protectores de racha</b><p class="muted" style="margin:2px 0 0;font-size:14px">Tienes '+S.freezes+' de 2. Ganas uno cada 7 días de racha y se usa solo si un día no alcanzas a practicar ni a leer.</p></section>'+
    '<section class="card"><b>📣 Compartir mi progreso</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha. Se envía por WhatsApp o por donde quieras.</p><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button></section>'+
    '<h3 style="margin:18px 0 2px">Logros</h3><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
+   '<section class="card don"><b>💛 Apoya a Lampy</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Lampy es gratis y no tiene anuncios. Si te sirve y quieres ayudar a mantenerla, puedes dejar un aporte voluntario.</p><button class="btn ghost sm" data-a="don-open">Ver cómo aportar</button></section>'+
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
@@ -9628,6 +9632,20 @@ function closeLesson(){$('#lesson').hidden=true;$('#lesson').innerHTML='';docume
 /* ============================================================
    MODAL
    ============================================================ */
+/* Aporte voluntario por Bre-B (QR y llave de Lampy) */
+const DON_LLAVE='@davilampy';
+function donModal(){
+  showModal('<h3 style="margin:0 0 6px">💛 Apoya a Lampy</h3><p style="margin:0 0 12px;font-size:15px">Todo en Lampy sigue siendo gratis, aportes o no. Si quieres ayudar a mantenerla y a seguir creando lecciones, puedes dejar el valor que quieras por <b>Bre-B</b>.</p>'+
+   '<div class="donkey"><small>Llave Bre-B · se verá a nombre de «Lampy»</small><b>@DAVILAMPY</b></div>'+
+   '<p class="muted" style="margin:0 0 12px;font-size:13px">Copia la llave, abre la app de tu banco y pégala en «Pagar con llave» o «Bre-B». Pon el valor que quieras.</p>'+
+   '<button class="btn" data-a="don-copy">Copiar la llave</button><button class="btn ghost" data-a="stay">Cerrar</button>');
+}
+async function donCopy(){
+  let ok=false;
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(DON_LLAVE);ok=true;}}catch(e){}
+  if(!ok){try{const t=document.createElement('textarea');t.value=DON_LLAVE;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();ok=document.execCommand('copy');t.remove();}catch(e){}}
+  toast(ok?'Llave copiada: '+DON_LLAVE:'No se pudo copiar. La llave es @DAVILAMPY');
+}
 function showModal(html){const m=$('#modal');m.innerHTML='<div class="box" role="alertdialog" aria-modal="true">'+html+'</div>';m.hidden=false;}
 function hideModal(){$('#modal').hidden=true;$('#modal').innerHTML='';}
 
@@ -11230,6 +11248,8 @@ document.addEventListener('click',e=>{
   else if(a==='next')nextQ();
   else if(a==='close'){showModal('<h3>¿Salir de la lección?</h3><p>Perderás el avance de esta lección.</p><button class="btn" data-a="stay">Seguir aprendiendo</button><button class="btn ghost" data-a="leave">Salir</button>');}
   else if(a==='stay')hideModal();
+  else if(a==='don-open')donModal();
+  else if(a==='don-copy')donCopy();
   else if(a==='leave'){hideModal();closeLesson();}
   else if(a==='finish'){const uc=L&&L.unitCel,oc=L&&L.offerCloud,po=L&&L.offerPush;closeLesson();if(uc)setTimeout(()=>showUnitCel(uc),300);else if(oc){S.cloudAsked=true;save();setTimeout(()=>authOpen(),450);}else if(po&&pushCanOffer())setTimeout(pushOffer,500);}
   else if(a==='share'){doShare(b.dataset.k,b.dataset.id);}
