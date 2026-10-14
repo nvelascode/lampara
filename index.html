@@ -485,6 +485,13 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 
 /* ---------- resultado ---------- */
 .res{text-align:center;padding-top:10px}
+/* al terminar una lección, las partes van apareciendo una tras otra */
+.res>*{animation:slideup .45s cubic-bezier(.2,.8,.3,1) both}
+.res>*:nth-child(2){animation-delay:.12s}.res>*:nth-child(3){animation-delay:.2s}
+.res>*:nth-child(4){animation-delay:.3s}.res>*:nth-child(5){animation-delay:.4s}
+.res>*:nth-child(n+6){animation-delay:.5s}
+.res>*:first-child{animation:pop .6s both}
+@media (prefers-reduced-motion:reduce){.res>*{animation:none!important}}
 .res h1{font-size:34px;margin:6px 0 2px;letter-spacing:-.02em;color:var(--green)}
 .rs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
 .rs div{border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;padding:10px 4px;background:var(--surface);animation:pop .4s ease-out backwards}
@@ -999,7 +1006,14 @@ a.btn{text-decoration:none;text-align:center}
 .rfrow.cur{border-color:#C8372D;background:color-mix(in srgb,#C8372D 10%,var(--surface))}
 .rfrow.done{opacity:.8}.rfrow[disabled]{opacity:.5}
 /* ===== Tarjetas para compartir ===== */
-.modal .box{max-height:calc(100dvh - 40px);overflow:auto}
+.modal .box{max-height:calc((100dvh - 40px)/var(--zm,1));overflow:auto}
+/* tamaño de letra: Normal (por defecto), Grande y Muy grande. Escala toda la pantalla, así que nada se desacomoda. */
+html.fs-l{zoom:1.15;--zm:1.15}
+html.fs-xl{zoom:1.3;--zm:1.3}
+:root[data-theme="dark"] .modal .box{border:2px solid var(--line)}
+/* una sola forma de tarjeta: esquinas de 20 px y borde inferior más grueso */
+.trcard,.trgold,.trbr,.stat{border-radius:20px;border-bottom-width:4px}
+.gcard{border-radius:20px}
 .ccard{--ca:#fff;border-radius:18px;padding:22px 20px 14px;color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:190px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);position:relative;overflow:hidden}
 .ccard q{display:block;quotes:none;font-family:'Cormorant Garamond','Noto Serif',Georgia,serif;font-style:italic;font-weight:600;font-size:21px;line-height:1.3;text-shadow:0 2px 8px rgba(0,0,0,.25)}
 .ccard cite{font-style:normal;font-weight:900;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ca)}
@@ -7872,6 +7886,20 @@ function pushWatch(){
   }catch(e){}
 }
 {const _pw=setInterval(pushWatch,2500);try{if(_pw&&_pw.unref)_pw.unref();}catch(e){}}
+function remHM(){return S.remT||'20:00';}
+function remCardHTML(){
+  return '<section class="card"><b>⏰ Recordatorio en tu calendario</b><p class="muted" style="margin:2px 0 8px;font-size:14px">Crea un evento diario con alarma en el calendario de tu teléfono. Elige la hora y toca el botón.</p>'+
+  '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input type="time" id="remT" value="'+remHM()+'" style="font:inherit;font-size:18px;padding:8px 10px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)">'+
+  '<button class="btn" data-a="rem-ics" style="flex:1;min-width:160px">Añadir al calendario</button></div></section>';
+}
+function remICS(){
+  const t=(($('#remT')||{}).value||remHM());S.remT=t;save();
+  const [h,m]=t.split(':'),d=new Date(),p=n=>String(n).padStart(2,'0');
+  const day=d.getFullYear()+p(d.getMonth()+1)+p(d.getDate());
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Lampy//ES','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:lampy-recordatorio-diario@lamppy.vercel.app','DTSTAMP:'+day+'T000000Z','DTSTART:'+day+'T'+h+m+'00','DTEND:'+day+'T'+h+p((+m+15)%60)+'00','RRULE:FREQ=DAILY','SUMMARY:📖 Tu lección diaria en Lampy','DESCRIPTION:Unos minutos con la Palabra. Abre Lampy y mantén tu racha: https://lamppy.vercel.app','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Tu lección diaria en Lampy','TRIGGER:PT0M','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download='lampy-recordatorio.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+  toast('Abre el archivo para añadirlo a tu calendario');
+}
 function pushCardHTML(){
   if(!famOn())return '';
   const head='<b>🔔 Notificaciones</b>';
@@ -8320,6 +8348,7 @@ function applyTheme(){
     if(S.theme!=='dark'&&S.theme!=='light'){S.theme=(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)?'dark':'light';}
     const t=S.theme,r=document.documentElement,dark=t==='dark';
     r.setAttribute('data-theme',t);
+    r.classList.toggle('fs-l',S.fs==='l');r.classList.toggle('fs-xl',S.fs==='xl');
     const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',dark?'#131F24':'#58CC02');
   }catch(e){}
 }
@@ -9735,7 +9764,8 @@ function settingsHTML(){
   return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
-   meCardHTML()+vozCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
+   meCardHTML()+vozCardHTML()+pushCardHTML()+remCardHTML()+accountCardHTML()+installCardHTML()+
+   '<section class="card"><b>🔠 Tamaño de letra</b><p class="muted" style="margin:2px 0 0;font-size:14px">Agranda todo el texto de Lampy. Si no lo cambias, se queda como está.</p><div class="seg">'+[['n','Normal','16px'],['l','Grande','19px'],['xl','Muy grande','22px']].map(o=>'<button class="'+((S.fs||'n')===o[0]?'on':'')+'" data-a="fs" data-v="'+o[0]+'" style="font-size:'+(o[0]==='n'?'14px':o[0]==='l'?'15px':'16px')+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lampy.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    (signedIn()?'':'<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
@@ -10112,6 +10142,7 @@ function finishLesson(){
   /* Una sola vez en la vida: al llegar a 7 días de racha, un mensaje discreto de apoyo */
   const donAsk=r.newDay&&S.streak>=7&&!S.donAsk&&!L.offerCloud;if(donAsk)S.donAsk=true;
   save();
+  setTimeout(()=>{try{const bs=document.querySelectorAll('#lesson .rs b');bs.forEach(el=>{const t=el.textContent,m=t.match(/^(\+?)(\d+)(%?)$/);if(!m)return;const n=+m[2],t0=performance.now();(function f(now){const k=Math.min(1,((now||performance.now())-t0)/800);el.textContent=m[1]+Math.round(n*(1-Math.pow(1-k,3)))+m[3];if(k<1)requestAnimationFrame(f);})();});}catch(e){}},0);
   const acc=Math.round(100*L.firstTry/L.total);
   const vs=L.meta.verses||[];
   const gws=(L.meta.words||[]).map(id=>GK_BY[id]).filter(Boolean);
@@ -11918,6 +11949,8 @@ document.addEventListener('click',e=>{
   else if(a==='say-w'){sayWord(b.dataset.w);}
   else if(a==='say-t'){gkSpeak(b.dataset.t,{rate:.75});}
   else if(a==='theme'){S.theme=b.dataset.v;save();applyTheme();render();}
+  else if(a==='rem-ics'){remICS();}
+  else if(a==='fs'){S.fs=b.dataset.v;save();applyTheme();render();}
   else if(a==='sound'){S.sound=b.dataset.v==='1';save();render();if(S.sound)beep('good');}
   else if(a==='haptic'){S.haptic=b.dataset.v==='1';save();render();if(S.haptic)haptic([30,40,30]);}
   else if(a==='tip'){S.tipHide=true;save();render();}
