@@ -1006,6 +1006,7 @@ a.btn{text-decoration:none;text-align:center}
 .rfrow.cur{border-color:#C8372D;background:color-mix(in srgb,#C8372D 10%,var(--surface))}
 .rfrow.done{opacity:.8}.rfrow[disabled]{opacity:.5}
 /* ===== Tarjetas para compartir ===== */
+.rdaud{flex:none;font-weight:800;font-size:14px;color:var(--blue);text-decoration:none;border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;padding:6px 10px;white-space:nowrap}
 .bubble.rlvoz{cursor:pointer;position:relative;padding-right:34px}
 .bubble.rlvoz::after{content:"";position:absolute;right:10px;top:10px;width:18px;height:18px;opacity:.55;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z'/%3E%3C/svg%3E") center/contain no-repeat}
 .modal .box{max-height:calc((100dvh - 40px)/var(--zm,1));overflow:auto}
@@ -3909,7 +3910,7 @@ function gkUtter(text,opt){
   const norm=l=>String(l).replace('_','-').toLowerCase();
   let v=want?voices.find(x=>norm(x.lang)===norm(want)):null;
   const pickV=re=>voices.find(x=>re.test(norm(x.lang))&&x.localService)||voices.find(x=>re.test(norm(x.lang)));
-  v=v||pickV(/^es-(co|419|mx|us)/i)||pickV(/^es/i);
+  v=v||(S.vname?voices.find(x=>x.name===S.vname&&/^es/i.test(x.lang)):null)||pickV(/^es-(co|419|mx|us)/i)||pickV(/^es/i);
   if(v){u.voice=v;u.lang=v.lang;}else u.lang=want||'es-ES';
   u.rate=(opt&&opt.rate)||.8;
   return u;
@@ -4577,8 +4578,13 @@ function rdLinkFor(plan,day){
   const txt=rdDayParts(plan,day).map(p=>rdPartText(p[1])).join('; ').replace(/–/g,'-');
   return 'https://www.biblegateway.com/passage/?search='+encodeURIComponent(txt)+'&version=RVR1960';
 }
+const RD_USFM='GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JON MIC NAM HAB ZEP HAG ZEC MAL MAT MRK LUK JHN ACT ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB JAS 1PE 2PE 1JN 2JN 3JN JUD REV'.split(' ');
+function rdAudioLink(part){
+  try{const g=rdPartRefs(part)[0],F=rdFlat(),c=F.ch[rdChIdx(part[0])];
+    return 'https://www.bible.com/audio-bible/149/'+RD_USFM[c.bi]+'.'+c.c+'.RVR1960';}catch(e){return '';}
+}
 function rdPassagesHTML(plan,day){
-  return rdDayParts(plan,day).map(p=>'<div class="rdp">'+(p[0]?'<small>'+p[0]+'</small>':'')+'<b>'+esc(rdPartText(p[1]))+'</b></div>').join('');
+  return rdDayParts(plan,day).map(p=>{const u=rdAudioLink(p[1]);return '<div class="rdp" style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:0">'+(p[0]?'<small>'+p[0]+'</small>':'')+'<b>'+esc(rdPartText(p[1]))+'</b></div>'+(u?'<a class="rdaud" href="'+u+'" target="_blank" rel="noopener" aria-label="Escuchar '+esc(rdPartText(p[1]))+'">🎧 Escuchar</a>':'')+'</div>';}).join('');
 }
 function rdStreakCardHTML(){
   const cur=rdStreak(),best=Math.max(S.rdbest||0,cur),t=today(),D=S.rdDays||{},wk=[];
@@ -8605,6 +8611,16 @@ let INSTALL_EVT=null;
 const UPD={tag:null,shown:false,last:0};
 const swReady=()=>{try{return !!(navigator.serviceWorker&&navigator.serviceWorker.controller);}catch(e){return false;}};
 function vozCardHTML(){return '<section class="card"><b>🔊 Probar la voz</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Lampy lee en voz alta con la voz de tu teléfono. Si no suena, aquí se ve por qué.</p><button class="btn blue sm" data-a="voz-test">🔊 Probar la voz</button><div id="voztest" class="muted" style="margin-top:10px;font-size:13px;word-break:break-word"></div></section>';}
+function vozPickHTML(){
+  if(!canSpeak())return '';
+  let vs=[];try{vs=(speechSynthesis.getVoices()||[]).filter(v=>/^es/i.test(v.lang));}catch(e){}
+  if(vs.length<2)return '';
+  vs.sort((a,b)=>(b.localService-a.localService)||a.name.localeCompare(b.name));
+  return '<section class="card"><b>🎙️ Voz de Lampy</b><p class="muted" style="margin:2px 0 8px;font-size:14px">Elige una de las voces en español que tiene tu teléfono. Al elegirla, la oyes.</p><select id="vname" class="inp" aria-label="Voz">'+
+   '<option value="">Automática</option>'+vs.map(v=>'<option value="'+esc(v.name)+'"'+(S.vname===v.name?' selected':'')+'>'+esc(v.name.replace(/^(Microsoft|Google)\s+/,'')+' · '+v.lang+(v.localService?'':' (en línea)'))+'</option>').join('')+'</select></section>';
+}
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='vname'){S.vname=t.value||'';save();gkSpeak('Así suena esta voz. Lámpara es a mis pies tu palabra.',{rate:.95});}});
+try{if(window.speechSynthesis)speechSynthesis.addEventListener('voiceschanged',()=>{if(typeof TAB!=='undefined'&&TAB==='set'&&!document.activeElement.matches('select'))render();});}catch(e){}
 function vozTest(){
   const out=document.getElementById('voztest');const say=t=>{if(out)out.innerHTML=t;};
   if(!canSpeak()){say('Este navegador no tiene voz (speechSynthesis no existe).');return;}
@@ -9767,6 +9783,7 @@ function settingsHTML(){
    '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
    meCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
+   vozPickHTML()+
    '<section class="card"><b>🗣️ Rollo habla</b><p class="muted" style="margin:2px 0 0;font-size:14px">Rollo lee en voz alta sus respuestas. También puedes tocar su globo para volver a oírlas.</p><div class="seg">'+[['1','Sí'],['0','No']].map(o=>'<button class="'+((S.rlv!==false?'1':'0')===o[0]?'on':'')+'" data-a="rlv" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔠 Tamaño de letra</b><p class="muted" style="margin:2px 0 0;font-size:14px">Agranda todo el texto de Lampy. Si no lo cambias, se queda como está.</p><div class="seg">'+[['n','Normal','16px'],['l','Grande','19px'],['xl','Muy grande','22px']].map(o=>'<button class="'+((S.fs||'n')===o[0]?'on':'')+'" data-a="fs" data-v="'+o[0]+'" style="font-size:'+(o[0]==='n'?'14px':o[0]==='l'?'15px':'16px')+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lampy.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
@@ -10567,7 +10584,7 @@ function speak(t){
     speechSynthesis.cancel();
     const token=++SPK_TOKEN;
     const parts=String(t).split(/\s*(?:\u2014|\|\|)\s*/).map(x=>x.trim()).filter(Boolean);
-    const _vs=(speechSynthesis.getVoices()||[]).filter(x=>/^es/i.test(x.lang));const v=_vs.find(x=>x.localService)||_vs[0];
+    const _vs=(speechSynthesis.getVoices()||[]).filter(x=>/^es/i.test(x.lang));const v=(S.vname&&_vs.find(x=>x.name===S.vname))||_vs.find(x=>x.localService)||_vs[0];
     const next=i=>{
       if(token!==SPK_TOKEN||i>=parts.length)return;
       const u=new SpeechSynthesisUtterance(sayClean(parts[i]));
