@@ -1739,7 +1739,7 @@ function rlBody(){const el=$('#rlbody');if(el)el.innerHTML=rlBodyHTML();}
 function rlShow(){
   rlBody();if(RL.ans&&RL.ans.k!=='none')beep('page');
   const root=$('#rlib');if(!root||!RL.ans)return;
-  const bub=root.querySelector('.hero .bubble');if(bub){const tx=rlSay(RL.ans);bub.textContent=tx;bub.dataset.a='rl-say';bub.dataset.t=tx;bub.classList.add('rlvoz');if(S.rlv!==false&&canSpeak())setTimeout(()=>gkSpeak(tx,{rate:.95}),250);}
+  const bub=root.querySelector('.hero .bubble');if(bub){const tx=rlSay(RL.ans);bub.textContent=tx;bub.dataset.a='rl-say';bub.dataset.t=tx;bub.classList.add('rlvoz');if(!S.vozOff&&canSpeak())setTimeout(()=>gkSpeak(tx,{rate:.95}),250);}
   const mood=RL.ans.k==='none'?'pensando':'contento',m=root.querySelector('.hero .mas');
   if(m&&!m.classList.contains(mood))m.outerHTML=rollo(mood,84);
   lampyTalk(root,true);
@@ -8634,12 +8634,17 @@ const swReady=()=>{try{return !!(navigator.serviceWorker&&navigator.serviceWorke
 function vozCardHTML(){return '<section class="card"><b>🔊 Probar la voz</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Lampy lee en voz alta con la voz de tu teléfono. Si no suena, aquí se ve por qué.</p><button class="btn blue sm" data-a="voz-test">🔊 Probar la voz</button><div id="voztest" class="muted" style="margin-top:10px;font-size:13px;word-break:break-word"></div></section>';}
 function vozPickHTML(){
   if(!canSpeak())return '';
-  let vs=[];try{vs=(speechSynthesis.getVoices()||[]).filter(v=>/^es/i.test(v.lang));}catch(e){}
-  if(vs.length<2)return '';
+  let all=[];try{all=speechSynthesis.getVoices()||[];}catch(e){}
+  const vs=all.filter(v=>/^es/i.test(v.lang));
   vs.sort((a,b)=>(b.localService-a.localService)||a.name.localeCompare(b.name));
+  const pk=re=>all.find(x=>re.test(String(x.lang).replace('_','-'))&&x.localService)||all.find(x=>re.test(String(x.lang).replace('_','-')));
+  const auto=pk(/^es-(co|419|mx|us)/i)||pk(/^es/i);
+  const on=!S.vozOff;
   const row=(v,lab,sub)=>'<button class="vrow'+(((S.vname||'')===v)?' on':'')+'" data-a="vsel" data-v="'+esc(v)+'"><span class="vp">▶</span><span class="vt"><b>'+esc(lab)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</span><span class="vk">✓</span></button>';
-  return '<section class="card" id="vozcard"><b>🎙️ Voz de Lampy</b><p class="muted" style="margin:2px 0 8px;font-size:14px">Toca una voz para oírla y elegirla. Son las voces en español que tiene tu teléfono.</p><div class="vlist">'+
-   row('','Automática','La que el teléfono prefiera')+vs.map(v=>row(v.name,v.name.replace(/^(Microsoft|Google)\s+/,''),v.lang+(v.localService?'':' · necesita internet'))).join('')+'</div></section>';
+  const list=(vs.length>=2)?'<p class="muted" style="margin:12px 0 8px;font-size:14px">Toca una voz para oírla y elegirla. Se usa en Rollo, en las lecciones y en los juegos.</p><div class="vlist">'+
+   row('','Automática',auto?'Ahora usa: '+auto.name.replace(/^(Microsoft|Google)\s+/,'')+' · '+auto.lang:'La que el teléfono prefiera')+
+   vs.map(v=>row(v.name,v.name.replace(/^(Microsoft|Google)\s+/,''),v.lang+(v.localService?'':' · necesita internet'))).join('')+'</div>':'';
+  return '<section class="card" id="vozcard"><b>🎙️ Voz de Lampy</b><p class="muted" style="margin:2px 0 0;font-size:14px">Rollo lee en voz alta sus respuestas. Si lo apagas, solo habla cuando tocas su globo. Las lecciones y los juegos no cambian.</p><div class="seg">'+[['1','Rollo habla'],['0','Rollo en silencio']].map(o=>'<button class="'+((on?'1':'0')===o[0]?'on':'')+'" data-a="voz-onoff" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div>'+list+'</section>';
 }
 try{if(window.speechSynthesis&&speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',()=>{if(typeof TAB!=='undefined'&&TAB==='set')render();});}catch(e){}
 function vozTest(){
@@ -9805,7 +9810,6 @@ function settingsHTML(){
    [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
    meCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
    vozPickHTML()+
-   '<section class="card"><b>🗣️ Rollo habla</b><p class="muted" style="margin:2px 0 0;font-size:14px">Rollo lee en voz alta sus respuestas. También puedes tocar su globo para volver a oírlas.</p><div class="seg">'+[['1','Sí'],['0','No']].map(o=>'<button class="'+((S.rlv!==false?'1':'0')===o[0]?'on':'')+'" data-a="rlv" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔠 Tamaño de letra</b><p class="muted" style="margin:2px 0 0;font-size:14px">Agranda todo el texto de Lampy. Si no lo cambias, se queda como está.</p><div class="seg">'+[['n','Normal','16px'],['l','Grande','19px'],['xl','Muy grande','22px']].map(o=>'<button class="'+((S.fs||'n')===o[0]?'on':'')+'" data-a="fs" data-v="'+o[0]+'" style="font-size:'+(o[0]==='n'?'14px':o[0]==='l'?'15px':'16px')+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lampy.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
@@ -11991,9 +11995,9 @@ document.addEventListener('click',e=>{
   else if(a==='say-t'){gkSpeak(b.dataset.t,{rate:.75});}
   else if(a==='theme'){S.theme=b.dataset.v;save();applyTheme();render();}
   else if(a==='rem-ics'){remICS();}
-  else if(a==='vsel'){const v=b.dataset.v||'';S.vname=v;save();document.querySelectorAll('#vozcard .vrow').forEach(x=>x.classList.toggle('on',(x.dataset.v||'')===v));gkSpeak('Así suena esta voz. Lámpara es a mis pies tu palabra.',{rate:.95,vn:v});}
-  else if(a==='rl-say'){const t=b.dataset.t;if(t)gkSpeak(t,{rate:.95});}
-  else if(a==='rlv'){S.rlv=b.dataset.v==='1';save();if(!S.rlv)stopSpeak();render();}
+  else if(a==='vsel'){const v=b.dataset.v||'';S.vname=v;save();document.querySelectorAll('#vozcard .vrow').forEach(x=>x.classList.toggle('on',(x.dataset.v||'')===v));gkSpeak('Así suena esta voz. Lámpara es a mis pies tu palabra.',{rate:.95,vn:v,force:true});}
+  else if(a==='rl-say'){const t=b.dataset.t;if(t)gkSpeak(t,{rate:.95,force:true});}
+  else if(a==='voz-onoff'){S.vozOff=b.dataset.v==='0';save();if(S.vozOff)stopSpeak();render();}
   else if(a==='fs'){S.fs=b.dataset.v;save();applyTheme();render();}
   else if(a==='sound'){S.sound=b.dataset.v==='1';save();render();if(S.sound)beep('good');}
   else if(a==='haptic'){S.haptic=b.dataset.v==='1';save();render();if(S.haptic)haptic([30,40,30]);}
