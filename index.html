@@ -341,6 +341,33 @@ h1,h2,h3,h4{font-weight:900}
 .mlink{background:none;border:0;color:var(--blue);font-weight:800;padding:12px 0 0;cursor:pointer;font:inherit;font-weight:800}
 .mres{margin-top:10px;padding:10px 12px;border-radius:12px}.mres.ok{background:color-mix(in srgb,#58cc02 18%,var(--surface))}.mres.no{background:color-mix(in srgb,var(--red) 12%,var(--surface))}
 .repttl{margin:6px 0 10px}
+.grec{display:block;margin-top:4px;font-size:12px;font-weight:800;opacity:.9}
+.rivalbox{margin:12px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#FF9600 14%,var(--surface));font-weight:700}
+.lf:has(#sgf:empty){display:none}
+.sgtop{display:flex;justify-content:space-between;align-items:center;font-weight:800;margin:0 0 6px}
+.sgopts{margin-top:8px}
+.sgopt{display:block;width:100%;text-align:left;border:2px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0;background:var(--surface);color:inherit;font:inherit;font-weight:700;cursor:pointer}
+.sgopt.ok{border-color:var(--green);background:color-mix(in srgb,var(--green) 16%,var(--surface))}
+.sgopt.bad{border-color:var(--red);background:color-mix(in srgb,var(--red) 12%,var(--surface))}
+.sgopt .vref{display:block;font-weight:600;font-size:13px;margin-top:2px}
+.tln{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:13px;margin-right:8px}
+.sgclues p{margin:6px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--gc,#1CB0F6) 10%,var(--surface));font-style:italic}
+.sgrev{margin:10px 0}.sgx{margin:6px 0}
+.sgdet{line-height:2.1}
+.sgtok{background:none;border:0;border-bottom:2px dashed var(--line);font:inherit;font-style:italic;color:inherit;padding:0 2px;margin:0 1px;cursor:pointer;border-radius:4px}
+.sgtok.ok,.sgtok.real{background:color-mix(in srgb,var(--green) 25%,transparent);border-bottom-color:var(--green)}
+.sgtok.bad{background:color-mix(in srgb,var(--red) 22%,transparent);border-bottom-color:var(--red)}
+.bibg h4{margin:12px 0 6px;font-size:13px;opacity:.7}.bibc{display:flex;flex-wrap:wrap;gap:6px}
+.bibk{padding:5px 9px;border-radius:10px;border:2px solid var(--line);font-size:13px;font-weight:700;min-width:34px;text-align:center}
+.bibk.on{background:color-mix(in srgb,var(--green) 18%,var(--surface));border-color:var(--green)}
+.bibk.miss{border-color:var(--red);color:var(--red)}
+#bibin.dup{border-color:var(--orange,#FF9600)}
+.wsg{display:grid;gap:2px;justify-content:center;margin:10px auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.wsc{aspect-ratio:1;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:calc(var(--cs) * .5);background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.wsc.sel{background:var(--gc,#1CB0F6);color:#fff}.wsc.f{color:#fff;border-color:transparent}
+.wsw{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.wsw span{padding:4px 10px;border-radius:999px;border:2px solid var(--line);font-size:13px;font-weight:800}
+.wsw span.dn{text-decoration:line-through;opacity:.6}
 .tab .dot{position:absolute;top:3px;left:calc(50% + 6px);width:11px;height:11px;border-radius:50%;background:var(--red);border:2px solid var(--surface)}
 .phead{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .gear{width:46px;height:46px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:22px;display:grid;place-items:center}
@@ -10904,6 +10931,350 @@ function dConv(n){
   });
 }
 const DECKS={quien:dQuien,pers:dPers,vf:dVF,comp:dComp,libros:dLibros,conv:dConv};
+/* ============================================================
+   JUEGOS SOLO (v92): Mixto, Cadena, Detective, Biblioteca loca, Línea del tiempo, Sopa de letras + récord personal
+   ============================================================ */
+let SG=null;
+const SG_DEF={
+  mix:{t:'Mixto',d:'Quién lo dijo, personajes, verdadero o falso y libros, todo revuelto',emo:'🎲',c:'#1CB0F6',hi:true,u:'aciertos'},
+  cad:{t:'Cadena de versículos',d:'¿Cuál versículo sigue? No rompas la cadena',emo:'🔗',c:'#FF9600',hi:true,u:'eslabones'},
+  det:{t:'Detective de errores',d:'Una palabra del versículo está cambiada: encuéntrala',emo:'🔍',c:'#A560E8',hi:true,u:'aciertos'},
+  bib:{t:'Biblioteca loca',d:'¿Cuántos libros de la Biblia sabes de memoria?',emo:'📚',c:'#4CB800',hi:true,u:'libros'},
+  tl:{t:'Línea del tiempo',d:'Ordena los sucesos del más antiguo al más reciente',emo:'⏳',c:'#E84393',hi:true,u:'aciertos'},
+  sopa:{t:'Sopa de letras',d:'Encuentra los nombres escondidos',emo:'🔤',c:'#00B894',hi:false,u:'tiempo'}
+};
+const sgFmt=(id,v)=>id==='sopa'?(Math.floor(v/60)+':'+String(v%60).padStart(2,'0')):String(v);
+function sgRecGet(id){return (S.rec&&S.rec[id])||null;}
+function sgRecTile(id){const r=sgRecGet(id);return r?'<small class="grec">🏆 Récord: '+sgFmt(id,r.best)+'</small>':'';}
+function sgTileHTML(id){const d=SG_DEF[id];return '<button class="gcard" style="--gc:'+d.c+'" data-a="sg-open" data-g="'+id+'"><span class="gemo" aria-hidden="true">'+d.emo+'</span><b>'+esc(d.t)+'</b><span>'+esc(d.d)+'</span>'+sgRecTile(id)+'</button>';}
+function sgShell(body,foot,pct,title){
+  const d=SG.def;const el=$('#game');el.className='overlay gamed';el.style.setProperty('--gc',d.c);el.style.setProperty('--gcol',d.c);
+  el.innerHTML='<div class="lh"><button class="x" data-a="sg-close" aria-label="Salir del juego">'+IC.close+'</button><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(pct)+'"><i style="width:'+Math.round(pct)+'%"></i></div></div>'+
+   '<div class="lb">'+body+'</div>'+(foot?'<div class="lf"><div class="in">'+foot+'</div></div>':'');
+  gShow();
+}
+function sgClose(){if(SG&&SG.tm)clearInterval(SG.tm);SG=null;stopSpeak&&stopSpeak();$('#game').hidden=true;$('#game').innerHTML='';$('#game').className='overlay';document.body.style.overflow='';render();}
+function sgOpen(id){
+  if(SG&&SG.tm)clearInterval(SG.tm);
+  SG={id,def:SG_DEF[id],score:0,i:0,done:false};
+  ({mix:mixStart,cad:cadStart,det:detStart,bib:bibStart,tl:tlStart,sopa:sopaStart})[id]();
+}
+function sgFinish(o){
+  /* o: {head, score, sub, extra(html), mood} */
+  const id=SG.id,d=SG.def;if(SG.tm)clearInterval(SG.tm);SG.done=true;
+  const prev=sgRecGet(id);S.rec=S.rec||{};
+  let isNew=false;
+  if(o.score!==null&&o.score!==undefined&&(d.hi?o.score>0:o.score>0)){
+    if(!prev||(d.hi?o.score>prev.best:o.score<prev.best)){S.rec[id]={best:o.score,d:today()};isNew=!!prev;}
+  }
+  const first=!prev&&sgRecGet(id);
+  const r=recordDay(10);S.gplays=(S.gplays||0)+1;
+  const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
+  const rec=sgRecGet(id);
+  $('#game').innerHTML='<div class="lb"><div class="res"><div style="display:flex;justify-content:center">'+mascot(isNew?'cheer':'wink',130)+'</div><h1>'+esc(o.head)+'</h1><p class="muted" style="margin:0">'+esc(d.t)+(o.sub?' · '+esc(o.sub):'')+'</p>'+
+   (isNew?'<div class="note fl">🏆 <b>¡Batiste tu récord!</b> Antes: '+sgFmt(id,prev.best)+'</div>':first?'<div class="note fl">🏆 <b>Nuevo récord:</b> '+sgFmt(id,rec.best)+'</div>':rec?'<div class="rivalbox">🏆 Tu récord: <b>'+sgFmt(id,rec.best)+'</b> — ¿lo superas?</div>':'')+
+   '<div class="rs" style="grid-template-columns:1fr 1fr"><div><i>⚡</i><b>+10</b><span>XP</span></div><div><i>🔥</i><b>'+S.streak+'</b><span>Días de racha</span></div></div>'+
+   (r.newDay?'<div class="note fl">🔥 <b>¡Racha de '+S.streak+(S.streak===1?' día':' días')+'!</b></div>':'')+
+   (r.gotFreeze?'<div class="note fl">🛡️ <b>¡Ganaste un protector de racha!</b></div>':'')+
+   fresh.map(a=>'<div class="note">'+(ACH_E[a.id]||'⭐')+' <b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join('')+(o.extra||'')+'</div></div>'+
+   '<div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="sg-close">Salir</button><button class="btn" data-a="sg-again" data-primary>Jugar otra vez</button></div></div></div>';
+  try{setTimeout(famSync,400);}catch(e){}
+  beep('win');confetti(isNew?160:100);haptic([20,70,20,70,50]);
+}
+function sgAct(a,b){
+  if(a==='sg-open')return sgOpen(b.dataset.g);
+  if(a==='sg-close')return sgClose();
+  if(!SG)return;
+  if(a==='sg-again')return sgOpen(SG.id);
+  if(a==='sg-opt')return sgOptTap(+b.dataset.i);
+  if(a==='sg-next')return sgNext();
+  if(a==='sg-tok')return detTap(+b.dataset.i);
+  if(a==='sg-tl')return tlTap(+b.dataset.i);
+  if(a==='sg-fin')return bibFinish();
+}
+function sgNext(){
+  if(SG.id==='cad')return cadNext();
+  if(SG.id==='det')return detNext();
+  if(SG.id==='tl')return tlNext();
+  SG.i++;mixShow();
+}
+const sgDone=()=>SG&&SG.done;
+
+/* ---------- Mixto ---------- */
+function rmQPers(used){
+  const pool=GPERS.filter(x=>!used.has(x.a));const it=pickOne(gFresh('pers',pool.length?pool:GPERS,x=>x.a));used.add(it.a);gMark('pers',it.a);
+  const wrong=shuffle(Array.from(new Set(GPERS.map(x=>x.a))).filter(n=>n!==it.a)).slice(0,3),o=shuffle([it.a,...wrong]);
+  return {k:'pers',p:'¿Quién es este personaje?',c:it.c.map(c=>c[0]).join('\n'),o,a:o.indexOf(it.a),x:'',r:it.c.map(c=>c[1]).join(' · ')};
+}
+function mixStart(){
+  const used=new Set(),kinds=['who','pers','tf','book'],fn={who:rmQWho,pers:rmQPers,tf:rmQTF,book:rmQBook},n=10;
+  const ks=shuffle(Array.from({length:n},(_,i)=>kinds[i%4]));
+  SG.qs=ks.map(k=>fn[k](used));SG.n=n;save();SG.picked=-1;mixShow();
+}
+function sgQBody(q,ans){
+  const lines=q.c.split('\n');
+  const c=q.k==='pers'?'<div class="sgclues">'+lines.map(l=>'<p>'+esc(l)+'</p>').join('')+'</div>':'<blockquote class="verse gbig">'+esc(q.c)+'</blockquote>';
+  return '<p class="glabel">'+esc(q.p)+'</p>'+c+
+   '<div class="sgopts">'+q.o.map((o,i)=>{const cls=ans===null||ans===undefined?'':(i===q.a?' ok':(i===SG.picked?' bad':''));return '<button class="sgopt'+cls+'" data-a="sg-opt" data-i="'+i+'"'+(ans!==null&&ans!==undefined?' disabled':'')+'>'+esc(o)+'</button>';}).join('')+'</div>';
+}
+function sgReveal(q){
+  const x=q.k==='blank'?'<p class="sgx"><i>'+esc(q.x)+'</i></p>':(q.x&&q.x!==q.r?'<p class="sgx">'+esc(q.x)+'</p>':'');
+  return '<div class="sgrev">'+x+(q.r?'<cite class="vref">'+esc(q.r)+'</cite>':'')+'</div>';
+}
+function mixShow(){
+  if(SG.i>=SG.n){
+    const s=SG.score;return sgFinish({head:s>=8?'¡Excelente!':s>=5?'¡Muy bien!':'¡Buen intento!',score:s,sub:s+' de '+SG.n});
+  }
+  const q=SG.qs[SG.i];SG.picked=-1;SG.ans=null;
+  sgShell(sgQBody(q,null)+'<div id="sgrev"></div>','<div id="sgf"></div>',100*SG.i/SG.n);
+}
+function sgOptTap(i){
+  if(SG.id==='mix'){
+    if(SG.ans!==null)return;const q=SG.qs[SG.i];SG.picked=i;SG.ans=i===q.a;
+    if(SG.ans){SG.score++;beep('good');haptic([12]);}else{beep('bad');haptic([30,40,30]);}
+    $('.sgopts').outerHTML=sgQBody(q,SG.ans).match(/<div class="sgopts">[\s\S]*<\/div>$/)[0];
+    $('#sgrev').innerHTML=sgReveal(q);
+    $('#sgf').innerHTML='<button class="btn" data-a="sg-next" data-primary>'+(SG.i===SG.n-1?'Ver resultado':'Continuar')+'</button>';
+  }else if(SG.id==='cad')cadTap(i);
+}
+
+/* ---------- Cadena de versículos ---------- */
+let CADX=null;
+function cadIndex(){
+  if(CADX)return CADX;
+  const seen={},arr=[];
+  ALLV.forEach(v=>{
+    if(seen[v.r])return;seen[v.r]=1;
+    const m=v.r.match(/^(.*?):(\d+)(?:[-–](\d+))?$/);if(!m)return;
+    if(v.t.split(/\s+/).length>34)return;
+    arr.push({v,key:m[1],s:+m[2],e:+(m[3]||m[2])});
+  });
+  const byKey={};arr.forEach(x=>{(byKey[x.key]=byKey[x.key]||[]).push(x);});
+  arr.forEach(x=>{x.nx=(byKey[x.key]||[]).find(y=>y.s===x.e+1)||null;});
+  CADX={arr,starts:arr.filter(x=>x.nx)};return CADX;
+}
+function cadStart(){SG.lives=3;SG.chain=0;SG.cur=null;SG.max=20;cadNext();}
+function cadNext(){
+  if(SG.lives<=0||SG.score>=SG.max){return sgFinish({head:SG.score>=SG.max?'¡Cadena perfecta!':'¡Se rompió la cadena!',score:SG.score,sub:SG.score+(SG.score===1?' eslabón':' eslabones')});}
+  const X=cadIndex();
+  if(!SG.cur||!SG.cur.nx){const pool=gFresh('cad',X.starts,x=>x.v.r);SG.cur=pickOne(pool);gMark('cad',SG.cur.v.r);save();}
+  const cur=SG.cur,right=cur.nx;
+  const dist=shuffle(X.arr.filter(x=>x.key!==cur.key)).slice(0,3);
+  const o=shuffle([right,...dist]);
+  SG.q={o,a:o.indexOf(right)};SG.picked=-1;SG.ans=null;
+  const hearts='❤️'.repeat(SG.lives)+'🖤'.repeat(3-SG.lives);
+  sgShell('<div class="sgtop"><span>'+hearts+'</span><span>🔗 '+SG.chain+'</span></div><p class="glabel">¿Qué versículo sigue?</p>'+
+    '<blockquote class="verse gbig">'+esc(cur.v.t)+'<cite class="vref">'+esc(cur.v.r)+'</cite></blockquote>'+
+    '<div class="sgopts">'+o.map((x,i)=>'<button class="sgopt" data-a="sg-opt" data-i="'+i+'">'+esc(x.v.t)+'</button>').join('')+'</div><div id="sgrev"></div>','<div id="sgf"></div>',100*SG.score/SG.max);
+}
+function cadTap(i){
+  if(SG.ans!==null)return;const q=SG.q;SG.picked=i;SG.ans=i===q.a;
+  document.querySelectorAll('.sgopt').forEach((b,k)=>{b.disabled=true;if(k===q.a)b.classList.add('ok');else if(k===i)b.classList.add('bad');});
+  const right=q.o[q.a];
+  if(SG.ans){SG.score++;SG.chain++;beep('good');haptic([12]);}else{SG.lives--;SG.chain=0;SG.cur=null;beep('bad');haptic([30,40,30]);}
+  $('#sgrev').innerHTML='<div class="sgrev"><cite class="vref">'+esc(right.v.r)+'</cite></div>';
+  if(SG.ans)SG.cur=right;
+  $('#sgf').innerHTML='<button class="btn" data-a="sg-next" data-primary>Continuar</button>';
+}
+
+/* ---------- Detective de errores ---------- */
+function detStart(){SG.n=8;SG.i=0;SG.qs=[];
+  const vs=gTake('det',ALLV.filter(v=>v.t.split(/\s+/).length<=26&&BLANKS[v.r]),v=>v.r,SG.n);
+  vs.forEach(v=>{const b=pickBlank(v);if(!b)return;const cand=b.ds.filter(d=>d&&d.toLowerCase()!==b.word.toLowerCase()),wrong=pickOne(cand.length?cand:b.ds);
+    const toks=b.toks.slice();toks[b.idx]=b.pre+wrong+b.suf;SG.qs.push({v,b,toks,wrong});});
+  SG.n=SG.qs.length;detShow();}
+function detShow(){
+  if(SG.i>=SG.n)return sgFinish({head:SG.score>=7?'¡Ojo de águila!':SG.score>=4?'¡Muy bien!':'¡Buen intento!',score:SG.score,sub:SG.score+' de '+SG.n});
+  const q=SG.qs[SG.i];SG.picked=-1;SG.ans=null;
+  sgShell('<p class="glabel">Una palabra fue cambiada. ¡Tócala! <span>· '+(SG.i+1)+' de '+SG.n+'</span></p>'+
+   '<blockquote class="verse gbig sgdet">'+q.toks.map((w,i)=>'<button class="sgtok" data-a="sg-tok" data-i="'+i+'">'+esc(w)+'</button>').join(' ')+'<cite class="vref">'+esc(q.v.r)+'</cite></blockquote><div id="sgrev"></div>','<div id="sgf"></div>',100*SG.i/SG.n);
+}
+function detTap(i){
+  if(SG.ans!==null)return;const q=SG.qs[SG.i];SG.picked=i;SG.ans=i===q.b.idx;
+  document.querySelectorAll('.sgtok').forEach((b,k)=>{b.disabled=true;if(k===q.b.idx)b.classList.add(SG.ans?'ok':'real');else if(k===i)b.classList.add('bad');});
+  if(SG.ans){SG.score++;beep('good');haptic([12]);}else{beep('bad');haptic([30,40,30]);}
+  $('#sgrev').innerHTML='<div class="sgrev"><p class="sgx">Decía <b>«'+esc(q.b.word)+'»</b>, no «'+esc(q.wrong)+'».</p><p class="sgx"><i>'+esc(q.v.t)+'</i></p></div>';
+  $('#sgf').innerHTML='<button class="btn" data-a="sg-next" data-primary>'+(SG.i===SG.n-1?'Ver resultado':'Continuar')+'</button>';
+}
+function detNext(){SG.i++;detShow();}
+
+/* ---------- Biblioteca loca ---------- */
+const BIB_B=[
+ ['Ley',['Génesis','Éxodo','Levítico','Números','Deuteronomio']],
+ ['Historia',['Josué','Jueces','Rut','1 Samuel','2 Samuel','1 Reyes','2 Reyes','1 Crónicas','2 Crónicas','Esdras','Nehemías','Ester']],
+ ['Poesía',['Job','Salmos','Proverbios','Eclesiastés','Cantares']],
+ ['Profetas',['Isaías','Jeremías','Lamentaciones','Ezequiel','Daniel','Oseas','Joel','Amós','Abdías','Jonás','Miqueas','Nahum','Habacuc','Sofonías','Hageo','Zacarías','Malaquías']],
+ ['Evangelios y Hechos',['Mateo','Marcos','Lucas','Juan','Hechos']],
+ ['Cartas',['Romanos','1 Corintios','2 Corintios','Gálatas','Efesios','Filipenses','Colosenses','1 Tesalonicenses','2 Tesalonicenses','1 Timoteo','2 Timoteo','Tito','Filemón','Hebreos','Santiago','1 Pedro','2 Pedro','1 Juan','2 Juan','3 Juan','Judas']],
+ ['Profecía',['Apocalipsis']]
+];
+const bibKey=s=>String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'');
+function bibStart(){
+  SG.found={};SG.t0=Date.now();SG.limit=240;
+  SG.all=[];BIB_B.forEach(g=>g[1].forEach(b=>SG.all.push(b)));
+  const alias={'cantares':'Cantares','cantaresdesalomon':'Cantares','cantardeloscantares':'Cantares','eclesiastes':'Eclesiastés','apocalipsisdejuan':'Apocalipsis'};
+  SG.map={};SG.all.forEach(b=>{SG.map[bibKey(b)]=b;});Object.keys(alias).forEach(k=>SG.map[k]=alias[k]);
+  ['1','2','3'].forEach(n=>SG.all.forEach(b=>{if(b[0]===n&&b[1]===' '){const r=b.slice(2);SG.map[bibKey(r)+n]=b;SG.map[bibKey(({'1':'primera','2':'segunda','3':'tercera'})[n]+' '+r)]=b;SG.map[bibKey(({'1':'primera de','2':'segunda de','3':'tercera de'})[n]+' '+r)]=b;SG.map[bibKey(({'1':'i','2':'ii','3':'iii'})[n]+' '+r)]=b;}}));
+  bibShell();
+  SG.tm=setInterval(bibTick,500);
+  setTimeout(()=>{const i=$('#bibin');if(i)i.focus();},150);
+}
+function bibGridHTML(show){
+  return BIB_B.map(g=>'<div class="bibg"><h4>'+esc(g[0])+'</h4><div class="bibc">'+g[1].map(b=>{const f=SG.found[b];return '<span class="bibk'+(f?' on':(show?' miss':''))+'">'+(f||show?esc(b):'?')+'</span>';}).join('')+'</div></div>').join('');
+}
+function bibShell(){
+  const n=Object.keys(SG.found).length;
+  sgShell('<div class="sgtop"><span>⏱️ <b id="bibt">4:00</b></span><span>📚 <b id="bibn">'+n+'</b> de '+SG.all.length+'</span></div>'+
+   '<p class="glabel">Escribe los nombres de los libros de la Biblia</p>'+
+   '<input id="bibin" class="inp" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Escribe un libro…" aria-label="Escribe el nombre de un libro">'+
+   '<div id="bibgrid">'+bibGridHTML(false)+'</div>','<button class="btn ghost" data-a="sg-fin">Terminar y ver los que faltan</button>',0);
+  const i=$('#bibin');i.addEventListener('input',()=>{
+    const k=bibKey(i.value);const b=SG.map[k];
+    if(b&&!SG.found[b]){SG.found[b]=1;i.value='';beep('good');haptic([10]);$('#bibn').textContent=Object.keys(SG.found).length;$('#bibgrid').innerHTML=bibGridHTML(false);const bar=$('#game .bar i');if(bar)bar.style.width=Math.round(100*Object.keys(SG.found).length/SG.all.length)+'%';if(Object.keys(SG.found).length===SG.all.length)bibFinish();}
+    else if(b&&SG.found[b]){i.classList.add('dup');setTimeout(()=>i.classList.remove('dup'),300);}
+  });
+}
+function bibTick(){
+  if(!SG||SG.id!=='bib'||SG.done)return;
+  const left=Math.max(0,SG.limit-Math.floor((Date.now()-SG.t0)/1000));
+  const t=$('#bibt');if(t)t.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
+  if(left<=0)bibFinish();
+}
+function bibFinish(){
+  if(SG.done)return;const n=Object.keys(SG.found).length;
+  sgFinish({head:n>=60?'¡Biblioteca completa!':n>=40?'¡Gran memoria!':n>=20?'¡Buen avance!':'¡Buen comienzo!',score:n,sub:n+' de '+SG.all.length+' libros',
+    extra:'<h3 style="text-align:left;margin:18px 0 6px">Los libros</h3><div style="text-align:left">'+bibGridHTML(true)+'</div>'});
+}
+
+/* ---------- Línea del tiempo ---------- */
+const TL_EV=[
+ ['La creación del mundo','Génesis 1'],['La caída de Adán y Eva','Génesis 3'],['Caín y Abel','Génesis 4'],['El diluvio y el arca de Noé','Génesis 6–8'],['La torre de Babel','Génesis 11'],
+ ['Dios llama a Abraham','Génesis 12'],['Nace Isaac','Génesis 21'],['Jacob recibe la bendición de Isaac','Génesis 27'],['José es vendido por sus hermanos','Génesis 37'],['Nace Moisés','Éxodo 2'],
+ ['La zarza ardiendo','Éxodo 3'],['Las diez plagas de Egipto','Éxodo 7–12'],['El cruce del Mar Rojo','Éxodo 14'],['Los Diez Mandamientos en el Sinaí','Éxodo 20'],['El becerro de oro','Éxodo 32'],
+ ['Los doce espías a Canaán','Números 13'],['El pueblo cruza el Jordán','Josué 3'],['La caída de Jericó','Josué 6'],['Débora y Barac vencen a Sísara','Jueces 4'],['Sansón y los filisteos','Jueces 13–16'],
+ ['Samuel es llamado por Dios','1 Samuel 3'],['Saúl es ungido rey','1 Samuel 10'],['David vence a Goliat','1 Samuel 17'],['David reina en Jerusalén','2 Samuel 5'],['Salomón edifica el templo','1 Reyes 6'],
+ ['El reino se divide','1 Reyes 12'],['Elías en el monte Carmelo','1 Reyes 18'],['Jonás en Nínive','Jonás 3'],['Cae el reino del norte (Samaria)','2 Reyes 17'],['Josías halla el libro de la ley','2 Reyes 22'],
+ ['Jerusalén cae ante Babilonia','2 Reyes 25'],['Daniel en el foso de los leones','Daniel 6'],['Los desterrados vuelven a Jerusalén','Esdras 1'],['Ester ante el rey Asuero','Ester 4'],['Nehemías reconstruye los muros','Nehemías 2–6'],
+ ['Nace Jesús en Belén','Lucas 2'],['El bautismo de Jesús','Mateo 3'],['El Sermón del monte','Mateo 5'],['Jesús alimenta a los cinco mil','Juan 6'],['Jesús resucita a Lázaro','Juan 11'],
+ ['La entrada de Jesús a Jerusalén','Mateo 21'],['La crucifixión de Jesús','Mateo 27'],['La resurrección de Jesús','Mateo 28'],['El día de Pentecostés','Hechos 2'],['Saulo se convierte camino a Damasco','Hechos 9'],
+ ['El concilio de Jerusalén','Hechos 15'],['Pablo llega preso a Roma','Hechos 28'],['Juan recibe el Apocalipsis en Patmos','Apocalipsis 1']
+];
+function tlStart(){SG.n=8;SG.i=0;tlRound();}
+function tlPick(){
+  const seen=gSeen('tl'),N=TL_EV.length;
+  for(let tries=0;tries<200;tries++){
+    const a=rnd(N);if(tries<100&&seen.has(TL_EV[a][0]))continue;
+    const idx=[a];
+    for(let t2=0;t2<60&&idx.length<4;t2++){const c=rnd(N);if(idx.every(x=>Math.abs(x-c)>=3))idx.push(c);}
+    if(idx.length===4){idx.forEach(x=>gMark('tl',TL_EV[x][0]));save();return idx.sort((x,y)=>x-y);}
+  }
+  return [0,10,25,40];
+}
+function tlRound(){
+  if(SG.i>=SG.n)return sgFinish({head:SG.score>=7?'¡Maestro del tiempo!':SG.score>=4?'¡Muy bien!':'¡Buen intento!',score:SG.score,sub:SG.score+' de '+SG.n});
+  const idx=tlPick();SG.ord=idx;SG.cards=shuffle(idx.slice());SG.placed=[];SG.err=0;SG.bad=-1;tlShow();
+}
+function tlShow(){
+  const done=SG.placed.length===4;
+  sgShell('<p class="glabel">Toca los sucesos del más antiguo al más reciente <span>· '+(SG.i+1)+' de '+SG.n+'</span></p>'+
+   '<div class="sgopts">'+SG.cards.map((e,i)=>{const p=SG.placed.indexOf(e);return '<button class="sgopt tl'+(p>=0?' ok':'')+(SG.bad===i?' bad':'')+'" data-a="sg-tl" data-i="'+i+'"'+(p>=0||done?' disabled':'')+'>'+(p>=0?'<span class="tln">'+(p+1)+'</span>':'')+esc(TL_EV[e][0])+(done?'<cite class="vref">'+esc(TL_EV[e][1])+'</cite>':'')+'</button>';}).join('')+'</div>'+
+   (done?'<div class="sgrev"><p class="sgx"><b>'+(SG.err?'Casi: ':'¡Perfecto! ')+'</b>este es el orden correcto.</p></div>':''),done?'<button class="btn" data-a="sg-next" data-primary>'+(SG.i===SG.n-1?'Ver resultado':'Continuar')+'</button>':'',100*SG.i/SG.n);
+}
+function tlTap(i){
+  if(SG.placed.length===4)return;
+  const e=SG.cards[i],want=SG.ord[SG.placed.length];
+  if(e===want){SG.placed.push(e);SG.bad=-1;beep('good');haptic([10]);if(SG.placed.length===4){if(!SG.err)SG.score++;}}
+  else{SG.err++;SG.bad=i;beep('bad');haptic([30,40,30]);}
+  tlShow();
+}
+function tlNext(){SG.i++;tlRound();}
+
+/* ---------- Sopa de letras (el generador y la selección se reutilizan en la versión de grupo) ---------- */
+const WS_THEMES=[
+ ['Personajes',['NOE','ABRAHAM','ISAAC','JACOB','JOSE','MOISES','JOSUE','DAVID','SAMUEL','ELIAS','DANIEL','ESTER','JONAS','PEDRO','PABLO','TIMOTEO','LUCAS','MARCOS','CALEB','GEDEON','SANSON','NEHEMIAS','ESDRAS','ISAIAS']],
+ ['Libros',['GENESIS','EXODO','NUMEROS','SALMOS','PROVERBIOS','ISAIAS','JEREMIAS','DANIEL','MATEO','MARCOS','LUCAS','JUAN','HECHOS','ROMANOS','GALATAS','EFESIOS','HEBREOS','SANTIAGO','JUDAS','JONAS','AMOS','RUT']],
+ ['Lugares',['EDEN','BELEN','NAZARET','JERUSALEN','SINAI','JORDAN','CANAAN','EGIPTO','BABILONIA','SION','CARMELO','GALILEA','JERICO','DAMASCO','ANTIOQUIA','EFESO','CORINTO','ROMA','BETEL','HEBRON']]
+];
+function wsRng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function wsGen(seed,words,size){
+  const R=wsRng(seed),dirs=[[0,1],[1,0],[1,1],[-1,1]];
+  const grid=Array.from({length:size},()=>Array(size).fill('')),placed=[];
+  const order=words.slice().sort((a,b)=>b.length-a.length);
+  for(const w of order){
+    let ok=false;
+    for(let t=0;t<400&&!ok;t++){
+      const d=dirs[Math.floor(R()*dirs.length)],r=Math.floor(R()*size),c=Math.floor(R()*size);
+      const er=r+d[0]*(w.length-1),ec=c+d[1]*(w.length-1);
+      if(er<0||er>=size||ec<0||ec>=size)continue;
+      let fit=true;for(let i=0;i<w.length;i++){const g=grid[r+d[0]*i][c+d[1]*i];if(g&&g!==w[i]){fit=false;break;}}
+      if(!fit)continue;
+      const cells=[];for(let i=0;i<w.length;i++){grid[r+d[0]*i][c+d[1]*i]=w[i];cells.push([r+d[0]*i,c+d[1]*i]);}
+      placed.push({w,cells});ok=true;
+    }
+    if(!ok)return wsGen(seed+7919,words,size);
+  }
+  const AB='ABCDEFGHIJLMNOPQRSTUVXYZ';
+  for(let r=0;r<size;r++)for(let c=0;c<size;c++)if(!grid[r][c])grid[r][c]=AB[Math.floor(R()*AB.length)];
+  return {size,grid,words:placed};
+}
+/* Convierte el trazo del dedo en una línea recta (horizontal, vertical o diagonal) */
+function wsLine(r0,c0,r1,c1,size){
+  let dr=r1-r0,dc=c1-c0;const ar=Math.abs(dr),ac=Math.abs(dc);
+  let sr=0,sc=0,len;
+  if(ar===0&&ac===0)return [[r0,c0]];
+  if(ar>=ac*2){sr=Math.sign(dr);len=ar;}
+  else if(ac>=ar*2){sc=Math.sign(dc);len=ac;}
+  else{sr=Math.sign(dr);sc=Math.sign(dc);len=Math.min(ar,ac);}
+  const out=[];for(let i=0;i<=len;i++){const r=r0+sr*i,c=c0+sc*i;if(r<0||r>=size||c<0||c>=size)break;out.push([r,c]);}
+  return out;
+}
+function wsAttach(el,size,onDone,onSel){
+  let start=null,line=[];
+  const cellAt=e=>{const b=el.getBoundingClientRect();const c=Math.floor((e.clientX-b.left)/b.width*size),r=Math.floor((e.clientY-b.top)/b.height*size);return [Math.max(0,Math.min(size-1,r)),Math.max(0,Math.min(size-1,c))];};
+  const paint=()=>{el.querySelectorAll('.wsc.sel').forEach(x=>x.classList.remove('sel'));line.forEach(p=>{const x=el.children[p[0]*size+p[1]];if(x)x.classList.add('sel');});};
+  el.addEventListener('pointerdown',e=>{e.preventDefault();try{el.setPointerCapture(e.pointerId);}catch(_){}start=cellAt(e);line=[start];paint();});
+  el.addEventListener('pointermove',e=>{if(!start)return;const p=cellAt(e);line=wsLine(start[0],start[1],p[0],p[1],size);paint();});
+  const end=()=>{if(!start)return;const l=line;start=null;line=[];paint();if(l.length>1)onDone(l);};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+}
+const WS_COL=['#1CB0F6','#FF9600','#A560E8','#4CB800','#E84393','#FF4B4B','#00B894','#7C5CFC'];
+function wsGridHTML(W,found){
+  const avail=Math.min(window.innerWidth,520)-32,cs=Math.floor((avail-(W.size-1)*2)/W.size);
+  const col={};found.forEach((f,k)=>{W.words[f.i].cells.forEach(p=>{col[p[0]+','+p[1]]=WS_COL[k%WS_COL.length];});});
+  let h='<div class="wsg" id="wsg" style="grid-template-columns:repeat('+W.size+','+cs+'px);--cs:'+cs+'px">';
+  for(let r=0;r<W.size;r++)for(let c=0;c<W.size;c++){const k=r+','+c;h+='<i class="wsc'+(col[k]?' f':'')+'"'+(col[k]?' style="background:'+col[k]+'"':'')+'>'+W.grid[r][c]+'</i>';}
+  return h+'</div>';
+}
+function wsMatch(W,l,foundIdx){
+  const s=l.map(p=>W.grid[p[0]][p[1]]).join(''),rs=s.split('').reverse().join('');
+  return W.words.findIndex((x,i)=>!foundIdx.includes(i)&&(x.w===s||x.w===rs)&&l.length===x.w.length);
+}
+function sopaStart(){
+  const th=pickOne(WS_THEMES);
+  const seenW=gSeen('sopa');
+  const fresh=shuffle(th[1].slice()).sort((a,b)=>(seenW.has(a)?1:0)-(seenW.has(b)?1:0));
+  const words=fresh.filter(w=>w.length<=10).slice(0,7);words.forEach(w=>gMark('sopa',w));
+  if(th[1].every(w=>gSeen('sopa').has(w)))S.gseen.sopa=[];
+  save();
+  SG.W=wsGen(Math.floor(Math.random()*1e9),words,10);SG.theme=th[0];SG.fd=[];SG.t0=Date.now();SG.el=0;
+  sopaShell();
+  SG.tm=setInterval(()=>{if(SG.done)return;SG.el=Math.floor((Date.now()-SG.t0)/1000);const t=$('#sgt');if(t)t.textContent=sgFmt('sopa',SG.el);},500);
+}
+function sopaShell(){
+  const W=SG.W,fi=SG.fd.map(f=>f.i);
+  sgShell('<div class="sgtop"><span>⏱️ <b id="sgt">'+sgFmt('sopa',SG.el)+'</b></span><span>'+esc(SG.theme)+' · <b>'+SG.fd.length+'</b> de '+W.words.length+'</span></div>'+
+    wsGridHTML(W,SG.fd)+
+    '<div class="wsw">'+W.words.map((x,i)=>{const k=fi.indexOf(i);return '<span class="'+(k>=0?'dn':'')+'"'+(k>=0?' style="border-color:'+WS_COL[k%WS_COL.length]+'"':'')+'>'+esc(x.w)+'</span>';}).join('')+'</div>',
+    '',100*SG.fd.length/W.words.length);
+  wsAttach($('#wsg'),W.size,l=>{
+    const i=wsMatch(W,l,fi);
+    if(i<0){beep('bad');return;}
+    SG.fd.push({i});beep('good');haptic([12]);
+    if(SG.fd.length===W.words.length){SG.el=Math.floor((Date.now()-SG.t0)/1000);sgFinish({head:'¡Sopa completa!',score:SG.el,sub:sgFmt('sopa',SG.el)});}
+    else sopaShell();
+  });
+}
+
 
 let G=null;
 function av(i){return '<span class="av" style="background:'+PCOL[i%PCOL.length]+'">'+esc(nameOf(i).charAt(0).toUpperCase())+'</span>';}
@@ -11865,10 +12236,10 @@ function trCardHTML(){
 
 function gSoloTiles(){
   const fam=famOn();
-  return '<div class="gtiles">'+GAMES.filter(g=>!(fam&&g.id==='conv')).map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+
+  return '<div class="gtiles">'+sgTileHTML('mix')+GAMES.filter(g=>!(fam&&g.id==='conv')&&!/^(quien|pers|vf|libros)$/.test(g.id)).map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+
    '<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button>'+
    '<button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button>'+
-   '<button class="gcard" style="--gc:#7C5CFC" data-a="cw-solo"><span class="gemo" aria-hidden="true">🧩</span><b>Crucigrama bíblico</b><span>Resuelve las pistas y descubre el pasaje de cada palabra</span></button>'+'</div>';
+   '<button class="gcard" style="--gc:#7C5CFC" data-a="cw-solo"><span class="gemo" aria-hidden="true">🧩</span><b>Crucigrama bíblico</b><span>Resuelve las pistas y descubre el pasaje de cada palabra</span></button>'+['cad','det','bib','tl','sopa'].map(sgTileHTML).join('')+'</div>';
 }
 function gamesHTML(){
   const fam=famOn();
@@ -12129,6 +12500,7 @@ document.addEventListener('click',e=>{
   else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
   else if(a.slice(0,3)==='cw-'){cwAct(a,b);}
+  else if(a.slice(0,3)==='sg-'){sgAct(a,b);}
   else if(a.slice(0,3)==='cd-'){cdAct(a,b);}
   else if(a.slice(0,3)==='xw-'){xwAct(a,b);}
   else if(a.slice(0,5)==='rlib-'){rlAct(a,b);}
