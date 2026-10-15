@@ -478,6 +478,7 @@ h1,h2,h3,h4{font-weight:900}
 .wsc.sel{background:var(--gc,#1CB0F6);color:#fff}.wsc.f{color:#fff;border-color:transparent}
 .bibrow{display:flex;gap:8px;align-items:stretch}.bibrow .inp{flex:1;margin:0}.bibrow .mmic{width:52px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--blue);display:grid;place-items:center;cursor:pointer}.bibrow .mmic.on{background:var(--red);color:#fff;border-color:var(--red)}
 .wsq>div{padding:8px 10px;margin:6px 0;border:2px solid var(--line);border-radius:12px;font-size:14px}.wsq>div.dn{background:color-mix(in srgb,var(--green) 10%,var(--surface))}.wsq small{opacity:.65}
+.wsq>div[data-a]{cursor:pointer}.wsq>div.sl{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,var(--surface))}
 .wsw{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .wsw span{padding:4px 10px;border-radius:999px;border:2px solid var(--line);font-size:13px;font-weight:800}
 .wsw span.dn{text-decoration:line-through;opacity:.6}
@@ -5553,7 +5554,7 @@ const RM_MODES={
   assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores',hide:true},
   guess:{id:'guess',t:'¿Quién es quién?',d:'Cada uno elige en secreto un personaje. ¡Adivina el del otro!',emo:'🃏',c:'#E84393',totals:[5,8,12],def:8,time:20,min:'2 jugadores',one:true},
   cross:{id:'cross',t:'Crucigrama a dos',d:'Cada uno en su celular: por turnos, con tiempo para completar cada palabra.',emo:'🧩',c:'#7C5CFC',totals:[14],def:14,time:20,min:'2 jugadores',one:true},
-  wsop:{id:'wsop',t:'Sopa de letras a dos',d:'Los dos buscan en la misma sopa a la vez, con pistas. Si el otro marca una palabra antes que tú, la pierdes.',emo:'🔤',c:'#00B894',totals:[13],def:13,time:20,min:'2 jugadores',one:true},
+  wsop:{id:'wsop',t:'Sopa de letras a dos',d:'Los dos buscan en la misma sopa. Toca una pista y marca su palabra (o marca la palabra y luego toca su pista). Acertar suma; equivocarte o caer en un señuelo resta.',emo:'🔤',c:'#00B894',totals:[13],def:13,time:20,min:'2 jugadores',one:true},
   draw:{id:'draw',t:'Dibujo por equipos',d:'Dibuja con el dedo una escena bíblica y tu equipo la adivina, mientras todos ven tu trazo en vivo.',emo:'🎨',c:'#E84393',totals:[7],def:7,time:20,min:'4 a 8 jugadores'},
   mime:{id:'mime',t:'Mímica bíblica',d:'El equipo contrario elige quién actúa y le revela qué interpretar. ¡Tu equipo debe adivinarlo!',emo:'🎭',c:'#FF9600',totals:[9],def:9,time:20,min:'4 a 8 jugadores, juntos en el mismo lugar'},
   buzz:{id:'buzz',t:'¡Yo respondo!',d:'Se lee la pregunta en voz alta, suena un timbre y quien pulse primero el botón rojo responde.',emo:'🔴',c:'#FF4B4B',totals:[6,10,15],def:10,time:20,min:'2 a 8 jugadores, juntos en el mismo lugar'},
@@ -11497,7 +11498,7 @@ function xgMatch(guess,keys){
 const xgHexr=()=>Math.random().toString(36).slice(2,8);
 function xgSetupHTML(id){
   const c=RM.cfg;
-  if(id==='wsop')return '<section class="sec"><p class="muted" style="font-size:14px;margin:0">Los dos ven la misma sopa. Se dan pistas, como en un crucigrama: gana quien encuentre más palabras. Si el otro marca una antes que tú, la pierdes.</p></section>';
+  if(id==='wsop')return '<section class="sec"><p class="muted" style="font-size:14px;margin:0">Los dos ven la misma sopa y las mismas pistas. Toca una pista y marca su palabra en la sopa, o marca primero la palabra y luego toca su pista. Acertar suma 1; marcar una palabra que no es la de esa pista, o caer en un señuelo, resta 1. Si el otro marca una antes que tú, la pierdes.</p></section>';
   const rounds=id==='draw'?[6,8,10]:[6,8,12],secs=id==='draw'?[60,75,90]:[45,60,90];
   return '<section class="sec"><h3>¿Cuántas rondas?</h3><div class="seg">'+rounds.map(r=>'<button class="'+((c.xr||8)===r?'on':'')+'" data-a="xg-r" data-r="'+r+'">'+r+'</button>').join('')+'</div></section>'+
    '<section class="sec"><h3>Tiempo por ronda</h3><div class="seg">'+secs.map(s=>'<button class="'+((c.xs||(id==='draw'?75:60))===s?'on':'')+'" data-a="xg-s" data-s="'+s+'">'+s+' s</button>').join('')+'</div></section>'+
@@ -11505,7 +11506,7 @@ function xgSetupHTML(id){
 }
 async function xgStart(st){
   const k=rmX(st);let cfg;
-  if(k==='wsop'){const th=pickOne(WS_THEMES),words=wsPick(th);cfg={k:'wsop',id:xgHexr(),rounds:XG_TOT.wsop,first:pickOne(st.players).device,theme:th[0],seed:Math.floor(Math.random()*1e9),w:words,secs:240};}
+  if(k==='wsop'){const th=pickOne(WS_THEMES),words=wsPick(th);cfg={k:'wsop',id:xgHexr(),rounds:XG_TOT.wsop,first:pickOne(st.players).device,theme:th[0],seed:Math.floor(Math.random()*1e9),w:words,d:wsDecoys(th,words),secs:240};}
   else if(k==='draw'){const n=RM.cfg.xr||8;cfg={k:'draw',id:xgHexr(),secs:RM.cfg.xs||75,qs:gTake('draw',DRAW_BANK,x=>x[0],n).map(x=>({t:x[0],k:x[1]}))};}
   else{const n=RM.cfg.xr||8;cfg={k:'mime',id:xgHexr(),secs:RM.cfg.xs||60,qs:gTake('mime',MIME_BANK,x=>x,n).map(x=>({t:x}))};}
   try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
@@ -11516,11 +11517,11 @@ const xgKey=st=>st.room.code+'|'+(st.cfg&&st.cfg.id);
 function xgInit(st){
   const k=rmX(st),cfg=st.cfg;
   const pl=st.players.map(p=>({d:p.device,n:p.name,a:p.avatar})).sort((a,b)=>a.d<b.d?-1:1);
-  const g={k,pen:{c:'#222222',w:7},key:xgKey(st),cfg,me:st.me,host:st.room.host,pl,team:{},evs:[],after:0,S:null,sent:new Set(),polling:false,q:Promise.resolve(),rewarded:false,tid:0,t0:Date.now(),rt:{},at:{},ea:{},pend:{},loc:null,mine:[],vsig:'',guess:''};
+  const g={k,pen:{c:'#222222',w:7},key:xgKey(st),cfg,me:st.me,host:st.room.host,pl,team:{},evs:[],after:0,S:null,sent:new Set(),polling:false,q:Promise.resolve(),rewarded:false,tid:0,t0:Date.now(),rt:{},at:{},ea:{},pend:{},selQ:null,hold:null,decDone:new Set(),loc:null,mine:[],vsig:'',guess:''};
   pl.forEach((p,i)=>g.team[p.d]=i%2);
   g.nm=d=>{const p=pl.find(x=>x.d===d);return p?p.n:'Jugador';};
   g.av=d=>{const p=pl.find(x=>x.d===d);return p?p.a:'🙂';};
-  if(k==='wsop'){g.W=wsGen(cfg.seed,cfg.w,10);}
+  if(k==='wsop'){g.W=wsGen(cfg.seed,cfg.w,10,cfg.d||[]);}
   XG=g;xgRecalc();xgStop();g.tid=setInterval(xgTick,300);
   return g;
 }
@@ -11534,9 +11535,13 @@ function xgQueue(ev){const g=XG;if(!g)return Promise.resolve(false);g.q=g.q.then
 function xgReduce(g){
   const evs=g.evs;
   if(g.k==='wsop'){
-    const W=g.W,Z={claims:{},score:{},over:false};g.pl.forEach(p=>Z.score[p.d]=0);
+    const W=g.W,Z={claims:{},score:{},pen:{},over:false};g.pl.forEach(p=>Z.score[p.d]=0);
     for(const x of evs){const ev=x.ev||{};
-      if(ev.t==='ans'&&ev.k==='w'&&Number.isInteger(ev.i)&&ev.i>=0&&ev.i<W.words.length&&Z.claims[ev.i]===undefined&&Z.score[x.d]!==undefined){Z.claims[ev.i]=x.d;Z.score[x.d]++;}
+      if(ev.t==='ans'&&ev.k==='w'&&Number.isInteger(ev.i)&&ev.i>=0&&ev.i<W.words.length&&Z.score[x.d]!==undefined){
+        if(ev.c===undefined||ev.c===ev.i){if(Z.claims[ev.i]===undefined){Z.claims[ev.i]=x.d;Z.score[x.d]++;}}
+        else if(Number.isInteger(ev.c)&&ev.c>=0&&ev.c<W.words.length){const k=x.d+'|'+ev.i+'|'+ev.c;if(!Z.pen[k]){Z.pen[k]=1;Z.score[x.d]--;}}
+      }
+      else if(ev.t==='ans'&&ev.k==='x'&&Number.isInteger(ev.j)&&W.dec&&ev.j>=0&&ev.j<W.dec.length&&Z.score[x.d]!==undefined){const k=x.d+'|d'+ev.j;if(!Z.pen[k]){Z.pen[k]=1;Z.score[x.d]--;}}
       else if(ev.t==='over')Z.over=true;
     }
     if(Object.keys(Z.claims).length===W.words.length)Z.over=true;
@@ -11662,7 +11667,7 @@ function xgView(){
 }
 function xgSopaView(){
   const g=XG;
-  return rmShell('<div class="sgtop xgscore" id="xgs"></div>'+wsGridHTML(g.W,[])+'<p class="glabel" style="margin:10px 0 4px">Pistas · ¡sé más rápido que tu rival!</p><div id="xgq" class="wsq"></div>','',false);
+  return rmShell('<div class="sgtop xgscore" id="xgs"></div>'+wsGridHTML(g.W,[])+'<p class="glabel" style="margin:10px 0 2px">Pistas · toca una y marca su palabra</p><p class="muted" style="font-size:13px;margin:0 0 4px">Cuidado: en la sopa hay palabras señuelo que restan puntos.</p><div id="xgq" class="wsq"></div>','',false);
 }
 function xgTeamChip(t){return '<span class="xgteam" style="background:'+XG_TC[t]+'">'+XG_TN[t]+'</span>';}
 function xgScoreBar(){
@@ -11710,7 +11715,7 @@ function xgFinalHTML(){
     banner=a>b?'🏆 ¡Ganaste!':a<b?'¡Ganó '+esc(opp.n)+'!':'🤝 ¡Empate!';
     banner+='<small>'+a+' a '+b+'</small>';
     const th=(WS_THEMES.find(t=>t[0]===g.cfg.theme)||[0,{}])[1];
-    body='<h3 style="text-align:left;margin:18px 0 6px">Las palabras</h3><div class="list" style="text-align:left">'+g.W.words.map((x,i)=>'<div class="li"><span><b>'+esc(x.w)+'</b> — '+esc(th[x.w]||'')+'</span><span class="muted" style="white-space:nowrap">'+(Z.claims[i]?esc(g.nm(Z.claims[i])):'—')+'</span></div>').join('')+'</div>';
+    body=((g.W.dec||[]).length?'<p class="muted" style="text-align:left;margin:14px 0 0;font-size:14px">Señuelos: '+g.W.dec.map(x=>'<b>'+esc(x.w)+'</b>').join(', ')+'.</p>':'')+'<h3 style="text-align:left;margin:18px 0 6px">Las palabras</h3><div class="list" style="text-align:left">'+g.W.words.map((x,i)=>'<div class="li"><span><b>'+esc(x.w)+'</b> — '+esc(th[x.w]||'')+'</span><span class="muted" style="white-space:nowrap">'+(Z.claims[i]?esc(g.nm(Z.claims[i])):'—')+'</span></div>').join('')+'</div>';
   }else{
     const a=Z.team[0],b=Z.team[1];
     banner=a>b?'🏆 ¡Ganó el equipo '+XG_TN[0]+'!':b>a?'🏆 ¡Ganó el equipo '+XG_TN[1]+'!':'🤝 ¡Empate!';
@@ -11728,13 +11733,26 @@ function xgAfter(){
     const el=document.getElementById('wsg');
     if(el)wsAttach(el,10,l=>{
       const Z=g.S,have=Object.keys(Z.claims).map(Number).concat(Object.keys(g.pend).map(Number));
+      const di=wsMatchDec(g.W,l);
+      if(di>=0){
+        if(g.decDone.has(di)){beep('bad');return;}
+        g.decDone.add(di);g.hold=null;beep('bad');haptic([30]);
+        toast('«'+g.W.dec[di].w+'» no responde a ninguna pista: −1 punto.');
+        xgQueue({t:'ans',k:'x',j:di}).then(()=>xgPoll());xgPaint();return;
+      }
       const i=wsMatch(g.W,l,have);
       if(i<0){beep('bad');return;}
-      g.pend[i]=true;beep('good');haptic([12]);
-      xgQueue({t:'ans',k:'w',i}).then(()=>xgPoll());
-      xgPaint();
+      if(g.selQ!=null)xgResolve(i,g.selQ);
+      else{g.hold=i;beep('pop');toast('Ahora toca la pista de esa palabra.');xgPaint();}
     });
   }else if(g.k==='draw')xgDrawBind();
+  xgPaint();
+}
+function xgResolve(i,c){
+  const g=XG;g.selQ=null;g.hold=null;
+  if(i===c){g.pend[i]=true;beep('good');haptic([12]);}
+  else{beep('bad');haptic([30]);toast('Esa palabra no responde a esa pista: −1 punto.');}
+  xgQueue({t:'ans',k:'w',i:i,c:c}).then(()=>xgPoll());
   xgPaint();
 }
 function xgPaint(){
@@ -11749,11 +11767,12 @@ function xgSopaPaint(){
   const own=i=>Z.claims[i]!==undefined?Z.claims[i]:(g.pend[i]?me:null);
   const th=(WS_THEMES.find(t=>t[0]===g.cfg.theme)||[0,{}])[1];
   g.W.words.forEach((x,i)=>{const o=own(i);if(!o)return;const col=o===me?XG_TC[0]:XG_TC[1];x.cells.forEach(p=>{const e=cells[p[0]*10+p[1]];if(e){e.classList.add('f');e.style.background=col;}});});
-  const mc=Object.keys(Z.claims).filter(i=>Z.claims[i]===me).length+Object.keys(g.pend).length,oc=Object.keys(Z.claims).filter(i=>Z.claims[i]!==me).length;
+  if(g.hold!=null&&g.W.words[g.hold]&&!own(g.hold))g.W.words[g.hold].cells.forEach(p=>{const e=cells[p[0]*10+p[1]];if(e){e.classList.add('f');e.style.background='#7C5CFC';}});
+  const mc=(Z.score[me]||0)+Object.keys(g.pend).filter(i=>Z.claims[i]===undefined).length,oc=Z.score[opp.d]||0;
   const s=document.getElementById('xgs');
   if(s){const el=Math.floor((Date.now()-g.t0)/1000),left=Math.max(0,g.cfg.secs-el);s.innerHTML='<span class="xgme">'+esc(g.av(me))+' Tú <b>'+mc+'</b></span><span>⏱️ <b id="xgt">'+Math.floor(left/60)+':'+String(left%60).padStart(2,'0')+'</b></span><span><b>'+oc+'</b> '+esc(opp.a)+' '+esc(opp.n)+'</span>';}
   const q=document.getElementById('xgq');
-  if(q)q.innerHTML=g.W.words.map((x,i)=>{const o=own(i);const bc=o?(o===me?XG_TC[0]:XG_TC[1]):'';return '<div class="'+(o?'dn':'')+'"'+(o?' style="border-color:'+bc+'"':'')+'><b>'+(i+1)+'.</b> '+(o?'<strong>'+esc(x.w)+'</strong> — ':'')+esc(th[x.w]||'')+' <small>('+x.w.length+' letras)</small>'+(o?' <em>'+(o===me?'tú':esc(g.nm(o)))+'</em>':'')+'</div>';}).join('');
+  if(q)q.innerHTML=g.W.words.map((x,i)=>{const o=own(i);const bc=o?(o===me?XG_TC[0]:XG_TC[1]):'';return '<div class="'+(o?'dn':(g.selQ===i?'sl':''))+'"'+(o?' style="border-color:'+bc+'"':(' data-a="xg-clue" data-i="'+i+'" role="button" tabindex="0"'))+'><b>'+(i+1)+'.</b> '+(o?'<strong>'+esc(x.w)+'</strong> — ':'')+esc(th[x.w]||'')+' <small>('+x.w.length+' letras)</small>'+(o?' <em>'+(o===me?'tú':esc(g.nm(o)))+'</em>':'')+'</div>';}).join('');
 }
 function xgStrokeDraw(ctx,s){
   const k=2;ctx.strokeStyle=s.c;ctx.fillStyle=s.c;ctx.lineWidth=s.w;ctx.lineCap='round';ctx.lineJoin='round';
@@ -11811,6 +11830,12 @@ function xgAct(a,b){
   else if(a==='xg-w'){g.pen=g.pen||{c:'#222222',w:7};g.pen.w=+b.dataset.w;document.querySelectorAll('.xgw').forEach(x=>x.classList.toggle('on',x===b));}
   else if(a==='xg-clear'){g.mine=[];g.loc=null;g.unsent=[];xgQueue({t:'ans',k:'c',n:g.S.n});xgCanvasPaint();}
   else if(a==='xg-guess')xgGuess();
+  else if(a==='xg-clue'){
+    const c=+b.dataset.i,Z=g.S;
+    if(g.k!=='wsop'||Z.claims[c]!==undefined||g.pend[c])return;
+    if(g.hold!=null)xgResolve(g.hold,c);
+    else{g.selQ=g.selQ===c?null:c;beep('pop');xgPaint();}
+  }
   else if(a==='xg-pick'){const rd=g.S.rd;if(rd&&!rd.actor)xgQueue({t:'ans',k:'pick',n:g.S.n,a:b.dataset.d}).then(()=>xgPoll());}
   else if(a==='xg-ok'){const rd=g.S.rd;if(rd&&rd.actor===g.me&&!rd.ended){xgQueue({t:'ans',k:'ok',n:g.S.n,r:xgLeft(g.S.n)}).then(()=>xgPoll());}}
   else if(a==='xg-pass'){const rd=g.S.rd;if(rd&&rd.actor===g.me&&!rd.ended){xgQueue({t:'ans',k:'pass',n:g.S.n}).then(()=>xgPoll());}}
@@ -12191,7 +12216,7 @@ const WS_THEMES=[
  ['Lugares',{EDEN:'Huerto donde vivieron Adán y Eva',BELEN:'Ciudad donde nació Jesús',NAZARET:'Ciudad donde Jesús creció',JERUSALEN:'Ciudad del templo y del rey David',SINAI:'Monte donde Moisés recibió la ley',JORDAN:'Río donde Jesús fue bautizado',CANAAN:'La tierra prometida a Abraham',EGIPTO:'Tierra donde Israel fue esclavo',BABILONIA:'Imperio al que llevaron cautivo a Judá',SION:'Nombre poético de Jerusalén',CARMELO:'Monte donde Elías desafió a los profetas de Baal',GALILEA:'Región donde Jesús enseñó y llamó a sus discípulos',JERICO:'Ciudad cuyos muros cayeron',DAMASCO:'Camino donde Saulo vio una luz del cielo',ANTIOQUIA:'Allí los discípulos fueron llamados cristianos por primera vez',EFESO:'Ciudad a la que Pablo escribió sobre la armadura de Dios',CORINTO:'Ciudad de las cartas de Pablo sobre divisiones y dones',ROMA:'Capital del imperio, adonde Pablo llegó preso',BETEL:'Donde Jacob vio una escalera hasta el cielo',HEBRON:'Donde Abraham compró la cueva de Macpela'}]
 ];
 function wsRng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-function wsGen(seed,words,size){
+function wsGen(seed,words,size,decoys){
   const R=wsRng(seed),dirs=[[0,1],[1,0],[1,1],[-1,1]];
   const grid=Array.from({length:size},()=>Array(size).fill('')),placed=[];
   const order=words.slice().sort((a,b)=>b.length-a.length);
@@ -12206,11 +12231,27 @@ function wsGen(seed,words,size){
       const cells=[];for(let i=0;i<w.length;i++){grid[r+d[0]*i][c+d[1]*i]=w[i];cells.push([r+d[0]*i,c+d[1]*i]);}
       placed.push({w,cells});ok=true;
     }
-    if(!ok)return wsGen(seed+7919,words,size);
+    if(!ok)return wsGen(seed+7919,words,size,decoys);
   }
+  const dec=[];
+  (decoys||[]).forEach(w=>{
+    for(let t=0;t<300;t++){
+      const d=dirs[Math.floor(R()*dirs.length)],r=Math.floor(R()*size),c=Math.floor(R()*size);
+      const er=r+d[0]*(w.length-1),ec=c+d[1]*(w.length-1);
+      if(er<0||er>=size||ec<0||ec>=size)continue;
+      let fit=true;for(let i=0;i<w.length;i++){const g=grid[r+d[0]*i][c+d[1]*i];if(g&&g!==w[i]){fit=false;break;}}
+      if(!fit)continue;
+      const cells=[];for(let i=0;i<w.length;i++){grid[r+d[0]*i][c+d[1]*i]=w[i];cells.push([r+d[0]*i,c+d[1]*i]);}
+      dec.push({w,cells});break;
+    }
+  });
   const AB='ABCDEFGHIJLMNOPQRSTUVXYZ';
   for(let r=0;r<size;r++)for(let c=0;c<size;c++)if(!grid[r][c])grid[r][c]=AB[Math.floor(R()*AB.length)];
-  return {size,grid,words:placed};
+  return {size,grid,words:placed,dec:dec};
+}
+function wsMatchDec(W,l){
+  const s=l.map(p=>W.grid[p[0]][p[1]]).join(''),rs=s.split('').reverse().join('');
+  return (W.dec||[]).findIndex(x=>(x.w===s||x.w===rs)&&l.length===x.w.length);
 }
 /* Convierte el trazo del dedo en una línea recta (horizontal, vertical o diagonal) */
 function wsLine(r0,c0,r1,c1,size){
@@ -12243,6 +12284,10 @@ function wsGridHTML(W,found){
 function wsMatch(W,l,foundIdx){
   const s=l.map(p=>W.grid[p[0]][p[1]]).join(''),rs=s.split('').reverse().join('');
   return W.words.findIndex((x,i)=>!foundIdx.includes(i)&&(x.w===s||x.w===rs)&&l.length===x.w.length);
+}
+function wsDecoys(th,words){
+  const all=Object.keys(th[1]).filter(w=>words.indexOf(w)<0&&w.length>=4&&w.length<=8&&!words.some(x=>x.indexOf(w)>=0||w.indexOf(x)>=0));
+  return shuffle(all.slice()).slice(0,4);
 }
 function wsPick(th){
   const seenW=gSeen('sopa'),all=Object.keys(th[1]);
