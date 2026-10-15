@@ -365,9 +365,24 @@ h1,h2,h3,h4{font-weight:900}
 .wsg{display:grid;gap:2px;justify-content:center;margin:10px auto;touch-action:none;user-select:none;-webkit-user-select:none}
 .wsc{aspect-ratio:1;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:calc(var(--cs) * .5);background:var(--surface);border:1px solid var(--line);border-radius:8px}
 .wsc.sel{background:var(--gc,#1CB0F6);color:#fff}.wsc.f{color:#fff;border-color:transparent}
+.bibrow{display:flex;gap:8px;align-items:stretch}.bibrow .inp{flex:1;margin:0}.bibrow .mmic{width:52px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--blue);display:grid;place-items:center;cursor:pointer}.bibrow .mmic.on{background:var(--red);color:#fff;border-color:var(--red)}
+.wsq>div{padding:8px 10px;margin:6px 0;border:2px solid var(--line);border-radius:12px;font-size:14px}.wsq>div.dn{background:color-mix(in srgb,var(--green) 10%,var(--surface))}.wsq small{opacity:.65}
 .wsw{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .wsw span{padding:4px 10px;border-radius:999px;border:2px solid var(--line);font-size:13px;font-weight:800}
 .wsw span.dn{text-decoration:line-through;opacity:.6}
+.xgscore{font-size:15px}.xgme{color:#1CB0F6}
+.xgteam{display:inline-block;color:#fff;font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px}
+.xgtb{display:flex;gap:10px;margin:12px 0}.xgtb>div{flex:1;border:2px solid var(--tc);border-radius:14px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center}.xgtb b{color:var(--tc)}.xgtb span{font-size:22px;font-weight:900}
+.xgbig{padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--gc,#E84393) 10%,var(--surface));margin:8px 0;font-weight:700}
+.xgbig small{display:block;font-weight:600;opacity:.75;margin-top:4px}
+.xgword{font-size:24px;font-weight:900;margin:8px 0 2px;line-height:1.2}
+.xgres{padding:10px 14px;border-radius:14px;margin:8px 0;font-weight:700}.xgres.ok{background:color-mix(in srgb,var(--green) 18%,var(--surface))}.xgres.no{background:color-mix(in srgb,var(--red) 12%,var(--surface))}
+.xgcanvas{display:block;width:100%;max-width:420px;aspect-ratio:1;margin:8px auto;background:#fff;border:2px solid var(--line);border-radius:16px;touch-action:none;user-select:none;-webkit-user-select:none}
+.xgtools{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:6px 0}
+.xgcol{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);margin-right:6px;cursor:pointer}.xgcol.on{outline:3px solid var(--blue);outline-offset:1px}
+.xgw{width:34px;height:34px;border-radius:10px;border:2px solid var(--line);background:var(--surface);display:inline-grid;place-items:center;margin-right:4px;cursor:pointer}.xgw.on{border-color:var(--blue)}.xgw i{background:var(--text,#333);border-radius:50%;display:block}
+.xgguess{display:flex;gap:8px;margin:8px 0}.xgguess .inp{flex:1;margin:0}
+.xgl{margin:6px 0}.xgg{padding:6px 10px;border-radius:10px;background:var(--surface);border:1px solid var(--line);margin:4px 0;font-size:14px}.xgg.ok{background:color-mix(in srgb,var(--green) 18%,var(--surface));border-color:var(--green)}
 .tab .dot{position:absolute;top:3px;left:calc(50% + 6px);width:11px;height:11px;border-radius:50%;background:var(--red);border:2px solid var(--surface)}
 .phead{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .gear{width:46px;height:46px;border-radius:16px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:22px;display:grid;place-items:center}
@@ -5284,6 +5299,9 @@ const RM_MODES={
   assemble:{id:'assemble',t:'Armar el versículo',d:'Cada uno tiene piezas. Entre todos armen el versículo.',emo:'🧩',c:'#58CC02',totals:[2,3,4],def:3,time:90,min:'2 a 8 jugadores',hide:true},
   guess:{id:'guess',t:'¿Quién es quién?',d:'Cada uno elige en secreto un personaje. ¡Adivina el del otro!',emo:'🃏',c:'#E84393',totals:[5,8,12],def:8,time:20,min:'2 jugadores',one:true},
   cross:{id:'cross',t:'Crucigrama a dos',d:'Cada uno en su celular: por turnos, con tiempo para completar cada palabra.',emo:'🧩',c:'#7C5CFC',totals:[14],def:14,time:20,min:'2 jugadores',one:true},
+  wsop:{id:'wsop',t:'Sopa de letras a dos',d:'Los dos buscan en la misma sopa a la vez, con pistas. Si el otro marca una palabra antes que tú, la pierdes.',emo:'🔤',c:'#00B894',totals:[13],def:13,time:20,min:'2 jugadores',one:true},
+  draw:{id:'draw',t:'Dibujo por equipos',d:'Dibuja con el dedo una escena bíblica y tu equipo la adivina, mientras todos ven tu trazo en vivo.',emo:'🎨',c:'#E84393',totals:[7],def:7,time:20,min:'4 a 8 jugadores'},
+  mime:{id:'mime',t:'Mímica bíblica',d:'El equipo contrario elige quién actúa y le revela qué interpretar. ¡Tu equipo debe adivinarlo!',emo:'🎭',c:'#FF9600',totals:[9],def:9,time:20,min:'4 a 8 jugadores, juntos en el mismo lugar'},
   buzz:{id:'buzz',t:'¡Yo respondo!',d:'Se lee la pregunta en voz alta, suena un timbre y quien pulse primero el botón rojo responde.',emo:'🔴',c:'#FF4B4B',totals:[6,10,15],def:10,time:20,min:'2 a 8 jugadores, juntos en el mismo lugar'},
   talk:{id:'talk',t:'Para conversar',d:'Un versículo y una pregunta para compartir. Cada quien la ve en su celular si quiere.',emo:'💬',c:'#00B894',totals:[5,8,12],def:8,time:20,min:'2 a 8 jugadores'}
 };
@@ -7440,11 +7458,12 @@ function rmEnter(code){
 function rmLoop(){
   clearTimeout(RM.loop);
   if(!RM.code||$('#room').hidden)return;
-  RM.loop=setTimeout(async()=>{await rmPoll();rmLoop();},document.hidden?3000:(BZ&&RM.st&&RM.st.room.mode==='buzz'&&RM.st.room.status==='playing'?(BZ.fast?220:380):900));
+  RM.loop=setTimeout(async()=>{await rmPoll();rmLoop();},document.hidden?3000:(XG&&RM.st&&RM.st.room.status==='playing'?450:BZ&&RM.st&&RM.st.room.mode==='buzz'&&RM.st.room.status==='playing'?(BZ.fast?220:380):900));
 }
 async function rmPoll(){
   const code=RM.code;if(!code)return;
   try{
+    if(XG&&RM.st&&rmX(RM.st)&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await xgPoll();return;}
     if(XW&&RM.st&&rmKind(RM.st)==='cross'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await xwPoll();return;}
     if(GW&&!GW.solo&&RM.st&&RM.st.room.mode==='guess'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await gwPoll();return;}
     if(SP&&!SP.solo&&RM.st&&RM.st.room.mode==='sprint'&&RM.st.room.status==='playing'&&Date.now()-(RM.lastState||0)<5000){await spPoll();return;}
@@ -7460,7 +7479,7 @@ async function rmPoll(){
     if(rmKind(st)==='cross'){
       if(st.room.status==='lobby'){xwStop();XW=null;}
       else if(st.cfg&&(!XW||XW.key!==xwKey(st)))xwInitLive(st);
-    }else if(st.room.mode==='guess'){
+    }else if(st.room.mode==='guess'&&!rmX(st)){
       if(st.room.status==='lobby')GW=null;
       else if(st.cfg&&(!GW||GW.cfgKey!==st.room.code+'|'+st.cfg.first+'|'+st.cfg.ids.join(',')))gwInitLive(st);
     }
@@ -7468,7 +7487,11 @@ async function rmPoll(){
       if(st.room.status==='lobby')SP=null;
       else if(st.cfg&&(!SP||SP.key!==spKey(st)))spInitLive(st);
     }
-    if(st.room.mode==='buzz'){
+    if(rmX(st)){
+      if(st.room.status==='lobby'){xgStop();XG=null;}
+      else if(st.cfg&&(!XG||XG.key!==xgKey(st)))xgInit(st);
+    }
+    if(st.room.mode==='buzz'&&!rmX(st)){
       if(st.room.status==='lobby'){if(BZ){bzLeft();}BZ=null;}
       else if(st.cfg&&(!BZ||BZ.key!==bzKey(st)))bzInitLive(st);
     }
@@ -7479,13 +7502,14 @@ async function rmPoll(){
     rmRender();
     if(st.room.mode==='guess'&&st.room.status!=='lobby'&&GW)await gwPoll();
     if(rmKind(st)==='cross'&&st.room.status!=='lobby'&&XW)await xwPoll();
+    if(rmX(st)&&st.room.status!=='lobby'&&XG)await xgPoll();
     if(st.room.mode==='sprint'&&st.room.status!=='lobby'&&SP)await spPoll();
     if(st.room.mode==='buzz'&&st.room.status!=='lobby'&&BZ)await bzPoll();
     if(st.room.mode==='talk'&&st.room.status!=='lobby'&&TK)await tkPoll();
   }catch(e){RM.fails++;if(RM.fails===4)rmRender(true);}
 }
 function rmEnd(msg){
-  clearTimeout(RM.loop);try{bzLeft();}catch(e){}RM.code=null;RM.st=null;RM.sig='';GW=null;SP=null;BZ=null;TK=null;xwStop();XW=null;
+  clearTimeout(RM.loop);try{bzLeft();}catch(e){}RM.code=null;RM.st=null;RM.sig='';GW=null;SP=null;BZ=null;TK=null;xwStop();XW=null;xgStop();XG=null;
   $('#room').hidden=true;$('#room').innerHTML='';document.body.style.overflow='';
   if(msg)toast(msg);
   render();
@@ -7552,6 +7576,7 @@ function rmFinalHTML(st){
 function rmView(st){
   const r=st.room;
   if(r.status==='lobby')return rmLobbyHTML(st);
+  if(rmX(st))return XG?xgView():xgSplash('Cargando la partida…');
   if(r.mode==='sprint')return SP?spView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la carrera…</b></div>','',false);
   if(rmKind(st)==='cross')return XW?xwView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la partida…</b></div>','',false);
   if(r.mode==='guess')return GW?gwView():rmShell('<div class="splash"><div class="spl">🕯️</div><b>Cargando la partida…</b></div>','',false);
@@ -7567,6 +7592,7 @@ function rmRender(force){
   const prevPhase=RM.lastPhase,prevQ=RM.lastQ;RM.sig=sig;
   const _lb=document.querySelector('#room .lb'),_top=_lb?_lb.scrollTop:0,_pv=GW&&GW.vk;
   $('#room').innerHTML=rmView(st);
+  try{xgAfter();}catch(e){}
   {const _l2=document.querySelector('#room .lb');if(_l2&&_top&&!(GW&&GW.vk!==_pv))_l2.scrollTop=_top;}
   if(RM.fails>=4){const b=document.createElement('div');b.className='banner';b.style.margin='0 0 12px';b.textContent='Reconectando…';const lb=$('#room').querySelector('.lb');if(lb)lb.prepend(b);}
   if(st.room.phase==='reveal'&&(prevPhase!=='reveal'||prevQ!==st.room.q)&&st.mine){beep(st.mine.correct?'good':'bad');haptic(st.mine.correct?15:[30,40,30]);}
@@ -7608,6 +7634,7 @@ async function rmPlace(slot){
 }
 async function rmStart(){
   const st=RM.st;if(!st)return;const M=RM_MODES[st.room.mode];
+  if(rmX(st)){await xgStart(st);return;}
   if(st.room.mode==='buzz'){
     bzPrime();
     const cfg={id:hexr(4),qs:bzBuildQs(st.room.total,BZSET.kind),read:BZSET.read,pen:BZSET.pen,hostPlays:BZSET.hostPlays!==false};
@@ -8388,7 +8415,7 @@ function rmTilesHTML(){
   }).join('')+'</div>';
   if(!frActive())out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Para jugar en vivo, crea tu perfil y sigue a alguien.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
   else if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Sigue al menos a una persona para invitarla a jugar.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
-  else out+='<div class="gtiles">'+['guess','cross','sprint','buzz','talk','race','assemble'].map(k=>RM_MODES[k]).filter(m=>m&&!m.hide).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
+  else out+='<div class="gtiles">'+['guess','cross','wsop','sprint','buzz','draw','mime','talk','race','assemble'].map(k=>RM_MODES[k]).filter(m=>m&&!m.hide).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
   return out;
 }
 let GSEC={on:false,solo:false,fw:false,add:false};
@@ -8405,6 +8432,7 @@ function rmMenuHTML(){
   let settings;
   if(M.id==='guess'){GW_MENU='live';settings=gwSetupHTML(false);}
   else if(M.id==='cross')settings='<section class="sec"><h3>Tiempo por palabra</h3><p class="muted" style="font-size:14px;margin:0 0 10px">Cada letra vale 1 punto, y +2 si completas la palabra en la primera mitad del tiempo.</p><div class="seg">'+[30,45,60].map(t=>'<button class="'+((RM.cfg.secs||45)===t?'on':'')+'" data-a="xw-secs" data-s="'+t+'">'+t+' s</button>').join('')+'</div></section>';
+  else if(M.id==='wsop'||M.id==='draw'||M.id==='mime')settings=xgSetupHTML(M.id);
   else if(M.id==='buzz')settings=bzSetupHTML();
   else settings='<section class="sec"><h3>'+(M.id==='assemble'?'¿Cuántos versículos?':M.id==='guess'?'¿Cuántas rondas?':M.id==='sprint'?'¿Cuánto dura la carrera?':'¿Cuántas preguntas?')+'</h3>'+(M.id==='guess'?'<p class="muted" style="font-size:14px;margin:0 0 10px">En cada ronda, cada jugador tiene un turno para preguntar o adivinar.</p>':M.id==='sprint'?'<p class="muted" style="font-size:14px;margin:0 0 10px">Todos responden las mismas preguntas, cada uno a su ritmo. ✔ Acierto +2 · ✖ Error −2 · ⏭ Paso 0.</p>':'')+'<div class="rdpills">'+M.totals.map(t=>'<button class="rdpill '+(RM.cfg.total===t?'on':'')+'" data-a="rm-total" data-v="'+t+'">'+(M.id==='sprint'?t*10+' s':t)+'</button>').join('')+'</div></section>';
   return rmShell(head+who+settings,
@@ -8412,7 +8440,7 @@ function rmMenuHTML(){
 }
 function rmOpenMenu(screen,mode){
   if(!famOn())return;
-  if(mode){RM.cfg.mode=mode;RM.cfg.total=RM_MODES[mode].def;if(mode==='guess'){RM.cfg.size=16;RM.cfg.dim=1;GW_MENU='live';}if(mode==='buzz')bzMenuDefaults();}
+  if(mode){RM.cfg.mode=mode;RM.cfg.total=RM_MODES[mode].def;if(mode==='guess'){RM.cfg.size=16;RM.cfg.dim=1;GW_MENU='live';}if(mode==='buzz')bzMenuDefaults();if(mode==='draw'){RM.cfg.xr=8;RM.cfg.xs=75;}if(mode==='mime'){RM.cfg.xr=8;RM.cfg.xs=60;}}
   const fol=(FR.data&&FR.data.following)||[];
   RM.pick=RM.pick.filter(d=>fol.some(f=>f.device===d));
   if((RM_MODES[RM.cfg.mode]||{}).one)RM.pick=RM.pick.slice(0,1);
@@ -8436,7 +8464,7 @@ async function rmCreate(){
   const M=RM_MODES[RM.cfg.mode];
   if(!RM.pick.length){toast('Elige a quién invitar.');return;}
   try{
-    const r=await rpc('fr_room_create',frArgs({p_mode:M.id==='cross'?'guess':M.id,p_total:RM.cfg.total,p_time:M.time,p_invite:RM.pick.slice()}));
+    const r=await rpc('fr_room_create',frArgs({p_mode:(M.id==='cross'||M.id==='wsop')?'guess':(M.id==='draw'||M.id==='mime')?'buzz':M.id,p_total:RM.cfg.total,p_time:M.time,p_invite:RM.pick.slice()}));
     if(r&&r.ok){RM.pick=[];rmEnter(r.code);}else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
@@ -8464,8 +8492,8 @@ async function rmInviteSend(to){
   }catch(e){toast(frMsg(e));}
 }
 function rmLobbyHTML(st){
-  const r=st.room,xk=rmKind(st)==='cross',M=RM_MODES[xk?'cross':r.mode],host=r.host===st.me,n=st.players.length,me=st.players.find(p=>p.device===st.me)||{};
-  const enough=(r.mode==='duel'||r.mode==='guess')?n===2:(r.mode==='buzz'&&BZSET.hostPlays===false?n>=3:n>=2),teamsOk=r.mode!=='teams'||[1,2].every(t=>st.players.some(p=>p.team===t)),can=host&&enough&&teamsOk;
+  const r=st.room,xk=rmKind(st)==='cross',XK=rmX(st),M=RM_MODES[XK||(xk?'cross':r.mode)],host=r.host===st.me,n=st.players.length,me=st.players.find(p=>p.device===st.me)||{};
+  const enough=XK==='wsop'?n===2:XK?n>=4:(r.mode==='duel'||r.mode==='guess')?n===2:(r.mode==='buzz'&&BZSET.hostPlays===false?n>=3:n>=2),teamsOk=r.mode!=='teams'||[1,2].every(t=>st.players.some(p=>p.team===t)),can=host&&enough&&teamsOk;
   let list;
   if(r.mode==='teams'){
     list='<div class="rmteams">'+[1,2].map(t=>'<div class="rmteam" style="--tc:'+RM_TEAM[t].c+'"><b>'+RM_TEAM[t].e+' Equipo '+RM_TEAM[t].n+'</b>'+(st.players.filter(p=>p.team===t).map(p=>rmPlayerRow(p,st)).join('')||'<span class="muted" style="font-size:13px">Nadie todavía</span>')+'</div>').join('')+'</div>'+
@@ -8474,12 +8502,12 @@ function rmLobbyHTML(st){
   const inv=st.invited||[];
   const cands=((FR.data&&FR.data.following)||[]).filter(f=>!st.players.some(p=>p.device===f.device)&&!inv.some(i=>i.device===f.device));
   const waiting=inv.length?'<p class="muted" style="margin:12px 0 0;font-weight:800">Esperando a: '+inv.map(i=>esc(i.avatar+' '+i.name)).join(', ')+'</p>':'';
-  const room=n<((r.mode==='duel'||r.mode==='guess')?2:8);
+  const room=n<((XK==='wsop'||r.mode==='duel'||r.mode==='guess')?2:8);
   const actions=host?'<div class="row2" style="margin:14px 0 0">'+(cands.length&&room?'<button class="btn ghost sm" data-a="rm-invite-open">➕ Invitar a más</button>':'')+'<button class="btn ghost sm" data-a="rm-invite">📲 Avisar por WhatsApp</button></div>':'';
-  const need=!enough?((r.mode==='duel'||r.mode==='guess')?'Faltan jugadores: este juego es de 2.':'Hace falta al menos otra persona. Cuando acepte la invitación, aparecerá aquí.'):(!teamsOk?'Cada equipo necesita al menos un jugador.':'');
-  return rmShell('<div class="gsetup"><span style="font-size:48px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+(xk?'Por turnos, con tiempo por palabra':r.mode==='sprint'?(r.total*10)+' segundos':r.total+(r.mode==='assemble'?' versículos':r.mode==='guess'?' rondas':' preguntas'))+' · '+n+(n===1?' jugador':' jugadores')+'</p></div></div>'+
+  const need=!enough?((XK&&XK!=='wsop')?'Este juego necesita al menos 4 jugadores. Invita a más.':(r.mode==='duel'||r.mode==='guess')?'Faltan jugadores: este juego es de 2.':'Hace falta al menos otra persona. Cuando acepte la invitación, aparecerá aquí.'):(!teamsOk?'Cada equipo necesita al menos un jugador.':'');
+  return rmShell('<div class="gsetup"><span style="font-size:48px;line-height:1">'+M.emo+'</span><div><h1>'+esc(M.t)+'</h1><p>'+(XK?(XK==='wsop'?'La misma sopa, a la vez':XK==='draw'?'Por equipos, con el dedo':'Por equipos, juntos'):xk?'Por turnos, con tiempo por palabra':r.mode==='sprint'?(r.total*10)+' segundos':r.total+(r.mode==='assemble'?' versículos':r.mode==='guess'?' rondas':' preguntas'))+' · '+n+(n===1?' jugador':' jugadores')+'</p></div></div>'+
     '<h3 style="margin:6px 0 8px">Jugadores</h3>'+list+waiting+actions+
-    (r.mode==='buzz'?'<p class="muted" style="margin:14px 0 0;font-size:14px">🤝 Juego presencial: deben estar en el mismo lugar. Cada quien usa su celular.</p>':r.mode==='talk'?'<p class="muted" style="margin:14px 0 0;font-size:14px">💬 Pueden estar juntos o cada quien en su lugar: todos ven la misma pregunta en su celular, y pueden ocultarla si prefieren solo escuchar.</p>':'')+(host?'':'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">Esperando a que empiece la partida…</p>')+
+    (r.mode==='buzz'&&!XK?'<p class="muted" style="margin:14px 0 0;font-size:14px">🤝 Juego presencial: deben estar en el mismo lugar. Cada quien usa su celular.</p>':r.mode==='talk'?'<p class="muted" style="margin:14px 0 0;font-size:14px">💬 Pueden estar juntos o cada quien en su lugar: todos ven la misma pregunta en su celular, y pueden ocultarla si prefieren solo escuchar.</p>':'')+(host?'':'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">Esperando a que empiece la partida…</p>')+
     (need&&host?'<p class="muted" style="text-align:center;margin:14px 0 0;font-weight:800">'+esc(need)+'</p>':''),
     host?'<div class="lf"><div class="in"><button class="btn" data-a="rm-start" '+(can?'':'disabled')+'>Empezar</button></div></div>':'',false);
 }
@@ -10932,6 +10960,380 @@ function dConv(n){
 }
 const DECKS={quien:dQuien,pers:dPers,vf:dVF,comp:dComp,libros:dLibros,conv:dConv};
 /* ============================================================
+   JUEGOS EN VIVO NUEVOS (v93): Sopa de letras a dos · Dibujo por equipos · Mímica bíblica
+   No necesitan SQL nuevo: viajan sobre las salas que ya existen.
+     · Sopa a dos  → sala de 2 jugadores (modo «guess» del servidor), configuración {k:'wsop'}
+     · Dibujo / Mímica → sala de varios jugadores (modo «buzz»), configuración {k:'draw'} o {k:'mime'}
+   Cada teléfono calcula la partida leyendo los mismos mensajes, en el mismo orden (el que fija el servidor).
+   ============================================================ */
+let XG=null;
+const XG_TOT={wsop:13,draw:7,mime:9};
+const XG_TC=['#1CB0F6','#FF9600'],XG_TN=['Azul','Naranja'];
+function rmX(st){
+  if(!st||!st.room)return '';
+  const c=st.cfg,m=st.room.mode;
+  if(c&&(c.k==='wsop'||c.k==='draw'||c.k==='mime')&&(m==='guess'||m==='buzz'))return c.k;
+  if(st.room.status==='lobby'&&!c){
+    if(m==='guess'&&st.room.total===XG_TOT.wsop)return 'wsop';
+    if(m==='buzz'&&st.room.total===XG_TOT.draw)return 'draw';
+    if(m==='buzz'&&st.room.total===XG_TOT.mime)return 'mime';
+  }
+  return '';
+}
+const DRAW_BANK=[
+ ['El arca de Noé',['arca','noe']],['La torre de Babel',['torre','babel']],['La zarza ardiendo',['zarza','arbusto','fuego']],['El mar Rojo abierto',['mar','rojo']],
+ ['Jonás y el gran pez',['jonas','pez','ballena']],['David y Goliat',['david','goliat','gigante']],['El arco iris',['arco','iris']],['La cruz',['cruz']],
+ ['El pesebre y la estrella',['pesebre','estrella','belen','nacimiento']],['Los cinco panes y dos peces',['panes','peces','multiplicacion']],['Jesús calma la tormenta',['tormenta','barca','barco']],
+ ['Daniel en el foso de los leones',['daniel','leones','foso']],['La escalera de Jacob',['escalera','jacob']],['El becerro de oro',['becerro','toro']],['Los muros de Jericó',['jerico','muros','muro']],
+ ['El buen samaritano',['samaritano']],['El hijo pródigo',['prodigo','cerdos']],['El sembrador',['sembrador','semilla','semillas']],['La tumba vacía',['tumba','sepulcro']],
+ ['La paloma del bautismo',['paloma','bautismo']],['La serpiente de bronce',['serpiente']],['Moisés y las tablas de la ley',['tablas','mandamientos','moises']],['Zaqueo en el árbol',['zaqueo','arbol','sicomoro']],
+ ['Jesús lava los pies',['lava','pies']],['La última cena',['cena']],['El naufragio de Pablo',['naufragio','barco']],['Elías y el carro de fuego',['elias','carro']],['La burra de Balaam',['balaam','burra','burro','asna']],
+ ['Sansón derriba las columnas',['sanson','columnas']],['La oveja perdida',['oveja']],['El pastor con su rebaño',['pastor','rebano','ovejas']],['El huerto del Edén y la serpiente',['eden','serpiente','manzana']],
+ ['Abraham e Isaac en el monte',['abraham','isaac','sacrificio']],['José y su túnica de colores',['jose','tunica']],['Moisés bebé en la canasta',['canasta','cesta','moises']],['La viuda y sus dos monedas',['viuda','monedas']],
+ ['Pedro camina sobre el agua',['pedro','agua']],['El camino a Emaús',['emaus']],['Pentecostés: lenguas de fuego',['pentecostes','lenguas','fuego']],['El templo de Salomón',['templo','salomon']],
+ ['El maná del cielo',['mana']],['Rut espigando en el campo',['rut','espigas','espiga']],['La armadura de Dios',['armadura']],['Lázaro sale de la tumba',['lazaro']],['La mujer junto al pozo',['pozo','samaritana']],
+ ['La lámpara sobre el candelero',['lampara','candelero','luz']],['Los tres amigos en el horno de fuego',['horno','sadrac','fuego']],['Los magos siguen la estrella',['magos','reyes']],['La red llena de peces',['red','pescador']]
+];
+const MIME_BANK=[
+ 'Noé construyendo el arca','Moisés abriendo el mar Rojo','David lanzando la honda a Goliat','Jonás dentro del gran pez','Sansón moviendo las columnas del templo','Daniel orando entre los leones','Pedro caminando sobre el agua',
+ 'Zaqueo subiendo al árbol','El hijo pródigo con los cerdos','El buen samaritano vendando al herido','Jesús lavando los pies de sus discípulos','María ungiendo los pies de Jesús','El sembrador esparciendo la semilla','La pesca milagrosa',
+ 'Pablo naufragando en el mar','Moisés golpeando la roca','Josué y las trompetas de Jericó','Abraham levantando el cuchillo','Jacob luchando con el ángel','Gedeón con su trompeta y su antorcha','El ciego Bartimeo gritando a Jesús',
+ 'Tomás tocando las manos de Jesús','Los pastores adorando al niño Jesús','Los magos entregando sus regalos','Nehemías levantando el muro','Ester presentándose ante el rey','Job sentado en ceniza','Naamán bañándose en el Jordán',
+ 'Juan bautizando en el Jordán','Jesús durmiendo en la barca durante la tormenta','El fariseo y el publicano orando','Esteban siendo apedreado','Pablo y Silas cantando en la cárcel','Los diez leprosos y el que volvió a dar gracias',
+ 'Eva ofreciendo el fruto a Adán','Caín y Abel presentando sus ofrendas','Elías huyendo de Jezabel','Rebeca dando de beber a los camellos','José interpretando los sueños en la cárcel','Jesús alimentando a los cinco mil',
+ 'Los discípulos en el aposento alto','Jesús llorando junto a la tumba de Lázaro','Débora dirigiendo el ejército','Samuel ungiendo a David','El rey David bailando delante del arca','Salomón repartiendo al niño en dos'
+];
+const xgNorm=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+function xgMatch(guess,keys){
+  const g=xgNorm(guess),tk=g.split(' ');
+  return keys.some(k=>{k=xgNorm(k);return tk.indexOf(k)>=0||(k.length>=5&&g.indexOf(k)>=0);});
+}
+const xgHexr=()=>Math.random().toString(36).slice(2,8);
+function xgSetupHTML(id){
+  const c=RM.cfg;
+  if(id==='wsop')return '<section class="sec"><p class="muted" style="font-size:14px;margin:0">Los dos ven la misma sopa. Se dan pistas, como en un crucigrama: gana quien encuentre más palabras. Si el otro marca una antes que tú, la pierdes.</p></section>';
+  const rounds=id==='draw'?[6,8,10]:[6,8,12],secs=id==='draw'?[60,75,90]:[45,60,90];
+  return '<section class="sec"><h3>¿Cuántas rondas?</h3><div class="seg">'+rounds.map(r=>'<button class="'+((c.xr||8)===r?'on':'')+'" data-a="xg-r" data-r="'+r+'">'+r+'</button>').join('')+'</div></section>'+
+   '<section class="sec"><h3>Tiempo por ronda</h3><div class="seg">'+secs.map(s=>'<button class="'+((c.xs||(id==='draw'?75:60))===s?'on':'')+'" data-a="xg-s" data-s="'+s+'">'+s+' s</button>').join('')+'</div></section>'+
+   '<p class="muted" style="font-size:14px">'+(id==='draw'?'Se juega por equipos (Azul y Naranja, se reparten solos). Una persona dibuja con el dedo y su equipo adivina; todos ven el dibujo en vivo.':'Se juega por equipos (Azul y Naranja, se reparten solos), todos en el mismo lugar. El equipo contrario elige a quién le toca actuar y le revela qué debe interpretar.')+' Se necesitan al menos 4 jugadores.</p>';
+}
+async function xgStart(st){
+  const k=rmX(st);let cfg;
+  if(k==='wsop'){const th=pickOne(WS_THEMES),words=wsPick(th);cfg={k:'wsop',id:xgHexr(),rounds:XG_TOT.wsop,first:pickOne(st.players).device,theme:th[0],seed:Math.floor(Math.random()*1e9),w:words,secs:240};}
+  else if(k==='draw'){const n=RM.cfg.xr||8;cfg={k:'draw',id:xgHexr(),secs:RM.cfg.xs||75,qs:gTake('draw',DRAW_BANK,x=>x[0],n).map(x=>({t:x[0],k:x[1]}))};}
+  else{const n=RM.cfg.xr||8;cfg={k:'mime',id:xgHexr(),secs:RM.cfg.xs||60,qs:gTake('mime',MIME_BANK,x=>x,n).map(x=>({t:x}))};}
+  try{const r=await rpc('fr_room_start',frArgs({p_code:RM.code,p_questions:[cfg]}));if(!(r&&r.ok))toast(famMsg(r&&r.error));}
+  catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
+  rmPoll();
+}
+const xgKey=st=>st.room.code+'|'+(st.cfg&&st.cfg.id);
+function xgInit(st){
+  const k=rmX(st),cfg=st.cfg;
+  const pl=st.players.map(p=>({d:p.device,n:p.name,a:p.avatar})).sort((a,b)=>a.d<b.d?-1:1);
+  const g={k,pen:{c:'#222222',w:7},key:xgKey(st),cfg,me:st.me,host:st.room.host,pl,team:{},evs:[],after:0,S:null,sent:new Set(),polling:false,q:Promise.resolve(),rewarded:false,tid:0,t0:Date.now(),rt:{},at:{},ea:{},pend:{},loc:null,mine:[],vsig:'',guess:''};
+  pl.forEach((p,i)=>g.team[p.d]=i%2);
+  g.nm=d=>{const p=pl.find(x=>x.d===d);return p?p.n:'Jugador';};
+  g.av=d=>{const p=pl.find(x=>x.d===d);return p?p.a:'🙂';};
+  if(k==='wsop'){g.W=wsGen(cfg.seed,cfg.w,10);}
+  XG=g;xgRecalc();xgStop();g.tid=setInterval(xgTick,300);
+  return g;
+}
+function xgStop(){if(XG&&XG.tid){clearInterval(XG.tid);XG.tid=0;}}
+async function xgSend(ev){
+  try{const r=await rpc('fr_gw_send',frArgs({p_code:RM.code,p_ev:ev}));if(r&&r.ok)return true;if(r&&r.error&&r.error!=='no_permitido'&&r.error!=='demasiados')toast(famMsg(r.error));}catch(e){}
+  return false;
+}
+function xgQueue(ev){const g=XG;if(!g)return Promise.resolve(false);g.q=g.q.then(()=>xgSend(ev)).catch(()=>false);return g.q;}
+/* ---------- Reductores: todos los teléfonos calculan lo mismo ---------- */
+function xgReduce(g){
+  const evs=g.evs;
+  if(g.k==='wsop'){
+    const W=g.W,Z={claims:{},score:{},over:false};g.pl.forEach(p=>Z.score[p.d]=0);
+    for(const x of evs){const ev=x.ev||{};
+      if(ev.t==='ans'&&ev.k==='w'&&Number.isInteger(ev.i)&&ev.i>=0&&ev.i<W.words.length&&Z.claims[ev.i]===undefined&&Z.score[x.d]!==undefined){Z.claims[ev.i]=x.d;Z.score[x.d]++;}
+      else if(ev.t==='over')Z.over=true;
+    }
+    if(Object.keys(Z.claims).length===W.words.length)Z.over=true;
+    return Z;
+  }
+  const cfg=g.cfg,R=cfg.qs.length,teams=[[],[]];g.pl.forEach(p=>teams[g.team[p.d]].push(p.d));
+  const Z={n:-1,rd:null,team:[0,0],pl:{},over:false,R,teams,hist:[]};g.pl.forEach(p=>Z.pl[p.d]=0);
+  const drawer=n=>{const t=teams[n%2];return t[Math.floor(n/2)%t.length];};
+  for(const x of evs){
+    if(Z.over)break;
+    const ev=x.ev||{},d=x.d,t=ev.t,rd=Z.rd;
+    if(t==='q'&&d===g.host){if(ev.n===Z.n+1&&ev.n<R){if(rd)Z.hist.push(rd);Z.n=ev.n;Z.rd=g.k==='draw'?{n:ev.n,drawer:drawer(ev.n),strokes:{},order:[],guesses:[],solved:null,ended:false,why:''}:{n:ev.n,team:ev.n%2,actor:null,ended:false,solved:false,why:''};}}
+    else if(t==='to'&&d===g.host){if(rd&&ev.n===Z.n&&!rd.ended){rd.ended=true;rd.why='time';}}
+    else if(t==='over'&&d===g.host){Z.over=true;}
+    else if(t==='ans'&&rd&&ev.n===Z.n&&!rd.ended){
+      if(g.k==='draw'){
+        if(ev.k==='s'&&d===rd.drawer){
+          const id=ev.i|0;let s=rd.strokes[id];
+          if(!s){s=rd.strokes[id]={c:String(ev.c||'#222').slice(0,9),w:Math.max(1,Math.min(14,ev.w|0||4)),p:[]};rd.order.push(id);}
+          String(ev.p||'').split(';').forEach(q=>{const m=q.split(',');if(m.length===2){const a=+m[0],b=+m[1];if(a>=0&&a<=200&&b>=0&&b<=200)s.p.push([a,b]);}});
+        }else if(ev.k==='c'&&d===rd.drawer){rd.strokes={};rd.order=[];}
+        else if(ev.k==='g'&&d!==rd.drawer&&g.team[d]===g.team[rd.drawer]){
+          const gs=String(ev.g||'').slice(0,60);rd.guesses.push({d,g:gs});
+          if(!rd.solved&&xgMatch(gs,cfg.qs[Z.n].k)){rd.solved=d;rd.ended=true;rd.why='ok';const b=(+ev.r||0)>=cfg.secs/2?1:0;Z.team[g.team[d]]+=2+b;Z.pl[d]+=2+b;Z.pl[rd.drawer]+=1;}
+        }
+      }else{
+        if(ev.k==='pick'){if(rd.actor===null&&g.team[d]===1-rd.team&&g.team[ev.a]===rd.team)rd.actor=ev.a;}
+        else if(ev.k==='ok'){if(d===rd.actor){rd.solved=true;rd.ended=true;rd.why='ok';const b=(+ev.r||0)>=cfg.secs/2?1:0;Z.team[rd.team]+=1+b;Z.pl[d]+=1+b;}}
+        else if(ev.k==='pass'){if(d===rd.actor){rd.ended=true;rd.why='pass';}}
+      }
+    }
+  }
+  return Z;
+}
+function xgRecalc(){
+  const g=XG;if(!g)return;
+  g.S=xgReduce(g);const Z=g.S;
+  if(g.lastN!==Z.n){g.lastN=Z.n;g.mine=[];g.loc=null;g.unsent=[];}
+  if(g.k!=='wsop'&&Z.rd){
+    if(!g.rt[Z.n])g.rt[Z.n]=Date.now();
+    if(g.k==='mime'&&Z.rd.actor&&!g.at[Z.n])g.at[Z.n]=Date.now();
+    if(Z.rd.ended&&!g.ea[Z.n])g.ea[Z.n]=Date.now();
+  }
+  if(g.k==='wsop'){
+    Object.keys(g.pend).forEach(i=>{if(g.S.claims[i]!==undefined){if(g.S.claims[i]!==g.me)toast('¡'+g.nm(g.S.claims[i])+' se te adelantó con una palabra!');delete g.pend[i];}});
+  }
+}
+async function xgPoll(){
+  const g=XG,code=RM.code;
+  if(!g||!code||g.polling)return;
+  g.polling=true;
+  try{
+    const r=await rpc('fr_gw_poll',frArgs({p_code:code,p_after:g.after}));
+    if(g!==XG||code!==RM.code)return;
+    if(!r||!r.ok){if(r&&(r.error==='sala_no_existe'||r.error==='no_estas'))rmEnd('La partida se cerró.');return;}
+    let nw=0;(r.ev||[]).forEach(x=>{if(x.seq>g.after){g.after=x.seq;g.evs.push({seq:x.seq,d:x.d,ev:x.ev});nw++;}});
+    if(RM.st&&r.status&&RM.st.room.status!==r.status){
+      RM.st.room.status=r.status;
+      if(r.status==='lobby'){xgStop();XG=null;RM.sig='';RM.lastState=0;return;}
+    }
+    if(XG===g&&(nw||!g.S)){xgRecalc();xgAuto();xgRefresh();}
+  }catch(e){}
+  finally{g.polling=false;}
+}
+function xgSig(g){
+  const Z=g.S;if(!Z)return 'x';
+  if(g.k==='wsop')return 'w'+(Z.over?1:0);
+  return [Z.n,Z.over?1:0,Z.rd?(Z.rd.ended?1:0):'-',Z.rd&&Z.rd.actor||''].join('|');
+}
+function xgRefresh(){
+  const g=XG;if(!g)return;
+  const sg=xgSig(g);
+  if(sg!==g.vsig){g.vsig=sg;RM.sig='';rmRender(true);}
+  else xgPaint();
+}
+function xgAuto(){
+  const g=XG,T=g&&g.S;if(!T||!T.over)return;
+  if(g.k==='wsop'&&!g.sent.has('over')){g.sent.add('over');xgQueue({t:'over'}).then(ok=>{if(!ok)g.sent.delete('over');});}
+  if(!g.rewarded){
+    g.rewarded=true;xgStop();
+    const x=recordDay(10);S.gplays=(S.gplays||0)+1;S.rmplays=(S.rmplays||0)+1;
+    const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();renderTop();
+    g.fresh=fresh;g.newDay=x.newDay;
+    beep('win');confetti(90);haptic([20,70,20,70,50]);
+  }
+}
+/* ---------- Reloj y director (el anfitrión pasa de ronda) ---------- */
+function xgLeft(n){const g=XG;return Math.max(0,Math.ceil(g.cfg.secs-(Date.now()-(g.k==='mime'?(g.at[n]||g.rt[n]):g.rt[n]))/1000));}
+function xgTick(){
+  const g=XG;if(!g||!g.S||!RM.code)return;
+  if(g.k==='draw')xgFlush();
+  const Z=g.S,host=g.me===g.host;
+  if(g.k==='wsop'){
+    const el=Math.floor((Date.now()-g.t0)/1000),left=Math.max(0,g.cfg.secs-el),t=document.getElementById('xgt');
+    if(t)t.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
+    const b=document.getElementById('rmbar');if(b)b.style.width=Math.round(100*left/g.cfg.secs)+'%';
+    if(left<=0&&!Z.over&&!g.sent.has('tmo')){g.sent.add('tmo');xgQueue({t:'over'}).then(()=>xgPoll());}
+    return;
+  }
+  if(Z.over)return;
+  if(Z.n<0){if(host&&Date.now()-g.t0>1500&&!g.sent.has('q0')){g.sent.add('q0');xgQueue({t:'q',n:0}).then(ok=>{if(!ok)g.sent.delete('q0');else xgPoll();});}return;}
+  const rd=Z.rd;if(!rd)return;
+  if(!rd.ended){
+    const l=(g.k==='mime'&&!rd.actor)?null:xgLeft(Z.n),t=document.getElementById('xgt'),b=document.getElementById('rmbar');
+    if(l!==null){if(t)t.textContent=l;if(b)b.style.width=Math.round(100*l/g.cfg.secs)+'%';if(l<=5&&l>0&&t&&t.dataset.l!==String(l)){t.dataset.l=String(l);haptic([10]);beep('tick');}}
+    const waitPick=g.k==='mime'&&!rd.actor&&Date.now()-g.rt[Z.n]>50000;
+    if(host&&((l!==null&&l<=0&&Date.now()-(g.k==='mime'?g.at[Z.n]:g.rt[Z.n])>(g.cfg.secs+1.2)*1000)||waitPick)){
+      const k='to'+Z.n;if(!g.sent.has(k)){g.sent.add(k);xgQueue({t:'to',n:Z.n}).then(ok=>{if(!ok)g.sent.delete(k);else xgPoll();});}
+    }
+  }else if(host&&g.ea[Z.n]&&Date.now()-g.ea[Z.n]>4800){
+    const nx=Z.n+1,k='nx'+nx;
+    if(!g.sent.has(k)){g.sent.add(k);xgQueue(nx<Z.R?{t:'q',n:nx}:{t:'over'}).then(ok=>{if(!ok)g.sent.delete(k);else xgPoll();});}
+  }
+}
+/* ---------- Vistas ---------- */
+const xgSplash=t=>rmShell('<div class="splash"><div class="spl">🕯️</div><b>'+t+'</b></div>','',false);
+function xgView(){
+  const g=XG;if(!g||!g.S)return xgSplash('Cargando la partida…');
+  if(g.S.over)return xgFinalHTML();
+  if(g.k==='wsop')return xgSopaView();
+  if(g.k==='draw')return xgDrawView();
+  return xgMimeView();
+}
+function xgSopaView(){
+  const g=XG;
+  return rmShell('<div class="sgtop xgscore" id="xgs"></div>'+wsGridHTML(g.W,[])+'<p class="glabel" style="margin:10px 0 4px">Pistas · ¡sé más rápido que tu rival!</p><div id="xgq" class="wsq"></div>','',false);
+}
+function xgTeamChip(t){return '<span class="xgteam" style="background:'+XG_TC[t]+'">'+XG_TN[t]+'</span>';}
+function xgScoreBar(){
+  const g=XG,Z=g.S;
+  return '<div class="xgtb">'+[0,1].map(t=>'<div style="--tc:'+XG_TC[t]+'"><b>'+XG_TN[t]+'</b><span>'+Z.team[t]+'</span></div>').join('')+'</div>';
+}
+function xgDrawView(){
+  const g=XG,Z=g.S,rd=Z.rd;
+  if(!rd)return xgSplash('Preparando la primera ronda…');
+  const q=g.cfg.qs[Z.n],isDr=rd.drawer===g.me,mates=g.team[g.me]===g.team[rd.drawer];
+  let prompt;
+  if(rd.ended)prompt='<div class="xgres '+(rd.why==='ok'?'ok':'no')+'">'+(rd.why==='ok'?'🎉 <b>'+esc(g.nm(rd.solved))+'</b> lo adivinó. ':'⏰ Se acabó el tiempo. ')+'Era: <b>'+esc(q.t)+'</b></div>';
+  else if(isDr)prompt='<div class="xgbig">Dibuja: <b>'+esc(q.t)+'</b><small>Sin letras ni números. Tu equipo lo adivina.</small></div>';
+  else if(mates)prompt='<div class="xgbig">¡Adivina! <b>'+esc(g.nm(rd.drawer))+'</b> está dibujando.</div>';
+  else prompt='<div class="xgbig">Dibuja el equipo contrario. Tú solo miras. 👀</div>';
+  const tools=(isDr&&!rd.ended)?'<div class="xgtools"><span id="xgcols">'+['#222222','#E53935','#1E88E5','#43A047','#FB8C00','#FFFFFF'].map(c=>'<button class="xgcol'+(g.pen.c===c?' on':'')+'" style="background:'+c+'" data-a="xg-col" data-c="'+c+'" aria-label="Color"></button>').join('')+'</span><span>'+[3,7,14].map(w=>'<button class="xgw'+(g.pen.w===w?' on':'')+'" data-a="xg-w" data-w="'+w+'" aria-label="Grosor"><i style="width:'+(w+4)+'px;height:'+(w+4)+'px"></i></button>').join('')+'</span><button class="btn ghost sm" data-a="xg-clear">Borrar todo</button></div>':'';
+  const guess=(mates&&!isDr&&!rd.ended)?'<div class="xgguess"><input id="xgg" class="inp" type="text" autocomplete="off" autocapitalize="off" enterkeyhint="send" placeholder="Escribe tu respuesta…" aria-label="Tu respuesta"><button class="btn sm" data-a="xg-guess">Enviar</button></div>':'';
+  return rmShell('<div class="sgtop"><span>Ronda '+(Z.n+1)+' de '+Z.R+' · '+xgTeamChip(g.team[rd.drawer])+'</span><span>⏱️ <b id="xgt">'+(rd.ended?'—':xgLeft(Z.n))+'</b></span></div>'+prompt+
+    '<canvas id="xgc" class="xgcanvas" width="400" height="400"></canvas>'+tools+guess+'<div id="xgl" class="xgl"></div>'+xgScoreBar(),'',false);
+}
+function xgMimeView(){
+  const g=XG,Z=g.S,rd=Z.rd;
+  if(!rd)return xgSplash('Preparando la primera ronda…');
+  const q=g.cfg.qs[Z.n],myT=g.team[g.me],acting=myT===rd.team,isActor=rd.actor===g.me;
+  let main='';
+  if(rd.ended){
+    main='<div class="xgres '+(rd.why==='ok'?'ok':'no')+'">'+(rd.why==='ok'?'🎉 ¡Lo adivinaron!':rd.why==='pass'?'🙈 Pasaron.':'⏰ Se acabó el tiempo.')+'<br>Era: <b>'+esc(q.t)+'</b></div>';
+  }else if(!rd.actor){
+    if(!acting)main='<div class="xgbig">Les toca elegir a quién del equipo '+xgTeamChip(rd.team)+' le tocará actuar.<small>Cuando elijan, esa persona verá lo que debe interpretar. Tú ya lo ves:</small><div class="xgword">'+esc(q.t)+'</div></div><div class="pickl">'+g.pl.filter(p=>g.team[p.d]===rd.team).map(p=>'<button class="pickrow" data-a="xg-pick" data-d="'+esc(p.d)+'"><span class="fav big">'+esc(p.a)+'</span><b>'+esc(p.n)+'</b><span class="frbtn">Elegir</span></button>').join('')+'</div>';
+    else main='<div class="xgbig">El equipo contrario está eligiendo quién actúa…<small>No mires sus pantallas. 🙈</small></div>';
+  }else if(isActor){
+    main='<div class="xgbig">¡Te toca actuar! Sin hablar.<div class="xgword">'+esc(q.t)+'</div></div><div class="row2"><button class="btn ghost" data-a="xg-pass">Pasar</button><button class="btn" data-a="xg-ok">¡Lo adivinaron!</button></div>';
+  }else if(acting){
+    main='<div class="xgbig"><b>'+esc(g.nm(rd.actor))+'</b> está actuando.<small>¡Adivinen en voz alta! '+esc(g.nm(rd.actor))+' tocará el botón cuando lo logren.</small></div>';
+  }else{
+    main='<div class="xgbig">Actúa <b>'+esc(g.nm(rd.actor))+'</b> (equipo '+xgTeamChip(rd.team)+'). Tú ya sabes lo que es:<div class="xgword">'+esc(q.t)+'</div><small>No lo digas. 🤫</small></div>';
+  }
+  return rmShell('<div class="sgtop"><span>Ronda '+(Z.n+1)+' de '+Z.R+' · actúa '+xgTeamChip(rd.team)+'</span><span>⏱️ <b id="xgt">'+(rd.ended||!rd.actor?'—':xgLeft(Z.n))+'</b></span></div>'+main+xgScoreBar(),'',false);
+}
+function xgFinalHTML(){
+  const g=XG,Z=g.S,st=RM.st,host=st&&st.room.host===st.me;
+  let banner,body='';
+  if(g.k==='wsop'){
+    const opp=g.pl.find(p=>p.d!==g.me),a=Z.score[g.me]||0,b=opp?(Z.score[opp.d]||0):0;
+    banner=a>b?'🏆 ¡Ganaste!':a<b?'¡Ganó '+esc(opp.n)+'!':'🤝 ¡Empate!';
+    banner+='<small>'+a+' a '+b+'</small>';
+    const th=(WS_THEMES.find(t=>t[0]===g.cfg.theme)||[0,{}])[1];
+    body='<h3 style="text-align:left;margin:18px 0 6px">Las palabras</h3><div class="list" style="text-align:left">'+g.W.words.map((x,i)=>'<div class="li"><span><b>'+esc(x.w)+'</b> — '+esc(th[x.w]||'')+'</span><span class="muted" style="white-space:nowrap">'+(Z.claims[i]?esc(g.nm(Z.claims[i])):'—')+'</span></div>').join('')+'</div>';
+  }else{
+    const a=Z.team[0],b=Z.team[1];
+    banner=a>b?'🏆 ¡Ganó el equipo '+XG_TN[0]+'!':b>a?'🏆 ¡Ganó el equipo '+XG_TN[1]+'!':'🤝 ¡Empate!';
+    banner+='<small>'+XG_TN[0]+' '+a+' · '+XG_TN[1]+' '+b+'</small>';
+    body='<div class="list" style="text-align:left;margin-top:14px">'+g.pl.slice().sort((x,y)=>(Z.pl[y.d]||0)-(Z.pl[x.d]||0)).map(p=>'<div class="li rk"><span style="display:flex;align-items:center;gap:10px"><span class="fav">'+esc(p.a)+'</span><b>'+esc(p.n)+'</b> '+xgTeamChip(g.team[p.d])+'</span><b>'+(Z.pl[p.d]||0)+'</b></div>').join('')+'</div>';
+  }
+  return rmShell('<div style="display:flex;justify-content:center">'+mascot('cheer',110)+'</div><div class="rmwin" style="--tc:#FF9600">'+banner+'</div>'+body+
+    (g.newDay?'<div class="note fl">🔥 <b>¡Racha de '+S.streak+(S.streak===1?' día':' días')+'!</b></div>':'')+(g.fresh||[]).map(a=>'<div class="note">'+(ACH_E[a.id]||'⭐')+' <b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join(''),
+    '<div class="lf"><div class="in"><div class="row2">'+(host?'<button class="btn" data-a="xg-again">Jugar otra vez</button>':'')+'<button class="btn ghost" data-a="rm-exit-yes">Salir</button></div>'+(host?'':'<p class="muted" style="text-align:center;margin:8px 0 0;font-size:14px">Espera a que quien organiza empiece otra.</p>')+'</div></div>',false);
+}
+/* ---------- Pintar sin reconstruir (para no cortar el dedo a mitad de un trazo) ---------- */
+function xgAfter(){
+  const g=XG;if(!g||!RM.st||!rmX(RM.st)||!g.S||g.S.over)return;
+  if(g.k==='wsop'){
+    const el=document.getElementById('wsg');
+    if(el)wsAttach(el,10,l=>{
+      const Z=g.S,have=Object.keys(Z.claims).map(Number).concat(Object.keys(g.pend).map(Number));
+      const i=wsMatch(g.W,l,have);
+      if(i<0){beep('bad');return;}
+      g.pend[i]=true;beep('good');haptic([12]);
+      xgQueue({t:'ans',k:'w',i}).then(()=>xgPoll());
+      xgPaint();
+    });
+  }else if(g.k==='draw')xgDrawBind();
+  xgPaint();
+}
+function xgPaint(){
+  const g=XG;if(!g||!g.S)return;
+  if(g.k==='wsop')xgSopaPaint();
+  else if(g.k==='draw'){xgCanvasPaint();xgGuessPaint();}
+}
+function xgSopaPaint(){
+  const g=XG,Z=g.S,me=g.me,opp=g.pl.find(p=>p.d!==me)||{n:'Rival',a:'🙂',d:''};
+  const cells=document.querySelectorAll('#wsg .wsc');if(!cells.length)return;
+  cells.forEach(c=>{c.classList.remove('f');c.style.background='';});
+  const own=i=>Z.claims[i]!==undefined?Z.claims[i]:(g.pend[i]?me:null);
+  const th=(WS_THEMES.find(t=>t[0]===g.cfg.theme)||[0,{}])[1];
+  g.W.words.forEach((x,i)=>{const o=own(i);if(!o)return;const col=o===me?XG_TC[0]:XG_TC[1];x.cells.forEach(p=>{const e=cells[p[0]*10+p[1]];if(e){e.classList.add('f');e.style.background=col;}});});
+  const mc=Object.keys(Z.claims).filter(i=>Z.claims[i]===me).length+Object.keys(g.pend).length,oc=Object.keys(Z.claims).filter(i=>Z.claims[i]!==me).length;
+  const s=document.getElementById('xgs');
+  if(s){const el=Math.floor((Date.now()-g.t0)/1000),left=Math.max(0,g.cfg.secs-el);s.innerHTML='<span class="xgme">'+esc(g.av(me))+' Tú <b>'+mc+'</b></span><span>⏱️ <b id="xgt">'+Math.floor(left/60)+':'+String(left%60).padStart(2,'0')+'</b></span><span><b>'+oc+'</b> '+esc(opp.a)+' '+esc(opp.n)+'</span>';}
+  const q=document.getElementById('xgq');
+  if(q)q.innerHTML=g.W.words.map((x,i)=>{const o=own(i);const bc=o?(o===me?XG_TC[0]:XG_TC[1]):'';return '<div class="'+(o?'dn':'')+'"'+(o?' style="border-color:'+bc+'"':'')+'><b>'+(i+1)+'.</b> '+(o?'<strong>'+esc(x.w)+'</strong> — ':'')+esc(th[x.w]||'')+' <small>('+x.w.length+' letras)</small>'+(o?' <em>'+(o===me?'tú':esc(g.nm(o)))+'</em>':'')+'</div>';}).join('');
+}
+function xgStrokeDraw(ctx,s){
+  const k=2;ctx.strokeStyle=s.c;ctx.fillStyle=s.c;ctx.lineWidth=s.w;ctx.lineCap='round';ctx.lineJoin='round';
+  const p=s.p||s.pts;if(!p||!p.length)return;
+  if(p.length===1){ctx.beginPath();ctx.arc(p[0][0]*k,p[0][1]*k,s.w/2,0,Math.PI*2);ctx.fill();return;}
+  ctx.beginPath();ctx.moveTo(p[0][0]*k,p[0][1]*k);for(let i=1;i<p.length;i++)ctx.lineTo(p[i][0]*k,p[i][1]*k);ctx.stroke();
+}
+function xgCanvasPaint(){
+  const g=XG,c=document.getElementById('xgc');if(!c||!g.S||!g.S.rd)return;
+  const ctx=c.getContext('2d'),rd=g.S.rd;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+  if(rd.drawer===g.me&&!rd.ended){g.mine.forEach(s=>xgStrokeDraw(ctx,s));if(g.loc)xgStrokeDraw(ctx,g.loc);}
+  else rd.order.forEach(id=>{if(rd.strokes[id])xgStrokeDraw(ctx,rd.strokes[id]);});
+}
+function xgGuessPaint(){
+  const g=XG,rd=g.S&&g.S.rd,el=document.getElementById('xgl');if(!el||!rd)return;
+  el.innerHTML=rd.guesses.slice(-6).map(x=>'<div class="xgg'+(rd.solved===x.d&&xgMatch(x.g,g.cfg.qs[g.S.n].k)?' ok':'')+'"><b>'+esc(g.nm(x.d))+':</b> '+esc(x.g)+'</div>').join('');
+}
+function xgDrawBind(){
+  const g=XG,c=document.getElementById('xgc'),rd=g.S.rd;if(!c||!rd)return;
+  if(rd.drawer===g.me&&!rd.ended){
+    g.pen=g.pen||{c:'#222222',w:7};
+    const pt=e=>{const b=c.getBoundingClientRect();return [Math.max(0,Math.min(200,Math.round((e.clientX-b.left)/b.width*200))),Math.max(0,Math.min(200,Math.round((e.clientY-b.top)/b.height*200)))];};
+    c.addEventListener('pointerdown',e=>{e.preventDefault();try{c.setPointerCapture(e.pointerId);}catch(_){}
+      const p=pt(e);g.sid=(g.sid||0)+1;g.loc={id:g.sid,c:g.pen.c,w:g.pen.w*(g.pen.c==='#FFFFFF'?2:1),pts:[p],pend:[p]};xgCanvasPaint();});
+    c.addEventListener('pointermove',e=>{if(!g.loc)return;const p=pt(e),l=g.loc.pts[g.loc.pts.length-1];if(Math.abs(p[0]-l[0])+Math.abs(p[1]-l[1])<2)return;g.loc.pts.push(p);g.loc.pend.push(p);xgCanvasPaint();});
+    const up=()=>{if(!g.loc)return;g.mine.push(g.loc);(g.unsent=g.unsent||[]).push(g.loc);g.loc=null;xgFlush();};
+    c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
+  }
+  const inp=document.getElementById('xgg');
+  if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();xgGuess();}});
+}
+function xgFlush(){
+  const g=XG;if(!g||g.k!=='draw'||!g.S||!g.S.rd||g.S.rd.drawer!==g.me||g.S.rd.ended)return;
+  const list=(g.unsent||[]).slice();if(g.loc)list.push(g.loc);
+  list.forEach(s=>{
+    while(s.pend.length){
+      const chunk=s.pend.splice(0,80);
+      xgQueue({t:'ans',k:'s',n:g.S.n,i:s.id,c:s.c,w:s.w,p:chunk.map(q=>q[0]+','+q[1]).join(';')});
+    }
+  });
+  g.unsent=(g.unsent||[]).filter(s=>s.pend.length);
+}
+function xgGuess(){
+  const g=XG,rd=g&&g.S&&g.S.rd;if(!rd||rd.ended)return;
+  const i=document.getElementById('xgg');const v=i?i.value.trim():'';if(!v)return;i.value='';
+  xgQueue({t:'ans',k:'g',n:g.S.n,g:v,r:xgLeft(g.S.n)}).then(()=>xgPoll());
+}
+function xgAct(a,b){
+  const g=XG;
+  if(a==='xg-r'){RM.cfg.xr=+b.dataset.r;rmMenuRefresh();return;}
+  if(a==='xg-s'){RM.cfg.xs=+b.dataset.s;rmMenuRefresh();return;}
+  if(!g||!g.S)return;
+  if(a==='xg-col'){g.pen=g.pen||{c:'#222222',w:7};g.pen.c=b.dataset.c;document.querySelectorAll('.xgcol').forEach(x=>x.classList.toggle('on',x===b));}
+  else if(a==='xg-w'){g.pen=g.pen||{c:'#222222',w:7};g.pen.w=+b.dataset.w;document.querySelectorAll('.xgw').forEach(x=>x.classList.toggle('on',x===b));}
+  else if(a==='xg-clear'){g.mine=[];g.loc=null;g.unsent=[];xgQueue({t:'ans',k:'c',n:g.S.n});xgCanvasPaint();}
+  else if(a==='xg-guess')xgGuess();
+  else if(a==='xg-pick'){const rd=g.S.rd;if(rd&&!rd.actor)xgQueue({t:'ans',k:'pick',n:g.S.n,a:b.dataset.d}).then(()=>xgPoll());}
+  else if(a==='xg-ok'){const rd=g.S.rd;if(rd&&rd.actor===g.me&&!rd.ended){xgQueue({t:'ans',k:'ok',n:g.S.n,r:xgLeft(g.S.n)}).then(()=>xgPoll());}}
+  else if(a==='xg-pass'){const rd=g.S.rd;if(rd&&rd.actor===g.me&&!rd.ended){xgQueue({t:'ans',k:'pass',n:g.S.n}).then(()=>xgPoll());}}
+  else if(a==='xg-again'){
+    rpc('fr_room_again',frArgs({p_code:RM.code})).then(r=>{if(!(r&&r.ok))toast(famMsg(r&&r.error));else{xgStop();XG=null;RM.sig='';RM.lastState=0;}RM.rewarded='';rmPoll();}).catch(()=>toast('Sin conexión.'));
+  }
+}
+
+/* ============================================================
    JUEGOS SOLO (v92): Mixto, Cadena, Detective, Biblioteca loca, Línea del tiempo, Sopa de letras + récord personal
    ============================================================ */
 let SG=null;
@@ -10953,7 +11355,7 @@ function sgShell(body,foot,pct,title){
    '<div class="lb">'+body+'</div>'+(foot?'<div class="lf"><div class="in">'+foot+'</div></div>':'');
   gShow();
 }
-function sgClose(){if(SG&&SG.tm)clearInterval(SG.tm);SG=null;stopSpeak&&stopSpeak();$('#game').hidden=true;$('#game').innerHTML='';$('#game').className='overlay';document.body.style.overflow='';render();}
+function sgClose(){if(SG&&SG.tm)clearInterval(SG.tm);if(SG&&SG.rec){SG.wantMic=false;try{SG.rec.stop();}catch(e){}}SG=null;stopSpeak&&stopSpeak();$('#game').hidden=true;$('#game').innerHTML='';$('#game').className='overlay';document.body.style.overflow='';render();}
 function sgOpen(id){
   if(SG&&SG.tm)clearInterval(SG.tm);
   SG={id,def:SG_DEF[id],score:0,i:0,done:false};
@@ -10991,6 +11393,7 @@ function sgAct(a,b){
   if(a==='sg-tok')return detTap(+b.dataset.i);
   if(a==='sg-tl')return tlTap(+b.dataset.i);
   if(a==='sg-fin')return bibFinish();
+  if(a==='sg-mic')return bibMic();
 }
 function sgNext(){
   if(SG.id==='cad')return cadNext();
@@ -11126,13 +11529,46 @@ function bibShell(){
   const n=Object.keys(SG.found).length;
   sgShell('<div class="sgtop"><span>⏱️ <b id="bibt">4:00</b></span><span>📚 <b id="bibn">'+n+'</b> de '+SG.all.length+'</span></div>'+
    '<p class="glabel">Escribe los nombres de los libros de la Biblia</p>'+
-   '<input id="bibin" class="inp" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Escribe un libro…" aria-label="Escribe el nombre de un libro">'+
+   '<div class="bibrow"><input id="bibin" class="inp" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Escribe un libro o díctalo…" aria-label="Escribe el nombre de un libro">'+(rlSR()?'<button class="mmic" id="bibmic" data-a="sg-mic" aria-label="Decir los libros en voz alta"><svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor"/><path d="M5 11.5a7 7 0 0 0 14 0M12 18.5V22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>':'')+'</div>'+
    '<div id="bibgrid">'+bibGridHTML(false)+'</div>','<button class="btn ghost" data-a="sg-fin">Terminar y ver los que faltan</button>',0);
   const i=$('#bibin');i.addEventListener('input',()=>{
     const k=bibKey(i.value);const b=SG.map[k];
     if(b&&!SG.found[b]){SG.found[b]=1;i.value='';beep('good');haptic([10]);$('#bibn').textContent=Object.keys(SG.found).length;$('#bibgrid').innerHTML=bibGridHTML(false);const bar=$('#game .bar i');if(bar)bar.style.width=Math.round(100*Object.keys(SG.found).length/SG.all.length)+'%';if(Object.keys(SG.found).length===SG.all.length)bibFinish();}
     else if(b&&SG.found[b]){i.classList.add('dup');setTimeout(()=>i.classList.remove('dup'),300);}
   });
+}
+const BIB_NUM={uno:'1',primero:'1',primera:'1',dos:'2',segundo:'2',segunda:'2',tres:'3',tercero:'3',tercera:'3'};
+function bibVoiceScan(text){
+  const toks=bibKey2(text);let hit=0;
+  for(let i=0;i<toks.length;i++){
+    for(const k of [3,2,1]){
+      const part=toks.slice(i,i+k);if(part.length<k)continue;
+      let key=part.join('');
+      const b=SG.map[key];
+      if(b){if(!SG.found[b]){SG.found[b]=1;hit++;}i+=k-1;break;}
+    }
+  }
+  if(hit)bibRefresh();
+}
+function bibKey2(t){
+  return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]+/g,' ').split(/\s+/).filter(w=>w&&w!=='de'&&w!=='del'&&w!=='libro'&&w!=='el').map(w=>BIB_NUM[w]||w);
+}
+function bibRefresh(){
+  const n=Object.keys(SG.found).length;beep('good');haptic([10]);
+  const e=$('#bibn');if(e)e.textContent=n;const g=$('#bibgrid');if(g)g.innerHTML=bibGridHTML(false);
+  const bar=$('#game .bar i');if(bar)bar.style.width=Math.round(100*n/SG.all.length)+'%';
+  if(n===SG.all.length)bibFinish();
+}
+function bibMic(){
+  const SR=rlSR();if(!SR||SG.done)return;
+  if(SG.rec){SG.wantMic=false;try{SG.rec.stop();}catch(e){}return;}
+  let r;try{r=new SR();}catch(e){toast('El dictado no está disponible aquí. Escríbelos.');return;}
+  SG.rec=r;SG.wantMic=true;r.lang='es-CO';r.interimResults=true;r.continuous=true;
+  r.onstart=()=>{const b=$('#bibmic');if(b)b.classList.add('on');};
+  r.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';if(SG&&SG.id==='bib'&&!SG.done)bibVoiceScan(t);};
+  r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){SG.wantMic=false;toast('Para usar la voz, permite el micrófono en tu navegador.');}};
+  r.onend=()=>{const was=SG&&SG.wantMic&&!SG.done;if(SG)SG.rec=null;const b=$('#bibmic');if(b)b.classList.remove('on');if(was)setTimeout(()=>{if(SG&&SG.id==='bib'&&SG.wantMic&&!SG.done)bibMic();},250);};
+  try{r.start();}catch(e){SG.rec=null;toast('No pude iniciar el micrófono.');}
 }
 function bibTick(){
   if(!SG||SG.id!=='bib'||SG.done)return;
@@ -11141,7 +11577,7 @@ function bibTick(){
   if(left<=0)bibFinish();
 }
 function bibFinish(){
-  if(SG.done)return;const n=Object.keys(SG.found).length;
+  if(SG.done)return;SG.wantMic=false;if(SG.rec){try{SG.rec.stop();}catch(e){}}const n=Object.keys(SG.found).length;
   sgFinish({head:n>=60?'¡Biblioteca completa!':n>=40?'¡Gran memoria!':n>=20?'¡Buen avance!':'¡Buen comienzo!',score:n,sub:n+' de '+SG.all.length+' libros',
     extra:'<h3 style="text-align:left;margin:18px 0 6px">Los libros</h3><div style="text-align:left">'+bibGridHTML(true)+'</div>'});
 }
@@ -11191,9 +11627,9 @@ function tlNext(){SG.i++;tlRound();}
 
 /* ---------- Sopa de letras (el generador y la selección se reutilizan en la versión de grupo) ---------- */
 const WS_THEMES=[
- ['Personajes',['NOE','ABRAHAM','ISAAC','JACOB','JOSE','MOISES','JOSUE','DAVID','SAMUEL','ELIAS','DANIEL','ESTER','JONAS','PEDRO','PABLO','TIMOTEO','LUCAS','MARCOS','CALEB','GEDEON','SANSON','NEHEMIAS','ESDRAS','ISAIAS']],
- ['Libros',['GENESIS','EXODO','NUMEROS','SALMOS','PROVERBIOS','ISAIAS','JEREMIAS','DANIEL','MATEO','MARCOS','LUCAS','JUAN','HECHOS','ROMANOS','GALATAS','EFESIOS','HEBREOS','SANTIAGO','JUDAS','JONAS','AMOS','RUT']],
- ['Lugares',['EDEN','BELEN','NAZARET','JERUSALEN','SINAI','JORDAN','CANAAN','EGIPTO','BABILONIA','SION','CARMELO','GALILEA','JERICO','DAMASCO','ANTIOQUIA','EFESO','CORINTO','ROMA','BETEL','HEBRON']]
+ ['Personajes',{NOE:'Construyó un arca por mandato de Dios',ABRAHAM:'Padre de la fe, llamado a salir de su tierra',ISAAC:'Hijo de la promesa de Abraham',JACOB:'Luchó con Dios y fue llamado Israel',JOSE:'Vendido por sus hermanos, gobernó Egipto',MOISES:'Sacó a Israel de Egipto',JOSUE:'Sucedió a Moisés y entró a Canaán',DAVID:'Pastor que venció a Goliat y fue rey',SAMUEL:'Profeta que ungió a Saúl y a David',ELIAS:'Profeta que subió al cielo en un carro de fuego',DANIEL:'Pasó la noche en el foso de los leones',ESTER:'Reina que intercedió por su pueblo ante el rey',JONAS:'Huyó de Nínive y fue tragado por un gran pez',PEDRO:'Pescador que negó a Jesús tres veces',PABLO:'Apóstol de los gentiles, antes llamado Saulo',TIMOTEO:'Joven colaborador de Pablo, a quien le escribió dos cartas',LUCAS:'Médico que escribió un Evangelio y Hechos',MARCOS:'Escribió el Evangelio más breve',CALEB:'Espía que confió en que Dios daría la tierra',GEDEON:'Venció a Madián con trescientos hombres',SANSON:'Juez de fuerza prodigiosa, nazareo desde su nacimiento',NEHEMIAS:'Reconstruyó los muros de Jerusalén',ESDRAS:'Escriba que enseñó la ley al volver del exilio'}],
+ ['Libros',{GENESIS:'Primer libro de la Biblia',EXODO:'Cuenta la salida de Israel de la esclavitud',NUMEROS:'El censo y las marchas por el desierto',SALMOS:'El himnario de Israel',PROVERBIOS:'Sabiduría práctica, en gran parte de Salomón',ISAIAS:'Profeta que anunció al Siervo sufriente',JEREMIAS:'El profeta llamado «llorón»',DANIEL:'Libro del foso de los leones y de las visiones',MATEO:'Primer Evangelio del Nuevo Testamento',MARCOS:'El Evangelio más breve',LUCAS:'Evangelio escrito por un médico',JUAN:'Evangelio que comienza «En el principio era el Verbo»',HECHOS:'Historia de la iglesia primitiva',ROMANOS:'Carta de Pablo sobre la justificación por la fe',GALATAS:'Carta de Pablo contra otro evangelio',EFESIOS:'Carta que habla de la armadura de Dios',HEBREOS:'Carta que muestra a Cristo superior a todo',SANTIAGO:'Carta que dice que la fe sin obras es muerta',JUDAS:'Carta breve que exhorta a contender por la fe',JONAS:'Libro del profeta tragado por un pez',AMOS:'Pastor de Tecoa convertido en profeta',RUT:'Moabita fiel, bisabuela del rey David'}],
+ ['Lugares',{EDEN:'Huerto donde vivieron Adán y Eva',BELEN:'Ciudad donde nació Jesús',NAZARET:'Ciudad donde Jesús creció',JERUSALEN:'Ciudad del templo y del rey David',SINAI:'Monte donde Moisés recibió la ley',JORDAN:'Río donde Jesús fue bautizado',CANAAN:'La tierra prometida a Abraham',EGIPTO:'Tierra donde Israel fue esclavo',BABILONIA:'Imperio al que llevaron cautivo a Judá',SION:'Nombre poético de Jerusalén',CARMELO:'Monte donde Elías desafió a los profetas de Baal',GALILEA:'Región donde Jesús enseñó y llamó a sus discípulos',JERICO:'Ciudad cuyos muros cayeron',DAMASCO:'Camino donde Saulo vio una luz del cielo',ANTIOQUIA:'Allí los discípulos fueron llamados cristianos por primera vez',EFESO:'Ciudad a la que Pablo escribió sobre la armadura de Dios',CORINTO:'Ciudad de las cartas de Pablo sobre divisiones y dones',ROMA:'Capital del imperio, adonde Pablo llegó preso',BETEL:'Donde Jacob vio una escalera hasta el cielo',HEBRON:'Donde Abraham compró la cueva de Macpela'}]
 ];
 function wsRng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 function wsGen(seed,words,size){
@@ -11249,13 +11685,20 @@ function wsMatch(W,l,foundIdx){
   const s=l.map(p=>W.grid[p[0]][p[1]]).join(''),rs=s.split('').reverse().join('');
   return W.words.findIndex((x,i)=>!foundIdx.includes(i)&&(x.w===s||x.w===rs)&&l.length===x.w.length);
 }
-function sopaStart(){
-  const th=pickOne(WS_THEMES);
-  const seenW=gSeen('sopa');
-  const fresh=shuffle(th[1].slice()).sort((a,b)=>(seenW.has(a)?1:0)-(seenW.has(b)?1:0));
+function wsPick(th){
+  const seenW=gSeen('sopa'),all=Object.keys(th[1]);
+  const fresh=shuffle(all.slice()).sort((a,b)=>(seenW.has(a)?1:0)-(seenW.has(b)?1:0));
   const words=fresh.filter(w=>w.length<=10).slice(0,7);words.forEach(w=>gMark('sopa',w));
-  if(th[1].every(w=>gSeen('sopa').has(w)))S.gseen.sopa=[];
-  save();
+  if(all.every(w=>gSeen('sopa').has(w)))S.gseen.sopa=[];
+  save();return words;
+}
+function wsClueHTML(W,theme,found){
+  const fi=found.map(f=>f.i);
+  return '<div class="wsq">'+W.words.map((x,i)=>{const k=fi.indexOf(i),clue=(WS_THEMES.find(t=>t[0]===theme)||[0,{}])[1][x.w]||'';
+    return '<div class="'+(k>=0?'dn':'')+'"'+(k>=0?' style="border-color:'+WS_COL[k%WS_COL.length]+'"':'')+'><b>'+(i+1)+'.</b> '+(k>=0?'<strong>'+esc(x.w)+'</strong> — ':'')+esc(clue)+' <small>('+x.w.length+' letras)</small></div>';}).join('')+'</div>';
+}
+function sopaStart(){
+  const th=pickOne(WS_THEMES),words=wsPick(th);
   SG.W=wsGen(Math.floor(Math.random()*1e9),words,10);SG.theme=th[0];SG.fd=[];SG.t0=Date.now();SG.el=0;
   sopaShell();
   SG.tm=setInterval(()=>{if(SG.done)return;SG.el=Math.floor((Date.now()-SG.t0)/1000);const t=$('#sgt');if(t)t.textContent=sgFmt('sopa',SG.el);},500);
@@ -11263,9 +11706,7 @@ function sopaStart(){
 function sopaShell(){
   const W=SG.W,fi=SG.fd.map(f=>f.i);
   sgShell('<div class="sgtop"><span>⏱️ <b id="sgt">'+sgFmt('sopa',SG.el)+'</b></span><span>'+esc(SG.theme)+' · <b>'+SG.fd.length+'</b> de '+W.words.length+'</span></div>'+
-    wsGridHTML(W,SG.fd)+
-    '<div class="wsw">'+W.words.map((x,i)=>{const k=fi.indexOf(i);return '<span class="'+(k>=0?'dn':'')+'"'+(k>=0?' style="border-color:'+WS_COL[k%WS_COL.length]+'"':'')+'>'+esc(x.w)+'</span>';}).join('')+'</div>',
-    '',100*SG.fd.length/W.words.length);
+    wsGridHTML(W,SG.fd)+'<p class="glabel" style="margin-top:10px">Encuentra la palabra de cada pista</p>'+wsClueHTML(W,SG.theme,SG.fd),'',100*SG.fd.length/W.words.length);
   wsAttach($('#wsg'),W.size,l=>{
     const i=wsMatch(W,l,fi);
     if(i<0){beep('bad');return;}
@@ -12501,6 +12942,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
   else if(a.slice(0,3)==='cw-'){cwAct(a,b);}
   else if(a.slice(0,3)==='sg-'){sgAct(a,b);}
+  else if(a.slice(0,3)==='xg-'){xgAct(a,b);}
   else if(a.slice(0,3)==='cd-'){cdAct(a,b);}
   else if(a.slice(0,3)==='xw-'){xwAct(a,b);}
   else if(a.slice(0,5)==='rlib-'){rlAct(a,b);}
