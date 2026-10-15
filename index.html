@@ -1259,6 +1259,13 @@ html.fs-xl{zoom:1.3;--zm:1.3}
 .vshare{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:50%;background:var(--surface);color:var(--blue-ink);border:2px solid var(--blue);border-bottom-width:4px;display:grid;place-items:center}
 .vshare svg{width:20px;height:20px}.vshare:active{transform:translateY(2px)}
 .btn:has(>.shi){display:flex;align-items:center;justify-content:center}
+.sethd{margin:22px 0 8px;font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted,#777)}
+.vdet>summary,.pdet>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.vdet>summary::-webkit-details-marker,.pdet>summary::-webkit-details-marker{display:none}
+.vdet>summary::after,.pdet>summary::after{content:"▾";color:var(--muted,#999);margin-left:6px}
+.vdet[open]>summary::after,.pdet[open]>summary::after{content:"▴"}
+.vdet .vcur{flex:1;text-align:right;color:var(--muted,#777);font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdet>summary{font-weight:800;font-size:15px;color:var(--blue);padding:10px 0 2px;border-top:2px solid var(--line);margin-top:2px}
 .mestrip{width:100%;display:flex;align-items:center;gap:14px;text-align:left;font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:20px;padding:10px 16px;margin:2px 0 12px;cursor:pointer}
 .mestrip .mt{flex:1;min-width:0;display:flex;flex-direction:column}.mestrip .mt b{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mestrip .mt small{color:var(--muted,#777);font-size:13px;margin-top:1px}.mestrip .mt u{text-decoration:none;font-weight:800;letter-spacing:.5px}
@@ -1755,7 +1762,7 @@ function rlBody(){const el=$('#rlbody');if(el)el.innerHTML=rlBodyHTML();}
 function rlShow(){
   rlBody();if(RL.ans&&RL.ans.k!=='none')beep('page');
   const root=$('#rlib');if(!root||!RL.ans)return;
-  const bub=root.querySelector('.hero .bubble');if(bub){const tx=rlSay(RL.ans);bub.textContent=tx;bub.dataset.a='rl-say';bub.dataset.t=tx;bub.classList.add('rlvoz');if(!S.vozOff&&canSpeak())setTimeout(()=>gkSpeak(tx,{rate:.95}),250);}
+  const bub=root.querySelector('.hero .bubble');if(bub){const tx=rlSay(RL.ans);bub.textContent=tx;bub.dataset.a='rl-say';bub.dataset.t=tx;bub.classList.add('rlvoz');if(RL.viaMic&&canSpeak())setTimeout(()=>gkSpeak(tx,{rate:.95,force:true}),250);}
   const mood=RL.ans.k==='none'?'pensando':'contento',m=root.querySelector('.hero .mas');
   if(m&&!m.classList.contains(mood))m.outerHTML=rollo(mood,84);
   lampyTalk(root,true);
@@ -1794,7 +1801,7 @@ function rlMic(){
   r.onstart=()=>{const b=$('#rlmic');if(b)b.classList.add('on');};
   r.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript;fin=t;const inp=$('#rlq');if(inp){inp.value=t;rlSync();}};
   r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')toast('Para dictar, permite el micrófono en tu navegador.');else if(e.error!=='no-speech'&&e.error!=='aborted')toast('No pude usar el dictado. Escribe tu pregunta.');};
-  r.onend=()=>{RL.rec=null;const b=$('#rlmic');if(b)b.classList.remove('on');if(fin)rlAsk(fin);};
+  r.onend=()=>{RL.rec=null;const b=$('#rlmic');if(b)b.classList.remove('on');if(fin){RL.viaMic=true;try{rlAsk(fin);}finally{RL.viaMic=false;}}};
   try{r.start();}catch(e){RL.rec=null;toast('No pude iniciar el dictado.');}
 }
 function rlOpen(){
@@ -7835,7 +7842,7 @@ function meStripHTML(){
 function privCardHTML(){
   const d=FR&&FR.data&&FR.data.me;
   if(!(frActive()&&d))return '';
-  return '<section class="card"><b>👥 Permitir que me sigan</b><p class="muted" style="margin:2px 0 0;font-size:14px">Quien te sigue con tu código ve tu nombre, tu emoji, tu racha, tus XP de la semana y si practicaste hoy. Nada más.</p><div class="seg"><button class="'+(d.visible?'on':'')+'" data-a="fr-vis" data-v="1">Sí</button><button class="'+(!d.visible?'on':'')+'" data-a="fr-vis" data-v="0">No</button></div></section>';
+  return '<section class="card"><div class="swr" style="border-top:0;padding:0"><span>👥 Permitir que me sigan</span><button class="tg'+(d.visible?' on':'')+'" role="switch" aria-checked="'+(!!d.visible)+'" aria-label="Permitir que me sigan" data-a="fr-vis" data-v="'+(d.visible?'0':'1')+'"></button></div><p class="muted" style="margin:6px 0 0;font-size:13px">Quien te sigue con tu código ve tu nombre, emoji, racha, XP de la semana y si practicaste hoy. Nada más.</p></section>';
 }
 /* ============================================================
    NOTIFICACIONES (Web Push)
@@ -7971,10 +7978,10 @@ function pushCardHTML(){
   const row=(k,txt)=>'<div class="swr"><span>'+txt+'</span><button class="tg'+(P[k]?' on':'')+'" role="switch" aria-checked="'+(!!P[k])+'" aria-label="'+esc(txt.replace(/^\S+\s/,''))+'" data-a="push-pref" data-k="'+k+'"></button></div>';
   let hr='';
   if(P.streak){hr='<div class="swr"><span>⏰ Recordarme a las</span><select id="pushhr" class="inp" aria-label="Hora del recordatorio">'+[12,13,14,15,16,17,18,19,20,21].map(x=>'<option value="'+x+'"'+(P.hour===x?' selected':'')+'>'+pushHourLabel(x)+'</option>').join('')+'</select></div>';}
-  return card('<p class="muted" style="margin:2px 0 6px;font-size:14px">Activados en este teléfono. Elige qué quieres recibir:</p>'+
-    row('streak','🔥 Mi llamita (racha en riesgo)')+hr+row('invite','🎮 Invitaciones a jugar')+row('cheer','💪 Ánimos')+row('gift','🎁 Regalos')+row('follow','👋 Nuevos seguidores')+
+  return card(row('streak','🔥 Mi llamita (racha en riesgo)')+hr+
+    '<details class="pdet"><summary>Elegir qué más recibir</summary>'+row('invite','🎮 Invitaciones a jugar')+row('cheer','💪 Ánimos')+row('gift','🎁 Regalos')+row('follow','👋 Nuevos seguidores')+
     '<p class="muted" style="margin:6px 0 0;font-size:13px">La «última llamada» sale a las 10 pm si todavía no has practicado.</p>'+
-    '<div class="row2" style="margin-top:12px"><button class="btn ghost sm" data-a="push-off">Desactivar aquí</button></div>');
+    '<div class="row2" style="margin-top:12px"><button class="btn ghost sm" data-a="push-off">Desactivar en este teléfono</button></div></details>');
 }
 /* Ir a una pantalla (lo usa el toque en una notificación) */
 function goTab(t){
@@ -8666,15 +8673,17 @@ function vozPickHTML(){
   if(!canSpeak())return '';
   let all=[];try{all=speechSynthesis.getVoices()||[];}catch(e){}
   const vs=all.filter(v=>/^es/i.test(v.lang));
+  if(vs.length<2)return '';
   vs.sort((a,b)=>(b.localService-a.localService)||a.name.localeCompare(b.name));
   const pk=re=>all.find(x=>re.test(String(x.lang).replace('_','-'))&&x.localService)||all.find(x=>re.test(String(x.lang).replace('_','-')));
   const auto=pk(/^es-(co|419|mx|us)/i)||pk(/^es/i);
-  const on=!S.vozOff;
+  const clean=n=>n.replace(/^(Microsoft|Google)\s+/,'');
+  const cur=S.vname?(vs.find(v=>v.name===S.vname)||auto):auto;
   const row=(v,lab,sub)=>'<button class="vrow'+(((S.vname||'')===v)?' on':'')+'" data-a="vsel" data-v="'+esc(v)+'"><span class="vp">▶</span><span class="vt"><b>'+esc(lab)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</span><span class="vk">✓</span></button>';
-  const list=(vs.length>=2)?'<p class="muted" style="margin:12px 0 8px;font-size:14px">Toca una voz para oírla y elegirla. Se usa en Rollo, en las lecciones y en los juegos.</p><div class="vlist">'+
-   row('','Automática',auto?'Ahora usa: '+auto.name.replace(/^(Microsoft|Google)\s+/,'')+' · '+auto.lang:'La que el teléfono prefiera')+
-   vs.map(v=>row(v.name,v.name.replace(/^(Microsoft|Google)\s+/,''),v.lang+(v.localService?'':' · necesita internet'))).join('')+'</div>':'';
-  return '<section class="card" id="vozcard"><b>🎙️ Voz de Lampy</b><p class="muted" style="margin:2px 0 0;font-size:14px">Rollo lee en voz alta sus respuestas. Si lo apagas, solo habla cuando tocas su globo. Las lecciones y los juegos no cambian.</p><div class="seg">'+[['1','Rollo habla'],['0','Rollo en silencio']].map(o=>'<button class="'+((on?'1':'0')===o[0]?'on':'')+'" data-a="voz-onoff" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div>'+list+'</section>';
+  return '<section class="card" id="vozcard"><details class="vdet"><summary><b>🎙️ Voz de Lampy</b><span class="vcur">'+esc(cur?clean(cur.name):'Automática')+'</span></summary>'+
+   '<p class="muted" style="margin:6px 0 8px;font-size:13px">Toca una voz para oírla y elegirla. Rollo responde en voz alta cuando le preguntas con el micrófono; toca su globo para oírlo siempre.</p><div class="vlist">'+
+   row('','Automática',auto?'Ahora usa: '+clean(auto.name)+' · '+auto.lang:'La que el teléfono prefiera')+
+   vs.map(v=>row(v.name,clean(v.name),v.lang+(v.localService?'':' · necesita internet'))).join('')+'</div></details></section>';
 }
 try{if(window.speechSynthesis&&speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',()=>{if(typeof TAB!=='undefined'&&TAB==='set')render();});}catch(e){}
 function vozTest(){
@@ -8705,11 +8714,11 @@ function vozTest(){
 function installCardHTML(){
   const ok=swReady();
   const st='<p class="muted" style="margin:8px 0 0;font-size:13px">Sin internet: '+(ok?'<b>listo ✓</b> La app abre y puedes estudiar sin señal.':'se activará la próxima vez que abras la app con internet.')+'</p>';
-  if(isStandalone())return '<section class="card"><b>📲 App instalada</b><p class="muted" style="margin:2px 0 0;font-size:14px">Lampy ya está instalada en este teléfono.</p><button class="btn ghost sm" style="margin-top:10px" data-a="fr-invite">📲 Invitar a alguien a instalar Lampy</button>'+st+'</section>';
+  if(isStandalone())return '<section class="card"><div class="swr" style="border-top:0;padding:0"><span>📲 Lampy instalada ✓</span><button class="btn ghost sm" data-a="fr-invite" style="width:auto;margin:0">Invitar</button></div>'+st+'</section>';
   const how=INSTALL_EVT?'<button class="btn sm" data-a="install">Instalar ahora</button>'
     :isIOS()?'<p style="margin:0;font-size:14px">En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Ábrela siempre desde ese ícono.</p>'
     :'<p style="margin:0;font-size:14px">Abre el menú del navegador (los tres puntos) y elige <b>Instalar app</b> o <b>Añadir a pantalla de inicio</b>.</p>';
-  return '<section class="card"><b>📲 Instalar Lampy</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Se abre como una app, es más rápida y funciona sin internet.</p>'+how+'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-invite">📲 Invitar a alguien a instalar Lampy</button>'+st+'</section>';
+  return '<section class="card"><details class="pdet" style="margin:0"><summary style="border-top:0;padding:0"><b>📲 Instalar Lampy</b></summary><p class="muted" style="margin:6px 0 10px;font-size:14px">Se abre como una app, es más rápida y funciona sin internet.</p>'+how+'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-invite">Invitar a alguien a instalar Lampy</button>'+st+'</details></section>';
 }
 async function updTag(){
   try{const r=await fetch('index.html',{method:'HEAD',cache:'no-store'});if(!r.ok)return null;
@@ -9835,12 +9844,15 @@ function meHTML(){
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
+  const sw=(txt,on,a,v)=>'<div class="swr"><span>'+txt+'</span><button class="tg'+(on?' on':'')+'" role="switch" aria-checked="'+(!!on)+'" aria-label="'+esc(txt.replace(/^\S+\s/,''))+'" data-a="'+a+'" data-v="'+v+'"></button></div>';
+  const hd=t=>'<h4 class="sethd">'+t+'</h4>';
   return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+
-   privCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
+   hd('Pantalla y sonido')+
+   '<section class="card"><b>🔠 Tamaño de letra</b><div class="seg">'+[['n','Normal'],['l','Grande'],['xl','Muy grande']].map(o=>'<button class="'+((S.fs||'n')===o[0]?'on':'')+'" data-a="fs" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div><div style="margin-top:8px">'+
+     sw('🌓 Modo oscuro',S.theme==='dark','theme',S.theme==='dark'?'light':'dark')+sw('🔊 Sonido',!!S.sound,'sound',S.sound?'0':'1')+sw('📳 Vibración',!!S.haptic,'haptic',S.haptic?'0':'1')+'</div></section>'+
    vozPickHTML()+
-   '<section class="card"><b>🔠 Tamaño de letra</b><p class="muted" style="margin:2px 0 0;font-size:14px">Agranda todo el texto de Lampy. Si no lo cambias, se queda como está.</p><div class="seg">'+[['n','Normal','16px'],['l','Grande','19px'],['xl','Muy grande','22px']].map(o=>'<button class="'+((S.fs||'n')===o[0]?'on':'')+'" data-a="fs" data-v="'+o[0]+'" style="font-size:'+(o[0]==='n'?'14px':o[0]==='l'?'15px':'16px')+'">'+o[1]+'</button>').join('')+'</div></section>'+
-   '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lampy.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
-   '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
+   (famOn()?hd('Avisos'):'')+pushCardHTML()+
+   hd('Cuenta')+accountCardHTML()+privCardHTML()+installCardHTML()+
    (signedIn()?'':'<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
    '<textarea id="bk" class="code" placeholder="Aquí aparece tu código. Para restaurar, pégalo aquí."></textarea><div class="row2" style="margin:10px 0 0"><button class="btn blue sm" data-a="bk-copy">Copiar código</button><button class="btn ghost sm" data-a="bk-restore">Restaurar</button></div></section>')+
    '<div style="margin-top:22px">'+((frActive()&&FR&&FR.data&&FR.data.me)?'<button class="link-danger" data-a="fr-del" style="display:block;margin-bottom:12px">Eliminar mi perfil de amigos</button>':'')+'<button class="link-danger" data-a="reset">'+(resetArmed?(signedIn()?'Toca otra vez para borrar también el progreso de tu cuenta':'Toca otra vez para borrar todo el progreso'):'Borrar progreso')+'</button></div>';
