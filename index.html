@@ -151,11 +151,12 @@ h1,h2,h3,h4{font-weight:900}
 .ring .rbg{stroke:var(--line)}
 .ring{--r0:68.6%;--r1:91.4%;--sw:11.43%}
 .ring .rwrap{position:absolute;inset:0;pointer-events:none}
-.ring .rgrad{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#D8392F 0deg,#FFB02E var(--a),transparent var(--a));-webkit-mask:radial-gradient(circle closest-side,transparent var(--r0),#000 calc(var(--r0) + .6%),#000 var(--r1),transparent calc(var(--r1) + .6%));mask:radial-gradient(circle closest-side,transparent var(--r0),#000 calc(var(--r0) + .6%),#000 var(--r1),transparent calc(var(--r1) + .6%))}
+.ring .rring{position:absolute;inset:0;-webkit-mask:radial-gradient(circle closest-side,transparent var(--r0),#000 calc(var(--r0) + .6%),#000 var(--r1),transparent calc(var(--r1) + .6%));mask:radial-gradient(circle closest-side,transparent var(--r0),#000 calc(var(--r0) + .6%),#000 var(--r1),transparent calc(var(--r1) + .6%))}
+.ring .rgrad{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#FFC800 0deg,#FF9600 180deg,#E8402F 360deg);-webkit-mask:conic-gradient(#000 var(--a),transparent var(--a));mask:conic-gradient(#000 var(--a),transparent var(--a))}
 .ring .rcap{position:absolute;inset:0}
 .ring .rcap::after{content:"";position:absolute;left:50%;top:10%;width:var(--sw);aspect-ratio:1;margin-left:calc(var(--sw) / -2);transform:translateY(-50%);border-radius:50%}
-.ring .rcap.s::after{background:#D8392F}
-.ring .rcap.e{transform:rotate(var(--a))}.ring .rcap.e::after{background:#FFB02E}
+.ring .rcap.s::after{background:#FFC800}
+.ring .rcap.e{transform:rotate(var(--a))}.ring .rcap.e::after{background:var(--ce,#E8402F)}
 .ring b span{display:grid;justify-items:center;line-height:1.05}
 .ring b small{font-size:10px;font-weight:900;color:var(--yellow-d);letter-spacing:.04em}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:15px;font-weight:900}
@@ -168,6 +169,8 @@ h1,h2,h3,h4{font-weight:900}
 .dot.on{background:var(--orange);border-color:var(--orange);color:#fff}
 .dot.today{border-color:var(--blue)}
 .dot.on.today{border-color:var(--orange)}
+.dot.on.lost{background:#C4CAD3;border-color:#C4CAD3;color:#fff;box-shadow:none}
+.dot.on.fz{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 6px rgba(28,176,246,.5)}
 .votd{background:var(--blue-bg);border-color:var(--blue)}
 .votd .tagv{display:inline-block;background:var(--blue);color:#fff;font-weight:900;font-size:13px;border-radius:999px;padding:2px 12px;margin-bottom:8px}
 .votd q{display:block;quotes:none;font-size:19px;line-height:1.45;margin:2px 0 6px;font-weight:800}
@@ -1497,7 +1500,7 @@ html.fs-xl{zoom:1.3;--zm:1.3}
 .goalc{padding-top:12px;padding-bottom:12px}.goalc .seg{margin-top:8px}
 .shprev{display:flex;justify-content:center;min-height:120px;align-items:center}
 .shprev img{max-width:min(62vw,260px);max-height:56dvh;width:auto;height:auto;border-radius:18px;border:2px solid var(--line);background:var(--surface2)}
-.pbtns{display:flex;gap:8px}.pbtns .gear svg{width:22px;height:22px}
+.pbtns{display:flex;gap:8px;align-items:center}.gear.help{width:auto;display:flex;align-items:center;gap:6px;padding:0 14px 0 12px;border-radius:999px}.gear.help span{font-size:14px;font-weight:900;color:var(--ink)}.pbtns .gear svg{width:22px;height:22px}
 .gear.pk{color:var(--blue)}
 .achd{margin-top:14px;border:2px solid var(--line);border-bottom-width:4px;border-radius:20px;background:var(--surface)}
 .achd>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 16px}
@@ -4675,7 +4678,7 @@ async function famPoll(force){
       if(!$('#fam').hidden)return; if(TAB==='path'||TAB==='me'||TAB==='fr')render();else renderTabs();}
   }catch(e){}
 }
-const KIND_E={animo:'💪',fuego:'🔥',oracion:'🙏'},KIND_T={animo:'¡Ánimo!',fuego:'¡Sigue así!',oracion:'Orando por ti'};
+const KIND_E={animo:'🫶',fuego:'🔥',oracion:'🙏'},KIND_T={animo:'¡Ánimo!',fuego:'¡Sigue así!',oracion:'Orando por ti'};
 const FAM_AV=['🙂','😄','🦁','🐑','🕊️','🌿','⭐','🌻','👩','👨','👵','👴'];
 function daysAgoText(d){if(!d)return 'aún sin practicar';const n=diffDays(d,today());return n<=0?'practicó hoy':n===1?'ayer':'hace '+n+' días';}
 function famCardHTML(){
@@ -4690,7 +4693,7 @@ function famHomeHTML(){
   if(giftN()>0)out+='<button class="banner cheerb" data-a="gift-inbox">🎁 Tienes <b>'+giftN()+'</b> '+(giftN()===1?'regalo':'regalos')+' por abrir</button>';
   if(FAM.cheers.length){
     const c=FAM.cheers[0],more=FAM.cheers.length-1;
-    out+='<button class="banner cheerb" data-a="fam-open">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> te mandó: '+esc(KIND_T[c.kind]||'¡Ánimo!')+(more>0?' (y '+more+' más)':'')+'</button>';
+    out+='<button class="banner cheerb" data-a="fam-open">'+(KIND_E[c.kind]||'🫶')+' <b>'+esc(c.from)+'</b> te mandó: '+esc(KIND_T[c.kind]||'¡Ánimo!')+(more>0?' (y '+more+' más)':'')+'</button>';
   }
   if(FAM.data&&FAM.data.members&&FAM.data.members.length>1){
     const rows=FAM.data.members.slice(0,4).map((m,i)=>'<div class="frow"><span class="fpos">'+(i===0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><b class="fnm">'+esc((m.me?'Tú':m.name)+(m.badge?' '+badgeE(m.badge):''))+'</b><span class="fst">🔥 '+m.streak+'</span><span class="fxp">⚡ '+kfmt(m.week_xp)+'</span></div>').join('');
@@ -4715,7 +4718,7 @@ function famRender(msg){
   }
   const d=FAM.data;
   if(!d){el.innerHTML=famShell('<div class="splash"><div class="spl">🕯️</div><b>Buscando a tu familia…</b></div>');return;}
-  const cheers=(d.cheers||[]).map(c=>'<div class="cheerrow">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> · '+esc(KIND_T[c.kind]||'¡Ánimo!')+'</div>').join('');
+  const cheers=(d.cheers||[]).map(c=>'<div class="cheerrow">'+(KIND_E[c.kind]||'🫶')+' <b>'+esc(c.from)+'</b> · '+esc(KIND_T[c.kind]||'¡Ánimo!')+'</div>').join('');
   const rows=d.members.map((m,i)=>{
     const cheerBtns=m.me?'':'<div class="chb">'+['animo','fuego','oracion'].map(k=>'<button class="chbtn" data-a="fam-cheer" data-to="'+esc(m.device)+'" data-k="'+k+'" aria-label="'+esc(KIND_T[k])+'" title="'+esc(KIND_T[k])+'">'+KIND_E[k]+'</button>').join('')+'<button class="giftbtn" data-a="gift-open" data-to="'+esc(m.device)+'" data-n="'+esc(m.name)+'" aria-label="Regalar">🎁 Regalar</button></div>';
     return '<div class="mrow '+(m.me?'me':'')+'"><div class="mtop"><span class="fpos">'+(i===0?'👑':(i+1))+'</span><span class="fav big">'+esc(m.avatar)+'</span><div class="minfo"><b>'+esc((m.me?m.name+' (tú)':m.name)+(m.badge?' '+badgeE(m.badge):''))+'</b><span class="muted">'+esc(daysAgoText(m.last_day))+'</span></div></div>'+
@@ -8328,7 +8331,7 @@ function pushCardHTML(){
   let hr='';
   if(P.streak){hr='<div class="swr"><span>⏰ Recordarme a las</span><select id="pushhr" class="inp" aria-label="Hora del recordatorio">'+[12,13,14,15,16,17,18,19,20,21].map(x=>'<option value="'+x+'"'+(P.hour===x?' selected':'')+'>'+pushHourLabel(x)+'</option>').join('')+'</select></div>';}
   return card(row('streak','🔥 Mi llamita (racha en riesgo)')+hr+
-    '<details class="pdet"><summary>Elegir qué más recibir</summary>'+row('invite','🎮 Invitaciones a jugar')+row('cheer','💪 Ánimos')+row('gift','🎁 Regalos')+row('follow','👋 Nuevos seguidores')+
+    '<details class="pdet"><summary>Elegir qué más recibir</summary>'+row('invite','🎮 Invitaciones a jugar')+row('cheer','🫶 Ánimos')+row('gift','🎁 Regalos')+row('follow','👋 Nuevos seguidores')+
     '<p class="muted" style="margin:6px 0 0;font-size:13px">La «última llamada» sale a las 10 pm si todavía no has practicado.</p>'+
     '<div class="row2" style="margin-top:12px"><button class="btn ghost sm" data-a="push-off">Desactivar en este teléfono</button></div></details>');
 }
@@ -8539,7 +8542,7 @@ function frIntroHTML(){
   if(!FRE.init){FRE.init=true;FRE.name=FRE.name||(S.me&&S.me.name)||(S.fam&&S.fam.name)||'';FRE.avatar=(S.me&&S.me.avatar)||(S.fam&&S.fam.avatar)||FRE.avatar||'🙂';}
   return (S.frPending?'<div class="banner">👋 Te invitaron a seguir a un amigo. Crea tu perfil y quedarás siguiéndolo.</div>':'')+
     '<section class="card frhow"><b>Así funciona</b><p>Crea tu perfil y recibe tu código de usuario. Quien lo escriba podrá seguirte, y tú podrás seguir a quien quieras.</p>'+
-    '<ul class="frlist"><li><span aria-hidden="true">🔥</span>Ves su racha y si ya practicaron hoy.</li><li><span aria-hidden="true">💪</span>Se mandan ánimo y se hacen regalos.</li><li><span aria-hidden="true">🎮</span>Se invitan a jugar en vivo.</li></ul></section>'+
+    '<ul class="frlist"><li><span aria-hidden="true">🔥</span>Ves su racha y si ya practicaron hoy.</li><li><span aria-hidden="true">🫶</span>Se mandan ánimo y se hacen regalos.</li><li><span aria-hidden="true">🎮</span>Se invitan a jugar en vivo.</li></ul></section>'+
     '<section class="sec"><h3>¿Cómo te llamas?</h3><input id="frname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRE.name)+'" autocomplete="off"></section>'+
     '<section class="sec"><h3>Tu avatar</h3>'+avxPickHTML('fre',FRE.avatar)+'</section>'+
     '<button class="btn purple" data-a="fr-create">Crear mi perfil</button>'+
@@ -8609,7 +8612,7 @@ function frHTML(){
   const me=d.me,fol=d.following.slice().sort((a,b)=>frStreak(b)-frStreak(a)||String(frName(a)).localeCompare(String(frName(b)))),fws=d.followers;
   let out='';
   if(FR.err)out+='<div class="banner">'+esc(FR.err)+'</div>';
-  if(FR.recv.length)out+='<section class="cheers"><b>Te enviaron:</b>'+FR.recv.map(c=>'<div class="cheerrow">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> · '+esc(KIND_T[c.kind]||'¡Ánimo!')+'</div>').join('')+'</section>';
+  if(FR.recv.length)out+='<section class="cheers"><b>Te enviaron:</b>'+FR.recv.map(c=>'<div class="cheerrow">'+(KIND_E[c.kind]||'🫶')+' <b>'+esc(c.from)+'</b> · '+esc(KIND_T[c.kind]||'¡Ánimo!')+'</div>').join('')+'</section>';
   const nn=fws.filter(f=>FR.recvNew.indexOf(f.device)>=0).map(frName);
   if(nn.length)out+='<div class="banner">👋 <b>'+esc(nn.length===1?nn[0]:nn.slice(0,-1).join(', ')+' y '+nn[nn.length-1])+'</b> '+(nn.length===1?'empezó a seguirte':'empezaron a seguirte')+'.</div>';
   /* 1. Lo de hoy: a quién sigues y cómo van */
@@ -8639,7 +8642,7 @@ function frHomeHTML(){
   if(giftN()>0)out+='<button class="banner cheerb" data-a="gift-inbox">🎁 Tienes <b>'+giftN()+'</b> '+(giftN()===1?'regalo':'regalos')+' por abrir</button>';
   if((d.cheers||[]).length){
     const c=d.cheers[0],more=d.cheers.length-1;
-    out+='<button class="banner cheerb" data-a="fr-go">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> te mandó: '+esc(KIND_T[c.kind]||'¡Ánimo!')+(more>0?' (y '+more+' más)':'')+'</button>';
+    out+='<button class="banner cheerb" data-a="fr-go">'+(KIND_E[c.kind]||'🫶')+' <b>'+esc(c.from)+'</b> te mandó: '+esc(KIND_T[c.kind]||'¡Ánimo!')+(more>0?' (y '+more+' más)':'')+'</button>';
   }
   if((d.new_followers||0)>0){
     const nn=d.followers.filter(f=>f.new).map(frName),k=d.new_followers;
@@ -9173,7 +9176,7 @@ function refreshStreak(){
   const gap=diffDays(S.lastDay,today());
   if(gap<=1)return;
   const missed=gap-1;
-  if(S.freezes>=missed){S.freezes-=missed;S.froze=missed;S.lastDay=addDays(today(),-1);}
+  if(S.freezes>=missed){S.freezes-=missed;S.froze=missed;S.fz=S.fz||{};for(let k=1;k<=missed;k++)S.fz[addDays(S.lastDay,k)]=1;S.lastDay=addDays(today(),-1);}
   else{S.streak=0;}
   save();
 }
@@ -10064,7 +10067,7 @@ function cmInviteHTML(){
 function setCmenu(v){CMENU=!!v;if(CMENU&&!S.cmSeen){S.cmSeen=true;save();}renderCmenu();renderTop();}
 function streakInfo(){
   const t=today(),xpT=S.days[t]||0;
-  let wk='';for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');wk+='<div class="day"><div class="dot '+((S.days[d]||0)>0||(S.rdDays&&S.rdDays[d])?'on':'')+(i===0?' today':'')+'">'+IC.check+'</div>'+DOW[dt.getDay()]+'</div>';}
+  let wk='';for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');wk+=wkDotHTML(d,i,t)+DOW[dt.getDay()]+'</div>';}
   const row=(e,tt,d)=>'<div style="display:flex;gap:10px;text-align:left;align-items:flex-start"><span style="font-size:24px;line-height:1.1">'+e+'</span><div><b>'+tt+'</b><p class="muted" style="margin:2px 0 0;font-size:14px">'+d+'</p></div></div>';
   showModal('<h3>🔥 '+S.streak+(S.streak===1?' día':' días')+' de racha</h3><div class="week" style="margin:0">'+wk+'</div>'+
     row('🔥','Racha','Los días seguidos en que practicas. Cuenta cualquier actividad: una lección, un juego o la lectura. Tu mejor racha: '+S.best+'.')+
@@ -10153,7 +10156,7 @@ function homeHTML(){
   else if(S.streak>0&&S.lastDay!==t){msg=flameMsg();mood=riskMood();}
   else if(S.streak>0){const nm=S.me&&S.me.name?', '+S.me.name:'',dd=S.streak+(S.streak===1?' día':' días'),fl=S.goal-xpT;msg=homeVar(['Llevas '+dd+' seguidos. Te faltan '+fl+' XP para tu meta.',homeGreet()+nm+'! Te faltan '+fl+' XP para tu meta de hoy.','Vas bien: '+dd+' seguidos. Faltan '+fl+' XP.']);mood='wink';}
   else{mood='wink';msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':bio?'¡Conoce a los hombres y mujeres que Dios usó en su iglesia! Haz tu primera lección.':lib?'¡Recorre la Biblia libro por libro, mirando siempre a Cristo! Haz tu primera ficha.':pas?'¡Aprende los pasajes que más importan, versículo por versículo! Haz tu primera lección.':'¡Hola'+(S.me&&S.me.name?', '+S.me.name:'')+'! Haz tu primera lección y empieza tu racha.';}
-  const week=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');week.push('<div class="day"><div class="dot '+((S.days[d]||0)>0||(S.rdDays&&S.rdDays[d])?'on':'')+(i===0?' today':'')+'">'+IC.check+'</div>'+DOW[dt.getDay()]+'</div>');}
+  const week=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');week.push(wkDotHTML(d,i,t)+DOW[dt.getDay()]+'</div>');}
   const cur=firstUndone(U),ldI=lastDoneIdx(U);let flat=0;
   const _lo=document.getElementById('lesson'),jd=(JUST_DONE&&(!_lo||_lo.hidden))?JUST_DONE:null;if(jd)JUST_DONE=null;
   const offs=[0,46,0,-46];
@@ -10178,7 +10181,7 @@ function homeHTML(){
     else daily='<section class="card votd"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button>'+(seen?'<button class="vtog" data-a="vs-tog" aria-label="Plegar el versículo del día"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'')+'<span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return cmInviteHTML()+(S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
   '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rdHomeHTML()+repCardHTML(true)+
-  '<section class="card gstrip"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/></svg><span class="rwrap" style="filter:drop-shadow(0 0 '+(pct*5).toFixed(1)+'px rgba(255,140,0,'+(pct*.75).toFixed(2)+'))"><span class="rgrad" style="--a:'+Math.round(pct*360)+'deg"></span><span class="rcap s"'+(pct>0?'':' hidden')+'></span><span class="rcap e"'+(pct>0&&pct<1?'':' hidden')+' style="--a:'+Math.round(pct*360)+'deg"></span></span><b><span>'+Math.min(xpT,S.goal)+'/'+S.goal+'<small>⚡ XP</small></span></b></div><div class="gcol"><h3>Meta de hoy <small>'+(xpT>=S.goal?'· ¡Cumplida!':'· faltan '+(S.goal-xpT)+' XP')+'</small></h3><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></div></div></section>'+
+  '<section class="card gstrip"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/></svg><span class="rwrap" style="filter:drop-shadow(0 0 '+(pct*5).toFixed(1)+'px '+heat(pct,.75)+')"><span class="rring"><span class="rgrad" style="--a:'+Math.round(pct*360)+'deg"></span></span><span class="rcap s"'+(pct>0?'':' hidden')+'></span><span class="rcap e"'+(pct>0&&pct<1?'':' hidden')+' style="--a:'+Math.round(pct*360)+'deg;--ce:'+heat(pct)+'"></span></span><b><span>'+Math.min(xpT,S.goal)+'/'+S.goal+'<small>⚡ XP</small></span></b></div><div class="gcol"><h3>Meta de hoy <small>'+(xpT>=S.goal?'· ¡Cumplida!':'· faltan '+(S.goal-xpT)+' XP')+'</small></h3><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></div></div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':bio?'Biografías: datos históricos resumidos de fuentes de dominio público. Textos bíblicos citados: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
 }
@@ -10377,7 +10380,7 @@ function achWatch(){
 {const _aw=setInterval(achWatch,900);try{if(_aw&&_aw.unref)_aw.unref();}catch(e){}}
 function meHTML(){
   const ld=ALLKEYS.concat(GKKEYS,BIOKEYS,LIBKEYS,PASKEYS).filter(k=>S.done[k]).length;
-  return '<div class="phead"><h1 class="page">Tu perfil</h1><div class="pbtns"><button class="gear" data-a="don-open" aria-label="Apoya a Lampy" title="Apoya a Lampy">💛</button><button class="gear" data-a="settings" aria-label="Ajustes" title="Ajustes">⚙️</button></div></div>'+meStripHTML()+'<div class="stats">'+
+  return '<div class="phead"><h1 class="page">Tu perfil</h1><div class="pbtns"><button class="gear help" data-a="don-open" aria-label="Quiero ayudar a Lampy" title="Quiero ayudar">💛<span>Quiero ayudar</span></button><button class="gear" data-a="settings" aria-label="Ajustes" title="Ajustes">⚙️</button></div></div>'+meStripHTML()+'<div class="stats">'+
    '<div class="stat s1"><span class="se">🔥</span><div><b>'+S.streak+'</b><span>Racha actual</span></div></div>'+
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+kfmt(S.xp)+'</b><span>XP total</span></div></div>'+
@@ -11281,6 +11284,24 @@ const nwRetoAny=()=>['rt_mem','rt_evg','rt_rev'].some(i=>!nwSeen(i));
 function nwAny(){return NW_SOLO.some(i=>!nwSeen(i))||(famOn()&&NW_FR.some(i=>!nwSeen(i)));}
 function nwSecDot(k){const on=k==='solo'?NW_SOLO.some(i=>!nwSeen(i)):k==='on'?(famOn()&&NW_FR.some(i=>!nwSeen(i))):false;return on?'<i class="gdot inl" aria-label="Nuevo"></i>':'';}
 
+const HEAT=[[0,255,200,0],[.5,255,150,0],[1,232,64,47]];
+function heat(p,al){p=Math.max(0,Math.min(1,p));let a=HEAT[0],b=HEAT[1];if(p>.5){a=HEAT[1];b=HEAT[2];}const k=(p-a[0])/(b[0]-a[0]),c=[1,2,3].map(i=>Math.round(a[i]+(b[i]-a[i])*k));return al===undefined?'rgb('+c.join(',')+')':'rgba('+c.join(',')+','+al+')';}
+function wkRun(t){
+  const act=d=>(S.days[d]||0)>0||!!(S.rdDays&&S.rdDays[d])||!!(S.fz&&S.fz[d]);
+  const e=act(t)?t:(act(addDays(t,-1))?addDays(t,-1):null),run=[];
+  if(e){let d=e;for(let i=0;i<7&&act(d);i++){run.unshift(d);d=addDays(d,-1);}}
+  return run;
+}
+function wkDotHTML(d,i,t){
+  const has=(S.days[d]||0)>0||!!(S.rdDays&&S.rdDays[d]),fz=!!(S.fz&&S.fz[d]),run=wkRun(t),j=run.indexOf(d);
+  let cls='',st='';
+  if(fz&&j>=0)cls=' on fz';
+  else if(has){
+    if(j>=0){const c=heat(run.length>1?j/(run.length-1):1);cls=' on';st=' style="background:'+c+';border-color:'+c+';box-shadow:0 0 '+(j===run.length-1?9:5)+'px '+heat(run.length>1?j/(run.length-1):1,.55)+'"';}
+    else cls=' on lost';
+  }
+  return '<div class="day"><div class="dot'+cls+(i===0?' today':'')+'"'+st+'>'+IC.check+'</div>';
+}
 const EVG_LV=[[1,'Cobre','🥉','evg1'],[3,'Plata','🥈','evg2'],[7,'Oro','🥇','evg3']];
 const evgN=()=>((S.evg&&S.evg.n)||0);
 function evgLink(){const b=appLink()||(location.origin+location.pathname);return b+(b.indexOf('?')>=0?'&':'?')+'e=1';}
