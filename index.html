@@ -7842,7 +7842,7 @@ function meStripHTML(){
 function privCardHTML(){
   const d=FR&&FR.data&&FR.data.me;
   if(!(frActive()&&d))return '';
-  return '<section class="card"><div class="swr" style="border-top:0;padding:0"><span>👥 Permitir que me sigan</span><button class="tg'+(d.visible?' on':'')+'" role="switch" aria-checked="'+(!!d.visible)+'" aria-label="Permitir que me sigan" data-a="fr-vis" data-v="'+(d.visible?'0':'1')+'"></button></div><p class="muted" style="margin:6px 0 0;font-size:13px">Quien te sigue con tu código ve tu nombre, emoji, racha, XP de la semana y si practicaste hoy. Nada más.</p></section>';
+  return '<section class="card"><div class="swr" style="border-top:0;padding:0"><span>Permitir que me sigan</span><button class="tg'+(d.visible?' on':'')+'" role="switch" aria-checked="'+(!!d.visible)+'" aria-label="Permitir que me sigan" data-a="fr-vis" data-v="'+(d.visible?'0':'1')+'"></button></div></section>';
 }
 /* ============================================================
    NOTIFICACIONES (Web Push)
@@ -7968,7 +7968,7 @@ function remICS(){
 }
 function pushCardHTML(){
   if(!famOn())return '';
-  const head='<b>🔔 Notificaciones</b>';
+  const head='<b>Notificaciones</b>';
   const card=x=>'<section class="card">'+head+x+'</section>';
   if(pushNeedsInstall())return card('<p class="muted" style="margin:4px 0 0;font-size:14px">En iPhone las notificaciones solo funcionan con Lampy instalada en la pantalla de inicio (iOS 16.4 o más reciente). Toca Compartir → «Añadir a pantalla de inicio» y ábrela desde ese ícono.</p>');
   if(!pushSupported())return card('<p class="muted" style="margin:4px 0 0;font-size:14px">Este navegador no permite notificaciones. Prueba con Chrome en Android, o con Lampy instalada en el iPhone.</p>');
@@ -8573,8 +8573,8 @@ function cloudCardHTML(){
 }
 function accountCardHTML(){
   if(!cloudOn())return '';
-  if(!signedIn())return '<section class="card"><b>☁️ Cuenta</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Aún no has guardado tu progreso en la nube.</p><button class="btn sm" data-a="auth-open">Guardar con mi correo</button></section>';
-  return '<section class="card"><b>☁️ Cuenta y progreso</b><p class="muted" style="margin:2px 0 4px;font-size:14px">Entraste con <b>'+esc(AU.email||'')+'</b>.</p><p class="muted" style="margin:0 0 10px;font-size:13px" id="cloudstat">'+esc(cloudStatText())+'</p><div class="row2" style="margin:0"><button class="btn ghost sm" data-a="cloud-now">Sincronizar ahora</button><button class="link-danger" data-a="auth-out">Cerrar sesión</button></div></section>';
+  if(!signedIn())return '<section class="card"><b>Cuenta</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Aún no has guardado tu progreso en la nube.</p><button class="btn sm" data-a="auth-open">Guardar con mi correo</button></section>';
+  return '<section class="card"><b>Cuenta y progreso</b><p class="muted" style="margin:2px 0 4px;font-size:14px">Entraste con <b>'+esc(AU.email||'')+'</b>.</p><p class="muted" style="margin:0 0 10px;font-size:13px" id="cloudstat">'+esc(cloudStatText())+'</p><div class="row2" style="margin:0"><button class="btn ghost sm" data-a="cloud-now">Sincronizar ahora</button><button class="link-danger" data-a="auth-out">Cerrar sesión</button></div></section>';
 }
 function cloudBannerHTML(){
   if(!cloudOn()||signedIn()||(S.lessons||0)<1||(S.cloudSnooze||'')>today())return '';
@@ -8680,8 +8680,8 @@ function vozPickHTML(){
   const clean=n=>n.replace(/^(Microsoft|Google)\s+/,'');
   const cur=S.vname?(vs.find(v=>v.name===S.vname)||auto):auto;
   const row=(v,lab,sub)=>'<button class="vrow'+(((S.vname||'')===v)?' on':'')+'" data-a="vsel" data-v="'+esc(v)+'"><span class="vp">▶</span><span class="vt"><b>'+esc(lab)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</span><span class="vk">✓</span></button>';
-  return '<section class="card" id="vozcard"><details class="vdet"><summary><b>🎙️ Voz de Lampy</b><span class="vcur">'+esc(cur?clean(cur.name):'Automática')+'</span></summary>'+
-   '<p class="muted" style="margin:6px 0 8px;font-size:13px">Toca una voz para oírla y elegirla. Rollo responde en voz alta cuando le preguntas con el micrófono; toca su globo para oírlo siempre.</p><div class="vlist">'+
+  return '<section class="card" id="vozcard"><details class="vdet"><summary><b>Voz de Lampy</b><span class="vcur">'+esc(cur?clean(cur.name):'Automática')+'</span></summary>'+
+   '<div class="vlist" style="margin-top:10px">'+
    row('','Automática',auto?'Ahora usa: '+clean(auto.name)+' · '+auto.lang:'La que el teléfono prefiera')+
    vs.map(v=>row(v.name,clean(v.name),v.lang+(v.localService?'':' · necesita internet'))).join('')+'</div></details></section>';
 }
@@ -8714,11 +8714,11 @@ function vozTest(){
 function installCardHTML(){
   const ok=swReady();
   const st='<p class="muted" style="margin:8px 0 0;font-size:13px">Sin internet: '+(ok?'<b>listo ✓</b> La app abre y puedes estudiar sin señal.':'se activará la próxima vez que abras la app con internet.')+'</p>';
-  if(isStandalone())return '<section class="card"><div class="swr" style="border-top:0;padding:0"><span>📲 Lampy instalada ✓</span><button class="btn ghost sm" data-a="fr-invite" style="width:auto;margin:0">Invitar</button></div>'+st+'</section>';
+  if(isStandalone())return '<section class="card"><button class="btn ghost sm" data-a="fr-invite" style="margin:0">Invitar a alguien a instalar Lampy</button></section>';
   const how=INSTALL_EVT?'<button class="btn sm" data-a="install">Instalar ahora</button>'
     :isIOS()?'<p style="margin:0;font-size:14px">En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Ábrela siempre desde ese ícono.</p>'
     :'<p style="margin:0;font-size:14px">Abre el menú del navegador (los tres puntos) y elige <b>Instalar app</b> o <b>Añadir a pantalla de inicio</b>.</p>';
-  return '<section class="card"><details class="pdet" style="margin:0"><summary style="border-top:0;padding:0"><b>📲 Instalar Lampy</b></summary><p class="muted" style="margin:6px 0 10px;font-size:14px">Se abre como una app, es más rápida y funciona sin internet.</p>'+how+'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-invite">Invitar a alguien a instalar Lampy</button>'+st+'</details></section>';
+  return '<section class="card"><details class="pdet" style="margin:0"><summary style="border-top:0;padding:0"><b>Instalar Lampy</b></summary><div style="margin-top:10px">'+how+'</div><button class="btn ghost sm" style="margin-top:10px" data-a="fr-invite">Invitar a alguien a instalar Lampy</button></details></section>';
 }
 async function updTag(){
   try{const r=await fetch('index.html',{method:'HEAD',cache:'no-store'});if(!r.ok)return null;
@@ -9844,16 +9844,16 @@ function meHTML(){
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
-  const sw=(txt,on,a,v)=>'<div class="swr"><span>'+txt+'</span><button class="tg'+(on?' on':'')+'" role="switch" aria-checked="'+(!!on)+'" aria-label="'+esc(txt.replace(/^\S+\s/,''))+'" data-a="'+a+'" data-v="'+v+'"></button></div>';
+  const sw=(txt,on,a,v)=>'<div class="swr"><span>'+txt+'</span><button class="tg'+(on?' on':'')+'" role="switch" aria-checked="'+(!!on)+'" aria-label="'+esc(txt.replace(/^[^A-Za-zÁÉÍÓÚáéíóúñÑ]+/,''))+'" data-a="'+a+'" data-v="'+v+'"></button></div>';
   const hd=t=>'<h4 class="sethd">'+t+'</h4>';
   return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+
    hd('Pantalla y sonido')+
-   '<section class="card"><b>🔠 Tamaño de letra</b><div class="seg">'+[['n','Normal'],['l','Grande'],['xl','Muy grande']].map(o=>'<button class="'+((S.fs||'n')===o[0]?'on':'')+'" data-a="fs" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div><div style="margin-top:8px">'+
-     sw('🌓 Modo oscuro',S.theme==='dark','theme',S.theme==='dark'?'light':'dark')+sw('🔊 Sonido',!!S.sound,'sound',S.sound?'0':'1')+sw('📳 Vibración',!!S.haptic,'haptic',S.haptic?'0':'1')+'</div></section>'+
+   '<section class="card"><b>Tamaño de letra</b><div class="seg">'+[['n','Normal'],['l','Grande'],['xl','Muy grande']].map(o=>'<button class="'+((S.fs||'n')===o[0]?'on':'')+'" data-a="fs" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div><div style="margin-top:8px">'+
+     sw('Modo oscuro',S.theme==='dark','theme',S.theme==='dark'?'light':'dark')+sw('Sonido',!!S.sound,'sound',S.sound?'0':'1')+sw('Vibración',!!S.haptic,'haptic',S.haptic?'0':'1')+'</div></section>'+
    vozPickHTML()+
    (famOn()?hd('Avisos'):'')+pushCardHTML()+
    hd('Cuenta')+accountCardHTML()+privCardHTML()+installCardHTML()+
-   (signedIn()?'':'<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
+   (signedIn()?'':'<h3 style="margin:22px 0 8px">Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
    '<textarea id="bk" class="code" placeholder="Aquí aparece tu código. Para restaurar, pégalo aquí."></textarea><div class="row2" style="margin:10px 0 0"><button class="btn blue sm" data-a="bk-copy">Copiar código</button><button class="btn ghost sm" data-a="bk-restore">Restaurar</button></div></section>')+
    '<div style="margin-top:22px">'+((frActive()&&FR&&FR.data&&FR.data.me)?'<button class="link-danger" data-a="fr-del" style="display:block;margin-bottom:12px">Eliminar mi perfil de amigos</button>':'')+'<button class="link-danger" data-a="reset">'+(resetArmed?(signedIn()?'Toca otra vez para borrar también el progreso de tu cuenta':'Toca otra vez para borrar todo el progreso'):'Borrar progreso')+'</button></div>';
 }
