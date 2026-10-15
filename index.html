@@ -1258,6 +1258,17 @@ html.fs-xl{zoom:1.3;--zm:1.3}
 .votd{position:relative}
 .vshare{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:50%;background:var(--surface);color:var(--blue-ink);border:2px solid var(--blue);border-bottom-width:4px;display:grid;place-items:center}
 .vshare svg{width:20px;height:20px}.vshare:active{transform:translateY(2px)}
+.btn:has(>.shi){display:flex;align-items:center;justify-content:center}
+.shprev{display:flex;justify-content:center;min-height:120px;align-items:center}
+.shprev img{max-width:min(62vw,260px);max-height:56dvh;width:auto;height:auto;border-radius:18px;border:2px solid var(--line);background:var(--surface2)}
+.pbtns{display:flex;gap:8px}.pbtns .gear svg{width:22px;height:22px}
+.gear.pk{color:var(--blue)}
+.achd{margin-top:14px;border:2px solid var(--line);border-bottom-width:4px;border-radius:20px;background:var(--surface)}
+.achd>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 16px}
+.achd>summary::-webkit-details-marker{display:none}
+.achd>summary b{font-size:17px}.achd>summary .pv{flex:1;display:flex;gap:4px;font-size:20px;justify-content:flex-end}
+.achd>summary::after{content:"▾";color:var(--muted,#999);font-size:18px}.achd[open]>summary::after{content:"▴"}
+.achd .achin{padding:0 12px 14px}
 .vsprev{display:flex;justify-content:center}.vsprev img{width:min(46vw,200px);height:auto;aspect-ratio:9/16;border-radius:18px;border:2px solid var(--line);background:var(--surface2);object-fit:cover}
 .vsdots{display:flex;gap:12px;justify-content:center}.vsdot{width:34px;height:34px;border-radius:50%;border:3px solid var(--line)}.vsdot.on{border-color:var(--ink);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--ink)}
 .vsinc{display:flex;gap:8px;align-items:center;justify-content:center;font-weight:800;font-size:15px}
@@ -4173,6 +4184,7 @@ function abcHTML(){
    COMPARTIR LOGROS Y ANIMAR (tarjeta con imagen + mensaje)
    ============================================================ */
 let LASTRES=null;const SHC={};
+const SHARE_I='<svg class="shi" viewBox="0 0 24 24" aria-hidden="true" style="width:1.05em;height:1.05em;vertical-align:-.15em;margin-right:6px"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg>';
 const lessonsDone=()=>ALLKEYS.concat(GKKEYS,BIOKEYS,LIBKEYS,PASKEYS).filter(k=>S.done[k]).length;
 function appLink(){try{return /^https?:/.test(location.protocol)?location.origin+location.pathname:'';}catch(e){return '';}}
 function shareData(kind,id){
@@ -4253,6 +4265,16 @@ async function prepShare(kind,id){
   SHC[d.key]={blob,file,text:d.text};return SHC[d.key];
 }
 function downloadBlob(blob){try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lampy.png';document.body.appendChild(a);a.click();setTimeout(()=>{try{a.remove();URL.revokeObjectURL(a.href);}catch(e){}},500);}catch(e){}}
+async function sharePreview(kind,id){
+  const d=shareData(kind,id);
+  if(d.noImage){doShare(kind,id);return;}
+  showModal('<h3>'+esc(kind==='ach'?'Compartir logro':kind==='lesson'?'Compartir resultado':'Compartir mi racha')+'</h3><div class="shprev"><div class="shload muted">Preparando la imagen…</div></div><p class="muted" style="margin:8px 0 12px;font-size:14px;text-align:center">Esto es lo que se va a enviar.</p><button class="btn" data-a="share-go" data-k="'+esc(kind)+'" data-id="'+esc(id||'')+'">'+SHARE_I+'Compartir</button><button class="btn ghost" data-a="stay">Cerrar</button>');
+  try{
+    const pre=SHC[d.key]||await prepShare(kind,id);
+    const box=document.querySelector('#modal .shprev');if(!box||!pre)return;
+    const u=URL.createObjectURL(pre.blob);box.innerHTML='<img alt="Vista previa de lo que se enviará" src="'+u+'">';
+  }catch(e){const box=document.querySelector('#modal .shprev');if(box)box.innerHTML='<div class="muted">No se pudo mostrar la vista previa, pero puedes compartir igual.</div>';}
+}
 async function doShare(kind,id){
   const d=shareData(kind,id);
   try{
@@ -4682,7 +4704,7 @@ function readHTML(){
    '<div class="rdbarrow" style="margin-top:12px"><span>Biblia leída</span><b>'+pctV+'%</b></div><div class="rdbw"><div class="bar"><i style="width:'+pctV+'%"></i></div></div></section>'+
    rdBooksHTML(R,P)+
    '<h3 style="margin:18px 0 8px">Calendario</h3>'+rdCalHTML(R,P,idx)+
-   '<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">'+(st>0?'<button class="btn ghost sm" data-a="share" data-k="read">📣 Compartir mi racha</button>':'')+'<button class="link-danger" data-a="rd-reset">Cambiar o reiniciar mi plan</button></div>'+
+   '<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">'+(st>0?'<button class="btn ghost sm" data-a="share" data-k="read">'+SHARE_I+'Compartir mi racha</button>':'')+'<button class="link-danger" data-a="rd-reset">Cambiar o reiniciar mi plan</button></div>'+
    '<p class="foot">Para leer, usa tu Biblia de siempre o toca «Abrir pasaje». Cada día que marques una lectura mantiene tu racha 🔥 y suma a tu racha de lectura.</p>';
 }
 function rdHomeHTML(){
@@ -9786,22 +9808,21 @@ function achWatch(){
     showModal('<div style="display:flex;justify-content:center">'+mascot('cheer',96)+'</div><span class="achtag">'+(one?'¡LOGRO DESBLOQUEADO!':'¡'+fresh.length+' LOGROS NUEVOS!')+'</span>'+
       (one?'<div class="achbig"><span aria-hidden="true">'+(ACH_E[a0.id]||'⭐')+'</span></div><h3 style="text-align:center;margin:6px 0 2px">'+esc(a0.t)+'</h3><p style="text-align:center;margin:0 0 12px" class="muted">'+esc(a0.d)+'</p>'
       :'<div class="achlist">'+fresh.map(a=>'<div class="achrow"><span aria-hidden="true">'+(ACH_E[a.id]||'⭐')+'</span><div><b>'+esc(a.t)+'</b><small>'+esc(a.d)+'</small></div></div>').join('')+'</div>')+
-      (one?'<button class="btn blue" data-a="share" data-k="ach" data-id="'+a0.id+'">📣 Compartir</button>':'')+'<button class="btn" data-a="stay">¡Genial!</button>');
+      (one?'<button class="btn blue" data-a="share" data-k="ach" data-id="'+a0.id+'">'+SHARE_I+'Compartir</button>':'')+'<button class="btn" data-a="stay">¡Genial!</button>');
     beep('win');haptic([20,40,20]);confetti(150);
   }catch(e){}
 }
 {const _aw=setInterval(achWatch,900);try{if(_aw&&_aw.unref)_aw.unref();}catch(e){}}
 function meHTML(){
   const ld=ALLKEYS.concat(GKKEYS,BIOKEYS,LIBKEYS,PASKEYS).filter(k=>S.done[k]).length;
-  return '<div class="phead"><h1 class="page">Tu perfil</h1><button class="gear" data-a="settings" aria-label="Ajustes" title="Ajustes">⚙️</button></div><div class="stats">'+
+  return '<div class="phead"><h1 class="page">Tu perfil</h1><div class="pbtns"><button class="gear" data-a="don-open" aria-label="Apoya a Lampy" title="Apoya a Lampy">💛</button><button class="gear pk" data-a="share" data-k="streak" aria-label="Compartir mi racha" title="Compartir mi racha"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button><button class="gear" data-a="settings" aria-label="Ajustes" title="Ajustes">⚙️</button></div></div><div class="stats">'+
    '<div class="stat s1"><span class="se">🔥</span><div><b>'+S.streak+'</b><span>Racha actual</span></div></div>'+
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
    '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length+BIOKEYS.length+LIBKEYS.length+PASKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+(signedIn()?'':cloudCardHTML())+
    '<p class="shline" title="Ganas uno cada 7 días de racha; se usa solo si un día no alcanzas a practicar ni a leer.">🛡️ <b>'+S.freezes+'</b> de 2 protectores de racha · ganas uno cada 7 días y se usa solo si un día no practicas ni lees.</p>'+
-   '<section class="card"><b>📣 Compartir mi progreso</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Presume tu racha. Se envía por WhatsApp o por donde quieras.</p><button class="btn blue sm" data-a="share" data-k="streak">Compartir mi racha</button></section>'+
-   '<section class="card don"><b>💛 Apoya a Lampy</b><p class="muted" style="margin:2px 0 10px;font-size:14px">Lampy es gratis y no tiene anuncios. Si te sirve y quieres ayudar a mantenerla, puedes dejar un aporte voluntario.</p><button class="btn ghost sm" data-a="don-open">Ver cómo aportar</button></section>'+
-   '<h3 style="margin:18px 0 2px">Logros</h3><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+ACH.map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div>'+
+   (function(){const got=ACH.filter(a=>S.ach[a.id]),rest=ACH.filter(a=>!S.ach[a.id]);
+     return '<details class="achd"><summary><b>🏅 Logros · '+got.length+' de '+ACH.length+'</b><span class="pv">'+got.slice(-4).map(a=>ACH_E[a.id]||'⭐').join('')+'</span></summary><div class="achin"><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+got.concat(rest).map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div></div></details>';})()+
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
@@ -10203,7 +10224,7 @@ function finishLesson(){
    fresh.map(a=>'<div class="note">'+(ACH_E[a.id]||'⭐')+' <b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join('')+
    (gws.length?'<div class="vs"><h3>Palabras de esta lección</h3><div class="dlist">'+gws.map(e=>'<button class="dentry" data-a="dic-peek" data-w="'+e.id+'"><span class="dg gk">'+esc(e.g)+'</span><span class="dm"><b>'+esc(e.tr)+'</b> '+esc(e.es)+'</span></button>').join('')+'</div></div>':'')+
    (vs.length?'<div class="vs"><h3>Versículos de esta lección</h3><div class="list">'+vs.map(v=>'<div class="li"><cite>'+esc(v.r)+'</cite><p>'+esc(v.t)+'</p></div>').join('')+'</div></div>':'')+
-   '</div></div><div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="share" data-k="lesson">📣 Compartir</button><button class="btn" data-a="finish">Continuar</button></div></div></div>';
+   '</div></div><div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="share" data-k="lesson">'+SHARE_I+'Compartir</button><button class="btn" data-a="finish">Continuar</button></div></div></div>';
   L.finished=true;
   LASTRES={title:L.meta.title||'una lección',xp,acc,streak:S.streak,review:isReview};
   setTimeout(famSync,400);
@@ -11886,7 +11907,8 @@ document.addEventListener('click',e=>{
   else if(a==='don-copy')donCopy();
   else if(a==='leave'){hideModal();closeLesson();}
   else if(a==='finish'){const uc=L&&L.unitCel,oc=L&&L.offerCloud,po=L&&L.offerPush;closeLesson();if(uc)setTimeout(()=>showUnitCel(uc),300);else if(oc){S.cloudAsked=true;save();setTimeout(()=>authOpen(),450);}else if(po&&pushCanOffer())setTimeout(pushOffer,500);}
-  else if(a==='share'){doShare(b.dataset.k,b.dataset.id);}
+  else if(a==='share'){sharePreview(b.dataset.k,b.dataset.id);}
+  else if(a==='share-go'){doShare(b.dataset.k,b.dataset.id||undefined);}
   else if(a==='rd-plan'){RDSET.plan=b.dataset.p;render();}
   else if(a==='rd-yrs'){RDSET.yrs=+b.dataset.y;render();}
   else if(a==='rd-mode'){RDSET.mode=b.dataset.m;if(RDSET.mode==='other'&&!RDSET.other)RDSET.other=today();render();}
