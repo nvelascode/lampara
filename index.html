@@ -343,6 +343,20 @@ h1,h2,h3,h4{font-weight:900}
 .repttl{margin:6px 0 10px}
 .imggrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:260px;margin:12px auto}
 .imggrid span{display:grid;place-items:center;aspect-ratio:1;font-size:56px;border-radius:18px;background:color-mix(in srgb,var(--gc,#6C5CE7) 10%,var(--surface));border:2px solid var(--line)}
+.gcard{position:relative}
+.gdot{position:absolute;top:10px;right:12px;width:12px;height:12px;border-radius:50%;background:var(--red);border:2px solid var(--surface);display:block}
+.gdot.inl{position:static;display:inline-block;margin-left:8px;vertical-align:middle}
+.mtag .gdot.inl{margin-left:6px}
+.evgov{z-index:100000}
+.evgdots{display:flex;gap:6px;justify-content:center;margin:4px 0 14px}.evgdots i{width:26px;height:8px;border-radius:5px;background:var(--line)}.evgdots i.on{background:var(--green)}.evgdots i.cur{background:var(--blue)}
+.evgh{font-size:28px;line-height:1.15;margin:0 0 10px;text-align:center}
+.evgp{font-size:17px;line-height:1.6;margin:0 0 12px}
+.evgv{font-size:18px;margin:0 0 12px}
+.evgr{padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--blue) 10%,var(--surface));font-weight:600;line-height:1.5;margin:12px 0}
+.evgq{margin:0 0 16px}.evgq .row2{margin:8px 0}.evgq .btn.on{border-color:var(--blue);color:var(--blue)}
+.evgend{margin-top:18px;padding:14px;border-radius:16px;border:2px solid var(--line);background:var(--surface)}
+.evgb{display:flex;gap:8px}.evgb>div{flex:1;text-align:center;border:2px solid var(--line);border-radius:14px;padding:8px 4px;opacity:.55}.evgb>div.on{opacity:1;border-color:var(--gold,#E5A600);background:var(--gold-bg,#FFF6CC)}
+.evgb span{font-size:26px;display:block}.evgb b{display:block;font-size:14px}.evgb small{opacity:.7}
 .grec{display:block;margin-top:4px;font-size:12px;font-weight:800;opacity:.9}
 .rivalbox{margin:12px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#FF9600 14%,var(--surface));font-weight:700}
 .lf:has(#sgf:empty){display:none}
@@ -2046,7 +2060,7 @@ function haptic(pat){
 }
 const pickOne=a=>a[rnd(a.length)];
 const UNIT_EMO={'La profecía final':'🌅','Libros poéticos':'🎼','Evangelios y Hechos':'✝️','Cartas de Pablo':'✉️','Otras cartas':'📮','Profetas mayores':'📯','Profetas menores':'🔔','Libros históricos':'🏰','Los libros de la Ley':'📜','Cómo leer la Biblia':'🔎','Raíces de la fe':'🌱','Mártires de la Reforma':'🕯️','Los reformadores':'🔥','Los puritanos':'📕','Pastores bautistas':'🕊️','Misioneros':'🌍','Mujeres de fe':'🌷','Himnos y libros fieles':'🎶','El alfabeto griego':'🔤','Sonidos y signos':'🔊','Primeras palabras':'📚','Leyendo el Nuevo Testamento':'📜','La creación':'🌍','La caída':'🐍','Los Diez Mandamientos':'📜','Jehová es mi pastor':'🐑','Sermón del Monte':'⛰️','El Evangelio de Juan':'📖','Salvación por gracia':'🎁','Atributos de Dios (1)':'👑','Atributos de Dios (2)':'✨','Doctrinas fundamentales':'🧭','Personajes bíblicos':'🧔','Eventos bíblicos':'🗺️','Cristo en toda la Biblia':'✝️',"Temas y lecturas: Nuevo Testamento":"📖","Historia Sagrada: el Nuevo Testamento":"⛪","Temas y lecturas: Génesis a Ester":"📚","Temas y lecturas: Job a Malaquías":"🔥","Historia Sagrada: el Antiguo Testamento (1)":"🏺","Historia Sagrada: el Antiguo Testamento (2)":"👑","Conoce tu Biblia":"📖","La historia y el mensaje de la Biblia":"🧭","De Caín a Babel":"🏗️","Salmos conocidos":"🎶","El Evangelio de Marcos":"🌅"};
-const ACH_E={lib1:'📜',liball:'🧭',bio1:'🕯️',bioall:'📚',gk1:'🔤',gkabc:'🏛️',gkw:'📚',first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑',rd1:'📖',rd7:'🔖',rd30:'🌅',rdall:'📜',gift1:'💝',gift2:'🎁',live1:'🎮',fr1:'🤝',fr2:'🌟'};
+const ACH_E={evg1:'🥉',evg2:'🥈',evg3:'🥇',lib1:'📜',liball:'🧭',bio1:'🕯️',bioall:'📚',gk1:'🔤',gkabc:'🏛️',gkw:'📚',first:'🌱',s3:'🔥',s7:'🏅',s30:'🏆',perf:'💯',x100:'⚡',x500:'🚀',v20:'📚',unit:'🎖️',group:'👨‍👩‍👧',rev:'🔄',all:'👑',rd1:'📖',rd7:'🔖',rd30:'🌅',rdall:'📜',gift1:'💝',gift2:'🎁',live1:'🎮',fr1:'🤝',fr2:'🌟'};
 const isStandalone=()=>{try{return !!(window.navigator.standalone||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches));}catch(e){return false;}};
 const isIOS=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent||'');
 
@@ -8417,11 +8431,11 @@ function rmTilesHTML(){
   }).join('')+'</div>';
   if(!frActive())out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Para jugar en vivo, crea tu perfil y sigue a alguien.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
   else if(!fol.length)out+='<section class="card frempty">'+mascot('think',64)+'<div><p>Sigue al menos a una persona para invitarla a jugar.</p><button class="btn purple sm" style="margin-top:8px" data-a="fr-go">Ir a Amigos</button></div></section>';
-  else out+='<div class="gtiles">'+['guess','cross','wsop','sprint','buzz','draw','mime','talk','race','assemble'].map(k=>RM_MODES[k]).filter(m=>m&&!m.hide).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'"><span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
+  else out+='<div class="gtiles">'+['guess','cross','wsop','sprint','buzz','draw','mime','talk','race','assemble'].map(k=>RM_MODES[k]).filter(m=>m&&!m.hide).map(m=>'<button class="gcard" style="--gc:'+m.c+'" data-a="rm-open" data-m="'+m.id+'">'+nwDot('rm_'+m.id)+'<span class="gemo" aria-hidden="true">'+m.emo+'</span><b>'+esc(m.t)+'</b><span>'+esc(m.d)+'</span></button>').join('')+'</div>';
   return out;
 }
 let GSEC={on:false,solo:false,fw:false,add:false};
-function gSecHTML(k,title,inner,badge){return '<details class="gsec" data-k="'+k+'"'+(GSEC[k]?' open':'')+'><summary><span>'+title+'</span>'+(badge?'<em class="gbadge">'+badge+'</em>':'')+'</summary>'+inner+'</details>';}
+function gSecHTML(k,title,inner,badge){return '<details class="gsec" data-k="'+k+'"'+(GSEC[k]?' open':'')+'><summary><span>'+title+'</span>'+nwSecDot(k)+(badge?'<em class="gbadge">'+badge+'</em>':'')+'</summary>'+inner+'</details>';}
 function rmMenuHTML(){
   const M=RM_MODES[RM.cfg.mode]||RM_MODES.race;
   const fol=((FR.data&&FR.data.following)||[]).slice().sort((a,b)=>String(frName(a)).localeCompare(String(frName(b))));
@@ -8944,6 +8958,9 @@ function recordDay(xp){
 }
 
 const ACH=[
+ {id:'evg1',t:'Sembrador de cobre',d:'Comparte el mensaje de la fe en Cristo por primera vez',f:s=>(s.evg&&s.evg.n>=1)},
+ {id:'evg2',t:'Sembrador de plata',d:'Comparte el mensaje de la fe en Cristo 3 veces',f:s=>(s.evg&&s.evg.n>=3)},
+ {id:'evg3',t:'Sembrador de oro',d:'Comparte el mensaje de la fe en Cristo 7 veces',f:s=>(s.evg&&s.evg.n>=7)},
  {id:'first',t:'Primera lección',d:'Completa tu primera lección',f:s=>s.lessons>=1},
  {id:'s3',t:'Tres días seguidos',d:'Alcanza una racha de 3 días',f:s=>s.best>=3},
  {id:'s7',t:'Una semana completa',d:'Alcanza una racha de 7 días',f:s=>s.best>=7},
@@ -9841,7 +9858,7 @@ function renderTabs(){
   tabs.push(['me','Perfil',IC.trophy]);
   const pend=(typeof giftN==='function'?giftN():0)+(typeof frPend==='function'?frPend():0);
   $('#tabs').firstElementChild.innerHTML=tabs.map(t=>{const on=TAB===t[0]||(t[0]==='me'&&TAB==='set');
-    return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(((t[0]==='fr'&&pend&&frActive())||(t[0]==='games'&&frInviteN()>0)||(t[0]==='review'&&!retoSeen()))?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
+    return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(((t[0]==='fr'&&pend&&frActive())||(t[0]==='games'&&frInviteN()>0)||(t[0]==='review'&&(!retoSeen()||!nwSeen('evg')))||(t[0]==='games'&&nwAny()))?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
 }
 /* ============================================================
    LA LLAMITA DE LAMPY
@@ -10040,7 +10057,7 @@ function memCheck(text){
   MEM.res={ok:true,adv:adv};MEM.txt='';beep('win');haptic([20,40,20]);if(adv)confetti(m.lvl>4?160:70);
   render();
 }
-function reviewHTML(){return '<h1 class="page">Reto</h1>'+memHTML()+reviewHTML0().replace('<h1 class="page">Repaso</h1>','<h3 class="repttl">Repaso</h3>');}
+function reviewHTML(){return '<h1 class="page">Reto</h1>'+memHTML()+evgCardHTML()+reviewHTML0().replace('<h1 class="page">Repaso</h1>','<h3 class="repttl">Repaso</h3>');}
 function reviewHTML0(){
   if(S.course==='gk')return gkReviewHTML();
   if(S.course==='bio')return bioReviewHTML();
@@ -10962,6 +10979,104 @@ function dConv(n){
 }
 const DECKS={quien:dQuien,pers:dPers,vf:dVF,comp:dComp,libros:dLibros,conv:dConv};
 /* ============================================================
+   NUEVO + EVANGELISMO (v95)
+   · Puntico rojo en lo nuevo (pestaña Juegos, secciones y cada juego nuevo) hasta que se abre
+   · «Comparte la fe en Cristo»: un mensaje corto que se abre desde un enlace (sin instalar nada ni dar datos)
+     y que se comparte por WhatsApp; insignia de cobre, plata y oro según cuántas veces se comparte.
+   ============================================================ */
+const NW_SOLO=['sg_mix','sg_img','sg_cad','sg_det','sg_bib','sg_tl','sg_sopa'],NW_FR=['rm_wsop','rm_draw','rm_mime'],NW_NEW=NW_SOLO.concat(NW_FR,['evg']);
+function nwGet(){try{return JSON.parse(localStorage.getItem('lampy_nw')||'{}')||{};}catch(e){return null;}}
+function nwSeen(id){const o=nwGet();return o===null?true:!!o[id];}
+function nwMark(id){try{const o=nwGet()||{};if(!o[id]){o[id]=1;localStorage.setItem('lampy_nw',JSON.stringify(o));}}catch(e){}}
+const nwDot=id=>(NW_NEW.indexOf(id)>=0&&!nwSeen(id))?'<i class="gdot" aria-label="Nuevo"></i>':'';
+function nwAny(){return NW_SOLO.some(i=>!nwSeen(i))||(famOn()&&NW_FR.some(i=>!nwSeen(i)));}
+function nwSecDot(k){const on=k==='solo'?NW_SOLO.some(i=>!nwSeen(i)):k==='on'?(famOn()&&NW_FR.some(i=>!nwSeen(i))):false;return on?'<i class="gdot inl" aria-label="Nuevo"></i>':'';}
+
+const EVG_LV=[[1,'Cobre','🥉','evg1'],[3,'Plata','🥈','evg2'],[7,'Oro','🥇','evg3']];
+const evgN=()=>((S.evg&&S.evg.n)||0);
+function evgLink(){const b=appLink()||(location.origin+location.pathname);return b+(b.indexOf('?')>=0?'&':'?')+'e=1';}
+function evgCardHTML(){
+  const n=evgN(),next=EVG_LV.find(l=>n<l[0]);
+  return '<section class="memo evgcard"><div class="mtag">EVANGELISMO'+nwDot('evg')+'</div><h2>Comparte la fe en Cristo</h2>'+
+   '<p class="muted" style="margin:0 0 10px">Un mensaje corto para alguien que conozcas. Lo abre desde un enlace: no tiene que descargar nada ni dar datos.</p>'+
+   '<div class="evgb">'+EVG_LV.map(l=>'<div class="'+(n>=l[0]?'on':'')+'"><span>'+l[2]+'</span><b>'+l[1]+'</b><small>'+l[0]+(l[0]===1?' vez':' veces')+'</small></div>').join('')+'</div>'+
+   '<p class="muted" style="margin:10px 0 0;font-size:14px">'+(n?'Lo has compartido <b>'+n+'</b> '+(n===1?'vez':'veces')+'. ':'')+(next?'Te '+(next[0]-n===1?'falta 1':'faltan '+(next[0]-n))+' para la insignia de '+next[1].toLowerCase()+'.':'¡Tienes la insignia de oro! Sigue compartiendo.')+'</p>'+
+   '<div class="mact"><button class="btn orange" data-a="evg-share">Compartir por WhatsApp</button></div><button class="mlink" data-a="evg-view">Ver el mensaje primero</button></section>';
+}
+async function evgShare(){
+  nwMark('evg');
+  const text='¿Tienes 5 minutos? Te comparto algo breve sobre la fe en Cristo. No tienes que descargar nada:\n'+evgLink();
+  let ok=false;
+  try{if(navigator.share){await navigator.share({text});ok=true;}}catch(e){if(e&&e.name==='AbortError')return;}
+  if(!ok){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');ok=true;}
+  S.evg=S.evg||{n:0,t:0};
+  if(Date.now()-(S.evg.t||0)>30000){
+    S.evg.n++;S.evg.t=Date.now();
+    ACH.filter(a=>!S.ach[a.id]&&a.f(S)).forEach(a=>S.ach[a.id]=true);
+    toast('¡Gracias por compartir! Llevas '+S.evg.n+(S.evg.n===1?' vez.':' veces.'));
+  }
+  save();if(TAB==='review')render();
+}
+/* ---------- El mensaje (pantallas cortas) ---------- */
+const EVG_S=[
+ {k:'q',t:'¿Eres una buena persona?',p:'Piensa un momento antes de contestar.',o:['Sí, creo que sí','Más o menos','No mucho'],r:'Casi todos pensamos que somos buenas personas. Pero lo que importa es cómo nos mide Dios, no cómo nos medimos nosotros. Veamos tres preguntas sencillas.'},
+ {k:'m',t:'Tres preguntas',p:'Responde con sinceridad. Nadie más lo verá.',qs:[['¿Alguna vez has dicho una mentira, aunque fuera pequeña?','No hablarás contra tu prójimo falso testimonio.','Éxodo 20:16'],['¿Alguna vez has tomado algo que no era tuyo, aunque fuera de poco valor?','No hurtarás.','Éxodo 20:15'],['¿Alguna vez has mirado a alguien con deseo?','Pero yo os digo que cualquiera que mira a una mujer para codiciarla, ya adulteró con ella en su corazón.','Mateo 5:28']]},
+ {k:'i',t:'Dios es justo',b:['Si Dios es bueno, no puede dejar el mal sin juzgar. Su ley no está para que nos sintamos bien, sino para mostrarnos cómo somos delante de Él.'],v:[['por cuanto todos pecaron, y están destituidos de la gloria de Dios,','Romanos 3:23'],['ya que por las obras de la ley ningún ser humano será justificado delante de él; porque por medio de la ley es el conocimiento del pecado.','Romanos 3:20'],['Y de la manera que está establecido para los hombres que mueran una sola vez, y después de esto el juicio,','Hebreos 9:27']]},
+ {k:'i',t:'Lo que merecemos… y lo que Dios hizo',b:['Nuestro pecado nos separa de Dios. Pero Dios no se quedó mirando: envió a su Hijo, Jesucristo, a ocupar nuestro lugar.'],v:[['Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro.','Romanos 6:23'],['Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros.','Romanos 5:8'],['Porque primeramente os he enseñado lo que asimismo recibí: Que Cristo murió por nuestros pecados, conforme a las Escrituras; y que fue sepultado, y que resucitó al tercer día, conforme a las Escrituras;','1 Corintios 15:3-4']]},
+ {k:'i',t:'Cómo se recibe',b:['No se gana siendo mejores personas. Se recibe como un regalo: confiando en Cristo y dejando que Él cambie nuestro rumbo.'],v:[['Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios; no por obras, para que nadie se gloríe.','Efesios 2:8-9'],['y diciendo: El tiempo se ha cumplido, y el reino de Dios se ha acercado; arrepentíos, y creed en el evangelio.','Marcos 1:15'],['Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.','Juan 3:16']]},
+ {k:'f',t:'¿Qué piensas de lo que leíste?',p:'No tienes que decidir nada ahora.',o:['Quiero seguir pensando en esto','Me gustaría hablar con quien me lo envió','Ya creo en Cristo'],r:['Está bien. Puedes volver a leer los versículos cuando quieras: son palabras de la Biblia.','Escríbele a quien te lo envió. Seguro le dará gusto conversar contigo.','Qué alegría. Sigue conociéndolo en su Palabra: «Escudriñad las Escrituras» (Juan 5:39).']}
+];
+let EV=null;
+function evgOpen(pub){
+  EV={i:0,pub:!!pub,pick:{},m:0,my:[]};
+  let el=document.getElementById('evg');
+  if(!el){el=document.createElement('div');el.id='evg';el.className='overlay evgov';document.body.appendChild(el);}
+  el.hidden=false;document.body.style.overflow='hidden';evgRender();
+}
+function evgClose(){const el=document.getElementById('evg');if(el){el.hidden=true;el.innerHTML='';}document.body.style.overflow='';EV=null;}
+function evgRender(){
+  const el=document.getElementById('evg');if(!el||!EV)return;
+  const n=EVG_S.length,s=EVG_S[EV.i];let body='',foot='',can=true;
+  body+='<div class="evgdots">'+EVG_S.map((_,i)=>'<i class="'+(i<EV.i?'on':i===EV.i?'cur':'')+'"></i>').join('')+'</div>'+(EV.pub?'':'<p class="muted" style="text-align:center;margin:0 0 6px;font-size:13px">Vista previa de lo que verá la persona</p>');
+  body+='<h1 class="evgh">'+esc(s.t)+'</h1>';
+  if(s.k==='q'||s.k==='f'){
+    body+=(s.p?'<p class="muted" style="margin:0 0 12px">'+esc(s.p)+'</p>':'')+'<div class="sgopts">'+s.o.map((o,i)=>'<button class="sgopt'+(EV.pick[EV.i]===i?' ok':'')+'" data-a="evg-pick" data-i="'+i+'">'+esc(o)+'</button>').join('')+'</div>';
+    if(EV.pick[EV.i]!==undefined){const r=Array.isArray(s.r)?s.r[EV.pick[EV.i]]:s.r;body+='<p class="evgr">'+esc(r)+'</p>';}else can=false;
+  }else if(s.k==='m'){
+    body+='<p class="muted" style="margin:0 0 12px">'+esc(s.p)+'</p>';
+    s.qs.forEach((q,j)=>{const a=EV.my[j];
+      body+='<div class="evgq"><b>'+(j+1)+'. '+esc(q[0])+'</b><div class="row2"><button class="btn ghost sm'+(a===1?' on':'')+'" data-a="evg-yn" data-j="'+j+'" data-v="1">Sí</button><button class="btn ghost sm'+(a===0?' on':'')+'" data-a="evg-yn" data-j="'+j+'" data-v="0">No</button></div>'+
+       (a!==undefined?'<blockquote class="verse evgv"><i>'+esc(q[1])+'</i><cite class="vref">'+esc(q[2])+'</cite></blockquote>':'')+'</div>';});
+    if(s.qs.every((_,j)=>EV.my[j]!==undefined)){
+      const yes=EV.my.filter(x=>x===1).length;
+      body+='<p class="evgr">'+(yes?'Si respondiste que sí a alguna, la Biblia lo llama pecado. Y le pasa a todos: no es para avergonzarte, es para ver con claridad dónde estamos.':'Pocas personas pueden decir que no a las tres. Y Jesús enseñó que Dios mira también el corazón, no solo lo que se ve.')+'</p>';
+    }else can=false;
+  }else{
+    body+=s.b.map(t=>'<p class="evgp">'+esc(t)+'</p>').join('')+s.v.map(v=>'<blockquote class="verse evgv"><i>'+esc(v[0])+'</i><cite class="vref">'+esc(v[1])+'</cite></blockquote>').join('');
+  }
+  if(EV.i===n-1&&EV.pick[EV.i]!==undefined){
+    body+='<div class="evgend"><p><b>Si quieres seguir conociendo la Biblia</b>, Lampy es una app gratuita con lecciones cortas, pensada para leer con calma. No es necesario para nada de lo anterior.</p><button class="btn blue" data-a="evg-lampy">'+(EV.pub?'Conocer Lampy':'Cerrar')+'</button></div>';
+  }
+  foot=EV.i<n-1?'<div class="lf"><div class="in"><div class="row2">'+(EV.i?'<button class="btn ghost" data-a="evg-back">Atrás</button>':'')+'<button class="btn" data-a="evg-next" data-primary '+(can?'':'disabled')+'>Siguiente</button></div></div></div>':'';
+  el.innerHTML='<div class="lh">'+(EV.pub?'<b style="flex:1;font-size:18px">🕯️ Un mensaje para ti</b>':'<button class="x" data-a="evg-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:'+Math.round(100*(EV.i+1)/n)+'%"></i></div>')+'</div><div class="lb">'+body+'</div>'+foot;
+  const lb=el.querySelector('.lb');if(lb)lb.scrollTop=0;
+}
+function evgAct(a,b){
+  if(a==='evg-share')return evgShare();
+  if(a==='evg-view'){nwMark('evg');return evgOpen(false);}
+  if(a==='evg-close')return evgClose();
+  if(!EV)return;
+  const top=()=>{const lb=document.querySelector('#evg .lb');return lb?lb.scrollTop:0;};
+  if(a==='evg-pick'){EV.pick[EV.i]=+b.dataset.i;const t=top();evgRender();const lb=document.querySelector('#evg .lb');if(lb)lb.scrollTop=t;}
+  else if(a==='evg-yn'){EV.my[+b.dataset.j]=+b.dataset.v;const t=top();evgRender();const lb=document.querySelector('#evg .lb');if(lb)lb.scrollTop=t;}
+  else if(a==='evg-next'){if(EV.i<EVG_S.length-1){EV.i++;evgRender();}}
+  else if(a==='evg-back'){if(EV.i>0){EV.i--;evgRender();}}
+  else if(a==='evg-lampy'){if(EV.pub){location.href=(appLink()||location.pathname);}else evgClose();}
+}
+const EVG_PUB=(()=>{try{return /[?&]e=1(&|$)/.test(location.search);}catch(e){return false;}})();
+if(EVG_PUB){const go=()=>{try{evgOpen(true);}catch(e){}};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(go,0));else setTimeout(go,0);}
+
+/* ============================================================
    JUEGOS EN VIVO NUEVOS (v93): Sopa de letras a dos · Dibujo por equipos · Mímica bíblica
    No necesitan SQL nuevo: viajan sobre las salas que ya existen.
      · Sopa a dos  → sala de 2 jugadores (modo «guess» del servidor), configuración {k:'wsop'}
@@ -11351,7 +11466,7 @@ const SG_DEF={
 const sgFmt=(id,v)=>id==='sopa'?(Math.floor(v/60)+':'+String(v%60).padStart(2,'0')):String(v);
 function sgRecGet(id){return (S.rec&&S.rec[id])||null;}
 function sgRecTile(id){const r=sgRecGet(id);return r?'<small class="grec">🏆 Récord: '+sgFmt(id,r.best)+'</small>':'';}
-function sgTileHTML(id){const d=SG_DEF[id];return '<button class="gcard" style="--gc:'+d.c+'" data-a="sg-open" data-g="'+id+'"><span class="gemo" aria-hidden="true">'+d.emo+'</span><b>'+esc(d.t)+'</b><span>'+esc(d.d)+'</span>'+sgRecTile(id)+'</button>';}
+function sgTileHTML(id){const d=SG_DEF[id];return '<button class="gcard" style="--gc:'+d.c+'" data-a="sg-open" data-g="'+id+'">'+nwDot('sg_'+id)+'<span class="gemo" aria-hidden="true">'+d.emo+'</span><b>'+esc(d.t)+'</b><span>'+esc(d.d)+'</span>'+sgRecTile(id)+'</button>';}
 function sgShell(body,foot,pct,title){
   const d=SG.def;const el=$('#game');el.className='overlay gamed';el.style.setProperty('--gc',d.c);el.style.setProperty('--gcol',d.c);
   el.innerHTML='<div class="lh"><button class="x" data-a="sg-close" aria-label="Salir del juego">'+IC.close+'</button><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(pct)+'"><i style="width:'+Math.round(pct)+'%"></i></div></div>'+
@@ -11360,6 +11475,7 @@ function sgShell(body,foot,pct,title){
 }
 function sgClose(){if(SG&&SG.tm)clearInterval(SG.tm);if(SG&&SG.rec){SG.wantMic=false;try{SG.rec.stop();}catch(e){}}SG=null;stopSpeak&&stopSpeak();$('#game').hidden=true;$('#game').innerHTML='';$('#game').className='overlay';document.body.style.overflow='';render();}
 function sgOpen(id){
+  nwMark('sg_'+id);
   if(SG&&SG.tm)clearInterval(SG.tm);
   SG={id,def:SG_DEF[id],score:0,i:0,done:false};
   ({mix:mixStart,cad:cadStart,det:detStart,bib:bibStart,tl:tlStart,sopa:sopaStart,img:imgStart})[id]();
@@ -12971,6 +13087,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
   else if(a.slice(0,3)==='cw-'){cwAct(a,b);}
   else if(a.slice(0,3)==='sg-'){sgAct(a,b);}
+  else if(a.slice(0,4)==='evg-'){evgAct(a,b);}
   else if(a.slice(0,3)==='xg-'){xgAct(a,b);}
   else if(a.slice(0,3)==='cd-'){cdAct(a,b);}
   else if(a.slice(0,3)==='xw-'){xwAct(a,b);}
@@ -12988,7 +13105,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='bz-'){bzAct(a,b);}
   else if(a.slice(0,3)==='tk-'){tkAct(a,b);}
   else if(a==='rm-size'){RM.cfg.size=+b.dataset.v;rmMenuRefresh();}
-  else if(a==='rm-open'){RM.pick=[];rmOpenMenu('create',b.dataset.m);}
+  else if(a==='rm-open'){nwMark('rm_'+b.dataset.m);RM.pick=[];rmOpenMenu('create',b.dataset.m);}
   else if(a==='rm-pick'){rmPickToggle(b.dataset.d);}
   else if(a==='rm-invite-open'){rmInviteOpen();}
   else if(a==='rm-inv-send'){rmInviteSend(b.dataset.to);}
