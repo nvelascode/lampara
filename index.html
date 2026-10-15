@@ -341,6 +341,8 @@ h1,h2,h3,h4{font-weight:900}
 .mlink{background:none;border:0;color:var(--blue);font-weight:800;padding:12px 0 0;cursor:pointer;font:inherit;font-weight:800}
 .mres{margin-top:10px;padding:10px 12px;border-radius:12px}.mres.ok{background:color-mix(in srgb,#58cc02 18%,var(--surface))}.mres.no{background:color-mix(in srgb,var(--red) 12%,var(--surface))}
 .repttl{margin:6px 0 10px}
+.imggrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:260px;margin:12px auto}
+.imggrid span{display:grid;place-items:center;aspect-ratio:1;font-size:56px;border-radius:18px;background:color-mix(in srgb,var(--gc,#6C5CE7) 10%,var(--surface));border:2px solid var(--line)}
 .grec{display:block;margin-top:4px;font-size:12px;font-weight:800;opacity:.9}
 .rivalbox{margin:12px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#FF9600 14%,var(--surface));font-weight:700}
 .lf:has(#sgf:empty){display:none}
@@ -11343,6 +11345,7 @@ const SG_DEF={
   det:{t:'Detective de errores',d:'Una palabra del versículo está cambiada: encuéntrala',emo:'🔍',c:'#A560E8',hi:true,u:'aciertos'},
   bib:{t:'Biblioteca loca',d:'¿Cuántos libros de la Biblia sabes de memoria?',emo:'📚',c:'#4CB800',hi:true,u:'libros'},
   tl:{t:'Línea del tiempo',d:'Ordena los sucesos del más antiguo al más reciente',emo:'⏳',c:'#E84393',hi:true,u:'aciertos'},
+  img:{t:'4 imágenes, 1 palabra',d:'Mira las 4 imágenes y descubre qué historia bíblica representan',emo:'🖼️',c:'#6C5CE7',hi:true,u:'aciertos'},
   sopa:{t:'Sopa de letras',d:'Encuentra los nombres escondidos',emo:'🔤',c:'#00B894',hi:false,u:'tiempo'}
 };
 const sgFmt=(id,v)=>id==='sopa'?(Math.floor(v/60)+':'+String(v%60).padStart(2,'0')):String(v);
@@ -11359,7 +11362,7 @@ function sgClose(){if(SG&&SG.tm)clearInterval(SG.tm);if(SG&&SG.rec){SG.wantMic=f
 function sgOpen(id){
   if(SG&&SG.tm)clearInterval(SG.tm);
   SG={id,def:SG_DEF[id],score:0,i:0,done:false};
-  ({mix:mixStart,cad:cadStart,det:detStart,bib:bibStart,tl:tlStart,sopa:sopaStart})[id]();
+  ({mix:mixStart,cad:cadStart,det:detStart,bib:bibStart,tl:tlStart,sopa:sopaStart,img:imgStart})[id]();
 }
 function sgFinish(o){
   /* o: {head, score, sub, extra(html), mood} */
@@ -11399,9 +11402,34 @@ function sgNext(){
   if(SG.id==='cad')return cadNext();
   if(SG.id==='det')return detNext();
   if(SG.id==='tl')return tlNext();
+  if(SG.id==='img')return imgNext();
   SG.i++;mixShow();
 }
 const sgDone=()=>SG&&SG.done;
+
+
+/* ---------- 4 imágenes, 1 palabra (con emojis) ---------- */
+const IMG_BANK=[["🌳🍎🐍👩","Adán y Eva","Génesis 3"],["🌧️🚢🕊️🌈","Noé y el arca","Génesis 6–9"],["🧱🏗️☁️🗣️","La torre de Babel","Génesis 11"],["🔪🐏⛰️👦","Abraham e Isaac","Génesis 22"],["🧥🌈🕳️🌾","José y su túnica","Génesis 37"],["🪜😴👼⛰️","La escalera de Jacob","Génesis 28"],["🌿🔥👞⛰️","La zarza ardiendo","Éxodo 3"],["🐸🦟🩸🌑","Las plagas de Egipto","Éxodo 7–12"],["🌊🚶‍♂️🌊🏃","El cruce del mar Rojo","Éxodo 14"],["🍞☁️🏜️🌅","El maná en el desierto","Éxodo 16"],["📜⛰️⚡🪨","Los Diez Mandamientos","Éxodo 20"],["🐂🥇🎶💃","El becerro de oro","Éxodo 32"],["🔥☁️🚶🌙","La columna de nube y de fuego","Éxodo 13"],["🐍🪵🤒🙏","La serpiente de bronce","Números 21"],["🐴🗣️👼⚔️","La burra de Balaam","Números 22"],["🎺🧱🏙️💥","La caída de Jericó","Josué 6"],["🦁💪💇‍♂️🏛️","Sansón","Jueces 16"],["🌾👩🤝👵","Rut y Noemí","Rut 1"],["🧒🪨🧌🛡️","David y Goliat","1 Samuel 17"],["👑🧠👶⚖️","La sabiduría de Salomón","1 Reyes 3"],["🔥🐴🌪️🧔","Elías sube al cielo","2 Reyes 2"],["🦁🙏🕳️👨","Daniel en el foso de los leones","Daniel 6"],["🔥🏗️🧍‍♂️🧍‍♂️","El horno de fuego","Daniel 3"],["🐋🌊🚢🙏","Jonás","Jonás 1–2"],["👸🎀👑🙏","Ester","Ester 4"],["🧱🔨🏙️🛡️","Nehemías reconstruye el muro","Nehemías 4"],["⭐🐪👑🎁","Los magos de Oriente","Mateo 2"],["🐑👼🌙👶","Los pastores y el ángel","Lucas 2"],["👶🌟🐄🌾","El nacimiento de Jesús","Lucas 2"],["🕊️💧🧔🏞️","El bautismo de Jesús","Mateo 3"],["🍷💧🏺💍","Las bodas de Caná","Juan 2"],["🍞🐟👥🧺","Los panes y los peces","Juan 6"],["🌊⛵😴🌩️","Jesús calma la tormenta","Marcos 4"],["🚶🌊🌙⛵","Jesús camina sobre el mar","Mateo 14"],["🐑🔍🥾⛰️","La oveja perdida","Lucas 15"],["🌱🐦🪨🌾","El sembrador","Mateo 13"],["🛣️🤕🐴🏨","El buen samaritano","Lucas 10"],["🐷💰👦🎉","El hijo pródigo","Lucas 15"],["🌳👀🧍‍♂️💰","Zaqueo","Lucas 19"],["🪙🪙👵⛪","La ofrenda de la viuda","Marcos 12"],["🪦😢🗣️🧣","La resurrección de Lázaro","Juan 11"],["🍞🍷🪑🌙","La última cena","Lucas 22"],["🐴🌿👑🙌","La entrada triunfal a Jerusalén","Mateo 21"],["✝️🌑🌿👑","La crucifixión de Jesús","Mateo 27"],["🪦🌅👩‍🦰👼","La resurrección de Jesús","Mateo 28"],["🔥🕊️👥🗣️","El día de Pentecostés","Hechos 2"],["🐴⚡👁️🛣️","La conversión de Pablo","Hechos 9"],["⛓️🎶🌍🔓","Pablo y Silas en la cárcel","Hechos 16"],["🚢🌊⛈️🏝️","El naufragio de Pablo","Hechos 27"],["🛡️⚔️🪖📖","La armadura de Dios","Efesios 6"],["🎣🐟🐟🚣","La pesca milagrosa","Lucas 5"],["🧑‍🦯💧🗣️✨","Jesús sana a un ciego","Marcos 10"]];
+function imgStart(){
+  SG.n=8;SG.i=0;SG.qs=gTake('img',IMG_BANK,x=>x[1],SG.n).map(x=>{
+    const wrong=shuffle(IMG_BANK.filter(y=>y[1]!==x[1])).slice(0,3).map(y=>y[1]);
+    const o=shuffle([x[1],...wrong]);return {e:Array.from(x[0].match(/\p{Extended_Pictographic}(?:\u200d\p{Extended_Pictographic}|\ufe0f)*/gu)||[]),o,a:o.indexOf(x[1]),r:x[2],t:x[1]};
+  });
+  SG.n=SG.qs.length;imgShow();
+}
+function imgShow(){
+  if(SG.i>=SG.n)return sgFinish({head:SG.score>=7?'¡Qué buen ojo!':SG.score>=4?'¡Muy bien!':'¡Buen intento!',score:SG.score,sub:SG.score+' de '+SG.n});
+  const q=SG.qs[SG.i];SG.picked=-1;SG.ans=null;
+  sgShell('<p class="glabel">¿Qué historia bíblica es? <span>· '+(SG.i+1)+' de '+SG.n+'</span></p><div class="imggrid">'+q.e.slice(0,4).map(x=>'<span>'+x+'</span>').join('')+'</div><div class="sgopts">'+q.o.map((o,i)=>'<button class="sgopt" data-a="sg-opt" data-i="'+i+'">'+esc(o)+'</button>').join('')+'</div><div id="sgrev"></div>','<div id="sgf"></div>',100*SG.i/SG.n);
+}
+function imgTap(i){
+  if(SG.ans!==null)return;const q=SG.qs[SG.i];SG.picked=i;SG.ans=i===q.a;
+  document.querySelectorAll('.sgopt').forEach((b,k)=>{b.disabled=true;if(k===q.a)b.classList.add('ok');else if(k===i)b.classList.add('bad');});
+  if(SG.ans){SG.score++;beep('good');haptic([12]);}else{beep('bad');haptic([30,40,30]);}
+  $('#sgrev').innerHTML='<div class="sgrev"><cite class="vref">'+esc(q.r)+'</cite></div>';
+  $('#sgf').innerHTML='<button class="btn" data-a="sg-next" data-primary>'+(SG.i===SG.n-1?'Ver resultado':'Continuar')+'</button>';
+}
+function imgNext(){SG.i++;imgShow();}
 
 /* ---------- Mixto ---------- */
 function rmQPers(used){
@@ -11439,6 +11467,7 @@ function sgOptTap(i){
     $('#sgrev').innerHTML=sgReveal(q);
     $('#sgf').innerHTML='<button class="btn" data-a="sg-next" data-primary>'+(SG.i===SG.n-1?'Ver resultado':'Continuar')+'</button>';
   }else if(SG.id==='cad')cadTap(i);
+  else if(SG.id==='img')imgTap(i);
 }
 
 /* ---------- Cadena de versículos ---------- */
@@ -12680,7 +12709,7 @@ function gSoloTiles(){
   return '<div class="gtiles">'+sgTileHTML('mix')+GAMES.filter(g=>!(fam&&g.id==='conv')&&!/^(quien|pers|vf|libros)$/.test(g.id)).map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+
    '<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button>'+
    '<button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button>'+
-   '<button class="gcard" style="--gc:#7C5CFC" data-a="cw-solo"><span class="gemo" aria-hidden="true">🧩</span><b>Crucigrama bíblico</b><span>Resuelve las pistas y descubre el pasaje de cada palabra</span></button>'+['cad','det','bib','tl','sopa'].map(sgTileHTML).join('')+'</div>';
+   '<button class="gcard" style="--gc:#7C5CFC" data-a="cw-solo"><span class="gemo" aria-hidden="true">🧩</span><b>Crucigrama bíblico</b><span>Resuelve las pistas y descubre el pasaje de cada palabra</span></button>'+['img','cad','det','bib','tl','sopa'].map(sgTileHTML).join('')+'</div>';
 }
 function gamesHTML(){
   const fam=famOn();
