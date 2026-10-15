@@ -406,7 +406,6 @@ h1,h2,h3,h4{font-weight:900}
 .card.votd.vmini .vch{width:22px;height:22px}
 .rtabs{z-index:3}
 .rf .rtab.on{margin-bottom:-3px;padding-bottom:15px}
-.evgnote{margin:0 0 10px;padding:8px 12px;border-radius:12px;background:var(--surface);border:2px solid var(--line);font-size:14px;font-weight:700;color:var(--ink)}
 .avsvg{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.2em;border-radius:50%;overflow:hidden;flex:none}
 .avE{transform-box:fill-box;transform-origin:50% 50%;animation:avBlink 5s infinite}
 @keyframes avBlink{0%,92%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.08)}}
@@ -11274,9 +11273,9 @@ function evgLink(){const b=appLink()||(location.origin+location.pathname);return
 function evgCardHTML(){
   const n=evgN(),next=EVG_LV.find(l=>n<l[0]);
   return '<section class="memo evgcard"><div class="mtag">MENSAJE DE FE'+nwDot('evg')+'</div><h2>La fe en Cristo, en 6 pantallas</h2>'+
-   '<p class="muted" style="margin:0 0 8px">Un mensaje corto para alguien que conozcas.</p><p class="evgnote"><b>La persona solo abre el enlace.</b> No tiene que descargar nada ni brindar ningún dato.</p>'+
+   '<p class="muted" style="margin:0 0 10px">Un mensaje corto para alguien que conozcas. Lo abre desde un enlace: no tiene que descargar nada ni brindar ningún dato.</p>'+
    '<div class="evgb">'+EVG_LV.map(l=>'<div class="'+(n>=l[0]?'on':'')+'"><span>'+l[2]+'</span><b>'+l[1]+'</b><small>'+l[0]+(l[0]===1?' vez':' veces')+'</small></div>').join('')+'</div>'+
-   '<p class="muted" style="margin:10px 0 0;font-size:14px">'+(next?(n?'Lo has compartido <b>'+n+'</b> '+(n===1?'vez':'veces')+'. ':'')+(n===0?'<b>Compártelo 1 vez</b> y ganas la insignia de cobre.':'Compártelo <b>'+(next[0]-n)+'</b> '+(next[0]-n===1?'vez más':'veces más')+' y ganas la insignia de '+next[1].toLowerCase()+'.'):'Lo has compartido <b>'+n+'</b> veces. ¡Tienes la insignia de oro! Sigue compartiendo.')+'</p>'+
+   '<p class="muted" style="margin:10px 0 0;font-size:14px">'+(next?(n?'Lo has compartido <b>'+n+'</b> '+(n===1?'vez':'veces')+'. ':'')+(n===0?'<b>Compártelo 1 vez</b> para obtener la insignia de cobre.':'Compártelo <b>'+(next[0]-n)+'</b> '+(next[0]-n===1?'vez más':'veces más')+' para obtener la insignia de '+next[1].toLowerCase()+'.'):'Lo has compartido <b>'+n+'</b> veces. ¡Tienes la insignia de oro! Sigue compartiendo.')+'</p>'+
    '<div class="mact"><button class="btn orange" data-a="evg-share">Compartir por WhatsApp</button></div><button class="mlink" data-a="evg-view">Ver el mensaje primero</button></section>';
 }
 async function evgShare(){
