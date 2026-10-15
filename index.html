@@ -368,6 +368,14 @@ h1,h2,h3,h4{font-weight:900}
 .evgcard .mlink{color:#7A5600}
 @media (prefers-reduced-motion:reduce){.evgcard::before{animation:none}}
 .evgend textarea{width:100%;box-sizing:border-box;border:2px solid var(--line);border-radius:14px;padding:10px 12px;font:inherit;background:var(--surface);color:inherit;resize:vertical}
+.rtabs{display:flex;gap:8px;margin:0 0 16px}
+.rtab{position:relative;flex:1;border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;background:var(--surface);color:inherit;font:inherit;font-weight:900;font-size:14px;padding:11px 4px;cursor:pointer;overflow:hidden;white-space:nowrap}
+.rtab .gdot{top:6px;right:6px;width:10px;height:10px}
+.rtab.on{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,var(--surface));color:var(--blue)}
+.rtab.r-evg{background:linear-gradient(150deg,#FFF3B8,#FFD95A 55%,#F2B705);border-color:#E5A600;color:#4A3500}
+.rtab.r-evg.on{border-color:#B07A00;box-shadow:0 0 0 2px rgba(229,166,0,.45)}
+.rtab.r-evg::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.75) 50%,transparent 62%);background-size:300% 100%;background-position:150% 0;background-repeat:no-repeat;animation:btnShine 4.5s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.rtab.r-evg::before{animation:none}}
 .grec{display:block;margin-top:4px;font-size:12px;font-weight:800;opacity:.9}
 .rivalbox{margin:12px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#FF9600 14%,var(--surface));font-weight:700}
 .lf:has(#sgf:empty){display:none}
@@ -9869,7 +9877,7 @@ function renderTabs(){
   tabs.push(['me','Perfil',IC.trophy]);
   const pend=(typeof giftN==='function'?giftN():0)+(typeof frPend==='function'?frPend():0);
   $('#tabs').firstElementChild.innerHTML=tabs.map(t=>{const on=TAB===t[0]||(t[0]==='me'&&TAB==='set');
-    return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(((t[0]==='fr'&&pend&&frActive())||(t[0]==='games'&&frInviteN()>0)||(t[0]==='review'&&(!retoSeen()||!nwSeen('evg')))||(t[0]==='games'&&nwAny()))?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
+    return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(((t[0]==='fr'&&pend&&frActive())||(t[0]==='games'&&frInviteN()>0)||(t[0]==='review'&&nwRetoAny())||(t[0]==='games'&&nwAny()))?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
 }
 /* ============================================================
    LA LLAMITA DE LAMPY
@@ -9974,7 +9982,7 @@ function gkReviewHTML(){
   const seen=gkSeen(),ready=seen.length>=3;
   const weak=seen.map(id=>({id,s:S.gw[id].c-S.gw[id].w*1.5})).sort((a,b)=>a.s-b.s).slice(0,6);
   return '<h1 class=\"page\">Repaso</h1>'+
-   '<section class=\"revhero\">'+mascot(ready?'think':'happy',90)+'<div style=\"flex:1\"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Repasa las palabras griegas que más te cuestan. Llevas <b>'+seen.length+'</b> de '+GK_DICT.length+'.':'Haz lecciones de palabras griegas y aquí aparecerán las que practiques.')+'</p>'+
+   '<section class=\"revhero\">'+'<div style=\"flex:1\"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Repasa las palabras griegas que ya practicaste, empezando por las que más te cuestan. Has visto <b>'+seen.length+'</b> de las '+GK_DICT.length+' palabras del curso.':'Haz lecciones de palabras griegas y aquí aparecerán las que practiques.')+'</p>'+
    '<button class=\"btn orange\" data-a=\"review\" '+(ready?'':'disabled')+'>'+(ready?'Empezar repaso':'Bloqueado')+'</button></div></section>'+
    (ready?'<h3 style=\"margin:18px 0 8px\">Las que más te cuestan</h3><div class=\"list\">'+weak.map(w=>{const e=GK_BY[w.id],l=lvlScore(w.s);return '<div class=\"li\"><cite class=\"gk\">'+esc(e.g)+'</cite> <span class=\"lvl\" style=\"background:'+l.c+'\">'+l.t+'</span><p>'+esc(e.tr+' — '+e.es)+'</p><div class=\"meter\"><i style=\"width:'+l.w+'%;background:'+l.c+'\"></i></div></div>';}).join('')+'</div>':'');
 }
@@ -9982,7 +9990,7 @@ function bioPool(){const o=[];BIO_UNITS.forEach(u=>u.lessons.forEach(l=>{if(S.do
 function bioReviewHTML(){
   const n=bioDone(),ready=n>=1;
   return '<h1 class="page">Repaso</h1>'+
-   '<section class="revhero">'+mascot(ready?'think':'happy',90)+'<div style="flex:1"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Repasa preguntas de las biografías que ya estudiaste. Llevas <b>'+n+'</b> de '+BIOKEYS.length+' lecciones.':'Completa tu primera biografía y aquí podrás repasarla.')+'</p>'+
+   '<section class="revhero">'+'<div style="flex:1"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Repasa preguntas de las biografías que ya estudiaste. Has completado <b>'+n+'</b> de '+BIOKEYS.length+' biografías.':'Completa tu primera biografía y aquí podrás repasarla.')+'</p>'+
    '<button class="btn orange" data-a="review" '+(ready?'':'disabled')+'>'+(ready?'Empezar repaso':'Bloqueado')+'</button></div></section>';
 }
 /* ===== RETO: el versículo de la semana (se borra por niveles; lo completas escribiendo o diciéndolo) ===== */
@@ -10039,7 +10047,7 @@ function memHTML(){
    res+'</section>';
 }
 function memAct(a,b){
-  const m=S.mem;if(!m)return;
+  nwMark('rt_mem');const m=S.mem;if(!m)return;
   if(a==='mem-peek'){const i=$('#memin');MEM.txt=i?i.value:MEM.txt;MEM.show=!MEM.show;render();}
   else if(a==='mem-mic')memMic();
   else if(a==='mem-chk'){const i=$('#memin');memCheck(i?i.value:MEM.txt);}
@@ -10068,8 +10076,20 @@ function memCheck(text){
   MEM.res={ok:true,adv:adv};MEM.txt='';beep('win');haptic([20,40,20]);if(adv)confetti(m.lvl>4?160:70);
   render();
 }
-function retoSec(e,t,d){return '<div class="rsec"><h2><span aria-hidden="true">'+e+'</span> '+t+'</h2><p>'+d+'</p></div>';}
-function reviewHTML(){return '<h1 class="page">Reto</h1>'+(memHTML()?retoSec('📖','Memoriza la Palabra','Un versículo por semana, en cuatro niveles')+memHTML():'')+retoSec('🕯️','Comparte el Evangelio','Un mensaje breve para alguien que lo necesite')+evgCardHTML()+retoSec('🔁','Repasa lo aprendido','Los versículos que más te cuestan')+reviewHTML0().replace('<h1 class="page">Repaso</h1>','').replace('<h1 class="page">Repaso</h1>','<h3 class="repttl">Repaso</h3>');}
+const RT={k:''};
+function mascotSport(size){
+  const m=mascot('cheer',size),i=m.lastIndexOf('</g></svg>');
+  const acc='<path d="M82 47Q94 44 97 54Q90 50 83 52Z" fill="#E03A3A"/><path d="M80 48Q92 50 95 62Q87 56 80 53Z" fill="#C82E2E"/><path d="M16 49Q50 28 84 49" fill="none" stroke="#E03A3A" stroke-width="6.5" stroke-linecap="round"/><path d="M16 49Q50 28 84 49" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.6" stroke-dasharray="2 5"/><path d="M90 30q4 6 0 9q-4-3 0-9z" fill="#5BC0F8"/>';
+  return i<0?m:m.slice(0,i)+acc+m.slice(i);
+}
+const RT_T=[['mem','📖','Memoriza','¡Un versículo por semana! Apréndelo en cuatro niveles.'],['evg','🕯️','Evangeliza','¡Comparte la esperanza que tienes en Cristo!'],['rev','🔁','Repasa','¡Entrena lo que ya aprendiste para no olvidarlo!']];
+function reviewHTML(){
+  const mh=memHTML();if(!RT.k||(RT.k==='mem'&&!mh))RT.k=mh?'mem':'evg';
+  const cur=RT_T.find(t=>t[0]===RT.k);
+  const pills='<div class="rtabs" role="tablist">'+RT_T.map(t=>'<button role="tab" aria-selected="'+(RT.k===t[0])+'" class="rtab r-'+t[0]+(RT.k===t[0]?' on':'')+'" data-a="rt-tab" data-k="'+t[0]+'"><span aria-hidden="true">'+t[1]+'</span> '+t[2]+(nwSeen('rt_'+t[0])?'':'<i class="gdot" aria-label="Nuevo"></i>')+'</button>').join('')+'</div>';
+  const body=RT.k==='mem'?mh:RT.k==='evg'?evgCardHTML():reviewHTML0().replace('<h1 class="page">Repaso</h1>','');
+  return '<h1 class="page">Reto</h1><div class="hero">'+mascotSport(84)+'<div class="bubble">'+cur[3]+'</div></div>'+pills+body;
+}
 function reviewHTML0(){
   if(S.course==='gk')return gkReviewHTML();
   if(S.course==='bio')return bioReviewHTML();
@@ -10077,7 +10097,7 @@ function reviewHTML0(){
   const ready=seen.length>=3;
   const weak=seen.map(r=>({r,s:S.verses[r].c-S.verses[r].w*1.5})).sort((a,b)=>a.s-b.s).slice(0,6);
   return '<h1 class="page">Repaso</h1>'+
-   '<section class="revhero">'+mascot(ready?'think':'happy',90)+'<div style="flex:1"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Repasa los versículos que más te cuestan. Llevas <b>'+seen.length+'</b> de '+ALLV.length+'.':'Haz tu primera lección y aquí aparecerán tus versículos.')+'</p>'+
+   '<section class="revhero">'+'<div style="flex:1"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Repasa los versículos que ya viste en las lecciones, empezando por los que más te cuestan. Has visto <b>'+seen.length+'</b> de los '+ALLV.length+' versículos del curso.':'Haz tu primera lección y aquí aparecerán tus versículos.')+'</p>'+
    '<button class="btn orange" data-a="review" '+(ready?'':'disabled')+'>'+(ready?'Empezar repaso':'Bloqueado')+'</button></div></section>'+
    (ready?'<h3 style="margin:18px 0 8px">Los que más te cuestan</h3><div class="list">'+weak.map(w=>{const l=lvlOf(w.r);return '<div class="li"><cite>'+esc(w.r)+'</cite> <span class="lvl" style="background:'+l.c+'">'+l.t+'</span><p>'+esc(VBY[w.r].t)+'</p><div class="meter"><i style="width:'+l.w+'%;background:'+l.c+'"></i></div></div>';}).join('')+'</div>':'');
 }
@@ -10996,11 +11016,12 @@ const DECKS={quien:dQuien,pers:dPers,vf:dVF,comp:dComp,libros:dLibros,conv:dConv
    · «Comparte la fe en Cristo»: un mensaje corto que se abre desde un enlace (sin instalar nada ni dar datos)
      y que se comparte por WhatsApp; insignia de cobre, plata y oro según cuántas veces se comparte.
    ============================================================ */
-const NW_SOLO=['sg_mix','sg_img','sg_cad','sg_det','sg_bib','sg_tl','sg_sopa'],NW_FR=['rm_wsop','rm_draw','rm_mime'],NW_NEW=NW_SOLO.concat(NW_FR,['evg']);
+const NW_SOLO=['sg_mix','sg_img','sg_cad','sg_det','sg_bib','sg_tl','sg_sopa'],NW_FR=['rm_wsop','rm_draw','rm_mime'],NW_NEW=NW_SOLO.concat(NW_FR,['evg','rt_mem','rt_evg','rt_rev']);
 function nwGet(){try{return JSON.parse(localStorage.getItem('lampy_nw')||'{}')||{};}catch(e){return null;}}
 function nwSeen(id){const o=nwGet();return o===null?true:!!o[id];}
 function nwMark(id){try{const o=nwGet()||{};if(!o[id]){o[id]=1;localStorage.setItem('lampy_nw',JSON.stringify(o));}}catch(e){}}
 const nwDot=id=>(NW_NEW.indexOf(id)>=0&&!nwSeen(id))?'<i class="gdot" aria-label="Nuevo"></i>':'';
+const nwRetoAny=()=>['rt_mem','rt_evg','rt_rev'].some(i=>!nwSeen(i));
 function nwAny(){return NW_SOLO.some(i=>!nwSeen(i))||(famOn()&&NW_FR.some(i=>!nwSeen(i)));}
 function nwSecDot(k){const on=k==='solo'?NW_SOLO.some(i=>!nwSeen(i)):k==='on'?(famOn()&&NW_FR.some(i=>!nwSeen(i))):false;return on?'<i class="gdot inl" aria-label="Nuevo"></i>':'';}
 
@@ -13105,6 +13126,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='cw-'){cwAct(a,b);}
   else if(a.slice(0,3)==='sg-'){sgAct(a,b);}
   else if(a.slice(0,4)==='evg-'){evgAct(a,b);}
+  else if(a==='rt-tab'){const i=$('#memin');if(i)MEM.txt=i.value;RT.k=b.dataset.k;nwMark('rt_'+RT.k);render();}
   else if(a.slice(0,3)==='xg-'){xgAct(a,b);}
   else if(a.slice(0,3)==='cd-'){cdAct(a,b);}
   else if(a.slice(0,3)==='xw-'){xwAct(a,b);}
