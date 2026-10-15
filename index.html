@@ -403,6 +403,29 @@ h1,h2,h3,h4{font-weight:900}
 .card.votd.vmini .vch{width:22px;height:22px}
 .rtabs{z-index:3}
 .rf .rtab.on{margin-bottom:-3px;padding-bottom:15px}
+.avsvg{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.2em;border-radius:50%;overflow:hidden;flex:none}
+.avE{transform-box:fill-box;transform-origin:50% 50%;animation:avBlink 5s infinite}
+@keyframes avBlink{0%,92%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.08)}}
+@media (prefers-reduced-motion:reduce){.avE{animation:none}}
+.avpick{width:100%;display:flex;align-items:center;gap:14px;text-align:left;font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;padding:10px 14px;margin:6px 0 12px;cursor:pointer}
+.avpick .avpv{font-size:48px;line-height:1;display:grid;place-items:center;width:64px;height:64px;flex:none}
+.avpick .avpv .avsvg{width:64px;height:64px;vertical-align:baseline}
+.avpick .avpt{display:flex;flex-direction:column}.avpick .avpt b{font-size:17px;color:var(--blue)}.avpick .avpt small{color:var(--muted,#777);font-weight:700}
+.overlay.avxov{z-index:300000}
+.avxbig{width:min(210px,56vw);aspect-ratio:1;margin:6px auto 8px}.avxbig .avsvg{width:100%;height:100%;display:block}
+.avxc{display:flex;justify-content:center;margin:0 0 14px}
+.avxrow{margin:0 0 16px}
+.avxlab{display:block;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#777);margin:0 0 8px}
+.avxsw{display:flex;flex-wrap:wrap;gap:8px}
+.avxsw button{width:36px;height:36px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 2px var(--line);padding:0;cursor:pointer}
+.avxsw button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--blue)}
+.avxseg{display:flex;gap:8px}.avxseg.w{display:grid;grid-template-columns:1fr 1fr}
+.avxopt{flex:1;font:inherit;font-weight:900;color:inherit;background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;padding:10px 8px;cursor:pointer}
+.avxopt[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-ink,var(--blue))}
+.avxsty{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.avxsty button{font:inherit;color:inherit;font-weight:800;font-size:12px;display:grid;gap:4px;justify-items:center;padding:6px;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);cursor:pointer}
+.avxsty button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-bg)}
+.avxmini{width:56px;height:56px;display:block}.avxmini .avsvg{width:100%;height:100%;display:block}.avxmini .avE{animation:none}
 .grec{display:block;margin-top:4px;font-size:12px;font-weight:800;opacity:.9}
 .rivalbox{margin:12px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#FF9600 14%,var(--surface));font-weight:700}
 .lf:has(#sgf:empty){display:none}
@@ -1551,7 +1574,107 @@ BANCO_TL.push({"title":"Personajes bíblicos (versión anterior)","sub":"Quién 
    UTILIDADES
    ============================================================ */
 const $=s=>document.querySelector(s);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const escx=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* Avatar de Lampy: la cara de Lampy contenta con sexo, piel, cabello, peinado, gafas y barba. Se guarda como un código de 7 caracteres, por ejemplo @f250000 */
+const AV_RE=/^@([fm])([0-7])([0-6])([0-5])([0-2])([0-3])/;
+const AVX=(function(){
+const SKIN=['#FFE0C7','#F8CBA4','#EDB68A','#D99A6C','#B97A4F','#8D5A3A','#6B4128','#4A2C1B'];
+const SKIN_N=['Muy claro','Claro','Trigueño claro','Trigueño','Canela','Moreno','Moreno oscuro','Oscuro'];
+const HAIR=['#1F1A17','#4A2E1E','#7A4A2A','#B07A3A','#E0B65A','#B5502A','#A9A9AE'];
+const HAIR_N=['Negro','Castaño oscuro','Castaño','Miel','Rubio','Pelirrojo','Canoso'];
+const BG='#CFEFFD';
+const GAF=['Sin gafas','Redondas','Cuadradas'];
+const BAR=['Sin barba','Bigote','Barba corta','Barba larga'];
+const SH=(c,a)=>{const n=parseInt(c.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=a<0?0:255,p=Math.abs(a);r=Math.round((f-r)*p+r);g=Math.round((f-g)*p+g);b=Math.round((f-b)*p+b);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);};
+/* Cada peinado: back va detrás de la cabeza y el torso, mid sobre el torso (mechones al frente), front encima de la cara.
+   g = relleno con degradado del color; L = reflejos; D = sombra. */
+const ST={
+ f:[
+  {n:'Larga',
+   back:(g,L,D)=>`<path d="M21 64C14 28 36 10 60 10C84 10 106 28 99 64C98 84 103 102 108 118L12 118C17 102 22 84 21 64Z" fill="${g}"/>`,
+   mid:(g,L,D)=>`<path d="M30 44C19 54 15 82 19 118L47 118C39 102 37 84 36 66C35 56 33 48 30 44Z" fill="${g}"/><path d="M90 44C101 54 105 82 101 118L73 118C81 102 83 84 84 66C85 56 87 48 90 44Z" fill="${g}"/><path d="M26 74C25 90 25 104 27 114M94 74C95 90 95 104 93 114" stroke="${D}" stroke-width="1.4" stroke-linecap="round" fill="none" opacity=".35"/><path d="M27 60C25 68 24 74 24 80M93 60C95 68 96 74 96 80" stroke="${L}" stroke-width="2" stroke-linecap="round" fill="none" opacity=".5"/>`,
+   front:(g,L,D)=>`<path d="M25 64C22 34 40 18 62 18C84 18 98 34 95 64C94 52 90 44 82 38C74 46 58 48 44 46C36 50 29 56 25 64Z" fill="${g}"/><path d="M82 38C76 30 68 24 60 22" stroke="${D}" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/><path d="M36 30C44 22 54 20 64 21M30 48C32 42 35 38 39 35" stroke="${L}" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".55"/>`},
+  {n:'Corto',
+   back:(g,L,D)=>`<path d="M21 62C14 28 36 10 60 10C84 10 106 28 99 62C101 76 103 88 98 96C92 100 84 96 80 90L40 90C36 96 28 100 22 96C17 88 19 76 21 62Z" fill="${g}"/>`,
+   mid:(g,L,D)=>'',
+   front:(g,L,D)=>`<path d="M25 62C22 34 40 18 62 18C84 18 98 34 95 62C92 50 84 40 64 40C46 40 32 48 25 62Z" fill="${g}"/><path d="M40 42C32 46 27 54 25 62M80 42C88 46 93 54 95 62" stroke="${D}" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".6"/><path d="M38 28C46 22 58 20 70 22" stroke="${L}" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".55"/>`},
+  {n:'Coleta',
+   back:(g,L,D)=>`<path d="M25 54C18 26 38 6 62 6C88 6 106 26 97 54C88 48 34 48 25 54Z" fill="${g}"/><path d="M84 30C108 24 120 52 110 80C107 90 102 98 98 108C99 92 98 76 90 60C88 48 86 38 84 30Z" fill="${g}"/><path d="M99 52C104 62 104 76 100 90" stroke="${L}" stroke-width="2" fill="none" stroke-linecap="round" opacity=".5"/>`,
+   mid:(g,L,D)=>'',
+   front:(g,L,D)=>`<path d="M24 62C20 30 40 14 62 14C84 14 100 30 96 62C92 50 82 40 62 38C42 40 30 50 24 62Z" fill="${g}"/><path d="M34 30C42 20 54 15 70 16" stroke="${L}" stroke-width="3" fill="none" stroke-linecap="round" opacity=".55"/><path d="M62 14C62 24 61 32 58 38" stroke="${D}" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".5"/><path d="M89 30C94 36 97 42 98 50" stroke="#E03A3A" stroke-width="5" stroke-linecap="round" fill="none"/>`},
+  {n:'Trenzas',
+   back:(g,L,D)=>`<path d="M23 62C20 32 40 16 62 16C84 16 100 32 97 62Z" fill="${g}"/>`,
+   mid:(g,L,D)=>{const br=(x,s)=>[0,1,2,3,4].map(i=>`<ellipse cx="${x+(i%2?1.6:-1.6)*s}" cy="${80+i*8.6}" rx="6.2" ry="5.2" fill="${g}" transform="rotate(${i%2?-22:22} ${x} ${80+i*8.6})"/><path d="M${x-4} ${80+i*8.6}q4 3 8 0" stroke="${D}" stroke-width="1.4" fill="none" opacity=".7"/>`).join('');return br(24,1)+br(96,-1)+`<circle cx="24" cy="118" r="3.6" fill="#E03A3A"/><circle cx="96" cy="118" r="3.6" fill="#E03A3A"/>`;},
+   front:(g,L,D)=>`<path d="M25 62C22 34 40 18 62 18C84 18 98 34 95 62C92 50 82 40 62 38C42 40 30 50 25 62Z" fill="${g}"/><path d="M62 18C62 26 61 33 58 38" stroke="${D}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".7"/><path d="M36 30C44 23 54 20 60 20M66 20C74 21 82 25 88 32" stroke="${L}" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".55"/>`},
+  {n:'Moño',
+   back:(g,L,D)=>`<circle cx="60" cy="14" r="14" fill="${g}"/><path d="M50 12C54 6 64 6 69 12C72 17 68 22 62 21" stroke="${D}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".7"/><path d="M51 9C55 6 59 5 63 6" stroke="${L}" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".6"/>`,
+   mid:(g,L,D)=>'',
+   front:(g,L,D)=>`<path d="M26 62C23 34 40 20 62 20C84 20 97 34 94 62C92 48 84 38 62 36C42 38 30 48 26 62Z" fill="${g}"/><path d="M38 30C46 24 56 22 66 23" stroke="${L}" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".55"/>`},
+  {n:'Rizos largos',
+   back:(g,L,D)=>{const c=[[22,50,13],[16,70,14],[20,92,13],[24,110,11],[98,50,13],[104,70,14],[100,92,13],[96,110,11],[38,22,14],[60,16,15],[82,22,14],[28,34,13],[92,34,13]];return c.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${g}"/>`).join('');},
+   mid:(g,L,D)=>'',
+   front:(g,L,D)=>{const c=[[30,40,8.5],[41,31,9],[54,27,9.5],[67,27,9.5],[79,31,9],[90,40,8.5]];return c.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${g}"/><path d="M${x-r*.5} ${y-r*.2}q${r*.5} -${r*.6} ${r} -${r*.1}" stroke="${L}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".6"/>`).join('');}}
+ ],
+ m:[
+  {n:'Corto',
+   back:()=>'',mid:()=>'',
+   front:(g,L,D)=>`<path d="M26 62C21 32 40 16 62 16C84 16 99 32 94 62C93 52 89 44 83 40C72 44 56 40 42 38C34 42 28 50 26 62Z" fill="${g}"/><path d="M38 28C46 21 58 18 70 20M30 46C32 40 36 36 40 34" stroke="${L}" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".55"/><path d="M52 24C56 28 60 31 66 33M70 22C74 26 78 30 82 34" stroke="${D}" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".6"/>`},
+  {n:'Rapado',
+   back:()=>'',mid:()=>'',
+   front:(g,L,D)=>`<path d="M28 60C25 36 40 24 60 24C80 24 95 36 92 60C91 52 88 46 82 43C68 38 52 38 38 43C32 46 29 52 28 60Z" fill="${g}" opacity=".88"/><path d="M36 34C44 28 54 26 64 27" stroke="${L}" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".5"/>`},
+  {n:'De lado',
+   back:()=>'',mid:()=>'',
+   front:(g,L,D)=>`<path d="M25 62C19 30 40 14 66 15C90 16 101 36 94 62C93 52 89 46 82 42C70 34 50 34 40 46C34 50 28 56 25 62Z" fill="${g}"/><path d="M66 15C58 22 52 30 42 36" stroke="${D}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".7"/><path d="M42 26C52 18 66 16 78 20M82 30C86 34 88 38 89 44" stroke="${L}" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".55"/>`},
+  {n:'Abuelo',
+   back:(g,L,D)=>`<path d="M31 42C18 42 12 58 15 72C17 78 22 80 26 77C22 68 23 58 32 52Z" fill="${g}"/><path d="M89 42C102 42 108 58 105 72C103 78 98 80 94 77C98 68 97 58 88 52Z" fill="${g}"/><path d="M20 56C18 62 18 68 21 73M100 56C102 62 102 68 99 73" stroke="${L}" stroke-width="1.8" stroke-linecap="round" fill="none" opacity=".55"/>`,mid:()=>'',
+   front:(g,L,D)=>`<path d="M42 31C50 25 60 23 70 25" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".4"/>`},
+  {n:'Rizos',
+   back:()=>'',mid:()=>'',
+   front:(g,L,D)=>{const c=[[30,52,9],[32,40,10.5],[42,30,11],[55,25,11.5],[69,25,11.5],[81,31,11],[89,42,10],[91,54,8]];return c.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${g}"/>`).join('')+c.map(([x,y,r])=>`<path d="M${x-r*.55} ${y-r*.1}q${r*.5} -${r*.7} ${r*1.1} -${r*.15}" stroke="${L}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".6"/>`).join('');}},
+  {n:'Sin cabello',
+   back:()=>'',mid:()=>'',
+   front:(g,L,D)=>`<path d="M38 30C46 24 56 22 66 24" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".45"/>`}
+ ]
+};
+/* Cara: la misma de Lampy contento (ojos con brillo, mejillas rosadas, sonrisa). */
+function face(skin){
+  const d=SH(skin,-.14);
+  return `<ellipse cx="25" cy="68" rx="6" ry="8" fill="${skin}"/><ellipse cx="95" cy="68" rx="6" ry="8" fill="${skin}"/>`+
+  `<rect x="48" y="86" width="24" height="22" rx="8" fill="${d}"/>`+
+  `<path d="M14 120C14 100 34 94 60 94C86 94 106 100 106 120Z" fill="#1CB0F6"/><path d="M48 94C52 104 68 104 72 94Z" fill="${d}"/>`+
+  `<ellipse cx="60" cy="62" rx="34" ry="36" fill="${skin}"/>`+
+  `<circle cx="39" cy="72" r="5.6" fill="#FF8FA3" opacity=".7"/><circle cx="81" cy="72" r="5.6" fill="#FF8FA3" opacity=".7"/>`+
+  `<g class="avE" style="animation-duration:${(4+Math.random()*2.6).toFixed(1)}s;animation-delay:-${(Math.random()*5).toFixed(1)}s"><ellipse cx="46" cy="64" rx="4.6" ry="5.4" fill="#3C3C3C"/><ellipse cx="74" cy="64" rx="4.6" ry="5.4" fill="#3C3C3C"/><circle cx="47.7" cy="62" r="1.8" fill="#fff"/><circle cx="75.7" cy="62" r="1.8" fill="#fff"/></g>`+
+  `<path d="M48 76q12 11 24 0" fill="none" stroke="#3C3C3C" stroke-width="3.4" stroke-linecap="round"/>`;
+}
+let GID=0;
+function beard(a,g,L,D){
+  if(!a.b||a.s!=='m')return '';
+  const must=`<path d="M45 73C49 68 55 69 60 72C65 69 71 68 75 73C71 77 65 75 60 74C55 75 49 77 45 73Z" fill="${g}"/>`;
+  const hole='M46 75C50 74 70 74 74 75C75 79 70 85 60 85C50 85 45 79 46 75Z';
+  const top='C92 66 90 69 86 71C80 70 74 69 70 70L50 70C46 69 40 70 34 71C30 69 28 66 26 62Z';
+  const jaw=`<path fill-rule="evenodd" d="M26 62C25 86 40 99 60 99C80 99 95 86 94 62${top.replace('C92 66','C92 66')} ${hole}" fill="${g}"/>`;
+  const long=`<path fill-rule="evenodd" d="M25 62C23 96 40 119 60 121C80 119 97 96 95 62${top.replace('C92 66','C92 66')} ${hole}" fill="${g}"/><path d="M44 98C48 106 52 112 56 116M76 98C72 106 68 112 64 116M60 92V114" stroke="${D}" stroke-width="1.4" stroke-linecap="round" fill="none" opacity=".4"/><path d="M34 90C36 100 42 108 50 114" stroke="${L}" stroke-width="2" stroke-linecap="round" fill="none" opacity=".45"/>`;
+  return a.b===1?must:a.b===2?jaw+must:long+must;
+}
+function glasses(a){
+  if(!a.g)return '';
+  const f='#2B3340',lens='<ellipse/>';
+  const sh=a.g===1
+   ?`<circle cx="46" cy="64" r="9.6" fill="#fff" fill-opacity=".18" stroke="${f}" stroke-width="2.4"/><circle cx="74" cy="64" r="9.6" fill="#fff" fill-opacity=".18" stroke="${f}" stroke-width="2.4"/>`
+   :`<rect x="35" y="55" width="22" height="17" rx="4" fill="#fff" fill-opacity=".18" stroke="${f}" stroke-width="2.4"/><rect x="63" y="55" width="22" height="17" rx="4" fill="#fff" fill-opacity=".18" stroke="${f}" stroke-width="2.4"/>`;
+  return sh+`<path d="M55.6 63Q60 60 64.4 63M36 62L27 60M84 62L93 60" stroke="${f}" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M38 58L43 57" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>`;
+}
+function avatar(a){
+  const id='av'+(++GID),c=HAIR[a.c],st=ST[a.s][a.h],g='url(#'+id+')',L=SH(c,.4),D=SH(c,-.35);
+  return `<svg class="avsvg" viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${SH(c,.16)}"/><stop offset="1" stop-color="${SH(c,-.22)}"/></linearGradient></defs><rect width="120" height="120" fill="${BG}"/>${st.back(g,L,D)}${face(SKIN[a.k])}${beard(a,g,L,D)}${st.mid(g,L,D)}${st.front(g,L,D)}${glasses(a)}</svg>`;
+}
+
+  const code=a=>'@'+a.s+a.k+a.c+a.h+(a.g||0)+(a.s==='m'?(a.b||0):0);
+  const parse=m=>({s:m[1],k:+m[2],c:+m[3],h:+m[4],g:+m[5],b:m[1]==='m'?+m[6]:0});
+  return {svg:avatar,code,parse,SKIN,SKIN_N,HAIR,HAIR_N,ST,GAF,BAR};
+})();
+const esc=s=>{s=String(s);if(s.charCodeAt(0)===64){const m=AV_RE.exec(s);if(m)return AVX.svg(AVX.parse(m))+escx(s.slice(m[0].length));}return escx(s);};
 const rnd=n=>Math.floor(Math.random()*n);
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
 const pad=n=>String(n).padStart(2,'0');
@@ -8002,7 +8125,7 @@ function welcomeRender(){
   el.innerHTML='<div class="auin"><div class="aurow">'+mascot('wink',104)+'</div><h1>'+(nw?'¡Bienvenido a Lampy!':'Un paso más')+'</h1>'+
     '<p class="ausub">'+(nw?'Aprende la Biblia un poco cada día. ':'')+'Primero dinos cómo te llamas: así te reconocerán tu familia y tus amigos.</p>'+
     '<input id="welname" class="inp" maxlength="24" placeholder="Tu nombre" autocomplete="given-name" value="'+esc(WEL.name)+'" aria-label="Tu nombre">'+
-    '<div class="welav">'+FAM_AV.map(a=>'<button class="avb '+(WEL.avatar===a?'on':'')+'" data-a="wel-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+'</div>'+
+    avxPickHTML('wel',WEL.avatar)+
     (WEL.msg?'<p class="aumsg" role="alert">'+esc(WEL.msg)+'</p>':'')+
     '<button class="btn" data-a="wel-go">'+(nw?'Empezar':'Continuar')+'</button>'+
     (cloudOn()&&!signedIn()?'<button class="link-plain" data-a="auth-open">Ya tengo cuenta · entrar con mi correo</button>':'')+'</div>';
@@ -8046,7 +8169,7 @@ async function frEnsure(){
 }
 function meStripHTML(){
   const me=S.me||{name:'',avatar:'🙂'},c=S.fr&&S.fr.code;
-  return '<button class="mestrip" data-a="fr-edit" aria-label="Cambiar nombre, emoji o código"><span class="fav big">'+esc(me.avatar||'🙂')+'</span><span class="mt"><b>'+esc(me.name||'Sin nombre')+'</b><small>'+(c?'Código: <u>'+esc(c)+'</u>':'Toca para poner tu nombre')+'</small></span><svg class="mpen" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg></button>';
+  return '<button class="mestrip" data-a="fr-edit" aria-label="Cambiar nombre, avatar o código"><span class="fav big">'+esc(me.avatar||'🙂')+'</span><span class="mt"><b>'+esc(me.name||'Sin nombre')+'</b><small>'+(c?'Código: <u>'+esc(c)+'</u>':'Toca para poner tu nombre')+'</small></span><svg class="mpen" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg></button>';
 }
 function privCardHTML(){
   const d=FR&&FR.data&&FR.data.me;
@@ -8286,12 +8409,61 @@ async function frNewCode(){
     else toast(famMsg(r&&r.error));
   }catch(e){toast(frMsg(e));}
 }
+/* ---------- Editor de avatar (pantalla completa) ---------- */
+let AVE=null;
+const AVX_CUR=t=>t==='wel'?WEL.avatar:t==='frm'?FRM.avatar:FRE.avatar;
+function avxPickHTML(t,cur){
+  const m=AV_RE.test(String(cur||''));
+  return '<button class="avpick" data-a="avx-open" data-t="'+t+'"><span class="avpv">'+esc(cur||'🙂')+'</span><span class="avpt"><b>'+(m?'Cambiar mi avatar':'Crear mi avatar')+'</b><small>Piel, cabello, gafas y más</small></span></button>';
+}
+function avxOpen(t){
+  if(t==='frm'){const i=$('#frmname');if(i)FRM.name=i.value;}
+  if(t==='wel'){const i=$('#welname');if(i)WEL.name=i.value;}
+  if(t==='fre'){const i=$('#frname');if(i)FRE.name=i.value;}
+  const m=AV_RE.exec(String(AVX_CUR(t)||''));
+  AVE={t,a:m?AVX.parse(m):{s:'f',k:2,c:2,h:0,g:0,b:0}};
+  let el=document.getElementById('avx');
+  if(!el){el=document.createElement('div');el.id='avx';el.className='overlay avxov';document.body.appendChild(el);}
+  el.hidden=false;avxRender();
+}
+function avxClose(){const el=document.getElementById('avx');if(el){el.hidden=true;el.innerHTML='';}AVE=null;}
+function avxRender(){
+  const el=document.getElementById('avx');if(!el||!AVE)return;
+  const a=AVE.a,old=el.querySelector('.lb'),top=old?old.scrollTop:0;
+  const sw=(arr,key,cur,names)=>'<div class="avxsw">'+arr.map((c,i)=>'<button type="button" aria-label="'+names[i]+'" aria-pressed="'+(cur===i)+'" data-a="avx-'+key+'" data-v="'+i+'" style="background:'+c+'"></button>').join('')+'</div>';
+  const seg=(arr,key,cur)=>'<div class="avxseg">'+arr.map((x,i)=>'<button type="button" class="avxopt" aria-pressed="'+(cur===i)+'" data-a="avx-'+key+'" data-v="'+i+'">'+x+'</button>').join('')+'</div>';
+  el.innerHTML='<div class="lh"><button class="x" data-a="avx-close" aria-label="Cerrar">'+IC.close+'</button><b style="flex:1;font-size:19px">Tu avatar</b></div>'+
+   '<div class="lb"><div class="avxbig">'+AVX.svg(a)+'</div><div class="avxc"><button class="btn ghost sm" data-a="avx-rand">🎲 Sorprenderme</button></div>'+
+   '<div class="avxrow"><span class="avxlab">Sexo</span><div class="avxseg">'+[['f','Mujer'],['m','Hombre']].map(x=>'<button type="button" class="avxopt" aria-pressed="'+(a.s===x[0])+'" data-a="avx-s" data-v="'+x[0]+'">'+x[1]+'</button>').join('')+'</div></div>'+
+   '<div class="avxrow"><span class="avxlab">Tono de piel</span>'+sw(AVX.SKIN,'k',a.k,AVX.SKIN_N)+'</div>'+
+   '<div class="avxrow"><span class="avxlab">Color de cabello</span>'+sw(AVX.HAIR,'c',a.c,AVX.HAIR_N)+'</div>'+
+   '<div class="avxrow"><span class="avxlab">Peinado</span><div class="avxsty">'+AVX.ST[a.s].map((x,i)=>'<button type="button" aria-pressed="'+(a.h===i)+'" data-a="avx-h" data-v="'+i+'"><span class="avxmini">'+AVX.svg(Object.assign({},a,{h:i}))+'</span>'+x.n+'</button>').join('')+'</div></div>'+
+   '<div class="avxrow"><span class="avxlab">Gafas</span>'+seg(AVX.GAF,'g',a.g||0)+'</div>'+
+   (a.s==='m'?'<div class="avxrow"><span class="avxlab">Barba</span><div class="avxseg w">'+AVX.BAR.map((x,i)=>'<button type="button" class="avxopt" aria-pressed="'+((a.b||0)===i)+'" data-a="avx-b" data-v="'+i+'">'+x+'</button>').join('')+'</div></div>':'')+
+   '</div><div class="lf"><div class="in"><button class="btn" data-a="avx-save">Guardar avatar</button></div></div>';
+  const nb=el.querySelector('.lb');if(nb)nb.scrollTop=top;
+}
+function avxAct(a,b){
+  if(a==='avx-open')return avxOpen(b.dataset.t);
+  if(a==='avx-close')return avxClose();
+  if(!AVE)return;
+  const A=AVE.a,v=b.dataset.v;
+  if(a==='avx-s'){A.s=v;A.h=0;if(v==='f')A.b=0;}
+  else if(a==='avx-k')A.k=+v;else if(a==='avx-c')A.c=+v;else if(a==='avx-h')A.h=+v;else if(a==='avx-g')A.g=+v;else if(a==='avx-b')A.b=+v;
+  else if(a==='avx-rand'){const R=n=>Math.floor(Math.random()*n),s=Math.random()<.5?'f':'m';Object.assign(A,{s,k:R(8),c:R(7),h:R(6),g:Math.random()<.3?1+R(2):0,b:s==='m'&&Math.random()<.45?1+R(3):0});}
+  else if(a==='avx-save'){
+    const code=AVX.code(A),t=AVE.t;avxClose();
+    if(t==='wel'){WEL.avatar=code;welcomeRender();}
+    else if(t==='frm'){FRM.avatar=code;frEditModal();}
+    else{FRE.avatar=code;render();}
+    return;
+  }
+  avxRender();
+}
 function frEditOpen(){FRM.ask=false;FRM.name=(S.me&&S.me.name)||(FR.data&&FR.data.me&&FR.data.me.name)||'';FRM.avatar=(S.me&&S.me.avatar)||(FR.data&&FR.data.me&&FR.data.me.avatar)||'🙂';frEditModal();}
 function frEditModal(){
   const ask=!!FRM.ask,cur=(FR.data&&FR.data.me&&FR.data.me.name)||'Jugador';
-  showModal('<h3>'+(ask?'¿Cómo te llamas?':'Mi perfil de amigos')+'</h3>'+(ask?'<p class="muted" style="margin:0">Tus amigos te ven como «'+esc(cur)+'». Pon tu nombre y elige tu emoji para que sepan quién eres.</p>':'')+'<input id="frmname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRM.name)+'" autocomplete="off" aria-label="Tu nombre"><div class="avs">'+
-    FAM_AV.map(a=>'<button class="avb '+(FRM.avatar===a?'on':'')+'" data-a="fr-medit-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+
-    '</div><button class="btn" data-a="fr-edit-save">Guardar</button>'+((!ask&&frActive())?'<button class="btn ghost" data-a="fr-code-ask">Cambiar mi código</button>':'')+'<button class="btn ghost" data-a="'+(ask?'fr-name-later':'stay')+'">'+(ask?'Después':'Cancelar')+'</button>');
+  showModal('<h3>'+(ask?'¿Cómo te llamas?':'Mi perfil de amigos')+'</h3>'+(ask?'<p class="muted" style="margin:0">Tus amigos te ven como «'+esc(cur)+'». Pon tu nombre y crea tu avatar para que sepan quién eres.</p>':'')+'<input id="frmname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRM.name)+'" autocomplete="off" aria-label="Tu nombre">'+avxPickHTML('frm',FRM.avatar)+'<button class="btn" data-a="fr-edit-save">Guardar</button>'+((!ask&&frActive())?'<button class="btn ghost" data-a="fr-code-ask">Cambiar mi código</button>':'')+'<button class="btn ghost" data-a="'+(ask?'fr-name-later':'stay')+'">'+(ask?'Después':'Cancelar')+'</button>');
 }
 async function frEditSave(){
   const nm=(($('#frmname')||{}).value||'').trim();
@@ -8352,9 +8524,9 @@ function frIntroHTML(){
     '<section class="card frhow"><b>Así funciona</b><p>Crea tu perfil y recibe tu código de usuario. Quien lo escriba podrá seguirte, y tú podrás seguir a quien quieras.</p>'+
     '<ul class="frlist"><li><span aria-hidden="true">🔥</span>Ves su racha y si ya practicaron hoy.</li><li><span aria-hidden="true">💪</span>Se mandan ánimo y se hacen regalos.</li><li><span aria-hidden="true">🎮</span>Se invitan a jugar en vivo.</li></ul></section>'+
     '<section class="sec"><h3>¿Cómo te llamas?</h3><input id="frname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRE.name)+'" autocomplete="off"></section>'+
-    '<section class="sec"><h3>Elige tu emoji</h3><div class="avs">'+FAM_AV.map(a=>'<button class="avb '+(FRE.avatar===a?'on':'')+'" data-a="fr-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+'</div></section>'+
+    '<section class="sec"><h3>Tu avatar</h3>'+avxPickHTML('fre',FRE.avatar)+'</section>'+
     '<button class="btn purple" data-a="fr-create">Crear mi perfil</button>'+
-    '<p class="foot">Quien te sigue ve tu nombre, tu emoji, tu racha, tus XP de la semana y si practicaste hoy. Nada más: no se comparte tu correo ni tu teléfono. Tú decides quién te sigue y puedes quitar seguidores cuando quieras.</p>';
+    '<p class="foot">Quien te sigue ve tu nombre, tu avatar, tu racha, tus XP de la semana y si practicaste hoy. Nada más: no se comparte tu correo ni tu teléfono. Tú decides quién te sigue y puedes quitar seguidores cuando quieras.</p>';
 }
 function frBoardHTML(d,limit){
   const mine=famStats();
@@ -13193,6 +13365,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='cw-'){cwAct(a,b);}
   else if(a.slice(0,3)==='sg-'){sgAct(a,b);}
   else if(a.slice(0,4)==='evg-'){evgAct(a,b);}
+  else if(a.slice(0,4)==='avx-'){avxAct(a,b);}
   else if(a==='rt-tab'){const i=$('#memin');if(i)MEM.txt=i.value;RT.k=b.dataset.k;nwMark('rt_'+RT.k);
     const live=document.querySelector('.rf'),bub=document.querySelector('.hero .bubble');
     if(live&&bub&&TAB==='review'){const t=document.createElement('div');t.innerHTML=reviewHTML();live.replaceWith(t.querySelector('.rf'));bub.innerHTML=t.querySelector('.hero .bubble').innerHTML;try{renderTabs();}catch(e){}}else render();}
