@@ -357,6 +357,17 @@ h1,h2,h3,h4{font-weight:900}
 .evgend{margin-top:18px;padding:14px;border-radius:16px;border:2px solid var(--line);background:var(--surface)}
 .evgb{display:flex;gap:8px}.evgb>div{flex:1;text-align:center;border:2px solid var(--line);border-radius:14px;padding:8px 4px;opacity:.55}.evgb>div.on{opacity:1;border-color:var(--gold,#E5A600);background:var(--gold-bg,#FFF6CC)}
 .evgb span{font-size:26px;display:block}.evgb b{display:block;font-size:14px}.evgb small{opacity:.7}
+.rsec{margin:22px 0 10px}.rsec h2{margin:0;font-size:22px}.rsec p{margin:2px 0 0;font-size:14px;color:var(--muted,#777);font-weight:700}
+.evgcard{position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF3B8,#FFD95A 55%,#F2B705);border:2px solid #E5A600;border-bottom-width:5px;color:#4A3500}
+.evgcard .mtag{color:#7A5600}.evgcard h2{color:#4A3500}.evgcard .muted{color:#6B4C00}
+.evgcard::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.75) 50%,transparent 62%);background-size:300% 100%;background-position:150% 0;background-repeat:no-repeat;animation:btnShine 4.5s ease-in-out infinite}
+.evgcard>*{position:relative;z-index:1}
+.evgcard .evgb>div{background:rgba(255,255,255,.55);border-color:rgba(122,86,0,.35);opacity:.6}
+.evgcard .evgb>div:nth-child(1) span{filter:sepia(1) saturate(2.5) hue-rotate(-15deg)}
+.evgcard .evgb>div.on{opacity:1;background:#fff;border-color:#B07A00}
+.evgcard .mlink{color:#7A5600}
+@media (prefers-reduced-motion:reduce){.evgcard::before{animation:none}}
+.evgend textarea{width:100%;box-sizing:border-box;border:2px solid var(--line);border-radius:14px;padding:10px 12px;font:inherit;background:var(--surface);color:inherit;resize:vertical}
 .grec{display:block;margin-top:4px;font-size:12px;font-weight:800;opacity:.9}
 .rivalbox{margin:12px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#FF9600 14%,var(--surface));font-weight:700}
 .lf:has(#sgf:empty){display:none}
@@ -10057,7 +10068,8 @@ function memCheck(text){
   MEM.res={ok:true,adv:adv};MEM.txt='';beep('win');haptic([20,40,20]);if(adv)confetti(m.lvl>4?160:70);
   render();
 }
-function reviewHTML(){return '<h1 class="page">Reto</h1>'+memHTML()+evgCardHTML()+reviewHTML0().replace('<h1 class="page">Repaso</h1>','<h3 class="repttl">Repaso</h3>');}
+function retoSec(e,t,d){return '<div class="rsec"><h2><span aria-hidden="true">'+e+'</span> '+t+'</h2><p>'+d+'</p></div>';}
+function reviewHTML(){return '<h1 class="page">Reto</h1>'+(memHTML()?retoSec('📖','Memoriza la Palabra','Un versículo por semana, en cuatro niveles')+memHTML():'')+retoSec('🕯️','Comparte el Evangelio','Un mensaje breve para alguien que lo necesite')+evgCardHTML()+retoSec('🔁','Repasa lo aprendido','Los versículos que más te cuestan')+reviewHTML0().replace('<h1 class="page">Repaso</h1>','').replace('<h1 class="page">Repaso</h1>','<h3 class="repttl">Repaso</h3>');}
 function reviewHTML0(){
   if(S.course==='gk')return gkReviewHTML();
   if(S.course==='bio')return bioReviewHTML();
@@ -10997,7 +11009,7 @@ const evgN=()=>((S.evg&&S.evg.n)||0);
 function evgLink(){const b=appLink()||(location.origin+location.pathname);return b+(b.indexOf('?')>=0?'&':'?')+'e=1';}
 function evgCardHTML(){
   const n=evgN(),next=EVG_LV.find(l=>n<l[0]);
-  return '<section class="memo evgcard"><div class="mtag">EVANGELISMO'+nwDot('evg')+'</div><h2>Comparte la fe en Cristo</h2>'+
+  return '<section class="memo evgcard"><div class="mtag">MENSAJE DE FE'+nwDot('evg')+'</div><h2>La fe en Cristo, en 6 pantallas</h2>'+
    '<p class="muted" style="margin:0 0 10px">Un mensaje corto para alguien que conozcas. Lo abre desde un enlace: no tiene que descargar nada ni dar datos.</p>'+
    '<div class="evgb">'+EVG_LV.map(l=>'<div class="'+(n>=l[0]?'on':'')+'"><span>'+l[2]+'</span><b>'+l[1]+'</b><small>'+l[0]+(l[0]===1?' vez':' veces')+'</small></div>').join('')+'</div>'+
    '<p class="muted" style="margin:10px 0 0;font-size:14px">'+(n?'Lo has compartido <b>'+n+'</b> '+(n===1?'vez':'veces')+'. ':'')+(next?'Te '+(next[0]-n===1?'falta 1':'faltan '+(next[0]-n))+' para la insignia de '+next[1].toLowerCase()+'.':'¡Tienes la insignia de oro! Sigue compartiendo.')+'</p>'+
@@ -11024,7 +11036,7 @@ const EVG_S=[
  {k:'i',t:'Dios es justo',b:['Si Dios es bueno, no puede dejar el mal sin juzgar. Su ley no está para que nos sintamos bien, sino para mostrarnos cómo somos delante de Él.'],v:[['por cuanto todos pecaron, y están destituidos de la gloria de Dios,','Romanos 3:23'],['ya que por las obras de la ley ningún ser humano será justificado delante de él; porque por medio de la ley es el conocimiento del pecado.','Romanos 3:20'],['Y de la manera que está establecido para los hombres que mueran una sola vez, y después de esto el juicio,','Hebreos 9:27']]},
  {k:'i',t:'Lo que merecemos… y lo que Dios hizo',b:['Nuestro pecado nos separa de Dios. Pero Dios no se quedó mirando: envió a su Hijo, Jesucristo, a ocupar nuestro lugar.'],v:[['Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro.','Romanos 6:23'],['Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros.','Romanos 5:8'],['Porque primeramente os he enseñado lo que asimismo recibí: Que Cristo murió por nuestros pecados, conforme a las Escrituras; y que fue sepultado, y que resucitó al tercer día, conforme a las Escrituras;','1 Corintios 15:3-4']]},
  {k:'i',t:'Cómo se recibe',b:['No se gana siendo mejores personas. Se recibe como un regalo: confiando en Cristo y dejando que Él cambie nuestro rumbo.'],v:[['Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios; no por obras, para que nadie se gloríe.','Efesios 2:8-9'],['y diciendo: El tiempo se ha cumplido, y el reino de Dios se ha acercado; arrepentíos, y creed en el evangelio.','Marcos 1:15'],['Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.','Juan 3:16']]},
- {k:'f',t:'¿Qué piensas de lo que leíste?',p:'No tienes que decidir nada ahora.',o:['Quiero seguir pensando en esto','Me gustaría hablar con quien me lo envió','Ya creo en Cristo'],r:['Está bien. Puedes volver a leer los versículos cuando quieras: son palabras de la Biblia.','Escríbele a quien te lo envió. Seguro le dará gusto conversar contigo.','Qué alegría. Sigue conociéndolo en su Palabra: «Escudriñad las Escrituras» (Juan 5:39).']}
+ {k:'f',t:'¿Qué piensas de lo que leíste?',p:'No tienes que decidir nada ahora.',o:['Me gustaría hablar con quien me lo envió','Quiero saber más de Cristo','Quiero seguir pensando en esto'],r:['Qué bueno. Escríbele: seguro le dará gusto conversar contigo.','Qué bueno. En Lampy puedes leer la Biblia con calma, con lecciones cortas y gratis.','Está bien, sin prisa. Puedes volver a leer los versículos cuando quieras: son palabras de la Biblia.']}
 ];
 let EV=null;
 function evgOpen(pub){
@@ -11055,7 +11067,10 @@ function evgRender(){
     body+=s.b.map(t=>'<p class="evgp">'+esc(t)+'</p>').join('')+s.v.map(v=>'<blockquote class="verse evgv"><i>'+esc(v[0])+'</i><cite class="vref">'+esc(v[1])+'</cite></blockquote>').join('');
   }
   if(EV.i===n-1&&EV.pick[EV.i]!==undefined){
-    body+='<div class="evgend"><p><b>Si quieres seguir conociendo la Biblia</b>, Lampy es una app gratuita con lecciones cortas, pensada para leer con calma. No es necesario para nada de lo anterior.</p><button class="btn blue" data-a="evg-lampy">'+(EV.pub?'Conocer Lampy':'Cerrar')+'</button></div>';
+    const pk=EV.pick[EV.i];
+    if(pk===0)body+='<div class="evgend"><button class="btn blue" data-a="evg-wa">Escribirle por WhatsApp</button></div>';
+    else if(pk===1)body+='<div class="evgend"><p>Lampy es una app gratuita con lecciones cortas para conocer a Cristo en la Biblia, a tu ritmo.</p><button class="btn blue" data-a="evg-lampy">'+(EV.pub?'Conocer Lampy':'Cerrar')+'</button></div>';
+    else body+='<div class="evgend"><p><b>Si quieres</b>, cuéntanos tu motivo de oración o tu situación, y oraremos por ti. No es obligatorio.</p><textarea id="evgpray" rows="4" maxlength="1200" placeholder="Escribe aquí lo que quieras compartir" aria-label="Motivo de oración"></textarea><button class="btn blue" data-a="evg-pray" style="margin-top:10px">Enviar por correo</button><button class="mlink" data-a="evg-lampy">'+(EV.pub?'Conocer Lampy':'Cerrar')+'</button></div>';
   }
   foot=EV.i<n-1?'<div class="lf"><div class="in"><div class="row2">'+(EV.i?'<button class="btn ghost" data-a="evg-back">Atrás</button>':'')+'<button class="btn" data-a="evg-next" data-primary '+(can?'':'disabled')+'>Siguiente</button></div></div></div>':'';
   el.innerHTML='<div class="lh">'+(EV.pub?'<b style="flex:1;font-size:18px">🕯️ Un mensaje para ti</b>':'<button class="x" data-a="evg-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:'+Math.round(100*(EV.i+1)/n)+'%"></i></div>')+'</div><div class="lb">'+body+'</div>'+foot;
@@ -11065,6 +11080,8 @@ function evgAct(a,b){
   if(a==='evg-share')return evgShare();
   if(a==='evg-view'){nwMark('evg');return evgOpen(false);}
   if(a==='evg-close')return evgClose();
+  if(a==='evg-wa'){const x='Hola, leí lo que me compartiste sobre la fe en Cristo y me gustaría conversar contigo.';window.open('https://wa.me/?text='+encodeURIComponent(x),'_blank');return;}
+  if(a==='evg-pray'){const v=((document.getElementById('evgpray')||{}).value||'').trim();if(!v){toast('Escribe primero lo que quieras compartir');return;}location.href='mailto:cursolampy@gmail.com?subject='+encodeURIComponent('Motivo de oración')+'&body='+encodeURIComponent(v);return;}
   if(!EV)return;
   const top=()=>{const lb=document.querySelector('#evg .lb');return lb?lb.scrollTop:0;};
   if(a==='evg-pick'){EV.pick[EV.i]=+b.dataset.i;const t=top();evgRender();const lb=document.querySelector('#evg .lb');if(lb)lb.scrollTop=t;}
