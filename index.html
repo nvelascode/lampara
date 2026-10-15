@@ -8182,7 +8182,7 @@ function frListHTML(d){
   const mine=famStats();
   const all=d.following.map(m=>({m,wk:frWeek(m),st:frStreak(m)})).concat([{me:true,wk:mine.p_week_xp,st:S.streak}]);
   all.sort((a,b)=>b.wk-a.wk||b.st-a.st);
-  const LIM=8,lim=!FRALL&&all.length>LIM+1;
+  const LIM=5,lim=!FRALL&&all.length>LIM+1;
   let shown=lim?all.slice(0,LIM):all;
   if(lim&&!shown.some(x=>x.me))shown=shown.slice(0,LIM-1).concat(all.filter(x=>x.me));
   const rows=shown.map(x=>{const i=all.indexOf(x);
@@ -8227,7 +8227,7 @@ function frHTML(){
   out+='<details class="gsec fradd2" data-k="add"'+((GSEC.add||!fol.length)?' open':'')+'><summary><span>➕ Agregar amigos</span></summary><section class="card fradd">'+
     '<div class="codebox2"><span class="muted">Tu código de usuario</span><div class="gcrow"><div class="gcodev">'+esc(me.code)+'</div><button class="cpbtn" data-a="fr-copy" aria-label="Copiar mi código" title="Copiar"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></svg></button></div></div>'+
     '<div class="fradd-sep"></div>'+
-    '<div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de usuario que te pasó.</small></div></div>'+
+    '<div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de 6 caracteres de tu amigo.</small></div></div>'+
     '<div class="jr-in" style="margin-top:10px"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></section></details>';
   /* 4. Regalos y tarjetas */
   const gn=giftN();
@@ -8257,7 +8257,7 @@ function frHomeHTML(){
 function amigosHTML(){
   if(!famOn())return '<h1 class="page">Amigos</h1><div class="hero">'+mascot('think',76)+'<div class="bubble">Los amigos no están disponibles en esta versión.</div></div>';
   const happy=frActive()&&FR.data&&FR.data.following.length&&S.lastDay===today()&&FR.data.following.some(frToday);
-  return '<h1 class="page">Amigos</h1><div class="hero">'+mascot(happy?'cheer':'wink',84)+'<div class="bubble">'+esc(frHeroMsg())+'</div></div>'+frHTML();
+  return '<h1 class="page">Amigos</h1><div class="hero">'+mascot('happy',84)+'<div class="bubble">'+esc(frHeroMsg())+'</div></div>'+frHTML();
 }
 
 /* ============================================================
