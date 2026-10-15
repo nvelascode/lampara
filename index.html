@@ -149,7 +149,13 @@ h1,h2,h3,h4{font-weight:900}
 .ring svg{width:76px;height:76px}
 .ring circle{fill:none;stroke-width:8}
 .ring .rbg{stroke:var(--line)}
-.ring .rfg{stroke:var(--yellow);stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+.ring{--r0:68.6%;--r1:91.4%;--sw:11.43%}
+.ring .rwrap{position:absolute;inset:0;pointer-events:none}
+.ring .rgrad{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#D8392F 0deg,#FFB02E var(--a),transparent var(--a));-webkit-mask:radial-gradient(circle closest-side,transparent var(--r0),#000 calc(var(--r0) + .6%),#000 var(--r1),transparent calc(var(--r1) + .6%));mask:radial-gradient(circle closest-side,transparent var(--r0),#000 calc(var(--r0) + .6%),#000 var(--r1),transparent calc(var(--r1) + .6%))}
+.ring .rcap{position:absolute;inset:0}
+.ring .rcap::after{content:"";position:absolute;left:50%;top:10%;width:var(--sw);aspect-ratio:1;margin-left:calc(var(--sw) / -2);transform:translateY(-50%);border-radius:50%}
+.ring .rcap.s::after{background:#D8392F}
+.ring .rcap.e{transform:rotate(var(--a))}.ring .rcap.e::after{background:#FFB02E}
 .ring b span{display:grid;justify-items:center;line-height:1.05}
 .ring b small{font-size:10px;font-weight:900;color:var(--yellow-d);letter-spacing:.04em}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:15px;font-weight:900}
@@ -1451,7 +1457,7 @@ html.fs-xl{zoom:1.3;--zm:1.3}
 .gstrip{padding:12px 14px}
 .gstrip .goalrow{gap:12px;align-items:center}
 .gstrip .ring,.gstrip .ring svg{width:56px;height:56px}
-.gstrip .ring circle{stroke-width:7}
+.gstrip .ring{--r0:70%;--r1:90%;--sw:10%}
 .gstrip .ring b{font-size:12px}.gstrip .ring b small{font-size:8px}
 .gstrip .gcol{flex:1;min-width:0}
 .gstrip h3{margin:0 0 6px;font-size:16px}
@@ -10172,7 +10178,7 @@ function homeHTML(){
     else daily='<section class="card votd"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button>'+(seen?'<button class="vtog" data-a="vs-tog" aria-label="Plegar el versículo del día"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'')+'<span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return cmInviteHTML()+(S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
   '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rdHomeHTML()+repCardHTML(true)+
-  '<section class="card gstrip"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b><span>'+Math.min(xpT,S.goal)+'/'+S.goal+'<small>⚡ XP</small></span></b></div><div class="gcol"><h3>Meta de hoy <small>'+(xpT>=S.goal?'· ¡Cumplida!':'· faltan '+(S.goal-xpT)+' XP')+'</small></h3><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></div></div></section>'+
+  '<section class="card gstrip"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/></svg><span class="rwrap" style="filter:drop-shadow(0 0 '+(pct*5).toFixed(1)+'px rgba(255,140,0,'+(pct*.75).toFixed(2)+'))"><span class="rgrad" style="--a:'+Math.round(pct*360)+'deg"></span><span class="rcap s"'+(pct>0?'':' hidden')+'></span><span class="rcap e"'+(pct>0&&pct<1?'':' hidden')+' style="--a:'+Math.round(pct*360)+'deg"></span></span><b><span>'+Math.min(xpT,S.goal)+'/'+S.goal+'<small>⚡ XP</small></span></b></div><div class="gcol"><h3>Meta de hoy <small>'+(xpT>=S.goal?'· ¡Cumplida!':'· faltan '+(S.goal-xpT)+' XP')+'</small></h3><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></div></div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':bio?'Biografías: datos históricos resumidos de fuentes de dominio público. Textos bíblicos citados: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
 }
