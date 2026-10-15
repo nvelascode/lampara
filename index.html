@@ -397,8 +397,11 @@ h1,h2,h3,h4{font-weight:900}
 .rfb .mtag{display:none}
 /* Versículo del día cerrado (A): un solo marco, texto plano */
 .card.votd.vmini{gap:10px;padding:12px 14px;min-height:0;border-bottom-width:5px;border-radius:18px;color:var(--blue-ink)}
-.card.votd.vmini .tagv{position:static;background:none;color:var(--blue-ink);padding:0;margin:0;font-size:13px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;flex:1;white-space:nowrap}
-.card.votd.vmini .vref{font-weight:800;font-size:14px;color:var(--blue-ink);opacity:.85;white-space:nowrap}
+.card.votd.vmini .vref{font-weight:800;font-size:14px;color:var(--blue-ink);opacity:.85;white-space:nowrap;margin:0 0 0 auto}
+.card.votd.vmini{min-height:62px;padding:10px 14px 10px 14px}
+.card.votd.vmini .tagv{white-space:nowrap}
+/* avatar del perfil un poco más grande sin agrandar la celda */
+.mestrip .fav.big .avsvg{display:block;width:54px;height:54px;margin:-6px 0}
 .card.votd.vmini .vtog{position:static;width:24px;height:24px;background:none;border:0;box-shadow:none;border-radius:0;display:grid;place-items:center;color:var(--blue-ink);flex:none}
 .card.votd.vmini .vch{width:22px;height:22px}
 .rtabs{z-index:3}
