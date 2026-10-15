@@ -341,6 +341,14 @@ h1,h2,h3,h4{font-weight:900}
 .mlink{background:none;border:0;color:var(--blue);font-weight:800;padding:12px 0 0;cursor:pointer;font:inherit;font-weight:800}
 .mres{margin-top:10px;padding:10px 12px;border-radius:12px}.mres.ok{background:color-mix(in srgb,#58cc02 18%,var(--surface))}.mres.no{background:color-mix(in srgb,var(--red) 12%,var(--surface))}
 .repttl{margin:6px 0 10px}
+.imgslots{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:10px 0 14px}
+.imgslot{width:38px;height:46px;border-radius:12px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink);font:inherit;font-weight:900;font-size:22px;padding:0;cursor:pointer}
+.imgslot.f{border-color:var(--gc,#6C5CE7)}
+.imgslots.ok .imgslot{border-color:#58CC02;background:color-mix(in srgb,#58CC02 16%,var(--surface))}
+.imgslots.bad .imgslot{border-color:#FF4B4B;background:color-mix(in srgb,#FF4B4B 14%,var(--surface))}
+.imgtiles{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 6px}
+.imgtile{width:44px;height:48px;border-radius:12px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink);font:inherit;font-weight:900;font-size:22px;padding:0;cursor:pointer}
+.imgtile:disabled{opacity:.25;cursor:default}
 .imggrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:260px;margin:12px auto}
 .imggrid span{display:grid;place-items:center;aspect-ratio:1;font-size:56px;border-radius:18px;background:color-mix(in srgb,var(--gc,#6C5CE7) 10%,var(--surface));border:2px solid var(--line)}
 .gcard{position:relative}
@@ -11789,6 +11797,9 @@ function sgAct(a,b){
   if(a==='sg-again')return sgOpen(SG.id);
   if(a==='sg-opt')return sgOptTap(+b.dataset.i);
   if(a==='sg-next')return sgNext();
+  if(a==='sg-il')return imgLetter(+b.dataset.i);
+  if(a==='sg-is')return imgSlot(+b.dataset.i);
+  if(a==='sg-ic')return imgCheck();
   if(a==='sg-tok')return detTap(+b.dataset.i);
   if(a==='sg-tl')return tlTap(+b.dataset.i);
   if(a==='sg-fin')return bibFinish();
@@ -11805,18 +11816,60 @@ const sgDone=()=>SG&&SG.done;
 
 
 /* ---------- 4 imágenes, 1 palabra (con emojis) ---------- */
-const IMG_BANK=[["🌳🍎🐍👩","Adán y Eva","Génesis 3"],["🌧️🚢🕊️🌈","Noé y el arca","Génesis 6–9"],["🧱🏗️☁️🗣️","La torre de Babel","Génesis 11"],["🔪🐏⛰️👦","Abraham e Isaac","Génesis 22"],["🧥🌈🕳️🌾","José y su túnica","Génesis 37"],["🪜😴👼⛰️","La escalera de Jacob","Génesis 28"],["🌿🔥👞⛰️","La zarza ardiendo","Éxodo 3"],["🐸🦟🩸🌑","Las plagas de Egipto","Éxodo 7–12"],["🌊🚶‍♂️🌊🏃","El cruce del mar Rojo","Éxodo 14"],["🍞☁️🏜️🌅","El maná en el desierto","Éxodo 16"],["📜⛰️⚡🪨","Los Diez Mandamientos","Éxodo 20"],["🐂🥇🎶💃","El becerro de oro","Éxodo 32"],["🔥☁️🚶🌙","La columna de nube y de fuego","Éxodo 13"],["🐍🪵🤒🙏","La serpiente de bronce","Números 21"],["🐴🗣️👼⚔️","La burra de Balaam","Números 22"],["🎺🧱🏙️💥","La caída de Jericó","Josué 6"],["🦁💪💇‍♂️🏛️","Sansón","Jueces 16"],["🌾👩🤝👵","Rut y Noemí","Rut 1"],["🧒🪨🧌🛡️","David y Goliat","1 Samuel 17"],["👑🧠👶⚖️","La sabiduría de Salomón","1 Reyes 3"],["🔥🐴🌪️🧔","Elías sube al cielo","2 Reyes 2"],["🦁🙏🕳️👨","Daniel en el foso de los leones","Daniel 6"],["🔥🏗️🧍‍♂️🧍‍♂️","El horno de fuego","Daniel 3"],["🐋🌊🚢🙏","Jonás","Jonás 1–2"],["👸🎀👑🙏","Ester","Ester 4"],["🧱🔨🏙️🛡️","Nehemías reconstruye el muro","Nehemías 4"],["⭐🐪👑🎁","Los magos de Oriente","Mateo 2"],["🐑👼🌙👶","Los pastores y el ángel","Lucas 2"],["👶🌟🐄🌾","El nacimiento de Jesús","Lucas 2"],["🕊️💧🧔🏞️","El bautismo de Jesús","Mateo 3"],["🍷💧🏺💍","Las bodas de Caná","Juan 2"],["🍞🐟👥🧺","Los panes y los peces","Juan 6"],["🌊⛵😴🌩️","Jesús calma la tormenta","Marcos 4"],["🚶🌊🌙⛵","Jesús camina sobre el mar","Mateo 14"],["🐑🔍🥾⛰️","La oveja perdida","Lucas 15"],["🌱🐦🪨🌾","El sembrador","Mateo 13"],["🛣️🤕🐴🏨","El buen samaritano","Lucas 10"],["🐷💰👦🎉","El hijo pródigo","Lucas 15"],["🌳👀🧍‍♂️💰","Zaqueo","Lucas 19"],["🪙🪙👵⛪","La ofrenda de la viuda","Marcos 12"],["🪦😢🗣️🧣","La resurrección de Lázaro","Juan 11"],["🍞🍷🪑🌙","La última cena","Lucas 22"],["🐴🌿👑🙌","La entrada triunfal a Jerusalén","Mateo 21"],["✝️🌑🌿👑","La crucifixión de Jesús","Mateo 27"],["🪦🌅👩‍🦰👼","La resurrección de Jesús","Mateo 28"],["🔥🕊️👥🗣️","El día de Pentecostés","Hechos 2"],["🐴⚡👁️🛣️","La conversión de Pablo","Hechos 9"],["⛓️🎶🌍🔓","Pablo y Silas en la cárcel","Hechos 16"],["🚢🌊⛈️🏝️","El naufragio de Pablo","Hechos 27"],["🛡️⚔️🪖📖","La armadura de Dios","Efesios 6"],["🎣🐟🐟🚣","La pesca milagrosa","Lucas 5"],["🧑‍🦯💧🗣️✨","Jesús sana a un ciego","Marcos 10"]];
+const IMG_BANK=[["🌳🍎🐍👩","Adán y Eva","Génesis 3"],["🌧️🚢🕊️🌈","Noé y el arca","Génesis 6–9"],["🧱🏗️☁️🗣️","La torre de Babel","Génesis 11"],["🔪🐏⛰️👦","Abraham e Isaac","Génesis 22"],["🧥🌈🕳️🌾","José y su túnica","Génesis 37"],["🪜😴👼⛰️","La escalera de Jacob","Génesis 28"],["🌿🔥👞⛰️","La zarza ardiendo","Éxodo 3"],["🐸🦟🩸🌑","Las plagas de Egipto","Éxodo 7–12"],["🌊🚶‍♂️🏃🐎","El cruce del mar Rojo","Éxodo 14"],["🍞☁️🏜️🌅","El maná en el desierto","Éxodo 16"],["📜⛰️⚡🪨","Los Diez Mandamientos","Éxodo 20"],["🐂🥇🎶💃","El becerro de oro","Éxodo 32"],["🔥☁️🚶🌙","La columna de nube y de fuego","Éxodo 13"],["🐍🪵🤒🙏","La serpiente de bronce","Números 21"],["🐴🗣️👼⚔️","La burra de Balaam","Números 22"],["🎺🧱🏙️💥","La caída de Jericó","Josué 6"],["🦁💪💇‍♂️🏛️","Sansón","Jueces 16"],["🌾👩🤝👵","Rut y Noemí","Rut 1"],["🧒🪨🧌🛡️","David y Goliat","1 Samuel 17"],["👑🧠👶⚖️","La sabiduría de Salomón","1 Reyes 3"],["🔥🐴🌪️🧔","Elías sube al cielo","2 Reyes 2"],["🦁🙏🕳️👨","Daniel en el foso de los leones","Daniel 6"],["🔥🗿🧍‍♂️👼","El horno de fuego","Daniel 3"],["🐋🌊🚢🙏","Jonás","Jonás 1–2"],["👸🎀👑🙏","Ester","Ester 4"],["🧱🔨🏙️🛡️","Nehemías reconstruye el muro","Nehemías 4"],["⭐🐪👑🎁","Los magos de Oriente","Mateo 2"],["🐑👼🌙👶","Los pastores y el ángel","Lucas 2"],["👶🌟🐄🌾","El nacimiento de Jesús","Lucas 2"],["🕊️💧🧔🏞️","El bautismo de Jesús","Mateo 3"],["🍷💧🏺💍","Las bodas de Caná","Juan 2"],["🍞🐟👥🧺","Los panes y los peces","Juan 6"],["🌊⛵😴🌩️","Jesús calma la tormenta","Marcos 4"],["🚶🌊🌙⛵","Jesús camina sobre el mar","Mateo 14"],["🐑🔍🥾⛰️","La oveja perdida","Lucas 15"],["🌱🐦🪨🌾","El sembrador","Mateo 13"],["🛣️🤕🐴🏨","El buen samaritano","Lucas 10"],["🐷💰👦🎉","El hijo pródigo","Lucas 15"],["🌳👀🧍‍♂️💰","Zaqueo","Lucas 19"],["🪙👵⛪👀","La ofrenda de la viuda","Marcos 12"],["🪦😢🗣️🧣","La resurrección de Lázaro","Juan 11"],["🍞🍷🪑🌙","La última cena","Lucas 22"],["🐴🌿👑🙌","La entrada triunfal a Jerusalén","Mateo 21"],["✝️🌑🌿👑","La crucifixión de Jesús","Mateo 27"],["🪦🌅👩‍🦰👼","La resurrección de Jesús","Mateo 28"],["🔥🕊️👥🗣️","El día de Pentecostés","Hechos 2"],["🐴⚡👁️🛣️","La conversión de Pablo","Hechos 9"],["⛓️🎶🌍🔓","Pablo y Silas en la cárcel","Hechos 16"],["🚢🌊⛈️🏝️","El naufragio de Pablo","Hechos 27"],["🛡️⚔️🪖📖","La armadura de Dios","Efesios 6"],["🎣🐟🚣🕸️","La pesca milagrosa","Lucas 5"],["🧑‍🦯💧🗣️✨","Jesús sana a un ciego","Marcos 10"]];
+const IMG_KW={"Adán y Eva":"EDÉN","Noé y el arca":"ARCA","La torre de Babel":"BABEL","Abraham e Isaac":"ISAAC","José y su túnica":"TÚNICA","La escalera de Jacob":"ESCALERA","La zarza ardiendo":"ZARZA","Las plagas de Egipto":"PLAGAS","El maná en el desierto":"MANÁ","Los Diez Mandamientos":"SINAÍ","El becerro de oro":"BECERRO","La columna de nube y de fuego":"NUBE","La serpiente de bronce":"SERPIENTE","La burra de Balaam":"BURRA","La caída de Jericó":"JERICÓ","Sansón":"SANSÓN","Rut y Noemí":"RUT","David y Goliat":"GOLIAT","La sabiduría de Salomón":"SALOMÓN","Elías sube al cielo":"ELÍAS","Daniel en el foso de los leones":"DANIEL","El horno de fuego":"HORNO","Jonás":"JONÁS","Ester":"ESTER","Nehemías reconstruye el muro":"NEHEMÍAS","Los magos de Oriente":"MAGOS","Los pastores y el ángel":"PASTORES","El nacimiento de Jesús":"BELÉN","El bautismo de Jesús":"BAUTISMO","Las bodas de Caná":"CANÁ","Los panes y los peces":"PANES","Jesús calma la tormenta":"TORMENTA","La oveja perdida":"OVEJA","El sembrador":"SEMBRADOR","El buen samaritano":"SAMARITANO","El hijo pródigo":"PRÓDIGO","Zaqueo":"ZAQUEO","La ofrenda de la viuda":"VIUDA","La resurrección de Lázaro":"LÁZARO","La última cena":"CENA","La entrada triunfal a Jerusalén":"RAMOS","La crucifixión de Jesús":"CRUZ","La resurrección de Jesús":"TUMBA","El día de Pentecostés":"ESPÍRITU","La conversión de Pablo":"SAULO","Pablo y Silas en la cárcel":"SILAS","El naufragio de Pablo":"NAUFRAGIO","La armadura de Dios":"ARMADURA","La pesca milagrosa":"PESCA","Jesús sana a un ciego":"CIEGO"};
+const imgNorm=w=>w.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
 function imgStart(){
-  SG.n=8;SG.i=0;SG.qs=gTake('img',IMG_BANK,x=>x[1],SG.n).map(x=>{
+  const EM=/\p{Extended_Pictographic}(?:\u200d\p{Extended_Pictographic}|\ufe0f)*/gu;
+  SG.n=8;SG.i=0;SG.qs=gTake('img',IMG_BANK,x=>x[1],SG.n).map((x,qi)=>{
+    const e=Array.from(new Set(x[0].match(EM)||[]));
+    const kw=IMG_KW[x[1]];
+    if(kw&&Math.random()<.5){
+      const w=imgNorm(kw),extra=Math.min(13,Math.max(8,w.length+3))-w.length,ABC='AEIOSRNDLTCMPUBGVJHZ';
+      const pool=w.split('');while(extra>0&&pool.length<w.length+extra){const c=ABC[Math.floor(Math.random()*ABC.length)];if(pool.filter(z=>z===c).length<2)pool.push(c);}
+      return {k:'l',e,w,kw,tiles:shuffle(pool.map((c,i)=>({c,i}))),fill:Array(w.length).fill(-1),r:x[2],t:x[1]};
+    }
     const wrong=shuffle(IMG_BANK.filter(y=>y[1]!==x[1])).slice(0,3).map(y=>y[1]);
-    const o=shuffle([x[1],...wrong]);return {e:Array.from(x[0].match(/\p{Extended_Pictographic}(?:\u200d\p{Extended_Pictographic}|\ufe0f)*/gu)||[]),o,a:o.indexOf(x[1]),r:x[2],t:x[1]};
+    const o=shuffle([x[1],...wrong]);return {k:'m',e,o,a:o.indexOf(x[1]),r:x[2],t:x[1]};
   });
   SG.n=SG.qs.length;imgShow();
+}
+function imgLetters(q){
+  const used=new Set(q.fill.filter(i=>i>=0));
+  return '<div class="imgslots'+(q.done?(q.ok?' ok':' bad'):'')+'">'+q.fill.map((t,i)=>'<button class="imgslot'+(t>=0?' f':'')+'" data-a="sg-is" data-i="'+i+'"'+(q.done?' disabled':'')+' aria-label="Letra '+(i+1)+'">'+(t>=0?q.tiles.find(z=>z.i===t).c:'')+'</button>').join('')+'</div>'+
+   '<div class="imgtiles">'+q.tiles.map(z=>'<button class="imgtile" data-a="sg-il" data-i="'+z.i+'"'+(used.has(z.i)||q.done?' disabled':'')+'>'+z.c+'</button>').join('')+'</div>';
 }
 function imgShow(){
   if(SG.i>=SG.n)return sgFinish({head:SG.score>=7?'¡Qué buen ojo!':SG.score>=4?'¡Muy bien!':'¡Buen intento!',score:SG.score,sub:SG.score+' de '+SG.n});
   const q=SG.qs[SG.i];SG.picked=-1;SG.ans=null;
-  sgShell('<p class="glabel">¿Qué historia bíblica es? <span>· '+(SG.i+1)+' de '+SG.n+'</span></p><div class="imggrid">'+q.e.slice(0,4).map(x=>'<span>'+x+'</span>').join('')+'</div><div class="sgopts">'+q.o.map((o,i)=>'<button class="sgopt" data-a="sg-opt" data-i="'+i+'">'+esc(o)+'</button>').join('')+'</div><div id="sgrev"></div>','<div id="sgf"></div>',100*SG.i/SG.n);
+  const grid='<div class="imggrid">'+q.e.slice(0,4).map(x=>'<span>'+x+'</span>').join('')+'</div>';
+  if(q.k==='l'){
+    sgShell('<p class="glabel">Forma la palabra clave de la historia <span>· '+(SG.i+1)+' de '+SG.n+'</span></p>'+grid+'<p class="muted" style="text-align:center;margin:0 0 6px;font-size:14px">Pista: '+esc(q.r)+'</p><div id="imgl">'+imgLetters(q)+'</div><div id="sgrev"></div>','<div id="sgf"><button class="btn" id="imgchk" data-a="sg-ic" disabled>Comprobar</button></div>',100*SG.i/SG.n);
+    return;
+  }
+  sgShell('<p class="glabel">¿Qué historia bíblica es? <span>· '+(SG.i+1)+' de '+SG.n+'</span></p>'+grid+'<div class="sgopts">'+q.o.map((o,i)=>'<button class="sgopt" data-a="sg-opt" data-i="'+i+'">'+esc(o)+'</button>').join('')+'</div><div id="sgrev"></div>','<div id="sgf"></div>',100*SG.i/SG.n);
+}
+function imgLRefresh(){
+  const q=SG.qs[SG.i];$('#imgl').innerHTML=imgLetters(q);
+  const bt=$('#imgchk');if(bt)bt.disabled=q.fill.some(t=>t<0);
+}
+function imgLetter(t){
+  const q=SG.qs[SG.i];if(!q||q.k!=='l'||q.done)return;
+  const p=q.fill.indexOf(-1);if(p<0||q.fill.indexOf(t)>=0)return;
+  q.fill[p]=t;imgLRefresh();
+}
+function imgSlot(i){
+  const q=SG.qs[SG.i];if(!q||q.k!=='l'||q.done)return;
+  if(q.fill[i]>=0){q.fill[i]=-1;imgLRefresh();}
+}
+function imgCheck(){
+  const q=SG.qs[SG.i];if(!q||q.k!=='l'||q.done||q.fill.some(t=>t<0))return;
+  const got=q.fill.map(t=>q.tiles.find(z=>z.i===t).c).join('');
+  q.done=true;q.ok=got===q.w;SG.ans=q.ok;
+  if(q.ok){SG.score++;beep('good');haptic([12]);}else{beep('bad');haptic([30,40,30]);}
+  $('#imgl').innerHTML=imgLetters(q);
+  $('#sgrev').innerHTML='<div class="sgrev">'+(q.ok?'':'<p class="sgx">La palabra era <b>'+esc(q.kw)+'</b>.</p>')+'<p class="sgx">'+esc(q.t)+'</p><cite class="vref">'+esc(q.r)+'</cite></div>';
+  $('#sgf').innerHTML='<button class="btn" data-a="sg-next" data-primary>'+(SG.i===SG.n-1?'Ver resultado':'Continuar')+'</button>';
 }
 function imgTap(i){
   if(SG.ans!==null)return;const q=SG.qs[SG.i];SG.picked=i;SG.ans=i===q.a;
