@@ -376,6 +376,31 @@ h1,h2,h3,h4{font-weight:900}
 .rtab.r-evg.on{border-color:#B07A00;box-shadow:0 0 0 2px rgba(229,166,0,.45)}
 .rtab.r-evg::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.75) 50%,transparent 62%);background-size:300% 100%;background-position:150% 0;background-repeat:no-repeat;animation:btnShine 4.5s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.rtab.r-evg::before{animation:none}}
+.rtabs{gap:4px;margin:0;align-items:flex-end;position:relative;z-index:1}
+.rf .rtab{border-bottom:0;border-radius:14px 14px 0 0;padding:9px 2px 8px;background:color-mix(in srgb,var(--line) 55%,var(--surface));color:var(--muted,#777);border-color:var(--line);font-size:14px}
+.rf .rtab.on{padding:13px 2px 12px;margin-bottom:-2px;z-index:3;box-shadow:none}
+.rf .rtab.r-evg{background:#FFE9A0;color:#6B4C00;border-color:#E5A600;opacity:.92}
+.rf .rtab.r-mem.on{background:var(--blue-bg);border-color:var(--blue);color:var(--blue-ink,var(--blue))}
+.rf .rtab.r-rev.on{background:var(--orange-bg);border-color:var(--orange);color:var(--orange-ink,var(--orange))}
+.rf .rtab.r-evg.on{background:#FFF3B8;border-color:#E5A600;color:#4A3500;opacity:1;box-shadow:none}
+.rfb{position:relative;overflow:hidden;border:2px solid var(--line);border-bottom-width:5px;border-radius:0 0 20px 20px;padding:16px;margin-bottom:16px;z-index:2}
+.rf-mem .rfb{background:var(--blue-bg);border-color:var(--blue)}
+.rf-rev .rfb{background:var(--orange-bg);border-color:var(--orange)}
+.rf-evg .rfb{background:linear-gradient(180deg,#FFF3B8,#FFE07A 70%,#F7C93A);border-color:#E5A600;color:#4A3500}
+.rf-evg .rfb::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.7) 50%,transparent 62%);background-size:300% 100%;background-position:150% 0;background-repeat:no-repeat;animation:btnShine 4.5s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.rf-evg .rfb::before{animation:none}}
+.rfb>*{position:relative}
+.rfb .memo,.rfb .evgcard{background:none;border:0;border-radius:0;padding:0;margin:0;box-shadow:none;overflow:visible}
+.rfb .evgcard::before{display:none}
+.rfb .revhero{background:none;border:0;border-radius:0;padding:0;margin:0 0 4px}
+.rfb .revhero h2{margin-top:0}
+.rfb .mtag{display:none}
+/* Versículo del día cerrado (A): un solo marco, texto plano */
+.card.votd.vmini{gap:10px;padding:12px 14px;min-height:0;border-bottom-width:5px;border-radius:18px;color:var(--blue-ink)}
+.card.votd.vmini .tagv{position:static;background:none;color:var(--blue-ink);padding:0;margin:0;font-size:13px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;flex:1;white-space:nowrap}
+.card.votd.vmini .vref{font-weight:800;font-size:14px;color:var(--blue-ink);opacity:.85;white-space:nowrap}
+.card.votd.vmini .vtog{position:static;width:24px;height:24px;background:none;border:0;box-shadow:none;border-radius:0;display:grid;place-items:center;color:var(--blue-ink);flex:none}
+.card.votd.vmini .vch{width:22px;height:22px}
 .grec{display:block;margin-top:4px;font-size:12px;font-weight:800;opacity:.9}
 .rivalbox{margin:12px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#FF9600 14%,var(--surface));font-weight:700}
 .lf:has(#sgf:empty){display:none}
@@ -9958,7 +9983,7 @@ function homeHTML(){
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else if(bio){const w=botd();daily='<section class="card votd"><span class="tagv">🕯️ Persona del día</span><q>'+esc(w.t)+'</q><cite>'+esc(w.n)+'</cite></section>';}
   else{const v=votd(),seen=vSeen();
-    if(seen&&!VOPEN)daily='<section class="card votd vmini" data-a="vs-tog" role="button" tabindex="0" aria-label="Abrir el versículo del día"><span class="tagv">✨ Versículo del día</span><span class="vtog" aria-hidden="true"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></section>';
+    if(seen&&!VOPEN)daily='<section class="card votd vmini" data-a="vs-tog" role="button" tabindex="0" aria-label="Abrir el versículo del día"><span class="tagv">✨ Versículo del día</span><span class="vref">'+esc(v.r)+'</span><span class="vtog" aria-hidden="true"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></section>';
     else daily='<section class="card votd"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button>'+(seen?'<button class="vtog" data-a="vs-tog" aria-label="Plegar el versículo del día"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'')+'<span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return cmInviteHTML()+(S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
   '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rdHomeHTML()+repCardHTML(true)+
@@ -10077,18 +10102,42 @@ function memCheck(text){
   render();
 }
 const RT={k:''};
-function mascotSport(size){
-  const m=mascot('cheer',size),i=m.lastIndexOf('</g></svg>');
-  const acc='<path d="M82 47Q94 44 97 54Q90 50 83 52Z" fill="#E03A3A"/><path d="M80 48Q92 50 95 62Q87 56 80 53Z" fill="#C82E2E"/><path d="M16 49Q50 28 84 49" fill="none" stroke="#E03A3A" stroke-width="6.5" stroke-linecap="round"/><path d="M16 49Q50 28 84 49" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.6" stroke-dasharray="2 5"/><path d="M90 30q4 6 0 9q-4-3 0-9z" fill="#5BC0F8"/>';
-  return i<0?m:m.slice(0,i)+acc+m.slice(i);
-}
+const SPORT_SVG='<svg viewBox="-6 -4 112 108" aria-hidden="true"><defs><linearGradient id="sdg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9BE0FF"/><stop offset="1" stop-color="#34AEEF"/></linearGradient></defs><g class="sb"><path d="M17 56C5 54 3 70 15 73" fill="none" stroke="#E5A600" stroke-width="6" stroke-linecap="round"/><path d="M83 50C93 46 98 40 96 33C91 39 87 41 80 42Z" fill="#E5A600"/><path d="M12 62C12 42 28 37 50 37C72 37 88 42 88 62C88 80 72 92 50 92C28 92 12 80 12 62Z" fill="#FFC800"/><path d="M18 74C24 86 36 91 50 91C64 91 76 86 82 74C74 82 62 84 50 84C38 84 26 82 18 74Z" fill="#E5A600" opacity=".55"/><path d="M22 53q4-9 13-12" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="4" stroke-linecap="round"/><rect x="41" y="28" width="18" height="13" rx="4" fill="#E5A600"/><g class="sf" style="transform-origin:50px 36px"><path d="M50 2C58 12 64 18 64 25C64 32 58 36 50 36C42 36 36 32 36 25C36 18 42 12 50 2Z" fill="#FF9600"/><path d="M50 15C54 21 57 24 57 28C57 32 54 34 50 34C46 34 43 32 43 28C43 24 46 21 50 15Z" fill="#FFD84D"/></g><circle cx="27" cy="63" r="5.6" fill="#FF8FA3" opacity=".65"/><circle cx="73" cy="63" r="5.6" fill="#FF8FA3" opacity=".65"/><g class="eo"><ellipse cx="38" cy="53" rx="5.6" ry="6.4" fill="#3C3C3C"/><ellipse cx="62" cy="53" rx="5.6" ry="6.4" fill="#3C3C3C"/><circle cx="40" cy="50.6" r="2.1" fill="#fff"/><circle cx="64" cy="50.6" r="2.1" fill="#fff"/></g><g class="ec" style="display:none"><path d="M32 54q6 6 12 0M56 54q6 6 12 0" fill="none" stroke="#3C3C3C" stroke-width="3.8" stroke-linecap="round"/></g><path class="ms" d="M38 64q12 12 24 0" fill="none" stroke="#3C3C3C" stroke-width="3.6" stroke-linecap="round"/><path class="mt" style="display:none" d="M42 67h16" fill="none" stroke="#3C3C3C" stroke-width="3.6" stroke-linecap="round"/><ellipse class="mo" style="display:none" cx="50" cy="67" rx="4.6" ry="5.2" fill="#7A1F1F" stroke="#3C3C3C" stroke-width="2.6"/><g class="sw" opacity="0" style="transform-origin:24px 46px;transform-box:view-box"><path d="M24 40.5C26.6 44.2 28 46.6 28 48.6A4 4 0 0 1 20 48.6C20 46.6 21.4 44.2 24 40.5Z" fill="url(#sdg)" stroke="#2E98DE" stroke-width=".9"/><ellipse cx="22.4" cy="48" rx="1.1" ry="1.8" fill="#fff" opacity=".85"/></g><g><path d="M16 49Q50 28 84 49" fill="none" stroke="#E03A3A" stroke-width="6.5" stroke-linecap="round"/><path d="M16 49Q50 28 84 49" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.6" stroke-dasharray="2 5"/><path d="M82 47Q94 44 97 54Q90 50 83 52Z" fill="#E03A3A"/><path d="M80 48Q92 50 95 62Q87 56 80 53Z" fill="#C82E2E"/></g><g class="db" style="transform-origin:82px 80px;transform-box:view-box"><g transform="translate(-5 0) rotate(-18 82 80)"><rect x="66" y="78" width="32" height="4.5" rx="2" fill="#555"/><rect x="62" y="71" width="7" height="18" rx="3" fill="#333"/><rect x="95" y="71" width="7" height="18" rx="3" fill="#333"/></g></g></g></svg>';
+function mascotSport(size){return '<span class="mas sport" style="width:'+size+'px;height:'+size+'px">'+SPORT_SVG+'</span>';}
+(function(){
+  const rm=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
+  const sl=ms=>new Promise(r=>setTimeout(r,ms)),rn=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+  async function run(box){
+    const q=k=>box.querySelector(k);if(!q('.sb'))return;
+    const E={b:q('.sb'),db:q('.db'),eo:q('.eo'),ec:q('.ec'),ms:q('.ms'),mt:q('.mt'),mo:q('.mo'),sw:q('.sw')};
+    const sh=(n,on)=>{E[n].style.display=on?'':'none';},mouth=m=>{sh('ms',m==='s');sh('mt',m==='t');sh('mo',m==='o');},eyes=o=>{sh('eo',o);sh('ec',!o);};
+    const A=(e,k,o)=>e.animate(k,Object.assign({fill:'forwards'},o)).finished.catch(()=>{});
+    const alive=()=>box.isConnected;
+    while(alive()){
+      await sl(900);if(!alive())return;
+      eyes(false);mouth('t');
+      const up=A(E.db,[{transform:'translate(0,0) rotate(0deg)'},{transform:'translate(2px,-22px) rotate(-24deg)'}],{duration:3400,easing:'ease-in-out'});
+      (async()=>{await sl(1000);if(!alive())return;
+        A(E.sw,[{opacity:0,transform:'translate(0,0) scale(.5)'},{opacity:1,transform:'translate(0,0) scale(1)',offset:.12},{opacity:1,transform:'translate(-.6px,9px) scale(1)',offset:.55},{opacity:1,transform:'translate(-1.2px,20px) scale(1,1.08)',offset:.86},{opacity:0,transform:'translate(-1.4px,22px) scale(.7,.5)'}],{duration:2100,easing:'cubic-bezier(.4,0,.8,.6)'});})();
+      await up;if(!alive())return;await sl(260);if(!alive())return;
+      eyes(true);mouth('o');
+      await A(E.db,[{transform:'translate(2px,-22px) rotate(-24deg)'},{transform:'translate(0,0) rotate(0deg)'}],{duration:420,easing:'cubic-bezier(.5,0,.9,.6)'});
+      if(!alive())return;await sl(350);mouth('s');
+      const n=rn(2,5);
+      for(let i=0;i<n&&alive();i++){await A(E.b,[{transform:'translateY(0)'},{transform:'translateY(-4px)'},{transform:'translateY(0)'}],{duration:2200,easing:'ease-in-out'});}
+      await sl(rn(500,1100));
+    }
+  }
+  const started=new WeakSet();
+  window.sportInit=function(){if(rm)return;document.querySelectorAll('.mas.sport').forEach(el=>{if(started.has(el))return;started.add(el);run(el);});};
+})();
 const RT_T=[['mem','📖','Memoriza','¡Un versículo por semana! Apréndelo en cuatro niveles.'],['evg','🕯️','Evangeliza','¡Comparte la esperanza que tienes en Cristo!'],['rev','🔁','Repasa','¡Entrena lo que ya aprendiste para no olvidarlo!']];
-function reviewHTML(){
+function reviewHTML(){setTimeout(()=>{try{sportInit();}catch(e){}},0);
   const mh=memHTML();if(!RT.k||(RT.k==='mem'&&!mh))RT.k=mh?'mem':'evg';
   const cur=RT_T.find(t=>t[0]===RT.k);
   const pills='<div class="rtabs" role="tablist">'+RT_T.map(t=>'<button role="tab" aria-selected="'+(RT.k===t[0])+'" class="rtab r-'+t[0]+(RT.k===t[0]?' on':'')+'" data-a="rt-tab" data-k="'+t[0]+'"><span aria-hidden="true">'+t[1]+'</span> '+t[2]+(nwSeen('rt_'+t[0])?'':'<i class="gdot" aria-label="Nuevo"></i>')+'</button>').join('')+'</div>';
   const body=RT.k==='mem'?mh:RT.k==='evg'?evgCardHTML():reviewHTML0().replace('<h1 class="page">Repaso</h1>','');
-  return '<h1 class="page">Reto</h1><div class="hero">'+mascotSport(84)+'<div class="bubble">'+cur[3]+'</div></div>'+pills+body;
+  return '<h1 class="page">Reto</h1><div class="hero">'+mascotSport(84)+'<div class="bubble">'+cur[3]+'</div></div><div class="rf rf-'+RT.k+'">'+pills+'<div class="rfb">'+body+'</div></div>';
 }
 function reviewHTML0(){
   if(S.course==='gk')return gkReviewHTML();
