@@ -4197,6 +4197,10 @@ function abcHTML(){
    COMPARTIR LOGROS Y ANIMAR (tarjeta con imagen + mensaje)
    ============================================================ */
 let LASTRES=null;const SHC={};
+function kfmt(n){n=Math.max(0,Math.floor(+n||0));if(n<1000)return String(n);
+  if(n<10000)return (Math.floor(n/100)/10).toString().replace('.',',')+'K';
+  if(n<1e6)return Math.floor(n/1000)+'K';
+  return (Math.floor(n/1e5)/10).toString().replace('.',',')+'M';}
 const SHARE_I='<svg class="shi" viewBox="0 0 24 24" aria-hidden="true" style="width:1.05em;height:1.05em;vertical-align:-.15em;margin-right:6px"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg>';
 const lessonsDone=()=>ALLKEYS.concat(GKKEYS,BIOKEYS,LIBKEYS,PASKEYS).filter(k=>S.done[k]).length;
 function appLink(){try{return /^https?:/.test(location.protocol)?location.origin+location.pathname:'';}catch(e){return '';}}
@@ -4205,7 +4209,7 @@ function shareData(kind,id){
   if(kind==='streak'){
     const n=S.streak;
     return {key:'s:'+n+':'+S.xp,title:'¡Llevo '+n+(n===1?' día':' días')+' de racha!',sub:'aprendiendo la Biblia con Lampy',
-      stats:[['🔥',n,'días de racha','#FFEFD0','#FF9600'],['⚡',S.xp,'XP','#FFF6CC','#FFC800'],['📚',lessonsDone(),'lecciones','#D7FFB8','#58CC02']],
+      stats:[['🔥',n,'días de racha','#FFEFD0','#FF9600'],['⚡',kfmt(S.xp),'XP','#FFF6CC','#FFC800'],['📚',lessonsDone(),'lecciones','#D7FFB8','#58CC02']],
       text:'🔥 ¡Llevo '+n+(n===1?' día':' días')+' seguidos aprendiendo la Biblia en Lampy! ¿Te animas a hacerlo conmigo?'+sp};
   }
   if(kind==='ach'){
@@ -4357,7 +4361,7 @@ function famHomeHTML(){
     out+='<button class="banner cheerb" data-a="fam-open">'+(KIND_E[c.kind]||'💪')+' <b>'+esc(c.from)+'</b> te mandó: '+esc(KIND_T[c.kind]||'¡Ánimo!')+(more>0?' (y '+more+' más)':'')+'</button>';
   }
   if(FAM.data&&FAM.data.members&&FAM.data.members.length>1){
-    const rows=FAM.data.members.slice(0,4).map((m,i)=>'<div class="frow"><span class="fpos">'+(i===0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><b class="fnm">'+esc((m.me?'Tú':m.name)+(m.badge?' '+badgeE(m.badge):''))+'</b><span class="fst">🔥 '+m.streak+'</span><span class="fxp">⚡ '+m.week_xp+'</span></div>').join('');
+    const rows=FAM.data.members.slice(0,4).map((m,i)=>'<div class="frow"><span class="fpos">'+(i===0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><b class="fnm">'+esc((m.me?'Tú':m.name)+(m.badge?' '+badgeE(m.badge):''))+'</b><span class="fst">🔥 '+m.streak+'</span><span class="fxp">⚡ '+kfmt(m.week_xp)+'</span></div>').join('');
     out+='<section class="card famcard"><div class="famh"><b>👨‍👩‍👧 '+esc(FAM.data.family.name)+'</b><span class="muted">esta semana</span></div>'+rows+'<button class="btn ghost sm" style="margin-top:10px" data-a="fam-open">Ver familia y animar</button></section>';
   }
   return out;
@@ -8155,13 +8159,13 @@ function frBoardHTML(d,limit){
   rows.sort((a,b)=>b.wk-a.wk||b.st-a.st);
   if(limit)rows=rows.slice(0,limit);
   return '<section class="card famcard"><div class="famh"><b>🏆 Esta semana</b><span class="muted">XP</span></div>'+
-    rows.map((r,i)=>'<div class="frow"><span class="fpos">'+(i===0&&r.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc(r.avatar)+'</span><b class="fnm">'+esc(r.name)+(r.badge?' '+badgeE(r.badge):'')+'</b><span class="fst">🔥 '+r.st+'</span><span class="fxp">⚡ '+r.wk+'</span></div>').join('')+
+    rows.map((r,i)=>'<div class="frow"><span class="fpos">'+(i===0&&r.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc(r.avatar)+'</span><b class="fnm">'+esc(r.name)+(r.badge?' '+badgeE(r.badge):'')+'</b><span class="fst">🔥 '+r.st+'</span><span class="fxp">⚡ '+kfmt(r.wk)+'</span></div>').join('')+
     (limit?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-go">Ver amigos</button>':'')+'</section>';
 }
 let FRX='',FRALL=false;
 function frRowHTML(m,i){
   const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name),open=FRX===m.device,fw=((FR.data&&FR.data.followers)||[]).find(f=>f.device===m.device),isNew=fw&&FR.recvNew.indexOf(m.device)>=0;
-  return '<div class="frm'+(open?' open':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+': racha '+frStreak(m)+', '+frWeek(m)+' XP esta semana. Ver opciones"><span class="fpos">'+(i===0&&frWeek(m)>0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><span class="fnb"><b class="fnm">'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b>'+(fw?'<small class="fsub">'+(isNew?'<span class="frpill new">Nuevo</span> ':'')+'Te sigue</small>':'')+'</span>'+(frToday(m)?'<span class="ftd" title="Ya practicó hoy" aria-label="Ya practicó hoy">✔</span>':'')+'<span class="fst">🔥 '+frStreak(m)+'</span><span class="fxp">⚡ '+frWeek(m)+'</span><span class="fcv" aria-hidden="true">▾</span></button>'+
+  return '<div class="frm'+(open?' open':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+': racha '+frStreak(m)+', '+frWeek(m)+' XP esta semana. Ver opciones"><span class="fpos">'+(i===0&&frWeek(m)>0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><span class="fnb"><b class="fnm">'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b>'+(fw?'<small class="fsub">'+(isNew?'<span class="frpill new">Nuevo</span> ':'')+'Te sigue</small>':'')+'</span>'+(frToday(m)?'<span class="ftd" title="Ya practicó hoy" aria-label="Ya practicó hoy">✔</span>':'')+'<span class="fst">🔥 '+frStreak(m)+'</span><span class="fxp">⚡ '+kfmt(frWeek(m))+'</span><span class="fcv" aria-hidden="true">▾</span></button>'+
     '<div class="fpanel"'+(open?'':' hidden')+'><div class="fmeta muted">'+esc(frWhen(m.last_day))+' · 📚 '+(m.lessons||0)+' lecciones'+(frNoName(m)?' · Aún no puso su nombre':'')+'</div>'+
     '<div class="chb">'+['animo','fuego','oracion'].map(k=>'<button class="chbtn" data-a="fr-cheer" data-to="'+to+'" data-k="'+k+'" aria-label="'+esc(KIND_T[k])+' a '+nm+'" title="'+esc(KIND_T[k])+'">'+KIND_E[k]+'</button>').join('')+
     '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar">🎁</button>'+
@@ -8182,7 +8186,7 @@ function frListHTML(d){
   let shown=lim?all.slice(0,LIM):all;
   if(lim&&!shown.some(x=>x.me))shown=shown.slice(0,LIM-1).concat(all.filter(x=>x.me));
   const rows=shown.map(x=>{const i=all.indexOf(x);
-    if(x.me)return '<div class="frow frme"><span class="fpos">'+(i===0&&x.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc((d.me&&d.me.avatar)||'🙂')+'</span><b class="fnm">Tú'+(S.badge?' '+badgeE(S.badge):'')+'</b>'+(S.lastDay===today()?'<span class="ftd" aria-label="Ya practicaste hoy">✔</span>':'')+'<span class="fst">🔥 '+x.st+'</span><span class="fxp">⚡ '+x.wk+'</span><span class="fcv" aria-hidden="true"></span></div>';
+    if(x.me)return '<div class="frow frme"><span class="fpos">'+(i===0&&x.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc((d.me&&d.me.avatar)||'🙂')+'</span><b class="fnm">Tú'+(S.badge?' '+badgeE(S.badge):'')+'</b>'+(S.lastDay===today()?'<span class="ftd" aria-label="Ya practicaste hoy">✔</span>':'')+'<span class="fst">🔥 '+x.st+'</span><span class="fxp">⚡ '+kfmt(x.wk)+'</span><span class="fcv" aria-hidden="true"></span></div>';
     return frRowHTML(x.m,i);}).join('');
   const only=(d.followers||[]).filter(f=>!d.following.some(m=>m.device===f.device)),OL=3,olim=!FRALL&&only.length>OL;
   const onlyRows=(olim?only.slice(0,OL):only).map(frOnlyHTML).join('');
@@ -8192,7 +8196,7 @@ function frListHTML(d){
 function frFollowingHTML(m){
   const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name);
   return '<div class="mrow"><div class="mtop"><span class="fav big">'+esc(m.avatar)+'</span><div class="minfo"><b>'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b><span class="muted">'+esc(frWhen(m.last_day))+'</span>'+(frNoName(m)?'<span class="frnote">Aún no puso su nombre</span>':'')+'</div>'+(frToday(m)?'<span class="frpill">hoy ✔</span>':'')+'</div>'+
-    '<div class="mstats"><span>🔥 <b>'+frStreak(m)+'</b> racha</span><span>⚡ <b>'+frWeek(m)+'</b> esta semana</span><span>📚 <b>'+(m.lessons||0)+'</b></span></div>'+
+    '<div class="mstats"><span>🔥 <b>'+frStreak(m)+'</b> racha</span><span>⚡ <b>'+kfmt(frWeek(m))+'</b> esta semana</span><span>📚 <b>'+(m.lessons||0)+'</b></span></div>'+
     '<div class="chb">'+['animo','fuego','oracion'].map(k=>'<button class="chbtn" data-a="fr-cheer" data-to="'+to+'" data-k="'+k+'" aria-label="'+esc(KIND_T[k])+' a '+nm+'" title="'+esc(KIND_T[k])+'">'+KIND_E[k]+'</button>').join('')+
     '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar">🎁</button>'+
     '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar">🎮</button></div>'+
@@ -8222,7 +8226,6 @@ function frHTML(){
   /* 2. Agregar amigos: tu código + seguir a alguien + invitar a instalar */
   out+='<details class="gsec fradd2" data-k="add"'+((GSEC.add||!fol.length)?' open':'')+'><summary><span>➕ Agregar amigos</span></summary><section class="card fradd">'+
     '<div class="codebox2"><span class="muted">Tu código de usuario</span><div class="gcrow"><div class="gcodev">'+esc(me.code)+'</div><button class="cpbtn" data-a="fr-copy" aria-label="Copiar mi código" title="Copiar"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></svg></button></div></div>'+
-    '<button class="btn blue" data-a="fr-invite">'+SHARE_I+'Invitar a instalar Lampy</button>'+
     '<div class="fradd-sep"></div>'+
     '<div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de usuario que te pasó.</small></div></div>'+
     '<div class="jr-in" style="margin-top:10px"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></section></details>';
@@ -9836,7 +9839,7 @@ function meHTML(){
   return '<div class="phead"><h1 class="page">Tu perfil</h1><div class="pbtns"><button class="gear" data-a="don-open" aria-label="Apoya a Lampy" title="Apoya a Lampy">💛</button><button class="gear" data-a="settings" aria-label="Ajustes" title="Ajustes">⚙️</button></div></div>'+meStripHTML()+'<div class="stats">'+
    '<div class="stat s1"><span class="se">🔥</span><div><b>'+S.streak+'</b><span>Racha actual</span></div></div>'+
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
-   '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
+   '<div class="stat s3"><span class="se">⚡</span><div><b>'+kfmt(S.xp)+'</b><span>XP total</span></div></div>'+
    '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length+BIOKEYS.length+LIBKEYS.length+PASKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+(signedIn()?'':cloudCardHTML())+
    '<section class="card goalc"><b>🎯 Meta diaria</b><div class="seg">'+[10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
    '<p class="shline" title="Ganas uno cada 7 días de racha; se usa solo si un día no alcanzas a practicar ni a leer.">🛡️ <b>'+S.freezes+'</b> de 2 protectores de racha · ganas uno cada 7 días y se usa solo si un día no practicas ni lees.</p>'+
