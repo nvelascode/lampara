@@ -1006,6 +1006,12 @@ a.btn{text-decoration:none;text-align:center}
 .rfrow.cur{border-color:#C8372D;background:color-mix(in srgb,#C8372D 10%,var(--surface))}
 .rfrow.done{opacity:.8}.rfrow[disabled]{opacity:.5}
 /* ===== Tarjetas para compartir ===== */
+.vlist{display:flex;flex-direction:column;gap:8px}
+.vrow{display:flex;align-items:center;gap:12px;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;padding:10px 14px;cursor:pointer}
+.vrow .vp{color:var(--blue);font-size:15px}.vrow .vt{flex:1;min-width:0;display:flex;flex-direction:column}
+.vrow .vt b{font-size:16px}.vrow .vt small{color:var(--muted,#777);font-size:12px;margin-top:1px}
+.vrow .vk{visibility:hidden;color:var(--green,#58cc02);font-weight:900}
+.vrow.on{border-color:var(--blue);background:var(--blue-bg,#ddf4ff)}.vrow.on .vk{visibility:visible}
 .rdaud{flex:none;font-weight:800;font-size:14px;color:var(--blue);text-decoration:none;border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;padding:6px 10px;white-space:nowrap}
 .bubble.rlvoz{cursor:pointer;position:relative;padding-right:34px}
 .bubble.rlvoz::after{content:"";position:absolute;right:10px;top:10px;width:18px;height:18px;opacity:.55;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z'/%3E%3C/svg%3E") center/contain no-repeat}
@@ -3910,26 +3916,41 @@ function gkUtter(text,opt){
   const norm=l=>String(l).replace('_','-').toLowerCase();
   let v=want?voices.find(x=>norm(x.lang)===norm(want)):null;
   const pickV=re=>voices.find(x=>re.test(norm(x.lang))&&x.localService)||voices.find(x=>re.test(norm(x.lang)));
-  v=v||(S.vname?voices.find(x=>x.name===S.vname&&/^es/i.test(x.lang)):null)||pickV(/^es-(co|419|mx|us)/i)||pickV(/^es/i);
+  const vn=(opt&&opt.vn!=null)?opt.vn:S.vname;
+  v=v||(vn?voices.find(x=>x.name===vn&&/^es/i.test(x.lang)):null)||pickV(/^es-(co|419|mx|us)/i)||pickV(/^es/i);
   if(v){u.voice=v;u.lang=v.lang;}else u.lang=want||'es-ES';
   u.rate=(opt&&opt.rate)||.8;
   return u;
 }
 function gkSpeakParts(parts,opt){
   if(!canSpeak()){toast('Este navegador no puede leer en voz alta.');return;}
+  /* Android/Chrome: si se habla justo después de cancelar a veces no suena. Se reanuda, se espera un instante y se reintenta con la voz por defecto. */
+  try{speechSynthesis.resume();}catch(e){}
   try{speechSynthesis.cancel();}catch(e){}
   const token=++SPK,pause=(opt&&opt.pause!=null)?opt.pause:420;let i=0;
   const next=()=>{
     if(token!==SPK||i>=parts.length)return;
     const part=parts[i++];let moved=false;
+    const plainTxt=String((part&&part.alt)||part);
     const go=()=>{if(moved)return;moved=true;if(i<parts.length)setTimeout(next,pause);};
-    try{
-      const u=gkUtter(part,opt);u.onend=go;u.onerror=go;
-      speechSynthesis.speak(u);
-      setTimeout(go,600+String((part&&part.alt)||part).length*110);
-    }catch(e){}
+    const run=mode=>{
+      try{
+        let u;
+        if(mode==='plain'){u=new SpeechSynthesisUtterance(plainTxt);u.lang='es';u.rate=(opt&&opt.rate)||.8;}
+        else u=gkUtter(part,opt);
+        let begun=false;
+        u.onstart=()=>{begun=true;};
+        u.onend=go;
+        u.onerror=()=>{if(!begun&&mode==='voz'&&token===SPK&&!moved)setTimeout(()=>run('plain'),100);else go();};
+        try{speechSynthesis.resume();}catch(e){}
+        speechSynthesis.speak(u);
+        if(mode==='voz')setTimeout(()=>{if(!begun&&token===SPK&&!moved){try{speechSynthesis.cancel();}catch(e){}setTimeout(()=>{if(token===SPK&&!moved)run('plain');},150);}},2500);
+        setTimeout(go,600+plainTxt.length*110+(mode==='voz'?3000:0));
+      }catch(e){go();}
+    };
+    run('voz');
   };
-  next();
+  setTimeout(next,160);
 }
 function gkSpeak(text,opt){gkSpeakParts([text],opt);}
 const GK_TNAME={'xi':'eksi'};
@@ -8616,11 +8637,11 @@ function vozPickHTML(){
   let vs=[];try{vs=(speechSynthesis.getVoices()||[]).filter(v=>/^es/i.test(v.lang));}catch(e){}
   if(vs.length<2)return '';
   vs.sort((a,b)=>(b.localService-a.localService)||a.name.localeCompare(b.name));
-  return '<section class="card"><b>🎙️ Voz de Lampy</b><p class="muted" style="margin:2px 0 8px;font-size:14px">Elige una de las voces en español que tiene tu teléfono. Al elegirla, la oyes.</p><select id="vname" class="inp" aria-label="Voz">'+
-   '<option value="">Automática</option>'+vs.map(v=>'<option value="'+esc(v.name)+'"'+(S.vname===v.name?' selected':'')+'>'+esc(v.name.replace(/^(Microsoft|Google)\s+/,'')+' · '+v.lang+(v.localService?'':' (en línea)'))+'</option>').join('')+'</select></section>';
+  const row=(v,lab,sub)=>'<button class="vrow'+(((S.vname||'')===v)?' on':'')+'" data-a="vsel" data-v="'+esc(v)+'"><span class="vp">▶</span><span class="vt"><b>'+esc(lab)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</span><span class="vk">✓</span></button>';
+  return '<section class="card" id="vozcard"><b>🎙️ Voz de Lampy</b><p class="muted" style="margin:2px 0 8px;font-size:14px">Toca una voz para oírla y elegirla. Son las voces en español que tiene tu teléfono.</p><div class="vlist">'+
+   row('','Automática','La que el teléfono prefiera')+vs.map(v=>row(v.name,v.name.replace(/^(Microsoft|Google)\s+/,''),v.lang+(v.localService?'':' · necesita internet'))).join('')+'</div></section>';
 }
-document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='vname'){S.vname=t.value||'';save();gkSpeak('Así suena esta voz. Lámpara es a mis pies tu palabra.',{rate:.95});}});
-try{if(window.speechSynthesis)speechSynthesis.addEventListener('voiceschanged',()=>{if(typeof TAB!=='undefined'&&TAB==='set'&&!document.activeElement.matches('select'))render();});}catch(e){}
+try{if(window.speechSynthesis&&speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',()=>{if(typeof TAB!=='undefined'&&TAB==='set')render();});}catch(e){}
 function vozTest(){
   const out=document.getElementById('voztest');const say=t=>{if(out)out.innerHTML=t;};
   if(!canSpeak()){say('Este navegador no tiene voz (speechSynthesis no existe).');return;}
@@ -11970,6 +11991,7 @@ document.addEventListener('click',e=>{
   else if(a==='say-t'){gkSpeak(b.dataset.t,{rate:.75});}
   else if(a==='theme'){S.theme=b.dataset.v;save();applyTheme();render();}
   else if(a==='rem-ics'){remICS();}
+  else if(a==='vsel'){const v=b.dataset.v||'';S.vname=v;save();document.querySelectorAll('#vozcard .vrow').forEach(x=>x.classList.toggle('on',(x.dataset.v||'')===v));gkSpeak('Así suena esta voz. Lámpara es a mis pies tu palabra.',{rate:.95,vn:v});}
   else if(a==='rl-say'){const t=b.dataset.t;if(t)gkSpeak(t,{rate:.95});}
   else if(a==='rlv'){S.rlv=b.dataset.v==='1';save();if(!S.rlv)stopSpeak();render();}
   else if(a==='fs'){S.fs=b.dataset.v;save();applyTheme();render();}
