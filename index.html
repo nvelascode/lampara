@@ -1259,6 +1259,11 @@ html.fs-xl{zoom:1.3;--zm:1.3}
 .vshare{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:50%;background:var(--surface);color:var(--blue-ink);border:2px solid var(--blue);border-bottom-width:4px;display:grid;place-items:center}
 .vshare svg{width:20px;height:20px}.vshare:active{transform:translateY(2px)}
 .btn:has(>.shi){display:flex;align-items:center;justify-content:center}
+.mestrip{width:100%;display:flex;align-items:center;gap:14px;text-align:left;font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:20px;padding:10px 16px;margin:2px 0 12px;cursor:pointer}
+.mestrip .mt{flex:1;min-width:0;display:flex;flex-direction:column}.mestrip .mt b{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mestrip .mt small{color:var(--muted,#777);font-size:13px;margin-top:1px}.mestrip .mt u{text-decoration:none;font-weight:800;letter-spacing:.5px}
+.mestrip .mpen{width:22px;height:22px;fill:none;stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.goalc{padding-top:12px;padding-bottom:12px}.goalc .seg{margin-top:8px}
 .shprev{display:flex;justify-content:center;min-height:120px;align-items:center}
 .shprev img{max-width:min(62vw,260px);max-height:56dvh;width:auto;height:auto;border-radius:18px;border:2px solid var(--line);background:var(--surface2)}
 .pbtns{display:flex;gap:8px}.pbtns .gear svg{width:22px;height:22px}
@@ -7823,11 +7828,14 @@ async function frEnsure(){
   }catch(e){}
   finally{FR.ensuring=false;}
 }
-function meCardHTML(){
-  const me=S.me||{name:'',avatar:'🙂'},d=FR&&FR.data&&FR.data.me;
-  const fr=(frActive()&&d)?'<b style="display:block;font-size:15px;margin-top:14px">Permitir que me sigan con mi código</b><p class="muted" style="margin:2px 0 0;font-size:13px">Quien te sigue ve tu nombre, tu emoji, tu racha, tus XP de la semana y si practicaste hoy. Nada más.</p><div class="seg"><button class="'+(d.visible?'on':'')+'" data-a="fr-vis" data-v="1">Sí</button><button class="'+(!d.visible?'on':'')+'" data-a="fr-vis" data-v="0">No</button></div>'+
-    '<div class="row2" style="margin-top:12px"><button class="btn ghost sm" data-a="fr-code-ask">Cambiar mi código</button></div><button class="link-danger" data-a="fr-del">Eliminar mi perfil de amigos</button>':'';
-  return '<section class="card"><b>👤 Mi perfil</b><p class="muted" style="margin:2px 0 8px;font-size:14px">Así te ven tu familia y tus amigos.</p><div style="display:flex;align-items:center;gap:12px;margin:0 0 10px"><span class="fav big">'+esc(me.avatar||'🙂')+'</span><b style="font-size:20px">'+esc(me.name||'Sin nombre')+'</b></div><button class="btn ghost sm" data-a="fr-edit">Cambiar nombre o emoji</button>'+fr+'</section>';
+function meStripHTML(){
+  const me=S.me||{name:'',avatar:'🙂'},c=S.fr&&S.fr.code;
+  return '<button class="mestrip" data-a="fr-edit" aria-label="Cambiar nombre, emoji o código"><span class="fav big">'+esc(me.avatar||'🙂')+'</span><span class="mt"><b>'+esc(me.name||'Sin nombre')+'</b><small>'+(c?'Código: <u>'+esc(c)+'</u>':'Toca para poner tu nombre')+'</small></span><svg class="mpen" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg></button>';
+}
+function privCardHTML(){
+  const d=FR&&FR.data&&FR.data.me;
+  if(!(frActive()&&d))return '';
+  return '<section class="card"><b>👥 Permitir que me sigan</b><p class="muted" style="margin:2px 0 0;font-size:14px">Quien te sigue con tu código ve tu nombre, tu emoji, tu racha, tus XP de la semana y si practicaste hoy. Nada más.</p><div class="seg"><button class="'+(d.visible?'on':'')+'" data-a="fr-vis" data-v="1">Sí</button><button class="'+(!d.visible?'on':'')+'" data-a="fr-vis" data-v="0">No</button></div></section>';
 }
 /* ============================================================
    NOTIFICACIONES (Web Push)
@@ -8067,7 +8075,7 @@ function frEditModal(){
   const ask=!!FRM.ask,cur=(FR.data&&FR.data.me&&FR.data.me.name)||'Jugador';
   showModal('<h3>'+(ask?'¿Cómo te llamas?':'Mi perfil de amigos')+'</h3>'+(ask?'<p class="muted" style="margin:0">Tus amigos te ven como «'+esc(cur)+'». Pon tu nombre y elige tu emoji para que sepan quién eres.</p>':'')+'<input id="frmname" class="inp" maxlength="24" placeholder="Tu nombre" value="'+esc(FRM.name)+'" autocomplete="off" aria-label="Tu nombre"><div class="avs">'+
     FAM_AV.map(a=>'<button class="avb '+(FRM.avatar===a?'on':'')+'" data-a="fr-medit-av" data-v="'+a+'" aria-label="Elegir '+a+'">'+a+'</button>').join('')+
-    '</div><button class="btn" data-a="fr-edit-save">Guardar</button><button class="btn ghost" data-a="'+(ask?'fr-name-later':'stay')+'">'+(ask?'Después':'Cancelar')+'</button>');
+    '</div><button class="btn" data-a="fr-edit-save">Guardar</button>'+((!ask&&frActive())?'<button class="btn ghost" data-a="fr-code-ask">Cambiar mi código</button>':'')+'<button class="btn ghost" data-a="'+(ask?'fr-name-later':'stay')+'">'+(ask?'Después':'Cancelar')+'</button>');
 }
 async function frEditSave(){
   const nm=(($('#frmname')||{}).value||'').trim();
@@ -9815,28 +9823,27 @@ function achWatch(){
 {const _aw=setInterval(achWatch,900);try{if(_aw&&_aw.unref)_aw.unref();}catch(e){}}
 function meHTML(){
   const ld=ALLKEYS.concat(GKKEYS,BIOKEYS,LIBKEYS,PASKEYS).filter(k=>S.done[k]).length;
-  return '<div class="phead"><h1 class="page">Tu perfil</h1><div class="pbtns"><button class="gear" data-a="don-open" aria-label="Apoya a Lampy" title="Apoya a Lampy">💛</button><button class="gear pk" data-a="share" data-k="streak" aria-label="Compartir mi racha" title="Compartir mi racha"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button><button class="gear" data-a="settings" aria-label="Ajustes" title="Ajustes">⚙️</button></div></div><div class="stats">'+
+  return '<div class="phead"><h1 class="page">Tu perfil</h1><div class="pbtns"><button class="gear" data-a="don-open" aria-label="Apoya a Lampy" title="Apoya a Lampy">💛</button><button class="gear" data-a="settings" aria-label="Ajustes" title="Ajustes">⚙️</button></div></div>'+meStripHTML()+'<div class="stats">'+
    '<div class="stat s1"><span class="se">🔥</span><div><b>'+S.streak+'</b><span>Racha actual</span></div></div>'+
    '<div class="stat s2"><span class="se">🏆</span><div><b>'+S.best+'</b><span>Mejor racha</span></div></div>'+
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+S.xp+'</b><span>XP total</span></div></div>'+
    '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length+BIOKEYS.length+LIBKEYS.length+PASKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+(signedIn()?'':cloudCardHTML())+
+   '<section class="card goalc"><b>🎯 Meta diaria</b><div class="seg">'+[10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
    '<p class="shline" title="Ganas uno cada 7 días de racha; se usa solo si un día no alcanzas a practicar ni a leer.">🛡️ <b>'+S.freezes+'</b> de 2 protectores de racha · ganas uno cada 7 días y se usa solo si un día no practicas ni lees.</p>'+
    (function(){const got=ACH.filter(a=>S.ach[a.id]),rest=ACH.filter(a=>!S.ach[a.id]);
-     return '<details class="achd"><summary><b>🏅 Logros · '+got.length+' de '+ACH.length+'</b><span class="pv">'+got.slice(-4).map(a=>ACH_E[a.id]||'⭐').join('')+'</span></summary><div class="achin"><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+got.concat(rest).map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div></div></details>';})()+
+     return '<details class="achd"><summary><b>🏅 Logros · '+got.length+' de '+ACH.length+'</b></summary><div class="achin"><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+got.concat(rest).map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div></div></details>';})()+
    '<p class="foot">Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.<br>Las preguntas se apoyan en el texto bíblico. Las notas breves ayudan a entender cada tema.</p>';
 }
 function settingsHTML(){
   return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+
-   '<section class="card"><b>🎯 Meta diaria</b><p class="muted" style="margin:2px 0 0;font-size:14px">Una lección completa suma entre 15 y 30 XP.</p><div class="seg">'+
-   [10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
-   meCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
+   privCardHTML()+pushCardHTML()+accountCardHTML()+installCardHTML()+
    vozPickHTML()+
    '<section class="card"><b>🔠 Tamaño de letra</b><p class="muted" style="margin:2px 0 0;font-size:14px">Agranda todo el texto de Lampy. Si no lo cambias, se queda como está.</p><div class="seg">'+[['n','Normal','16px'],['l','Grande','19px'],['xl','Muy grande','22px']].map(o=>'<button class="'+((S.fs||'n')===o[0]?'on':'')+'" data-a="fs" data-v="'+o[0]+'" style="font-size:'+(o[0]==='n'?'14px':o[0]==='l'?'15px':'16px')+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🌓 Apariencia</b><p class="muted" style="margin:2px 0 0;font-size:14px">Elige cómo se ve Lampy.</p><div class="seg">'+[['light','☀️ Claro'],['dark','🌙 Oscuro']].map(o=>'<button class="'+(S.theme===o[0]?'on':'')+'" data-a="theme" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></section>'+
    '<section class="card"><b>🔊 Sonido</b><div class="seg"><button class="'+(S.sound?'on':'')+'" data-a="sound" data-v="1">Con sonido</button><button class="'+(!S.sound?'on':'')+'" data-a="sound" data-v="0">Sin sonido</button></div><b style="display:block;margin-top:14px">📳 Vibración</b><div class="seg"><button class="'+(S.haptic?'on':'')+'" data-a="haptic" data-v="1">Con vibración</button><button class="'+(!S.haptic?'on':'')+'" data-a="haptic" data-v="0">Sin vibración</button></div></section>'+
    (signedIn()?'':'<h3 style="margin:22px 0 8px">💾 Respaldo de tu progreso</h3><section class="card"><p style="margin:0 0 10px;font-size:14px" class="muted">Tu progreso se guarda en este teléfono. Si cambias de teléfono o borras los datos del navegador, se pierde. Copia tu código y guárdalo en tus notas o envíatelo por WhatsApp.</p>'+
    '<textarea id="bk" class="code" placeholder="Aquí aparece tu código. Para restaurar, pégalo aquí."></textarea><div class="row2" style="margin:10px 0 0"><button class="btn blue sm" data-a="bk-copy">Copiar código</button><button class="btn ghost sm" data-a="bk-restore">Restaurar</button></div></section>')+
-   '<div style="margin-top:22px"><button class="link-danger" data-a="reset">'+(resetArmed?(signedIn()?'Toca otra vez para borrar también el progreso de tu cuenta':'Toca otra vez para borrar todo el progreso'):'Borrar progreso')+'</button></div>';
+   '<div style="margin-top:22px">'+((frActive()&&FR&&FR.data&&FR.data.me)?'<button class="link-danger" data-a="fr-del" style="display:block;margin-bottom:12px">Eliminar mi perfil de amigos</button>':'')+'<button class="link-danger" data-a="reset">'+(resetArmed?(signedIn()?'Toca otra vez para borrar también el progreso de tu cuenta':'Toca otra vez para borrar todo el progreso'):'Borrar progreso')+'</button></div>';
 }
 
 /* «Ir a mi lección»: lleva a la primera lección sin hacer (la que la ruta marca con ¡EMPIEZA!).
