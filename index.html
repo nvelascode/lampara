@@ -187,11 +187,15 @@ h1,h2,h3,h4{font-weight:900}
 .node:active:not(:disabled){transform:translateY(5px);box-shadow:0 2px 0 var(--shade)}
 .node.done{background:var(--yellow);color:#fff}
 .node.locked{background:var(--line);color:var(--muted);cursor:not-allowed}
-.node.current{position:relative;box-shadow:0 7px 0 var(--shade),0 0 0 4px var(--surface),0 0 0 8px var(--u)}
-.node.current:active:not(:disabled){box-shadow:0 2px 0 var(--shade),0 0 0 4px var(--surface),0 0 0 8px var(--u)}
-.node.current::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:3px solid var(--u);opacity:0;pointer-events:none;animation:halo 2s ease-out infinite}
-@keyframes halo{0%{transform:scale(.82);opacity:.55}100%{transform:scale(1.18);opacity:0}}
-@media (prefers-reduced-motion:reduce){.node.current::after{animation:none}.start-tip{animation:none!important}}
+.node.current{position:relative;box-shadow:0 7px 0 var(--shade);animation:ndP 2.4s ease-in-out infinite}
+.node.current:active:not(:disabled){box-shadow:0 2px 0 var(--shade);animation:none}
+.node.current svg{margin-left:4px;width:38px;height:38px;position:relative;z-index:1}
+.node.current::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid var(--u);opacity:0;pointer-events:none;animation:ndW 2.4s ease-out infinite}
+.node.current::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.62) 50%,transparent 62%);background-size:300% 100%;background-position:150% 0;background-repeat:no-repeat;animation:ndS 2.4s ease-in-out infinite}
+@keyframes ndP{0%,30%,100%{transform:scale(1)}45%{transform:scale(1.08)}65%{transform:scale(1)}}
+@keyframes ndW{0%,34%{opacity:0;transform:scale(1)}40%{opacity:.6}100%{opacity:0;transform:scale(1.55)}}
+@keyframes ndS{0%,28%{background-position:150% 0}70%,100%{background-position:-50% 0}}
+@media (prefers-reduced-motion:reduce){.node.current,.node.current::after,.node.current::before,.start-tip{animation:none!important}}
 .stop span{font-size:14px;font-weight:800;text-align:center;color:var(--muted)}
 .stop.cur span{color:var(--ink);font-weight:900}
 .start-tip{position:absolute;top:-38px;background:var(--u);color:#fff;border-radius:999px;padding:5px 14px;font-weight:900;font-size:13px;letter-spacing:.02em;box-shadow:0 3px 0 var(--shade);animation:tipfloat 2s ease-in-out infinite;white-space:nowrap}
@@ -1013,6 +1017,7 @@ a.btn{text-decoration:none;text-align:center}
 .rfbtn.ok{background:linear-gradient(135deg,#3A9C5A,#1F5E3A)}
 .rfbtn b{font-size:12px;font-weight:900;letter-spacing:.06em}
 .rfbtn.sm,.rfbtn{}
+@media(max-width:420px){.top:has(.rfbtn) .cbtn .nwtag{display:none}}
 @media(max-width:380px){.rfbtn{padding:0 9px;margin-right:0}.rfbtn b{font-size:11px;letter-spacing:.02em}.top{gap:6px}.top .cbtn{padding-left:10px;padding-right:10px}.top .cbtn .car{display:none}}
 .rfbtn .rfn{position:absolute;top:-8px;right:-6px;min-width:20px;height:20px;padding:0 4px;border-radius:99px;background:#FFD54A;color:#5A2A00;font-weight:900;font-size:11px;display:grid;place-items:center;border:2px solid var(--bg,#fff);box-sizing:border-box}
 /* ===== Tarjetas para compartir ===== */
@@ -9799,7 +9804,7 @@ function homeHTML(){
     return '<section class="unit" style="--u:'+COLORS[(gk?ui+4:bio?ui+2:lib?ui+6:pas?ui+3:ui)%COLORS.length]+'"><div class="unit-h"><div><h2>'+esc(u.title)+(isNew?'<span class="newtag">¡Nueva unidad!</span>':'')+'</h2><p>'+esc(u.sub)+'</p><span class="count'+(full?' full':'')+'">'+(full?'🏅 Unidad completa':dn+' de '+u.lessons.length)+'</span></div><div class="uemo" aria-hidden="true">'+emo+'</div></div><div class="path">'+
     u.lessons.map((l,li)=>{
       const idx=flat++,isDone=!!S.done[l.title],optN=isOptNew(l,idx,ldI),locked=idx>cur&&!isDone&&!optN,isCur=idx===cur;
-      const inner=isDone?IC.check:locked?IC.lock:'<span class="e">'+emo+'</span>';
+      const inner=isDone?IC.check:locked?IC.lock:isCur?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="#fff" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/></svg>':'<span class="e">'+emo+'</span>';
       return '<div class="stop '+(isCur?'cur':'')+'" style="--off:'+offs[li%4]+'px">'+''+
       '<button class="node '+(isDone?'done ':'')+(locked?'locked':'')+(isCur?' current':'')+'" data-a="lesson" data-c="'+(gk?'gk':bio?'bio':lib?'lib':pas?'pas':'bib')+'" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+inner+'</button><span>'+esc(l.title)+(optN?'<em class="optnew">✨ Nueva</em>':'')+'</span></div>';
     }).join('')+'</div></section>';
