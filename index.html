@@ -196,6 +196,11 @@ h1,h2,h3,h4{font-weight:900}
 @keyframes ndW{0%,34%{opacity:0;transform:scale(1)}40%{opacity:.6}100%{opacity:0;transform:scale(1.55)}}
 @keyframes ndS{0%,28%{background-position:150% 0}70%,100%{background-position:-50% 0}}
 @media (prefers-reduced-motion:reduce){.node.current,.node.current::after,.node.current::before,.start-tip{animation:none!important}}
+.node.pop{animation:ndPop .65s cubic-bezier(.3,1.6,.5,1) both}
+.node.current.lit{animation:ndLit .8s ease-out .5s both,ndP 2.4s ease-in-out 1.3s infinite}
+@keyframes ndPop{0%{transform:scale(.7)}60%{transform:scale(1.22)}100%{transform:scale(1)}}
+@keyframes ndLit{0%{transform:scale(.8);filter:brightness(1.5)}60%{transform:scale(1.15);filter:brightness(1.2)}100%{transform:scale(1);filter:none}}
+@media (prefers-reduced-motion:reduce){.node.pop,.node.current.lit{animation:none!important}}
 .stop span{font-size:14px;font-weight:800;text-align:center;color:var(--muted)}
 .stop.cur span{color:var(--ink);font-weight:900}
 .start-tip{position:absolute;top:-38px;background:var(--u);color:#fff;border-radius:999px;padding:5px 14px;font-weight:900;font-size:13px;letter-spacing:.02em;box-shadow:0 3px 0 var(--shade);animation:tipfloat 2s ease-in-out infinite;white-space:nowrap}
@@ -248,6 +253,7 @@ h1,h2,h3,h4{font-weight:900}
 .ucnext span.s{color:var(--muted);font-size:14px;font-weight:800}
 .ucel .btn{width:min(420px,100%)}
 .newtag{display:inline-block;margin-left:8px;background:var(--orange);color:#fff;font-weight:900;font-size:12px;padding:3px 10px;border-radius:999px;vertical-align:middle;animation:pulse 1.8s ease-in-out infinite}
+.udots{margin-left:8px;letter-spacing:1px;font-size:9px;vertical-align:1px}.udots i{font-style:normal;opacity:.38}
 .count.full{background:#fff;color:color-mix(in srgb,var(--u) 50%,#000);box-shadow:0 2px 0 rgba(0,0,0,.18)}
 .offbar{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 6px);z-index:9;background:#3C3C3C;color:#fff;font-weight:900;font-size:13px;padding:6px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.3);white-space:nowrap}
 .offbar[hidden]{display:none}
@@ -292,8 +298,15 @@ h1,h2,h3,h4{font-weight:900}
 .ctile small{font-size:12px;color:var(--muted);font-weight:800}
 .cmenu .cl{margin:14px auto 0;display:block;color:var(--muted);font-weight:900}
 .goto{position:fixed;right:14px;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:7;display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;background:var(--blue);color:#fff;font-weight:900;font-size:15px;border:0;border-bottom:4px solid rgba(0,0,0,.22);box-shadow:0 6px 18px rgba(0,0,0,.25)}
-.goto{animation:gotoPulse 2.6s ease-in-out infinite;width:54px;height:54px;padding:0;justify-content:center;gap:0}
-.goto svg{width:28px;height:28px}
+.goto{overflow:hidden;animation:gotoPulse 2.6s ease-in-out infinite;width:54px;height:54px;padding:0;justify-content:center;gap:0}
+.goto svg{width:28px;height:28px;position:relative;z-index:1}
+.goto>span{position:relative;z-index:1}
+.goto::before,.rfbtn::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.6) 50%,transparent 62%);background-size:300% 100%;background-position:150% 0;background-repeat:no-repeat}
+.goto::before{animation:btnShine 4.5s ease-in-out infinite}
+.rfbtn::before{animation:btnShine 7s ease-in-out infinite;opacity:.8}
+.rfbtn b{position:relative;z-index:1}
+@keyframes btnShine{0%,35%{background-position:150% 0}75%,100%{background-position:-50% 0}}
+@media (prefers-reduced-motion:reduce){.goto::before,.rfbtn::before{animation:none}}
 .goto.lbl{width:auto;padding:0 18px 0 14px;gap:8px}
 @keyframes gotoPulse{0%,100%{transform:scale(1);box-shadow:0 6px 18px rgba(0,0,0,.25),0 0 0 0 rgba(28,176,246,.45)}50%{transform:scale(1.045);box-shadow:0 8px 22px rgba(0,0,0,.28),0 0 0 9px rgba(28,176,246,0)}}
 .goto .mas{margin:-6px 0 -6px -6px}
@@ -1006,6 +1019,8 @@ a.btn{text-decoration:none;text-align:center}
 .rfbar .rfm{font-weight:800;opacity:.9;white-space:nowrap}
 .rfbar .rfd{margin-left:auto;font-weight:900;font-size:12px;background:#FFD54A;color:#5A2A00;padding:3px 8px;border-radius:99px;white-space:nowrap}
 .rfbar .rfch{font-size:20px;font-weight:900;opacity:.8}
+.rfsum{margin:4px 0 8px;font-size:17px;font-weight:800}.rfsum b{color:#C8372D}
+.rfprog{height:12px;border-radius:99px;background:var(--line);overflow:hidden}.rfprog i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#D8392F,#FFB02E)}
 .rflist{display:grid;gap:8px;text-align:left}
 .rfrow{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink);text-align:left}
 .rfrow b{flex:1;font-size:15px}.rfrow small{color:var(--muted);font-weight:800}
@@ -1286,6 +1301,12 @@ html.fs-xl{zoom:1.3;--zm:1.3}
 .votd.vmini{display:flex;align-items:center;min-height:60px;padding:10px 62px 10px 14px;cursor:pointer}
 .votd .tagv{position:absolute;left:16px;top:19px;margin:0}
 .votd:not(.vmini){padding-top:62px}
+.votd{overflow:hidden}
+.votd:not(.vmini){background:radial-gradient(120% 90% at 85% 0%,color-mix(in srgb,var(--blue) 16%,var(--blue-bg)),var(--blue-bg) 70%)}
+.votd:not(.vmini)::before{content:"\201C";position:absolute;right:12px;top:44px;font-family:Georgia,"Noto Serif",serif;font-size:150px;line-height:1;color:var(--blue);opacity:.16;pointer-events:none}
+.votd:not(.vmini) q{position:relative;font-family:Georgia,"Noto Serif","Times New Roman",serif;font-style:italic;font-weight:700;font-size:20px;line-height:1.5}
+.votd:not(.vmini) cite{position:relative;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.votd:not(.vmini) .think{position:relative}
 .votd .vtog{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:50%;background:var(--surface);color:var(--blue-ink);border:2px solid var(--blue);border-bottom-width:4px;display:grid;place-items:center;padding:0;cursor:pointer}
 .votd .vtog:active{transform:translateY(2px)}
 .votd .vch{width:22px;height:22px}
@@ -6385,7 +6406,7 @@ function rfCardHTML(){
 function rfOpen(){
   if(!rfOn())return;
   let cur=RF.findIndex(l=>!S.done[l.title]);
-  showModal('<h3>📜 Evento: Reforma</h3><p class="muted">'+rfDone()+' de '+RF.length+' completadas · quedan '+rfDaysLeft()+(rfDaysLeft()===1?' día':' días')+' (hasta el 1 de noviembre)</p><div class="rflist">'+
+  showModal('<h3>📜 Evento: Reforma</h3><p class="rfsum"><b>'+rfDone()+' de '+RF.length+'</b> lecciones · quedan <b>'+rfDaysLeft()+(rfDaysLeft()===1?' día':' días')+'</b></p><div class="rfprog" aria-hidden="true"><i style="width:'+Math.round(100*rfDone()/RF.length)+'%"></i></div><p class="muted" style="margin:6px 0 12px;font-size:13px">Termina el 1 de noviembre.</p><div class="rflist">'+
    RF.map((l,i)=>{const dn=!!S.done[l.title],lock=!dn&&i>cur&&cur>=0;
      return '<button class="rfrow'+(dn?' done':'')+(i===cur?' cur':'')+'" data-a="rf-go" data-i="'+i+'" '+(lock?'disabled':'')+'><span class="rfe">'+(dn?'✔':lock?'🔒':l.e)+'</span><b>'+esc(l.title.replace(/^Reforma \d · /,''))+'</b><small>'+(dn?'Hecha':lock?'Bloqueada':i===cur?'Sigue':'')+'</small></button>';}).join('')+
    '</div><button class="btn ghost" data-a="stay">Cerrar</button>');
@@ -9760,6 +9781,8 @@ function flameLeft(d){
 }
 const flameAtRisk=()=>S.streak>0&&S.lastDay!==dstr(flameNow());
 /* La carita de Lampy se va preocupando a lo largo del día (la llamita se achica a la vez) */
+function homeVar(arr){let h=0;for(const c of today())h=(h*31+c.charCodeAt(0))>>>0;return arr[(h+(S.streak||0))%arr.length];}
+function homeGreet(){const h=new Date().getHours();return h<12?'¡Buen día':h<19?'¡Buena tarde':'¡Buena noche';}
 function riskMood(d){
   d=d||flameNow();const hh=d.getHours()+d.getMinutes()/60;
   return hh<10?'happy':hh<14?'curious':hh<18?'uneasy':hh<21.5?'worried':'panic';
@@ -9791,22 +9814,23 @@ try{setInterval(flameTick,60000);}catch(e){}
 function homeHTML(){
   const gk=S.course==='gk',bio=S.course==='bio',lib=S.course==='lib',pas=S.course==='pas',U=curUnits(),t=today(),xpT=S.days[t]||0,pct=Math.min(1,xpT/S.goal),C=175.9;
   let msg,mood='happy';
-  if(xpT>=S.goal){msg='¡Meta cumplida! Tu racha está a salvo por hoy.';mood='cheer';}
+  if(xpT>=S.goal){const nm=S.me&&S.me.name?', '+S.me.name:'';msg=homeVar(['¡Meta cumplida! Tu racha está a salvo por hoy.',homeGreet()+nm+'! Hoy ya cumpliste tu meta.','Listo por hoy'+nm+'. Tu racha está a salvo.','¡Bien hecho! Cada día suma.']);mood='cheer';}
   else if(S.streak>0&&S.lastDay!==t){msg=flameMsg();mood=riskMood();}
-  else if(S.streak>0){msg='Llevas '+S.streak+(S.streak===1?' día':' días')+' seguidos. Te faltan '+(S.goal-xpT)+' XP para tu meta.';mood='wink';}
+  else if(S.streak>0){const nm=S.me&&S.me.name?', '+S.me.name:'',dd=S.streak+(S.streak===1?' día':' días'),fl=S.goal-xpT;msg=homeVar(['Llevas '+dd+' seguidos. Te faltan '+fl+' XP para tu meta.',homeGreet()+nm+'! Te faltan '+fl+' XP para tu meta de hoy.','Vas bien: '+dd+' seguidos. Faltan '+fl+' XP.']);mood='wink';}
   else{mood='wink';msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':bio?'¡Conoce a los hombres y mujeres que Dios usó en su iglesia! Haz tu primera lección.':lib?'¡Recorre la Biblia libro por libro, mirando siempre a Cristo! Haz tu primera ficha.':pas?'¡Aprende los pasajes que más importan, versículo por versículo! Haz tu primera lección.':'¡Hola'+(S.me&&S.me.name?', '+S.me.name:'')+'! Haz tu primera lección y empieza tu racha.';}
   const week=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');week.push('<div class="day"><div class="dot '+((S.days[d]||0)>0||(S.rdDays&&S.rdDays[d])?'on':'')+(i===0?' today':'')+'">'+IC.check+'</div>'+DOW[dt.getDay()]+'</div>');}
   const cur=firstUndone(U),ldI=lastDoneIdx(U);let flat=0;
+  const _lo=document.getElementById('lesson'),jd=(JUST_DONE&&(!_lo||_lo.hidden))?JUST_DONE:null;if(jd)JUST_DONE=null;
   const offs=[0,46,0,-46];
   const units=U.map((u,ui)=>{
     const dn=u.lessons.filter(l=>S.done[l.title]).length,u0=flat,full=unitDoneI(U,ui),isNew=!full&&dn===0&&u0>0&&cur>=u0&&cur<u0+u.lessons.length;
     const emo=UNIT_EMO[u.title]||'📖';
-    return '<section class="unit" style="--u:'+COLORS[(gk?ui+4:bio?ui+2:lib?ui+6:pas?ui+3:ui)%COLORS.length]+'"><div class="unit-h"><div><h2>'+esc(u.title)+(isNew?'<span class="newtag">¡Nueva unidad!</span>':'')+'</h2><p>'+esc(u.sub)+'</p><span class="count'+(full?' full':'')+'">'+(full?'🏅 Unidad completa':dn+' de '+u.lessons.length)+'</span></div><div class="uemo" aria-hidden="true">'+emo+'</div></div><div class="path">'+
+    return '<section class="unit" style="--u:'+COLORS[(gk?ui+4:bio?ui+2:lib?ui+6:pas?ui+3:ui)%COLORS.length]+'"><div class="unit-h"><div><h2>'+esc(u.title)+(isNew?'<span class="newtag">¡Nueva unidad!</span>':'')+'</h2><p>'+esc(u.sub)+'</p><span class="count'+(full?' full':'')+'">'+(full?'🏅 Unidad completa':dn+' de '+u.lessons.length+(u.lessons.length<=10?'<span class="udots" aria-hidden="true">'+'●'.repeat(dn)+'<i>'+'●'.repeat(u.lessons.length-dn)+'</i></span>':''))+'</span></div><div class="uemo" aria-hidden="true">'+emo+'</div></div><div class="path">'+
     u.lessons.map((l,li)=>{
       const idx=flat++,isDone=!!S.done[l.title],optN=isOptNew(l,idx,ldI),locked=idx>cur&&!isDone&&!optN,isCur=idx===cur;
       const inner=isDone?IC.check:locked?IC.lock:isCur?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="#fff" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/></svg>':'<span class="e">'+emo+'</span>';
       return '<div class="stop '+(isCur?'cur':'')+'" style="--off:'+offs[li%4]+'px">'+''+
-      '<button class="node '+(isDone?'done ':'')+(locked?'locked':'')+(isCur?' current':'')+'" data-a="lesson" data-c="'+(gk?'gk':bio?'bio':lib?'lib':pas?'pas':'bib')+'" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+inner+'</button><span>'+esc(l.title)+(optN?'<em class="optnew">✨ Nueva</em>':'')+'</span></div>';
+      '<button class="node '+(isDone?'done ':'')+(locked?'locked':'')+(isCur?' current'+(jd?' lit':''):'')+(jd&&l.title===jd?' pop':'')+'" data-a="lesson" data-c="'+(gk?'gk':bio?'bio':lib?'lib':pas?'pas':'bib')+'" data-u="'+ui+'" data-l="'+li+'" '+(locked?'disabled aria-label="Bloqueada: '+esc(l.title)+'"':'aria-label="'+esc(l.title)+(isDone?' (completada)':'')+'"')+'>'+inner+'</button><span>'+esc(l.title)+(optN?'<em class="optnew">✨ Nueva</em>':'')+'</span></div>';
     }).join('')+'</div></section>';
   }).join('');
   const tip=(!isStandalone()&&!S.tipHide)?'<div class="install"><b>📲 Instala Lampy en tu teléfono</b><br>'+(isIOS()?'En <b>Safari</b> toca el botón Compartir (el cuadro con la flecha) y elige <b>Añadir a pantalla de inicio</b>. Úsala siempre desde ese ícono para que no se borre tu progreso.':'Abre el menú del navegador y elige <b>Añadir a pantalla de inicio</b> o <b>Instalar app</b>. Así se abre como una app y guarda tu progreso.')+'<br>'+(INSTALL_EVT?'<button class="btn sm" data-a="install" style="margin-right:8px">Instalar ahora</button>':'')+'<button class="btn sm purple" data-a="tip">Entendido</button></div>':'';
@@ -10261,6 +10285,7 @@ function ucGo(){
   const el=document.getElementById('ucel');el.hidden=true;el.innerHTML='';document.body.style.overflow='';
   TAB='path';render();window.scrollTo(0,0);setTimeout(()=>{try{gotoMyLesson();}catch(e){}},200);
 }
+let JUST_DONE=null;
 function finishLesson(){
   const bonus=5+(L.mistakes===0?5:0);
   const xp=L.xp+bonus;
@@ -10268,7 +10293,7 @@ function finishLesson(){
   const isReview=L.meta.type==='review';
   L.wasDone=!isReview&&!!S.done[L.meta.key];
   if(isReview)S.reviews++;
-  else{const p=S.done[L.meta.key]||{n:0};S.done[L.meta.key]={n:p.n+1,acc:Math.max(p.acc||0,L.firstTry/L.total)};}
+  else{if(!S.done[L.meta.key])JUST_DONE=L.meta.key;const p=S.done[L.meta.key]||{n:0};S.done[L.meta.key]={n:p.n+1,acc:Math.max(p.acc||0,L.firstTry/L.total)};}
   if(!isReview){
     const gkc=L.meta.course==='gk',cc=L.meta.course||'bib',UU=gkc?GK_UNITS:cc==='bio'?BIO_UNITS:cc==='lib'?LIB_UNITS:cc==='pas'?PAS_UNITS:UNITS,ui0=unitOf(UU,L.meta.key);
     if(!L.wasDone&&ui0>=0&&unitDoneI(UU,ui0)&&!(S.cel&&S.cel[UU[ui0].title])){S.cel=S.cel||{};S.cel[UU[ui0].title]=1;L.unitCel={ui:ui0,gk:gkc,c:cc};}
