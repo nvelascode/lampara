@@ -1008,11 +1008,13 @@ a.btn{text-decoration:none;text-align:center}
 .rfrow .rfe{font-size:22px;width:30px;text-align:center}
 .rfrow.cur{border-color:#C8372D;background:color-mix(in srgb,#C8372D 10%,var(--surface))}
 .rfrow.done{opacity:.8}.rfrow[disabled]{opacity:.5}
-.hero .rfbtn{position:relative;flex:none;display:grid;justify-items:center;gap:1px;width:74px;padding:9px 4px 7px;border:0;border-radius:18px;color:#fff;background:linear-gradient(135deg,#D8392F,#8E1F3F);border-bottom:4px solid rgba(0,0,0,.28);cursor:pointer;font:inherit}
-.hero .rfbtn:active{transform:translateY(2px);border-bottom-width:2px}
-.hero .rfbtn.ok{background:linear-gradient(135deg,#3A9C5A,#1F5E3A)}
-.rfbtn .rfi{font-size:24px;line-height:1}.rfbtn b{font-size:11px;font-weight:900;letter-spacing:.06em}
-.rfbtn .rfn{position:absolute;top:-7px;right:-5px;min-width:22px;height:22px;padding:0 5px;border-radius:99px;background:#FFD54A;color:#5A2A00;font-weight:900;font-size:12px;display:grid;place-items:center;border:2px solid var(--bg,#fff);box-sizing:border-box}
+.rfbtn{position:relative;flex:none;display:inline-flex;align-items:center;height:38px;padding:0 13px;margin-right:4px;border:0;border-radius:14px;color:#fff;background:linear-gradient(135deg,#D8392F,#8E1F3F);border-bottom:4px solid rgba(0,0,0,.28);cursor:pointer;font:inherit}
+.rfbtn:active{transform:translateY(2px);border-bottom-width:2px}
+.rfbtn.ok{background:linear-gradient(135deg,#3A9C5A,#1F5E3A)}
+.rfbtn b{font-size:12px;font-weight:900;letter-spacing:.06em}
+.rfbtn.sm,.rfbtn{}
+@media(max-width:380px){.rfbtn{padding:0 9px;margin-right:0}.rfbtn b{font-size:11px;letter-spacing:.02em}.top{gap:6px}.top .cbtn{padding-left:10px;padding-right:10px}.top .cbtn .car{display:none}}
+.rfbtn .rfn{position:absolute;top:-8px;right:-6px;min-width:20px;height:20px;padding:0 4px;border-radius:99px;background:#FFD54A;color:#5A2A00;font-weight:900;font-size:11px;display:grid;place-items:center;border:2px solid var(--bg,#fff);box-sizing:border-box}
 /* ===== Tarjetas para compartir ===== */
 .vlist{display:flex;flex-direction:column;gap:8px}
 .vrow{display:flex;align-items:center;gap:12px;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;padding:10px 14px;cursor:pointer}
@@ -1276,12 +1278,13 @@ html.fs-xl{zoom:1.3;--zm:1.3}
 .gstrip .day{font-size:11px;gap:2px}
 .gstrip .dot{width:24px;height:24px;border-width:2px}
 .gstrip .dot svg{width:13px;height:13px}
-.votd.vmini{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;cursor:pointer}
+.votd.vmini{display:flex;align-items:center;min-height:60px;padding:10px 62px 10px 14px;cursor:pointer}
 .votd.vmini .tagv{margin:0;font-size:15px;padding:4px 14px}
-.votd.vmini .vch{width:26px;height:26px;color:var(--blue-ink);flex:none}
-.votd .tagv{white-space:nowrap}
-.votd .tagv .vch{display:inline-block;width:16px;height:16px;vertical-align:-3px;margin-left:6px}
-.votd .tagv[data-a="vs-tog"]{cursor:pointer;padding:5px 14px;font-size:14px}
+.votd .vtog{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:50%;background:var(--surface);color:var(--blue-ink);border:2px solid var(--blue);border-bottom-width:4px;display:grid;place-items:center;padding:0;cursor:pointer}
+.votd .vtog:active{transform:translateY(2px)}
+.votd .vch{width:22px;height:22px}
+.votd:not(.vmini) .vshare{right:58px}
+.votd:not(.vmini) .tagv{white-space:nowrap}
 .vshare{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:50%;background:var(--surface);color:var(--blue-ink);border:2px solid var(--blue);border-bottom-width:4px;display:grid;place-items:center}
 .vshare svg{width:20px;height:20px}.vshare:active{transform:translateY(2px)}
 .btn:has(>.shi){display:flex;align-items:center;justify-content:center}
@@ -6371,7 +6374,7 @@ function rfDone(){return RF.filter(l=>S.done[l.title]).length;}
 function rfCardHTML(){
   if(!rfOn()||S.course==='gk')return '';
   const n=rfDone(),d=rfDaysLeft(),all=n>=RF.length;
-  return '<button class="rfbtn'+(all?' ok':'')+'" data-a="rf-open" aria-label="Evento de la Reforma: '+(all?'completado':d<=1?'último día':'quedan '+d+' días')+'"><span class="rfi" aria-hidden="true">📜</span><b>EVENTO</b><span class="rfn" aria-hidden="true">'+(all?'✔':d)+'</span></button>';
+  return '<button class="rfbtn'+(all?' ok':'')+'" data-a="rf-open" aria-label="Evento de la Reforma: '+(all?'completado':d<=1?'último día':'quedan '+d+' días')+'"><b>EVENTO</b><span class="rfn" aria-hidden="true">'+(all?'✔':d)+'</span></button>';
 }
 function rfOpen(){
   if(!rfOn())return;
@@ -8261,7 +8264,7 @@ function frHTML(){
   out+='<details class="gsec fradd2" data-k="add"'+((GSEC.add||!fol.length)?' open':'')+'><summary><span>➕ Agregar amigos</span></summary><section class="card fradd">'+
     '<div class="codebox2"><span class="muted">Tu código de usuario</span><div class="gcrow"><div class="gcodev">'+esc(me.code)+'</div><button class="cpbtn" data-a="fr-copy" aria-label="Copiar mi código" title="Copiar"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></svg></button></div></div>'+
     '<div class="fradd-sep"></div>'+
-    '<div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de 6 caracteres de tu amigo.</small></div></div>'+
+    '<div class="jr-t"><span class="jr-e" aria-hidden="true">👥</span><div><b>Seguir a alguien</b><small>Escribe el código de tu amigo.</small></div></div>'+
     '<div class="jr-in" style="margin-top:10px"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></section></details>';
   /* 4. Regalos y tarjetas */
   const gn=giftN();
@@ -9714,7 +9717,7 @@ function renderTop(){
   const t=today(),doneToday=S.lastDay===t,alive=S.streak>0;
   $('#top').innerHTML=
    '<button class="cbtn'+(cmInvite()?' cpulse':'')+'" data-a="cmenu" aria-haspopup="true" aria-expanded="'+(typeof CMENU!=='undefined'&&CMENU)+'" aria-label="Curso actual: '+CINFO(S.course).n+'. Cambiar de curso"><span class="ci">'+CINFO(S.course).i+'</span><span>'+CINFO(S.course).n+'</span>'+((!S.bioSeen&&S.course!=='bio')||(!S.libSeen&&S.course!=='lib')||(!S.pasSeen&&S.course!=='pas')?'<span class="nwtag sm">NUEVO</span>':'')+'<span class="car" aria-hidden="true">▼</span></button>'+
-   '<div class="chips">'+
+   '<div class="chips">'+(TAB==='path'?rfCardHTML():'')+
    '<button class="askb" data-a="rlib-open" aria-label="Biblioteca: pregúntale a Rollo">'+rollo('contento',38)+'</button>'+
    '<button class="chip streak '+(doneToday?'on':alive?'risk':'off')+'" data-a="streak-info" aria-haspopup="dialog" aria-label="Racha de '+S.streak+' días. Toca para ver tu racha, protectores y puntos">'+IC.flame+S.streak+'</button></div>';
 }
@@ -9806,10 +9809,10 @@ function homeHTML(){
   if(gk){const w=wotd();daily='<section class="card wotd"><span class="tagv">🔤 Palabra del día</span><div class="wg gk">'+esc(w.g)+'</div><div class="wm"><b>'+esc(w.tr)+'</b> · '+esc(w.es)+'</div><button class="btn purple sm" data-a="dic-open" data-w="'+w.id+'">Ver su historia</button></section>';}
   else if(bio){const w=botd();daily='<section class="card votd"><span class="tagv">🕯️ Persona del día</span><q>'+esc(w.t)+'</q><cite>'+esc(w.n)+'</cite></section>';}
   else{const v=votd(),seen=vSeen();
-    if(seen&&!VOPEN)daily='<section class="card votd vmini" data-a="vs-tog" role="button" tabindex="0" aria-label="Abrir el versículo del día"><span class="tagv">✨ Versículo del día</span><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></section>';
-    else daily='<section class="card votd"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button><span class="tagv"'+(seen?' data-a="vs-tog" role="button" tabindex="0"':'')+'>✨ Versículo del día'+(seen?'<svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
+    if(seen&&!VOPEN)daily='<section class="card votd vmini" data-a="vs-tog" role="button" tabindex="0" aria-label="Abrir el versículo del día"><span class="tagv">✨ Versículo del día</span><span class="vtog" aria-hidden="true"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></section>';
+    else daily='<section class="card votd"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button>'+(seen?'<button class="vtog" data-a="vs-tog" aria-label="Plegar el versículo del día"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'')+'<span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return cmInviteHTML()+(S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
-  '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div>'+rfCardHTML()+'</div>'+frHomeHTML()+rdHomeHTML()+repCardHTML(true)+
+  '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rdHomeHTML()+repCardHTML(true)+
   '<section class="card gstrip"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/><circle class="rfg" cx="35" cy="35" r="28" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'" transform="rotate(-90 35 35)"/></svg><b><span>'+Math.min(xpT,S.goal)+'/'+S.goal+'<small>⚡ XP</small></span></b></div><div class="gcol"><h3>Meta de hoy <small>'+(xpT>=S.goal?'· ¡Cumplida!':'· faltan '+(S.goal-xpT)+' XP')+'</small></h3><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></div></div></section>'+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':bio?'Biografías: datos históricos resumidos de fuentes de dominio público. Textos bíblicos citados: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
