@@ -10849,7 +10849,7 @@ function finishLesson(){
    (r.newDay?'<div class="note fl">🔥 <b>¡Racha de '+S.streak+(S.streak===1?' día':' días')+'!</b> Vuelve mañana para mantenerla.</div>':'<div class="note">Hoy tu racha ya estaba asegurada. ¡Sigue sumando!</div>')+
    (r.gotFreeze?'<div class="note fl">🛡️ <b>¡Ganaste un protector de racha!</b> Cubre un día si no puedes practicar.</div>':'')+
    (r.goalHit?'<div class="note">🎯 <b>¡Meta diaria cumplida!</b> '+S.days[today()]+' XP hoy.</div>':'')+
-   (donAsk?'<div class="note">💛 <b>Si Lampy te está bendiciendo</b>, puedes ayudar a mantenerla.<button class="dlink" data-a="don-open">Ver cómo</button></div>':'')+
+   (donAsk?'<div class="note">💛 <b>Todo en Lampy sigue siendo gratis.</b> Si quieres apoyar este proyecto, puedes enviarnos el valor que quieras por Bre-B.<button class="dlink" data-a="don-open">Ver cómo</button></div>':'')+
    fresh.map(a=>'<div class="note">'+(ACH_E[a.id]||'⭐')+' <b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join('')+
    (gws.length?'<div class="vs"><h3>Palabras de esta lección</h3><div class="dlist">'+gws.map(e=>'<button class="dentry" data-a="dic-peek" data-w="'+e.id+'"><span class="dg gk">'+esc(e.g)+'</span><span class="dm"><b>'+esc(e.tr)+'</b> '+esc(e.es)+'</span></button>').join('')+'</div></div>':'')+
    (vs.length?'<div class="vs"><h3>Versículos de esta lección</h3><div class="list">'+vs.map(v=>'<div class="li"><cite>'+esc(v.r)+'</cite><p>'+esc(v.t)+'</p></div>').join('')+'</div></div>':'')+
@@ -10868,7 +10868,7 @@ function closeLesson(){$('#lesson').hidden=true;$('#lesson').innerHTML='';docume
 /* Aporte voluntario por Bre-B (QR y llave de Lampy) */
 const DON_LLAVE='@davilampy';
 function donModal(){
-  showModal('<h3 style="margin:0 0 6px">💛 Apoya a Lampy</h3><p style="margin:0 0 12px;font-size:15px">Todo en Lampy sigue siendo gratis, aportes o no. Si quieres ayudar a mantenerla y a seguir creando lecciones, puedes dejar el valor que quieras por <b>Bre-B</b>.</p>'+
+  showModal('<h3 style="margin:0 0 6px">💛 Apoya a Lampy</h3><p style="margin:0 0 12px;font-size:15px">Todo en Lampy sigue siendo gratis. Si quieres apoyar este proyecto, puedes enviarnos el valor que quieras por <b>Bre-B</b>.</p>'+
    '<div class="donkey"><small>Llave Bre-B · se verá a nombre de «Lampy»</small><b>@DAVILAMPY</b></div>'+
    '<p class="muted" style="margin:0 0 12px;font-size:13px">Copia la llave, abre la app de tu banco y pégala en «Pagar con llave» o «Bre-B». Pon el valor que quieras.</p>'+
    '<button class="btn" data-a="don-copy">Copiar la llave</button><button class="btn ghost" data-a="stay">Cerrar</button>');
