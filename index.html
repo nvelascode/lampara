@@ -2180,17 +2180,20 @@ function rlClear(){
     const lb=root.querySelector('.lb');if(lb)lb.scrollTop=0;}
   if(i){try{i.focus();}catch(e){}}
 }
+const IOS_PWA=()=>(/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))&&(navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches));
+const micKb=(sel)=>{const i=$(sel||'#rlq');if(i){try{i.focus();}catch(e){}}toast('Toca el micrófono de tu teclado (abajo a la derecha) para dictar.');};
 const micDenied=()=>toast(/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)?'Micrófono bloqueado. En el iPhone: Ajustes › Safari › Micrófono › Permitir. Y en Ajustes › General › Teclado, activa Dictado.':'Micrófono bloqueado. Permítelo en los ajustes del sitio de tu navegador.');
 const rlSR=()=>window.SpeechRecognition||window.webkitSpeechRecognition;
 function rlMic(){
   const SR=rlSR();if(!SR)return;
+  if(IOS_PWA()){micKb('#rlq');return;}
   if(RL.rec){try{RL.rec.stop();}catch(e){}return;}
   let r;try{r=new SR();}catch(e){toast('El dictado no está disponible aquí. Escribe tu pregunta.');return;}
   RL.rec=r;r.lang='es-CO';r.interimResults=true;r.continuous=false;
   let fin='';
   r.onstart=()=>{const b=$('#rlmic');if(b)b.classList.add('on');};
   r.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript;fin=t;const inp=$('#rlq');if(inp){inp.value=t;rlSync();}};
-  r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')micDenied();else if(e.error!=='no-speech'&&e.error!=='aborted')toast('No pude usar el dictado. Escribe tu pregunta.');};
+  r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){if(/iPad|iPhone|iPod/.test(navigator.userAgent))micKb('#rlq');else micDenied();}else if(e.error!=='no-speech'&&e.error!=='aborted')toast('No pude usar el dictado. Escribe tu pregunta.');};
   r.onend=()=>{RL.rec=null;const b=$('#rlmic');if(b)b.classList.remove('on');if(fin){RL.viaMic=true;try{rlAsk(fin);}finally{RL.viaMic=false;}}};
   try{r.start();}catch(e){RL.rec=null;toast('No pude iniciar el dictado.');}
 }
