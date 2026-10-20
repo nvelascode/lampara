@@ -5162,12 +5162,13 @@ function readHTML(){
   }
   const late=(pend.n>0&&dn<R.n&&idx>=0&&idx<R.n)?'<section class="card"><b>📚 Tienes '+pend.n+(pend.n===1?' lectura atrasada':' lecturas atrasadas')+'</b><p class="muted" style="margin:4px 0 10px;font-size:14px">No pasa nada: puedes ponerte al día cuando quieras.</p><button class="btn ghost sm" data-a="rd-day" data-i="'+pend.first+'">Ver la más antigua</button></section>':'';
   const st=rdStreak();
-  return '<h1 class="page">Lectura</h1>'+rcHTML()+'<p class="rdmeta">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+' · '+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+
-   rdStreakCardHTML()+repCardHTML()+repBookCardHTML()+card+late+
+  return '<h1 class="page">Lectura</h1>'+card+rdStreakCardHTML()+repCardHTML()+repBookCardHTML()+late+
    '<section class="card"><b>Tu avance</b><div class="rdbarrow"><span>Días leídos</span><b>'+dn+' de '+R.n+'</b></div><div class="rdbw"><div class="bar" style="--gcol:var(--blue)"><i style="width:'+pctD+'%"></i></div></div>'+
    '<div class="rdbarrow" style="margin-top:12px"><span>Biblia leída</span><b>'+pctV+'%</b></div><div class="rdbw"><div class="bar"><i style="width:'+pctV+'%"></i></div></div></section>'+
    rdBooksHTML(R,P)+
    '<h3 style="margin:18px 0 8px">Calendario</h3>'+rdCalHTML(R,P,idx)+
+   rcHTML()+
+   '<p class="rdmeta" style="margin-top:16px">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+' · '+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+
    '<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">'+(st>0?'<button class="btn ghost sm" data-a="share" data-k="read">'+SHARE_I+'Compartir mi racha</button>':'')+'<button class="link-danger" data-a="rd-reset">Cambiar o reiniciar mi plan</button></div>'+
    '<p class="foot">Para leer, usa tu Biblia de siempre o toca «Abrir pasaje». Cada día que marques una lectura mantiene tu racha 🔥 y suma a tu racha de lectura.</p>';
 }
@@ -5640,7 +5641,7 @@ let RM={code:null,st:null,t0:0,rem0:0,sig:'',sel:null,my:null,loop:0,fails:0,cfg
    ADIVINA EL PERSONAJE — datos
    K(id, nombre, testamento, sexo, edad, rol, partes, épocas, marcas, libros, descripción)
    · edad = la que tenía en el momento más famoso de su historia (J joven/niño, A adulto, V anciano)
-   · marcas: j conoció a Jesús durante su ministerio · n cambió o recibió otro nombre · g está en la genealogía de Mateo 1
+   · marcas: j conoció a Jesús durante su ministerio · n cambió o recibió otro nombre · g hace parte de la genealogía de Jesús (Mateo 1 o Lucas 3, o es madre de alguien que está en ella)
              h se nombra en Hebreos 11 · m la Biblia lo presenta como malo/enemigo de Dios o de su pueblo · x extranjero (no israelita)
    ============================================================ */
 const GW_ROLES={rey:'Rey o reina',profeta:'Profeta',sacerdote:'Sacerdote',apostol:'Apóstol',discipulo:'Discípulo o colaborador de los apóstoles',patriarca:'Patriarca o matriarca',juez:'Juez',lider:'Líder de Israel',otro:'Otro (ninguno de los anteriores)'};
@@ -5650,15 +5651,15 @@ const GW_EPOCHS={1:'Principios y patriarcas (Génesis)',2:'Moisés y la conquist
 const GW_PAUL=['Romanos','1 Corintios','2 Corintios','Gálatas','Efesios','Filipenses','Colosenses','1 Tesalonicenses','2 Tesalonicenses','1 Timoteo','2 Timoteo','Tito','Filemón'];
 function K(id,n,t,s,e,r,p,ep,fl,au,d){return {id,n,t,s,e,r,p:p.split(','),ep:String(ep).split(',').map(Number),j:fl.includes('j'),nn:fl.includes('n'),ge:fl.includes('g'),h:fl.includes('h'),ma:fl.includes('m'),ex:fl.includes('x'),au:au?(Array.isArray(au)?au:au.split('|')):[],d};}
 const GW_CHARS=[
- K('adan','Adán','AT','H','A','otro','ley',1,'',0,'El primer hombre. Dios lo creó del polvo de la tierra.'),
- K('eva','Eva','AT','M','A','otro','ley',1,'',0,'La primera mujer, esposa de Adán.'),
+ K('adan','Adán','AT','H','A','otro','ley',1,'g',0,'El primer hombre. Dios lo creó del polvo de la tierra.'),
+ K('eva','Eva','AT','M','A','otro','ley',1,'g',0,'La primera mujer, esposa de Adán.'),
  K('cain','Caín','AT','H','A','otro','ley',1,'m',0,'Hijo de Adán. Mató a su hermano Abel.'),
  K('abel','Abel','AT','H','A','otro','ley',1,'h',0,'Hijo de Adán. Su ofrenda agradó a Dios y su hermano lo mató.'),
- K('noe','Noé','AT','H','V','patriarca','ley',1,'h',0,'Construyó el arca y se salvó del diluvio con su familia.'),
+ K('noe','Noé','AT','H','V','patriarca','ley',1,'hg',0,'Construyó el arca y se salvó del diluvio con su familia.'),
  K('abraham','Abraham','AT','H','V','patriarca','ley',1,'ngh',0,'Padre de la fe. Dios le prometió una gran nación. Antes se llamaba Abram.'),
- K('sara','Sara','AT','M','V','patriarca','ley',1,'nh',0,'Esposa de Abraham y madre de Isaac. Antes se llamaba Sarai.'),
+ K('sara','Sara','AT','M','V','patriarca','ley',1,'nhg',0,'Esposa de Abraham y madre de Isaac. Antes se llamaba Sarai.'),
  K('isaac','Isaac','AT','H','A','patriarca','ley',1,'gh',0,'Hijo de la promesa de Abraham y Sara. Padre de Jacob y Esaú.'),
- K('rebeca','Rebeca','AT','M','J','patriarca','ley',1,'',0,'Esposa de Isaac. Era la joven que dio de beber al siervo de Abraham junto al pozo.'),
+ K('rebeca','Rebeca','AT','M','J','patriarca','ley',1,'g',0,'Esposa de Isaac. Era la joven que dio de beber al siervo de Abraham junto al pozo.'),
  K('jacob','Jacob','AT','H','A','patriarca','ley',1,'ngh',0,'Hijo de Isaac. Dios le cambió el nombre a Israel; tuvo 12 hijos.'),
  K('esau','Esaú','AT','H','A','otro','ley',1,'h',0,'Hermano mellizo de Jacob. Vendió su primogenitura por un plato de lentejas.'),
  K('jose1','José, hijo de Jacob','AT','H','J','patriarca','ley',1,'nh',0,'Vendido por sus hermanos a Egipto, llegó a gobernar allí y salvó a su familia del hambre.'),
@@ -5728,7 +5729,7 @@ const GW_Q=[
  {id:'pt',cat:'Parte de la Biblia',t:'¿En qué parte de la Biblia aparece principalmente?',o:()=>Object.entries(GW_PARTS),f:(c,v)=>c.p.includes(v)},
  {id:'ep',cat:'Época',t:'¿En qué época vivió?',o:()=>Object.entries(GW_EPOCHS),f:(c,v)=>c.ep.includes(+v)},
  {id:'nn',cat:'Cambio de nombre',t:'¿Su nombre fue cambiado o tuvo más de un nombre?',o:()=>GW_YN,f:(c,v)=>c.nn===(v==='1')},
- {id:'ge',cat:'Genealogía de Jesús',t:'¿Aparece en la genealogía de Jesús, en Mateo 1?',o:()=>GW_YN,f:(c,v)=>c.ge===(v==='1')},
+ {id:'ge',cat:'Genealogía de Jesús',t:'¿Hace parte de la genealogía de Jesús (Mateo 1 y Lucas 3)? Cuentan quienes están en esas listas y las madres de quienes están en ellas.',o:()=>GW_YN,f:(c,v)=>c.ge===(v==='1')},
  {id:'h',cat:'Hebreos 11',t:'¿Se menciona en Hebreos 11, la lista de los héroes de la fe?',o:()=>GW_YN,f:(c,v)=>c.h===(v==='1')},
  {id:'ma',cat:'Enemigo de Dios o de su pueblo',t:'¿Fue enemigo de Dios o de su pueblo, o la Biblia lo presenta como malvado?',o:()=>GW_YN,f:(c,v)=>c.ma===(v==='1')},
  {id:'ex',cat:'Extranjero',t:'¿Era extranjero (no era israelita)?',o:()=>GW_YN,f:(c,v)=>c.ex===(v==='1')}
@@ -10409,7 +10410,7 @@ function homeHTML(){
     if(seen&&!VOPEN)daily='<section class="card votd vmini" data-a="vs-tog" role="button" tabindex="0" aria-label="Abrir el versículo del día"><span class="tagv">✨ Versículo del día</span><span class="vref">'+esc(v.r)+'</span><span class="vtog" aria-hidden="true"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></section>';
     else daily='<section class="card votd"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button>'+(seen?'<button class="vtog" data-a="vs-tog" aria-label="Plegar el versículo del día"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'')+'<span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return cmInviteHTML()+(S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
-  '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rdHomeHTML()+repCardHTML(true)+
+  '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+repCardHTML(true)+
   ''+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':bio?'Biografías: datos históricos resumidos de fuentes de dominio público. Textos bíblicos citados: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
@@ -13404,7 +13405,9 @@ function trPersonHTML(id){
     [['mt','Mateo'],['lc','Lucas']].forEach(z=>{if(il[z[0]]){const ch=L[z[0]].filter(y=>!(z[0]==='mt'&&y.omit));const k=ch.findIndex(y=>y.id===id);if(k>=0){const n=ch.length-2-k;parts.push(z[1]+': '+(n===0?'ninguno':n+(n===1?' nombre':' nombres')));}}});
     if(parts.length)rel='Está en su genealogía. Nombres entre él y Jesús ('+parts.join('; ')+').';
     if(x.j)rel+=(rel?' ':'')+x.j;
-    if(!g){rel='No está en las genealogías de Jesús (Mateo 1; Lucas 3).'+(x.j?' '+x.j:'');}
+    const MADRE={eva:'Set (Génesis 4:25)',sara:'Isaac (Génesis 21:2-3)',rebeca:'Jacob (Génesis 25:24-26)'};
+    if(!g&&MADRE[id]){rel='No se nombra en las listas, pero es antepasada de Jesús: madre de '+MADRE[id]+'.'+(x.j?' '+x.j:'');}
+    else if(!g){rel='No está en las genealogías de Jesús (Mateo 1; Lucas 3).'+(x.j?' '+x.j:'');}
   }
   const relH='<div class="trcard trrel'+((g||isJ)?'':' neu')+'">'+trRow((g||isJ)?'✨':(x.j?'🔗':'➖'),'Relación con Jesús',rel)+'</div>';
   const nodes=g?'<button class="btn ghost" style="margin-top:14px" data-a="tr-inline" data-id="'+id+'" data-v="'+(il.mt?'mt':'lc')+'">✨ Ver dónde está en la línea de Cristo</button>':'';
