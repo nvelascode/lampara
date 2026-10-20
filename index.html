@@ -198,7 +198,7 @@ h1,h2,h3,h4{font-weight:900}
 
 /* ---------- ruta ---------- */
 .unit{margin:30px 0 8px}
-.unit-h{display:flex;justify-content:space-between;align-items:center;gap:12px;background:color-mix(in srgb,var(--u) 78%,#000);color:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 5px 0 var(--shade)}
+.nw{white-space:nowrap}.unit-h{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--toph,56px) - 2px);z-index:4;display:flex;justify-content:space-between;align-items:center;gap:12px;background:color-mix(in srgb,var(--u) 78%,#000);color:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 5px 0 var(--shade)}
 .unit-h h2{margin:0;font-size:21px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.25)}
 .unit-h p{margin:2px 0 0;font-size:14px;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.25)}
 .uemo{font-size:40px;line-height:1;filter:drop-shadow(0 2px 0 rgba(0,0,0,.15))}
@@ -10700,6 +10700,8 @@ function render(){
   const _kc=document.getElementById('frcode'),_kv=_kc?_kc.value:null,_kf=_kc&&document.activeElement===_kc;
   $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='read'?readHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():TAB==='fr'?amigosHTML():TAB==='set'?settingsHTML():meHTML();
   if(_kv){const _k2=document.getElementById('frcode');if(_k2){_k2.value=_kv;if(_kf){try{_k2.focus();}catch(e){}}}}
+  try{const tp=document.querySelector('.top');if(tp)document.documentElement.style.setProperty('--toph',tp.offsetHeight+'px');}catch(e){}
+  if(TAB==='path'&&!window._autoScr){window._autoScr=1;setTimeout(()=>{try{const n=myLessonNode();if(n&&!window.scrollY){n.scrollIntoView({block:'center'});}updateGoto();}catch(e){}},120);}
   setTimeout(updateGoto,50);
   renderCmenu();
   lampyTalk($('#main'));
@@ -13333,7 +13335,19 @@ function trRefsIn(t){const out=[];let last=0,m;const re=/\(([^()]*\d+:\d+[^()]*)
     out.push({s:')'});last=m.index+m[0].length;}
   out.push({s:t.slice(last)});return out;}
 function trRefBtn(s,r){return '<button type="button" class="trref" data-a="tr-v" data-r="'+esc(r)+'">'+esc(s)+'</button>';}
-function trTxt(t){return trRefsIn(String(t)).map(z=>z.r?trRefBtn(z.s,z.r):esc(z.s)).join('');}
+function trTxt(t){
+  const z=trRefsIn(String(t)),o=[];
+  for(let i=0;i<z.length;i++){
+    const p=z[i];
+    if(!p.r&&p.s.endsWith('(')){
+      let j=i+1;while(j<z.length&&!(z[j].s===')'&&!z[j].r))j++;
+      const grp=z.slice(i+1,j),len=grp.reduce((n,q)=>n+q.s.length,0);
+      if(j<z.length&&grp.some(q=>q.r)&&len<=34){
+        o.push(esc(p.s.slice(0,-1))+'<span class="nw">(');
+        grp.forEach(q=>o.push(q.r?trRefBtn(q.s,q.r):esc(q.s)));
+        o.push(')</span>');i=j;continue;}}
+    o.push(p.r?trRefBtn(p.s,p.r):esc(p.s));}
+  return o.join('');}
 function trV(r){
   const m=r.match(/^(.+?) (\d+):(\d+)(?:-(\d+))?$/),v=TREEV[r];
   const gw=q=>'https://www.biblegateway.com/passage/?search='+encodeURIComponent(q)+'&version=RVR1960';
