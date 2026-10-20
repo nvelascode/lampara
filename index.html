@@ -349,10 +349,11 @@ h1,h2,h3,h4{font-weight:900}
 .mdots i{width:26px;height:8px;border-radius:5px;background:var(--line)}
 .mdots i.on{background:var(--green,#58cc02)}.mdots i.cur{background:var(--blue)}
 .mdots span{font-size:13px;font-weight:700;color:var(--muted);margin-left:4px}
-.memo textarea{width:100%;box-sizing:border-box;border:2px solid var(--line);border-radius:14px;padding:10px 12px;font:inherit;background:var(--surface);color:inherit;resize:vertical}
+.memo textarea{width:100%;box-sizing:border-box;border:2px solid var(--line);border-radius:14px;padding:10px 12px;font:inherit;background:var(--surface);color:inherit;resize:none}
 .mact{display:flex;gap:10px;margin-top:10px;align-items:stretch}.mact .btn{flex:1;margin:0}
 .mmic{width:52px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--blue);display:grid;place-items:center;cursor:pointer}
 .mmic.on{background:var(--red);color:#fff;border-color:var(--red)}
+#memmic{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .mlink{background:none;border:0;color:var(--blue);font-weight:800;padding:12px 0 0;cursor:pointer;font:inherit;font-weight:800}
 .mres{margin-top:10px;padding:10px 12px;border-radius:12px}.mres.ok{background:color-mix(in srgb,#58cc02 18%,var(--surface))}.mres.no{background:color-mix(in srgb,var(--red) 12%,var(--surface))}
 .repttl{margin:6px 0 10px}
@@ -10324,7 +10325,7 @@ function bioReviewHTML(){
 const retoSeen=()=>{try{return !!localStorage.getItem('lampy_reto');}catch(e){return true;}};
 const retoMark=()=>{try{localStorage.setItem('lampy_reto','1');}catch(e){}};
 const memNorm=x=>String(x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9ñ ]+/g,' ').replace(/\s+/g,' ').trim();
-const MEM_LV=[['Nivel 1',.25],['Nivel 2',.5],['Nivel 3',.75],['Nivel 4',1]];
+const MEM_LV=[['Nivel 1',0],['Nivel 2',.25],['Nivel 3',.5],['Nivel 4',.75],['Nivel 5',1]];
 let MEM={res:null,show:false,rec:null,txt:''};
 function memWeek(){return Math.floor((Date.now()/86400000+3)/7);}
 function memWords(t){return String(t).split(/\s+/).filter(Boolean);}
@@ -10338,10 +10339,11 @@ function memPick(){
 function memState(){
   const wk=memWeek();
   if(!S.mem||S.mem.wk!==wk){
-    if(S.mem&&S.mem.lvl>4){S.memHist=(S.memHist||[]).concat([{r:S.mem.r,wk:S.mem.wk}]).slice(-60);}
+    if(S.mem&&S.mem.lvl>5){S.memHist=(S.memHist||[]).concat([{r:S.mem.r,wk:S.mem.wk}]).slice(-60);}
     const v=memPick();if(!v)return null;
-    S.mem={r:v.r,wk:wk,lvl:1,ld:'',tries:0};save();MEM.res=null;MEM.show=false;
+    S.mem={r:v.r,wk:wk,lvl:1,ld:'',tries:0,v5:1};save();MEM.res=null;MEM.show=false;
   }
+  if(!S.mem.v5){if(!(S.mem.lvl===1&&!S.mem.ld))S.mem.lvl++;S.mem.v5=1;save();}
   return S.mem;
 }
 function memHidden(m){
@@ -10349,58 +10351,69 @@ function memHidden(m){
   const ws=memWords(v.t);
   let h=0;for(const c of m.r)h=(h*31+c.charCodeAt(0))>>>0;
   const idx=ws.map((w,i)=>({i,k:(Math.sin(h+i*97.13)*10000)%1})).filter(o=>memCore(ws[o.i]).length>=3).sort((a,b)=>a.k-b.k).map(o=>o.i);
-  const lvl=Math.min(4,m.lvl),n=Math.max(2,Math.round(idx.length*MEM_LV[lvl-1][1]));
+  const lvl=Math.min(5,m.lvl);if(MEM_LV[lvl-1][1]===0)return {ws,hid:new Set()};const n=Math.max(2,Math.round(idx.length*MEM_LV[lvl-1][1]));
   return {ws,hid:new Set(idx.slice(0,n))};
 }
 function memHTML(){
   const m=memState();if(!m||!VBY[m.r])return '';
-  const done=m.lvl>4,{ws,hid}=memHidden(m),lvl=Math.min(4,m.lvl);
+  const done=m.lvl>5,{ws,hid}=memHidden(m),lvl=Math.min(5,m.lvl);
   const dots=MEM_LV.map((_,i)=>'<i class="'+(i+1<m.lvl?'on':i+1===m.lvl?'cur':'')+'"></i>').join('');
   let txt;
   if(done||MEM.show)txt=esc(VBY[m.r].t);
-  else txt=ws.map((w,i)=>{if(!hid.has(i))return esc(w);const core=w.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g,''),tail=w.slice(w.search(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]*$/)),hint=lvl>=4?esc(core.charAt(0)):'';return '<span class="mblk" style="min-width:'+Math.max(26,core.length*8)+'px">'+hint+'</span>'+esc(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]$/.test(w)?w.slice(-1):'');}).join(' ');
+  else txt=ws.map((w,i)=>{if(!hid.has(i))return esc(w);const core=w.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g,''),tail=w.slice(w.search(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]*$/)),hint=lvl>=5?esc(core.charAt(0)):'';return '<span class="mblk" style="min-width:'+Math.max(26,core.length*8)+'px">'+hint+'</span>'+esc(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]$/.test(w)?w.slice(-1):'');}).join(' ');
   const doneToday=m.ld===today();
   let res='';
-  if(MEM.res){const r=MEM.res;res='<div class="mres '+(r.ok?'ok':'no')+'">'+(r.ok?'<b>¡Muy bien!</b> '+(r.adv?(m.lvl>4?'¡Memorizaste el versículo de la semana!':'Subes al siguiente nivel.'):'Ya avanzaste hoy; mañana sube el nivel.'):'<b>Casi.</b> Te faltó: <i>'+r.miss.map(esc).join(', ')+'</i>')+'</div>';}
+  if(MEM.res){const r=MEM.res;res='<div class="mres '+(r.ok?'ok':'no')+'">'+(r.ok?'<b>¡Muy bien!</b> '+(r.adv?(m.lvl>5?'¡Memorizaste el versículo de la semana!':'Subes al siguiente nivel.'):'Ya avanzaste hoy; mañana sube el nivel.'):'<b>Casi.</b> Recita el versículo completo. Te faltó: <i>'+r.miss.map(esc).join(', ')+'</i>')+'</div>';}
   return '<section class="memo"><div class="mtag">VERSÍCULO DE LA SEMANA</div>'+
    '<h2>'+esc(m.r)+'</h2>'+
    '<blockquote class="mv">'+txt+'</blockquote>'+
-   '<div class="mdots" aria-label="Nivel '+lvl+' de 4">'+dots+'<span>'+(done?'¡Memorizado!':MEM_LV[lvl-1][0]+' de 4')+'</span></div>'+
+   '<div class="mdots" aria-label="Nivel '+lvl+' de 5">'+dots+'<span>'+(done?'¡Memorizado!':MEM_LV[lvl-1][0]+' de 5')+'</span></div>'+
    (done?'<p class="muted" style="margin:6px 0 0">Mañana empieza otra semana con un versículo nuevo. Repítelo en voz alta cuando quieras.</p>':
-   '<textarea id="memin" rows="3" placeholder="Escribe aquí el versículo completo, o toca el micrófono y dilo" aria-label="Escribe o di el versículo">'+esc(MEM.txt)+'</textarea>'+
-   '<div class="mact">'+(rlSR()?'<button class="mmic'+(MEM.rec?' on':'')+'" id="memmic" data-a="mem-mic" aria-label="Decir el versículo"><svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor"/><path d="M5 11.5a7 7 0 0 0 14 0M12 18.5V22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>':'')+
+   '<textarea id="memin" rows="3" placeholder="'+(lvl===1?'Lee el versículo completo en voz alta':'Recita el versículo completo')+(rlSR()?': mantén oprimido el micrófono y suéltalo al terminar':', o escríbelo aquí')+'" aria-label="Escribe o di el versículo">'+esc(MEM.txt)+'</textarea>'+
+   '<div class="mact">'+(rlSR()?'<button class="mmic'+(MEM.rec?' on':'')+'" id="memmic" aria-label="Mantén oprimido para decir el versículo"><svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor"/><path d="M5 11.5a7 7 0 0 0 14 0M12 18.5V22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>':'')+
    '<button class="btn orange" data-a="mem-chk">Comprobar</button></div>'+
-   '<button class="mlink" data-a="mem-peek">'+(MEM.show?'Ocultar el versículo':'Ver el versículo')+'</button>')+
+   (lvl>1?'<button class="mlink" data-a="mem-peek">'+(MEM.show?'Ocultar el versículo':'Ver el versículo')+'</button>':''))+
    res+'</section>';
 }
 function memAct(a,b){
   nwMark('rt_mem');const m=S.mem;if(!m)return;
   if(a==='mem-peek'){const i=$('#memin');MEM.txt=i?i.value:MEM.txt;MEM.show=!MEM.show;render();}
-  else if(a==='mem-mic')memMic();
   else if(a==='mem-chk'){const i=$('#memin');memCheck(i?i.value:MEM.txt);}
 }
-function memMic(){
-  const SR=rlSR();if(!SR)return;
-  if(MEM.rec){try{MEM.rec.stop();}catch(e){}return;}
+function memMicStart(){
+  const SR=rlSR();if(!SR||MEM.rec)return;
   let r;try{r=new SR();}catch(e){toast('El dictado no está disponible aquí. Escríbelo.');return;}
-  MEM.rec=r;r.lang='es-CO';r.interimResults=true;r.continuous=true;let fin='';
+  MEM.rec=r;MEM.held=true;r.lang='es-CO';r.interimResults=true;r.continuous=true;let fin='';
   r.onstart=()=>{const b=$('#memmic');if(b)b.classList.add('on');};
   r.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';fin=t.trim();const inp=$('#memin');if(inp)inp.value=fin;MEM.txt=fin;};
   r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')micDenied();};
-  r.onend=()=>{MEM.rec=null;const b=$('#memmic');if(b)b.classList.remove('on');if(fin)memCheck(fin);};
-  try{r.start();}catch(e){MEM.rec=null;toast('No pude iniciar el micrófono.');}
+  r.onend=()=>{MEM.rec=null;MEM.held=false;const b=$('#memmic');if(b)b.classList.remove('on');if(fin)memCheck(fin);else toast('No te escuché. Mantén oprimido el micrófono mientras recitas.');};
+  try{r.start();}catch(e){MEM.rec=null;MEM.held=false;toast('No pude iniciar el micrófono.');}
 }
+function memMicStop(){MEM.held=false;if(MEM.rec){try{MEM.rec.stop();}catch(e){}}}
+['pointerdown','pointerup','pointercancel','pointerleave','contextmenu'].forEach(t=>document.addEventListener(t,e=>{
+  const b=e.target.closest&&e.target.closest('#memmic');
+  if(t==='pointerdown'){if(!b)return;e.preventDefault();try{b.setPointerCapture(e.pointerId);}catch(x){}memMicStart();}
+  else if(t==='contextmenu'){if(b)e.preventDefault();}
+  else if(MEM.held&&(b||t==='pointerup'||t==='pointercancel'))memMicStop();
+},true));
+function memSame(a,b){return a===b||(a.length>=5&&b.length>=5&&rlLev(a,b)<=1);}
 function memCheck(text){
-  const m=S.mem;if(!m||m.lvl>4)return;
-  MEM.txt=text;const {ws,hid}=memHidden(m);
-  const bag=memNorm(text).split(' ').filter(Boolean),used=new Array(bag.length).fill(false),miss=[];
-  let ok=0;
-  hid.forEach(i=>{const c=memCore(ws[i]);const k=bag.findIndex((w,j)=>!used[j]&&w===c);if(k>=0){used[k]=true;ok++;}else miss.push(ws[i].replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g,''));});
-  const pass=hid.size>0&&ok/hid.size>=.8&&bag.length>=Math.ceil(hid.size*.8);
+  const m=S.mem;if(!m||m.lvl>5)return;
+  const v=VBY[m.r];if(!v)return;
+  MEM.txt=text;
+  const ws=memWords(v.t),vc=ws.map(memCore),bag=memNorm(text).split(' ').filter(Boolean);
+  /* subsecuencia común más larga: hay que decir el versículo completo y en orden */
+  const n=vc.length,k=bag.length,D=[];for(let i=0;i<=n;i++)D.push(new Array(k+1).fill(0));
+  for(let i=1;i<=n;i++)for(let j=1;j<=k;j++)D[i][j]=memSame(vc[i-1],bag[j-1])?D[i-1][j-1]+1:Math.max(D[i-1][j],D[i][j-1]);
+  const hit=new Array(n).fill(false);let i=n,j=k;
+  while(i>0&&j>0){if(memSame(vc[i-1],bag[j-1])&&D[i][j]===D[i-1][j-1]+1){hit[i-1]=true;i--;j--;}else if(D[i-1][j]>=D[i][j-1])i--;else j--;}
+  const ok=D[n][k],miss=ws.filter((w,x)=>!hit[x]&&vc[x].length>=3).map(w=>w.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g,''));
+  const pass=n>0&&ok/n>=.85&&k<=Math.ceil(n*1.4);
   if(!pass){MEM.res={ok:false,miss:miss.slice(0,6)};beep('bad');render();return;}
   let adv=false;
   if(m.ld!==today()){m.lvl++;m.ld=today();adv=true;S.xp=(S.xp||0)+15;save();}
-  MEM.res={ok:true,adv:adv};MEM.txt='';beep('win');haptic([20,40,20]);if(adv)confetti(m.lvl>4?160:70);
+  MEM.res={ok:true,adv:adv};MEM.txt='';beep('win');haptic([20,40,20]);if(adv)confetti(m.lvl>5?160:70);
   render();
 }
 const RT={k:''};
@@ -10449,7 +10462,7 @@ function mascotSport(size){return '<span class="mas sport ph" data-sz="'+size+'"
     if(fresh||!SPORT_EL._on){SPORT_EL._on=true;G++;resetFace(SPORT_EL);run(SPORT_EL,G);}
   };
 })();
-const RT_T=[['mem','📖','Memoriza','¡Un versículo por semana! Apréndelo en cuatro niveles.'],['evg','🕯️','Evangeliza','¡Comparte la esperanza que tienes en Cristo!'],['rev','🔁','Repasa','¡Entrena lo que ya aprendiste para no olvidarlo!']];
+const RT_T=[['mem','📖','Memoriza','¡Un versículo por semana! Apréndelo en cinco niveles.'],['evg','🕯️','Evangeliza','¡Comparte la esperanza que tienes en Cristo!'],['rev','🔁','Repasa','¡Entrena lo que ya aprendiste para no olvidarlo!']];
 function reviewHTML(){setTimeout(()=>{try{sportInit();}catch(e){}},0);
   const mh=memHTML();if(!RT.k||(RT.k==='mem'&&!mh))RT.k=mh?'mem':'evg';
   const cur=RT_T.find(t=>t[0]===RT.k);
