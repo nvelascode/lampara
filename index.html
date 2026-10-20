@@ -5698,6 +5698,12 @@ const GW_CHARS=[
  K('maria','María, madre de Jesús','NT','M','J','otro','evang',5,'jg',0,'Virgen de Nazaret. Dio a luz a Jesús por obra del Espíritu Santo.'),
  K('jose2','José, esposo de María','NT','H','A','otro','evang',5,'g',0,'Carpintero de Nazaret. Cuidó de María y de Jesús.'),
  K('bautista','Juan el Bautista','NT','H','A','profeta','evang',5,'j',0,'Preparó el camino de Jesús y lo bautizó en el Jordán.'),
+ K('zacarias_s','Zacarías, padre de Juan el Bautista','NT','H','V','sacerdote','evang',5,'',0,'Sacerdote, esposo de Isabel. Un ángel le anunció el nacimiento de su hijo y quedó mudo hasta que nació.'),
+ K('isabel','Isabel','NT','M','V','otro','evang',5,'',0,'Esposa de Zacarías y parienta de María. Fue madre de Juan el Bautista ya anciana.'),
+ K('simeon_t','Simeón, el del templo','NT','H','V','otro','evang',5,'',0,'Hombre justo y piadoso. Tomó en brazos al niño Jesús en el templo.'),
+ K('ana_p','Ana, la profetisa','NT','M','V','profeta','evang',5,'',0,'Viuda de edad muy avanzada. Servía a Dios en el templo y habló del niño Jesús.'),
+ K('jacobo_h','Jacobo, hermano del Señor','NT','H','A','otro','evang,hechos','5,6','j','Santiago','Uno de los hermanos de Jesús que nombra Mateo 13:55. Pablo lo llama «el hermano del Señor».'),
+ K('judas_h','Judas, hermano de Jacobo','NT','H','A','otro','evang,cartas','5,6','j','Judas','Uno de los hermanos de Jesús que nombra Mateo 13:55. Se presenta como «siervo de Jesucristo, y hermano de Jacobo».'),
  K('pedro','Pedro','NT','H','A','apostol','evang,hechos','5,6','jn','1 Pedro|2 Pedro','Pescador y apóstol. Negó a Jesús tres veces y luego predicó en Pentecostés. Se llamaba Simón.'),
  K('juan','Juan, el apóstol','NT','H','A','apostol','evang,hechos','5,6','j','Juan|1 Juan|2 Juan|3 Juan|Apocalipsis','Apóstol, hijo de Zebedeo y «el discípulo amado». Escribió cinco libros del Nuevo Testamento.'),
  K('mateo','Mateo','NT','H','A','apostol','evang',5,'jn','Mateo','Cobrador de impuestos que dejó todo para seguir a Jesús. También se llamaba Leví.'),
@@ -11237,6 +11243,10 @@ const GLIBROS=[
  ['El ángel dice a las mujeres: «No está aquí, pues ha resucitado»','Mateo','Mateo 28'],
  ['Jesús es alzado y una nube lo oculta de sus ojos','Hechos','Hechos 1'],
  ['Juan recibe la revelación de Jesucristo en la isla de Patmos','Apocalipsis','Apocalipsis 1'],
+ ['Simeón toma en brazos al niño Jesús en el templo y bendice a Dios','Lucas','Lucas 2:25-35'],
+ ['La profetisa Ana, hija de Fanuel, habla del niño a todos los que esperaban la redención','Lucas','Lucas 2:36-38'],
+ ['«Ni aun sus hermanos creían en él»','Juan','Juan 7:5'],
+ ['Pablo va a Jerusalén y ve a «Jacobo el hermano del Señor»','Gálatas','Gálatas 1:19'],
 ];
 const GQUIEN=[
  {q:"«Dios se proveerá de cordero para el holocausto, hijo mío»",a:"Abraham",ref:"Génesis 22:8"},
@@ -11286,6 +11296,11 @@ const GQUIEN=[
  {q:"«Mas él herido fue por nuestras rebeliones»",a:"Isaías",ref:"Isaías 53:5"},
  {q:"«Jehová mira el corazón»",a:"Jehová, hablando con Samuel",ref:"1 Samuel 16:7"},
  {q:"«En ningún otro hay salvación»",a:"Pedro",ref:"Hechos 4:12"},
+ {q:"«Ahora, Señor, despides a tu siervo en paz, conforme a tu palabra»",a:"Simeón, el del templo",ref:"Lucas 2:29"},
+ {q:"«Una espada traspasará tu misma alma»",a:"Simeón, el del templo",ref:"Lucas 2:35"},
+ {q:"«¿Por qué se me concede esto a mí, que la madre de mi Señor venga a mí?»",a:"Isabel",ref:"Lucas 1:43"},
+ {q:"«Así también la fe, si no tiene obras, es muerta en sí misma»",a:"Jacobo, hermano del Señor",ref:"Santiago 2:17"},
+ {q:"«Que contendáis ardientemente por la fe que ha sido una vez dada a los santos»",a:"Judas, hermano de Jacobo",ref:"Judas 1:3"},
 ];
 const GFALSO=[
  ["En el libro de Jueces, Israel nunca volvía a pecar después de que Dios lo libraba.",false,"Jueces 2:18","Israel volvía a pecar, y esto pasó varias veces."],
@@ -11391,6 +11406,13 @@ const GFALSO=[
  ["Según Nehemías 6:15, el muro de Jerusalén se terminó en cincuenta y dos días.",true,"Nehemías 6:15","Así lo dice el texto."],
  ["Según Marcos 10:45, el Hijo del Hombre vino para ser servido.",false,"Marcos 10:45","Vino no para ser servido, sino para servir y dar su vida en rescate por muchos."],
  ["Según Apocalipsis 21:4, Dios enjugará toda lágrima de los ojos de su pueblo.",true,"Apocalipsis 21:4","Así lo dice el texto."],
+ ["Jesús tuvo hermanos que se llamaban Jacobo, José, Simón y Judas.",true,"Mateo 13:55","Los vecinos de Nazaret los nombran."],
+ ["Mateo 13:56 dice que Jesús también tenía hermanas.",true,"Mateo 13:56","«¿No están todas sus hermanas con nosotros?»"],
+ ["Durante su ministerio en Galilea, los hermanos de Jesús creían en él.",false,"Juan 7:5","«Ni aun sus hermanos creían en él»."],
+ ["Pablo vio en Jerusalén a Jacobo, el hermano del Señor.",true,"Gálatas 1:19","Pablo lo llama «el hermano del Señor»."],
+ ["Simeón tomó en brazos al niño Jesús en el templo.",true,"Lucas 2:28","Y bendijo a Dios."],
+ ["Ana la profetisa era de la tribu de Judá.",false,"Lucas 2:36","Era de la tribu de Aser."],
+ ["Isabel, la madre de Juan el Bautista, era parienta de María.",true,"Lucas 1:36","El ángel se lo dijo a María."],
 ];
 const GPERS=[
  {a:"Noé",c:[["Halló gracia ante los ojos de Jehová.","Génesis 6:8"],["Dios le mandó hacerse un arca de madera.","Génesis 6:14"],["Dios puso su arco en las nubes como señal del pacto.","Génesis 9:13"]]},
@@ -11417,6 +11439,10 @@ const GPERS=[
  {a:"Rut",c:[["Dijo a su suegra: «Tu pueblo será mi pueblo, y tu Dios mi Dios».","Rut 1:16"],["Booz la tomó por mujer.","Rut 4:13"],["Su nieto Isaí fue padre de David.","Rut 4:17"]]},
  {a:"Elías",c:[["Dijo al pueblo: «Si Jehová es Dios, seguidle; y si Baal, id en pos de él».","1 Reyes 18:21"],["Al ver caer el fuego, todo el pueblo dijo: «¡Jehová es el Dios!».","1 Reyes 18:39"],["Apareció junto a Moisés hablando con Jesús.","Mateo 17:3"]]},
  {a:"Isaías",c:[["Vio al Señor en su trono y los serafines clamaban: «Santo, santo, santo».","Isaías 6:3"],["Anunció que un niño nos es nacido, y se llamará Príncipe de Paz.","Isaías 9:6"],["Anunció a un Siervo «herido por nuestras rebeliones».","Isaías 53:5"]]},
+ {a:"Simeón, el del templo",c:[["Era un hombre justo y piadoso que esperaba la consolación de Israel.","Lucas 2:25"],["El Espíritu Santo le había revelado que no vería la muerte antes de ver al Cristo del Señor.","Lucas 2:26"],["Tomó en brazos al niño Jesús y bendijo a Dios.","Lucas 2:28"]]},
+ {a:"Ana, la profetisa",c:[["Era hija de Fanuel, de la tribu de Aser.","Lucas 2:36"],["Era viuda y de edad muy avanzada, y no se apartaba del templo.","Lucas 2:36-37"],["Hablaba del niño a todos los que esperaban la redención en Jerusalén.","Lucas 2:38"]]},
+ {a:"Isabel",c:[["Era de las hijas de Aarón, y era estéril.","Lucas 1:5-7"],["Era parienta de María.","Lucas 1:36"],["Cuando María la saludó, la criatura saltó en su vientre.","Lucas 1:41"]]},
+ {a:"Jacobo, hermano del Señor",c:[["Mateo lo nombra entre los hermanos de Jesús.","Mateo 13:55"],["Pablo lo llama «el hermano del Señor».","Gálatas 1:19"],["En Jerusalén dijo: «Varones hermanos, oídme».","Hechos 15:13"]]},
 ];
 const GCONV=[
  {ref:'Lucas 24:27',q:'¿Qué pasaje del Antiguo Testamento te ayuda a ver a Cristo con más claridad?'},
