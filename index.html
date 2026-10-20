@@ -137,9 +137,11 @@ h1,h2,h3,h4{font-weight:900}
 .chip{display:flex;align-items:center;gap:4px;font-weight:900;font-size:17px;padding:4px 8px;border-radius:12px}
 .chip svg{width:22px;height:22px}
 .chip.streak{color:var(--orange)}
-.fring{position:relative;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--rc,var(--orange)) var(--a,0deg),var(--line) 0)}
-.fring::before{content:"";position:absolute;inset:3.5px;border-radius:50%;background:var(--bg)}
+.fring{position:relative;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--line)}
+.fring .fgr{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#FFC800 0deg,#FF9600 180deg,#E8402F 360deg);-webkit-mask:conic-gradient(#000 var(--a),transparent var(--a));mask:conic-gradient(#000 var(--a),transparent var(--a))}
+.fring .fcv{position:absolute;inset:3.5px;border-radius:50%;background:var(--bg)}
 .fring svg{position:relative;width:20px;height:20px}
+.fring.full{animation:wkHalo 2.8s ease-in-out infinite}.fring.full .fgr{background:#E8402F}
 .chip.streak{gap:5px;padding:2px 6px}
 .chip.streak.off{color:var(--muted);filter:grayscale(1)}
 .chip.streak.risk svg{animation:pulse 1.2s infinite}
@@ -1215,6 +1217,7 @@ a.btn{text-decoration:none;text-align:center}
 .rfbar .rfd{margin-left:auto;font-weight:900;font-size:12px;background:#FFD54A;color:#5A2A00;padding:3px 8px;border-radius:99px;white-space:nowrap}
 .rfbar .rfch{font-size:20px;font-weight:900;opacity:.8}
 .rfsum{margin:4px 0 8px;font-size:17px;font-weight:800}.rfsum b{color:#C8372D}
+.gmodal{justify-content:center;margin:12px 0 10px}
 .gbar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin:0 0 4px}.gbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#FFC800,#FF9600)}
 .rfprog{height:12px;border-radius:99px;background:var(--line);overflow:hidden}.rfprog i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#D8392F,#FFB02E)}
 .rflist{display:grid;gap:8px;text-align:left}
@@ -10291,11 +10294,11 @@ function cmInviteHTML(){
 }
 function setCmenu(v){CMENU=!!v;if(CMENU&&!S.cmSeen){S.cmSeen=true;save();}renderCmenu();renderTop();}
 function streakInfo(){
-  const t=today(),xpT=S.days[t]||0;
+  const t=today(),xpT=S.days[t]||0,pg=Math.max(0,Math.min(1,xpT/(S.goal||20)));
   let wk='';for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');wk+=wkDotHTML(d,i,t)+DOW[dt.getDay()]+'</div>';}
   const row=(e,tt,d)=>'<div style="display:flex;gap:10px;text-align:left;align-items:flex-start"><span style="font-size:24px;line-height:1.1">'+e+'</span><div><b>'+tt+'</b><p class="muted" style="margin:2px 0 0;font-size:14px">'+d+'</p></div></div>';
   showModal('<h3>🔥 '+S.streak+(S.streak===1?' día':' días')+' de racha</h3><div class="week" style="margin:0">'+wk+'</div>'+
-    '<p style="margin:4px 0 6px;text-align:left"><b>Meta de hoy:</b> '+Math.min(xpT,S.goal)+'/'+S.goal+' XP <span class="muted">'+(xpT>=S.goal?'· ¡Cumplida!':'· faltan '+(S.goal-xpT))+'</span></p><div class="gbar" aria-hidden="true"><i style="width:'+Math.round(100*Math.min(1,xpT/S.goal))+'%"></i></div>'+
+    '<div class="goalrow gmodal"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/></svg><span class="rwrap" style="filter:drop-shadow(0 0 '+(pg*6).toFixed(1)+'px '+heat(pg,.8)+')"><span class="rring"><span class="rgrad" style="--a:'+Math.round(pg*360)+'deg"></span></span><span class="rcap s"'+(pg>0?'':' hidden')+'></span><span class="rcap e"'+(pg>0&&pg<1?'':' hidden')+' style="--a:'+Math.round(pg*360)+'deg;--ce:'+heat(pg)+'"></span></span><b><span>'+Math.min(xpT,S.goal)+'/'+S.goal+'<small>⚡ XP</small></span></b></div><div style="text-align:left"><b style="font-size:18px">Meta de hoy</b><p class="muted" style="margin:2px 0 0;font-size:14px">'+(xpT>=S.goal?'¡Cumplida!':'Faltan '+(S.goal-xpT)+' XP')+'</p></div></div>'+
     row('🔥','Racha','Los días seguidos en que practicas. Cuenta cualquier actividad: una lección, un juego o la lectura. Tu mejor racha: '+S.best+'.')+
     row('🛡️','Protectores: '+(S.freezes||0)+' de 2','Cuidan tu racha, incluida la de lectura, si un día no practicas ni lees. Ganas uno cada 7 días de racha.')+
     row('⚡','XP total: '+S.xp,'Los puntos que sumas con cada lección o juego.')+
@@ -10310,7 +10313,7 @@ function renderTop(){
    '<button class="cbtn'+(cmInvite()?' cpulse':'')+'" data-a="cmenu" aria-haspopup="true" aria-expanded="'+(typeof CMENU!=='undefined'&&CMENU)+'" aria-label="Curso actual: '+CINFO(S.course).n+'. Cambiar de curso"><span class="ci">'+CINFO(S.course).i+'</span><span>'+CINFO(S.course).n+'</span>'+((!S.bioSeen&&S.course!=='bio')||(!S.libSeen&&S.course!=='lib')||(!S.pasSeen&&S.course!=='pas')?'<span class="nwtag sm">NUEVO</span>':'')+'<span class="car" aria-hidden="true">▼</span></button>'+
    '<div class="chips">'+(TAB==='path'?rfCardHTML():'')+
    '<button class="askb" data-a="rlib-open" aria-label="Biblioteca: pregúntale a Rollo">'+rollo('contento',38)+nwDot('dic')+'</button>'+
-   '<button class="chip streak '+(doneToday?'on':alive?'risk':'off')+'" data-a="streak-info" aria-haspopup="dialog" aria-label="Racha de '+S.streak+' días. Meta de hoy: '+Math.min(xpT,S.goal)+' de '+S.goal+' XP. Toca para ver el detalle"><span class="fring" style="--a:'+Math.round(pctG*360)+'deg;--rc:'+(pctG>=1?'var(--green)':'var(--orange)')+'">'+IC.flame+'</span>'+S.streak+'</button></div>';
+   '<button class="chip streak '+(doneToday?'on':alive?'risk':'off')+'" data-a="streak-info" aria-haspopup="dialog" aria-label="Racha de '+S.streak+' días. Meta de hoy: '+Math.min(xpT,S.goal)+' de '+S.goal+' XP. Toca para ver el detalle"><span class="fring'+(pctG>=1?' full':'')+'" style="--a:'+Math.round(pctG*360)+'deg"><span class="fgr"></span><span class="fcv"></span>'+IC.flame+'</span>'+S.streak+'</button></div>';
 }
 function renderTabs(){
   const gk=S.course==='gk';
