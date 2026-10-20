@@ -440,7 +440,12 @@ h1,h2,h3,h4{font-weight:900}
 .avpick .avpv .avsvg{width:64px;height:64px;vertical-align:baseline}
 .avpick .avpt{display:flex;flex-direction:column}.avpick .avpt b{font-size:17px;color:var(--blue)}.avpick .avpt small{color:var(--muted,#777);font-weight:700}
 .overlay.avxov{z-index:300000}
-.avxbig{width:min(210px,56vw);aspect-ratio:1;margin:6px auto 8px}.avxbig .avsvg{width:100%;height:100%;display:block}
+.avxtop{position:sticky;top:-6px;z-index:3;background:var(--bg);padding-top:6px;margin:0 -16px 10px;padding-left:16px;padding-right:16px;border-bottom:1px solid var(--line)}
+.avxacc{border:2px solid var(--line);border-radius:14px;margin:0 0 8px;background:var(--surface)}
+.avxah{width:100%;display:flex;align-items:center;gap:10px;background:none;border:0;font:inherit;color:inherit;padding:11px 14px;cursor:pointer;text-align:left}
+.avxah .avxlab{margin:0;flex:1}.avxsum{display:flex;align-items:center;font-weight:800;font-size:14px}.avxdot{width:22px;height:22px;border-radius:50%;box-shadow:0 0 0 2px var(--line)}
+.avxchev{color:var(--muted);transition:transform .15s}.avxacc.open .avxchev{transform:rotate(180deg)}.avxab{padding:2px 14px 14px}
+.avxbig{width:min(130px,34vw);aspect-ratio:1;margin:6px auto 8px}.avxbig .avsvg{width:100%;height:100%;display:block}
 .avxc{display:flex;justify-content:center;margin:0 0 14px}
 .avxrow{margin:0 0 16px}
 .avxlab{display:block;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#777);margin:0 0 8px}
@@ -1615,7 +1620,7 @@ const HAIR=['#1F1A17','#4A2E1E','#7A4A2A','#B07A3A','#E0B65A','#B5502A','#A9A9AE
 const HAIR_N=['Negro','Castaño oscuro','Castaño','Miel','Rubio','Pelirrojo','Canoso'];
 const BG='#CFEFFD';
 const BGS={m:['#CFEFFD','#FFF1B8','#CDEFC0','#FFFFFF'],f:['#FFD3E4','#FFF1B8','#E3D3FA','#FFFFFF']},BG_N={m:['Azul','Amarillo','Verde','Blanco'],f:['Rosado','Amarillo','Violeta','Blanco']};
-const CL=['#1CB0F6','#FF4B4B','#58CC02','#FFC800','#A560E8','#FF86D0','#3C3C3C','#F2F2F2'],CL_N=['Azul','Rojo','Verde','Amarillo','Morado','Rosado','Negro','Blanco'];
+const CLS={f:['#1CB0F6','#FF4B4B','#58CC02','#FFC800','#A560E8','#FF86D0','#3C3C3C','#F2F2F2'],m:['#1CB0F6','#FF4B4B','#58CC02','#FFC800','#FF9600','#9AA0A6','#3C3C3C','#F2F2F2']},CL_NS={f:['Azul','Rojo','Verde','Amarillo','Morado','Rosado','Negro','Blanco'],m:['Azul','Rojo','Verde','Amarillo','Naranja','Gris','Negro','Blanco']};
 const bgOf=a=>a.bg?BGS[a.s][a.bg-1]:BG;
 const GAF=['Sin gafas','Redondas','Cuadradas'];
 const BAR=['Sin barba','Bigote','Barba corta','Barba larga'];
@@ -1671,11 +1676,11 @@ const ST={
  ]
 };
 /* Cara: la misma de Lampy contento (ojos con brillo, mejillas rosadas, sonrisa). */
-function face(skin,cl){
+function face(skin,cl,sx){
   const d=SH(skin,-.14);
   return `<ellipse cx="25" cy="68" rx="6" ry="8" fill="${skin}"/><ellipse cx="95" cy="68" rx="6" ry="8" fill="${skin}"/>`+
   `<rect x="48" y="86" width="24" height="22" rx="8" fill="${d}"/>`+
-  `<path d="M14 120C14 100 34 94 60 94C86 94 106 100 106 120Z" fill="${CL[cl||0]}"${cl===7?' stroke="#00000026" stroke-width="1.2"':''}/><path d="M48 94C52 104 68 104 72 94Z" fill="${d}"/>`+
+  `<path d="M14 120C14 100 34 94 60 94C86 94 106 100 106 120Z" fill="${CLS[sx||'f'][cl||0]}"${cl===7?' stroke="#00000026" stroke-width="1.2"':''}/><path d="M48 94C52 104 68 104 72 94Z" fill="${d}"/>`+
   `<ellipse cx="60" cy="62" rx="34" ry="36" fill="${skin}"/>`+
   `<circle cx="39" cy="72" r="5.6" fill="#FF8FA3" opacity=".7"/><circle cx="81" cy="72" r="5.6" fill="#FF8FA3" opacity=".7"/>`+
   `<g class="avE" style="animation-duration:${(4+Math.random()*2.6).toFixed(1)}s;animation-delay:-${(Math.random()*5).toFixed(1)}s"><ellipse cx="46" cy="64" rx="4.6" ry="5.4" fill="#3C3C3C"/><ellipse cx="74" cy="64" rx="4.6" ry="5.4" fill="#3C3C3C"/><circle cx="47.7" cy="62" r="1.8" fill="#fff"/><circle cx="75.7" cy="62" r="1.8" fill="#fff"/></g>`+
@@ -1701,12 +1706,12 @@ function glasses(a){
 }
 function avatar(a){
   const id='av'+(++GID),c=HAIR[a.c],st=ST[a.s][a.h],g='url(#'+id+')',L=SH(c,.4),D=SH(c,-.35);
-  return `<svg class="avsvg" viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${SH(c,.16)}"/><stop offset="1" stop-color="${SH(c,-.22)}"/></linearGradient></defs><rect width="120" height="120" fill="${bgOf(a)}"/>${st.back(g,L,D)}${face(SKIN[a.k],a.cl)}${beard(a,g,L,D)}${st.mid(g,L,D)}${st.front(g,L,D)}${glasses(a)}</svg>`;
+  return `<svg class="avsvg" viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${SH(c,.16)}"/><stop offset="1" stop-color="${SH(c,-.22)}"/></linearGradient></defs><rect width="120" height="120" fill="${bgOf(a)}"/>${st.back(g,L,D)}${face(SKIN[a.k],a.cl,a.s)}${beard(a,g,L,D)}${st.mid(g,L,D)}${st.front(g,L,D)}${glasses(a)}</svg>`;
 }
 
   const code=a=>'@'+a.s+a.k+a.c+a.h+(a.g||0)+(a.s==='m'?(a.b||0):0)+(a.bg||0)+(a.cl||0);
   const parse=m=>({s:m[1],k:+m[2],c:+m[3],h:+m[4],g:+m[5],b:m[1]==='m'?+m[6]:0,bg:+(m[7]||0),cl:+(m[8]||0)});
-  return {svg:avatar,code,parse,BGS,BG_N,CL,CL_N,SKIN,SKIN_N,HAIR,HAIR_N,ST,GAF,BAR};
+  return {svg:avatar,code,parse,BGS,BG_N,CLS,CL_NS,SKIN,SKIN_N,HAIR,HAIR_N,ST,GAF,BAR};
 })();
 const esc=s=>{s=String(s);if(s.charCodeAt(0)===64){const m=AV_RE.exec(s);if(m)return AVX.svg(AVX.parse(m))+escx(s.slice(m[0].length));}return escx(s);};
 const rnd=n=>Math.floor(Math.random()*n);
@@ -8534,16 +8539,20 @@ function avxRender(){
   const a=AVE.a,old=el.querySelector('.lb'),top=old?old.scrollTop:0;
   const sw=(arr,key,cur,names)=>'<div class="avxsw">'+arr.map((c,i)=>'<button type="button" aria-label="'+names[i]+'" aria-pressed="'+(cur===i)+'" data-a="avx-'+key+'" data-v="'+i+'" style="background:'+c+'"></button>').join('')+'</div>';
   const seg=(arr,key,cur)=>'<div class="avxseg">'+arr.map((x,i)=>'<button type="button" class="avxopt" aria-pressed="'+(cur===i)+'" data-a="avx-'+key+'" data-v="'+i+'">'+x+'</button>').join('')+'</div>';
+  const op=AVE.open||'',dot=c=>'<i class="avxdot" style="background:'+c+'"></i>';
+  const acc=(key,lab,sum,body)=>'<div class="avxacc'+(op===key?' open':'')+'"><button type="button" class="avxah" aria-expanded="'+(op===key)+'" data-a="avx-open2" data-v="'+key+'"><span class="avxlab">'+lab+'</span><span class="avxsum">'+sum+'</span><span class="avxchev" aria-hidden="true">▾</span></button>'+(op===key?'<div class="avxab">'+body+'</div>':'')+'</div>';
+  const bgi=a.bg?a.bg-1:(a.s==='m'?0:-1),bgc=AVX.BGS[a.s][bgi<0?0:bgi];
+  const sty=AVX.ST[a.s][a.h]||AVX.ST[a.s][0];
   el.innerHTML='<div class="lh"><button class="x" data-a="avx-close" aria-label="Cerrar">'+IC.close+'</button><b style="flex:1;font-size:19px">Tu avatar</b></div>'+
-   '<div class="lb"><div class="avxbig">'+AVX.svg(a)+'</div><div class="avxc"><button class="btn ghost sm" data-a="avx-rand">🎲 Sorprenderme</button></div>'+
+   '<div class="lb"><div class="avxtop"><div class="avxbig">'+AVX.svg(a)+'</div><div class="avxc"><button class="btn ghost sm" data-a="avx-rand">🎲 Sorprenderme</button></div></div>'+
    '<div class="avxrow"><span class="avxlab">Sexo</span><div class="avxseg">'+[['f','Mujer'],['m','Hombre']].map(x=>'<button type="button" class="avxopt" aria-pressed="'+(a.s===x[0])+'" data-a="avx-s" data-v="'+x[0]+'">'+x[1]+'</button>').join('')+'</div></div>'+
-   '<div class="avxrow"><span class="avxlab">Tono de piel</span>'+sw(AVX.SKIN,'k',a.k,AVX.SKIN_N)+'</div>'+
-   '<div class="avxrow"><span class="avxlab">Color de cabello</span>'+sw(AVX.HAIR,'c',a.c,AVX.HAIR_N)+'</div>'+
-   '<div class="avxrow"><span class="avxlab">Peinado</span><div class="avxsty">'+AVX.ST[a.s].map((x,i)=>'<button type="button" aria-pressed="'+(a.h===i)+'" data-a="avx-h" data-v="'+i+'"><span class="avxmini">'+AVX.svg(Object.assign({},a,{h:i}))+'</span>'+x.n+'</button>').join('')+'</div></div>'+
-   '<div class="avxrow"><span class="avxlab">Gafas</span>'+seg(AVX.GAF,'g',a.g||0)+'</div>'+
-   (a.s==='m'?'<div class="avxrow"><span class="avxlab">Barba</span><div class="avxseg w">'+AVX.BAR.map((x,i)=>'<button type="button" class="avxopt" aria-pressed="'+((a.b||0)===i)+'" data-a="avx-b" data-v="'+i+'">'+x+'</button>').join('')+'</div></div>':'')+
-   '<div class="avxrow"><span class="avxlab">Fondo</span>'+sw(AVX.BGS[a.s],'bg',a.bg?a.bg-1:(a.s==='m'?0:-1),AVX.BG_N[a.s])+'</div>'+
-   '<div class="avxrow"><span class="avxlab">Color de ropa</span>'+sw(AVX.CL,'cl',a.cl||0,AVX.CL_N)+'</div>'+
+   acc('k','Tono de piel',dot(AVX.SKIN[a.k]),sw(AVX.SKIN,'k',a.k,AVX.SKIN_N))+
+   acc('c','Color de cabello',dot(AVX.HAIR[a.c]),sw(AVX.HAIR,'c',a.c,AVX.HAIR_N))+
+   acc('h','Peinado',sty.n,'<div class="avxsty">'+AVX.ST[a.s].map((x,i)=>'<button type="button" aria-pressed="'+(a.h===i)+'" data-a="avx-h" data-v="'+i+'"><span class="avxmini">'+AVX.svg(Object.assign({},a,{h:i}))+'</span>'+x.n+'</button>').join('')+'</div>')+
+   acc('g','Gafas',AVX.GAF[a.g||0],seg(AVX.GAF,'g',a.g||0))+
+   (a.s==='m'?acc('b','Barba',AVX.BAR[a.b||0],'<div class="avxseg w">'+AVX.BAR.map((x,i)=>'<button type="button" class="avxopt" aria-pressed="'+((a.b||0)===i)+'" data-a="avx-b" data-v="'+i+'">'+x+'</button>').join('')+'</div>'):'')+
+   acc('bg','Fondo',dot(bgc),sw(AVX.BGS[a.s],'bg',bgi,AVX.BG_N[a.s]))+
+   acc('cl','Color de ropa',dot(AVX.CLS[a.s][a.cl||0]),sw(AVX.CLS[a.s],'cl',a.cl||0,AVX.CL_NS[a.s]))+
    '</div><div class="lf"><div class="in"><button class="btn" data-a="avx-save">Guardar avatar</button></div></div>';
   const nb=el.querySelector('.lb');if(nb)nb.scrollTop=top;
 }
@@ -8551,6 +8560,7 @@ function avxAct(a,b){
   if(a==='avx-open')return avxOpen(b.dataset.t);
   if(a==='avx-close')return avxClose();
   if(!AVE)return;
+  if(a==='avx-open2'){AVE.open=AVE.open===b.dataset.v?'':b.dataset.v;return avxRender();}
   const A=AVE.a,v=b.dataset.v;
   if(a==='avx-s'){A.s=v;A.h=0;if(v==='f')A.b=0;}
   else if(a==='avx-k')A.k=+v;else if(a==='avx-c')A.c=+v;else if(a==='avx-h')A.h=+v;else if(a==='avx-g')A.g=+v;else if(a==='avx-b')A.b=+v;else if(a==='avx-bg')A.bg=+v+1;else if(a==='avx-cl')A.cl=+v;
