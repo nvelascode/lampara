@@ -445,7 +445,7 @@ h1,h2,h3,h4{font-weight:900}
 .avxah{width:100%;display:flex;align-items:center;gap:10px;background:none;border:0;font:inherit;color:inherit;padding:11px 14px;cursor:pointer;text-align:left}
 .avxah .avxlab{margin:0;flex:1}.avxsum{display:flex;align-items:center;font-weight:800;font-size:14px}.avxdot{width:22px;height:22px;border-radius:50%;box-shadow:0 0 0 2px var(--line)}
 .avxchev{color:var(--muted);transition:transform .15s}.avxacc.open .avxchev{transform:rotate(180deg)}.avxab{padding:2px 14px 14px}
-.avxbig{width:min(130px,34vw);aspect-ratio:1;margin:6px auto 8px}.avxbig .avsvg{width:100%;height:100%;display:block}
+.avxbig{width:min(200px,52vw);aspect-ratio:1;margin:6px auto 10px}.avxbig .avsvg{width:100%;height:100%;display:block}
 .avxc{display:flex;justify-content:center;margin:0 0 14px}
 .avxrow{margin:0 0 16px}
 .avxlab{display:block;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#777);margin:0 0 8px}
@@ -8544,7 +8544,7 @@ function avxRender(){
   const bgi=a.bg?a.bg-1:(a.s==='m'?0:-1),bgc=AVX.BGS[a.s][bgi<0?0:bgi];
   const sty=AVX.ST[a.s][a.h]||AVX.ST[a.s][0];
   el.innerHTML='<div class="lh"><button class="x" data-a="avx-close" aria-label="Cerrar">'+IC.close+'</button><b style="flex:1;font-size:19px">Tu avatar</b></div>'+
-   '<div class="lb"><div class="avxtop"><div class="avxbig">'+AVX.svg(a)+'</div><div class="avxc"><button class="btn ghost sm" data-a="avx-rand">🎲 Sorprenderme</button></div></div>'+
+   '<div class="lb"><div class="avxtop"><div class="avxbig">'+AVX.svg(a)+'</div></div>'+
    '<div class="avxrow"><span class="avxlab">Sexo</span><div class="avxseg">'+[['f','Mujer'],['m','Hombre']].map(x=>'<button type="button" class="avxopt" aria-pressed="'+(a.s===x[0])+'" data-a="avx-s" data-v="'+x[0]+'">'+x[1]+'</button>').join('')+'</div></div>'+
    acc('k','Tono de piel',dot(AVX.SKIN[a.k]),sw(AVX.SKIN,'k',a.k,AVX.SKIN_N))+
    acc('c','Color de cabello',dot(AVX.HAIR[a.c]),sw(AVX.HAIR,'c',a.c,AVX.HAIR_N))+
