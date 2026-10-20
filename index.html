@@ -353,6 +353,7 @@ h1,h2,h3,h4{font-weight:900}
 .mact{display:flex;gap:10px;margin-top:10px;align-items:stretch}.mact .btn{flex:1;margin:0}
 .mmic{width:52px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--blue);display:grid;place-items:center;cursor:pointer}
 .mmic.on{background:var(--red);color:#fff;border-color:var(--red)}
+.mmic.big{width:100%;height:64px;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;font:inherit;font-weight:800;font-size:16px}.mtr{min-height:48px;padding:10px 12px;border:2px dashed var(--line);border-radius:14px;color:var(--muted);margin-top:8px}
 #memmic{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .mlink{background:none;border:0;color:var(--blue);font-weight:800;padding:12px 0 0;cursor:pointer;font:inherit;font-weight:800}
 .mres{margin-top:10px;padding:10px 12px;border-radius:12px}.mres.ok{background:color-mix(in srgb,#58cc02 18%,var(--surface))}.mres.no{background:color-mix(in srgb,var(--red) 12%,var(--surface))}
@@ -10369,23 +10370,22 @@ function memHTML(){
    '<blockquote class="mv">'+txt+'</blockquote>'+
    '<div class="mdots" aria-label="Nivel '+lvl+' de 5">'+dots+'<span>'+(done?'¡Memorizado!':MEM_LV[lvl-1][0]+' de 5')+'</span></div>'+
    (done?'<p class="muted" style="margin:6px 0 0">Mañana empieza otra semana con un versículo nuevo. Repítelo en voz alta cuando quieras.</p>':
-   '<textarea id="memin" rows="3" placeholder="'+(lvl===1?'Lee el versículo completo en voz alta':'Recita el versículo completo')+(rlSR()?': mantén oprimido el micrófono y suéltalo al terminar':', o escríbelo aquí')+'" aria-label="Escribe o di el versículo">'+esc(MEM.txt)+'</textarea>'+
-   '<div class="mact">'+(rlSR()?'<button class="mmic'+(MEM.rec?' on':'')+'" id="memmic" aria-label="Mantén oprimido para decir el versículo"><svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor"/><path d="M5 11.5a7 7 0 0 0 14 0M12 18.5V22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>':'')+
-   '<button class="btn orange" data-a="mem-chk">Comprobar</button></div>'+
+   (rlSR()?'<div id="memin" class="mtr" aria-live="polite">'+(MEM.txt?'<i>'+esc(MEM.txt)+'</i>':'')+'</div>'+'<button class="mmic big'+(MEM.rec?' on':'')+'" id="memmic" aria-label="Mantén oprimido y recita el versículo"><svg viewBox="0 0 24 24" aria-hidden="true" width="26" height="26"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor"/><path d="M5 11.5a7 7 0 0 0 14 0M12 18.5V22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>'+(MEM.res&&!MEM.res.ok?'Mantén oprimido para intentar de nuevo':'Mantén oprimido y recita')+'</span></button>':'<textarea id="memin" rows="3" placeholder="Tu dispositivo no permite dictado aquí. Escribe el versículo completo" aria-label="Escribe el versículo">'+esc(MEM.txt)+'</textarea><div class="mact"><button class="btn orange" data-a="mem-chk">Comprobar</button></div>')+''+
    (lvl>1?'<button class="mlink" data-a="mem-peek">'+(MEM.show?'Ocultar el versículo':'Ver el versículo')+'</button>':''))+
    res+'</section>';
 }
 function memAct(a,b){
   nwMark('rt_mem');const m=S.mem;if(!m)return;
-  if(a==='mem-peek'){const i=$('#memin');MEM.txt=i?i.value:MEM.txt;MEM.show=!MEM.show;render();}
+  if(a==='mem-peek'){const i=$('#memin');MEM.txt=i&&i.value!==undefined?i.value:MEM.txt;MEM.show=!MEM.show;render();}
   else if(a==='mem-chk'){const i=$('#memin');memCheck(i?i.value:MEM.txt);}
 }
 function memMicStart(){
   const SR=rlSR();if(!SR||MEM.rec)return;
   let r;try{r=new SR();}catch(e){toast('El dictado no está disponible aquí. Escríbelo.');return;}
+  MEM.res=null;MEM.txt='';{const q=document.querySelector('.memo .mres');if(q)q.remove();const t=$('#memin');if(t)t.textContent='';const sp=document.querySelector('#memmic span');if(sp)sp.textContent='Recitando… suelta al terminar';}
   MEM.rec=r;MEM.held=true;r.lang='es-CO';r.interimResults=true;r.continuous=true;let fin='';
   r.onstart=()=>{const b=$('#memmic');if(b)b.classList.add('on');};
-  r.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';fin=t.trim();const inp=$('#memin');if(inp)inp.value=fin;MEM.txt=fin;};
+  r.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';fin=t.trim();const inp=$('#memin');if(inp)inp.innerHTML='<i>'+esc(fin)+'</i>';MEM.txt=fin;};
   r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')micDenied();};
   r.onend=()=>{MEM.rec=null;MEM.held=false;const b=$('#memmic');if(b)b.classList.remove('on');if(fin)memCheck(fin);else toast('No te escuché. Mantén oprimido el micrófono mientras recitas.');};
   try{r.start();}catch(e){MEM.rec=null;MEM.held=false;toast('No pude iniciar el micrófono.');}
