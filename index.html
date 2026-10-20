@@ -1613,6 +1613,12 @@ const $=s=>document.querySelector(s);
 const escx=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 /* Avatar de Lampy: la cara de Lampy contenta con sexo, piel, cabello, peinado, gafas y barba. Se guarda como un código de 7 caracteres, por ejemplo @f250000 */
 const AV_RE=/^@([fm])([0-7])([0-6])([0-5])([0-2])([0-3])([0-4])?([0-7])?/;
+const AV_NEW=/^@([FM])([0-9a-z]{4})/;
+function avRead(str){
+  str=String(str||'');let m=AV_NEW.exec(str);
+  if(m){let n=parseInt(m[2],36);const cl=n%8;n=(n-cl)/8;const bg=n%5;n=(n-bg)/5;const b=n%4;n=(n-b)/4;const g=n%3;n=(n-g)/3;const h=n%6;n=(n-h)/6;const c=n%7;n=(n-c)/7;const k=n%8;n=(n-k)/8;const sx=m[1]==='F'?'f':'m';return {a:{s:sx,k,c,h,g,b:sx==='m'?b:0,bg,cl},len:m[0].length};}
+  m=AV_RE.exec(str);if(m)return {a:AVX.parse(m),len:m[0].length};return null;
+}
 const AVX=(function(){
 const SKIN=['#FFE0C7','#F8CBA4','#EDB68A','#D99A6C','#B97A4F','#8D5A3A','#6B4128','#4A2C1B'];
 const SKIN_N=['Muy claro','Claro','Trigueño claro','Trigueño','Canela','Moreno','Moreno oscuro','Oscuro'];
@@ -1709,11 +1715,12 @@ function avatar(a){
   return `<svg class="avsvg" viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${SH(c,.16)}"/><stop offset="1" stop-color="${SH(c,-.22)}"/></linearGradient></defs><rect width="120" height="120" fill="${bgOf(a)}"/>${st.back(g,L,D)}${face(SKIN[a.k],a.cl,a.s)}${beard(a,g,L,D)}${st.mid(g,L,D)}${st.front(g,L,D)}${glasses(a)}</svg>`;
 }
 
-  const code=a=>'@'+a.s+a.k+a.c+a.h+(a.g||0)+(a.s==='m'?(a.b||0):0)+(a.bg||0)+(a.cl||0);
+  /* código corto de 6 caracteres (el servidor ya guardaba 7): sexo + 4 cifras en base 36 */
+  const code=a=>{let n=a.s==='m'?1:0;n=n*8+a.k;n=n*7+a.c;n=n*6+a.h;n=n*3+(a.g||0);n=n*4+(a.s==='m'?(a.b||0):0);n=n*5+(a.bg||0);n=n*8+(a.cl||0);return '@'+(a.s==='m'?'M':'F')+n.toString(36).padStart(4,'0');};
   const parse=m=>({s:m[1],k:+m[2],c:+m[3],h:+m[4],g:+m[5],b:m[1]==='m'?+m[6]:0,bg:+(m[7]||0),cl:+(m[8]||0)});
   return {svg:avatar,code,parse,BGS,BG_N,CLS,CL_NS,SKIN,SKIN_N,HAIR,HAIR_N,ST,GAF,BAR};
 })();
-const esc=s=>{s=String(s);if(s.charCodeAt(0)===64){const m=AV_RE.exec(s);if(m)return AVX.svg(AVX.parse(m))+escx(s.slice(m[0].length));}return escx(s);};
+const esc=s=>{s=String(s);if(s.charCodeAt(0)===64){const r=avRead(s);if(r)return AVX.svg(r.a)+escx(s.slice(r.len));}return escx(s);};
 const rnd=n=>Math.floor(Math.random()*n);
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
 const pad=n=>String(n).padStart(2,'0');
@@ -2344,7 +2351,7 @@ const VOTD=[
 {
 "r": "Salmo 23:1",
 "t": "Jehová es mi pastor; nada me faltará.",
-"p": "Si Jehová es tu pastor, no vas a la deriva. ¿Qué le entregas hoy?"
+"p": "Si Jehová es tu pastor, nada te faltará. ¿De qué temerás hoy?"
 },
 {
 "r": "Salmo 46:1",
@@ -8520,15 +8527,15 @@ async function frNewCode(){
 let AVE=null;
 const AVX_CUR=t=>t==='wel'?WEL.avatar:t==='frm'?FRM.avatar:FRE.avatar;
 function avxPickHTML(t,cur){
-  const m=AV_RE.test(String(cur||''));
+  const m=!!avRead(cur);
   return '<button class="avpick" data-a="avx-open" data-t="'+t+'">'+(nwDot('av')||nwDot('avc'))+'<span class="avpv">'+esc(cur||'🙂')+'</span><span class="avpt"><b>'+(m?'Cambiar mi avatar':'Crear mi avatar')+'</b><small>Piel, cabello, gafas, fondo y ropa</small></span></button>';
 }
 function avxOpen(t){nwMark('av');nwMark('avc');
   if(t==='frm'){const i=$('#frmname');if(i)FRM.name=i.value;}
   if(t==='wel'){const i=$('#welname');if(i)WEL.name=i.value;}
   if(t==='fre'){const i=$('#frname');if(i)FRE.name=i.value;}
-  const m=AV_RE.exec(String(AVX_CUR(t)||''));
-  AVE={t,a:m?AVX.parse(m):{s:'f',k:2,c:2,h:0,g:0,b:0,bg:0,cl:0}};
+  const m=avRead(AVX_CUR(t));
+  AVE={t,a:m?m.a:{s:'f',k:2,c:2,h:0,g:0,b:0,bg:0,cl:0}};
   let el=document.getElementById('avx');
   if(!el){el=document.createElement('div');el.id='avx';el.className='overlay avxov';document.body.appendChild(el);}
   el.hidden=false;avxRender();
@@ -8568,7 +8575,7 @@ function avxAct(a,b){
   else if(a==='avx-save'){
     const code=AVX.code(A),t=AVE.t;avxClose();
     if(t==='wel'){WEL.avatar=code;welcomeRender();}
-    else if(t==='frm'){FRM.avatar=code;frEditModal();}
+    else if(t==='frm'){FRM.avatar=code;frEditModal();if(!FRM.ask&&frActive())frEditSave();}
     else{FRE.avatar=code;render();}
     return;
   }
