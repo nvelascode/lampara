@@ -137,6 +137,10 @@ h1,h2,h3,h4{font-weight:900}
 .chip{display:flex;align-items:center;gap:4px;font-weight:900;font-size:17px;padding:4px 8px;border-radius:12px}
 .chip svg{width:22px;height:22px}
 .chip.streak{color:var(--orange)}
+.fring{position:relative;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--rc,var(--orange)) var(--a,0deg),var(--line) 0)}
+.fring::before{content:"";position:absolute;inset:3.5px;border-radius:50%;background:var(--bg)}
+.fring svg{position:relative;width:20px;height:20px}
+.chip.streak{gap:5px;padding:2px 6px}
 .chip.streak.off{color:var(--muted);filter:grayscale(1)}
 .chip.streak.risk svg{animation:pulse 1.2s infinite}
 .chip.xp{color:var(--yellow-d)}
@@ -1211,6 +1215,7 @@ a.btn{text-decoration:none;text-align:center}
 .rfbar .rfd{margin-left:auto;font-weight:900;font-size:12px;background:#FFD54A;color:#5A2A00;padding:3px 8px;border-radius:99px;white-space:nowrap}
 .rfbar .rfch{font-size:20px;font-weight:900;opacity:.8}
 .rfsum{margin:4px 0 8px;font-size:17px;font-weight:800}.rfsum b{color:#C8372D}
+.gbar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin:0 0 4px}.gbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#FFC800,#FF9600)}
 .rfprog{height:12px;border-radius:99px;background:var(--line);overflow:hidden}.rfprog i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#D8392F,#FFB02E)}
 .rflist{display:grid;gap:8px;text-align:left}
 .rfrow{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink);text-align:left}
@@ -1749,7 +1754,7 @@ const IC={
  lock:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>',
  close:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
  path:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20c0-6 7-4 7-9S6 7 8 4M14 20c4-2 6-5 6-8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="8" cy="4" r="1.8" fill="currentColor"/><circle cx="20" cy="12" r="1.8" fill="currentColor"/></svg>',
- review:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+ review:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 20.5 9 9.5l3.5 6 2.6-3.6 6 8.6z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 9.5V2.8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M9 3h5.6l-1.8 2.2 1.8 2.2H9z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>',
  bolt:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2L4.5 13.5h6L9.5 22l10-12.5h-6.2z" fill="currentColor"/></svg>',
  users:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M17 14.5c2.5.2 4 1.8 4 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
  read:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M4 10h16M9 3.5V7M15 3.5V7M9 15l2.2 2.2L15.5 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -10290,21 +10295,22 @@ function streakInfo(){
   let wk='';for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');wk+=wkDotHTML(d,i,t)+DOW[dt.getDay()]+'</div>';}
   const row=(e,tt,d)=>'<div style="display:flex;gap:10px;text-align:left;align-items:flex-start"><span style="font-size:24px;line-height:1.1">'+e+'</span><div><b>'+tt+'</b><p class="muted" style="margin:2px 0 0;font-size:14px">'+d+'</p></div></div>';
   showModal('<h3>🔥 '+S.streak+(S.streak===1?' día':' días')+' de racha</h3><div class="week" style="margin:0">'+wk+'</div>'+
+    '<p style="margin:4px 0 6px;text-align:left"><b>Meta de hoy:</b> '+Math.min(xpT,S.goal)+'/'+S.goal+' XP <span class="muted">'+(xpT>=S.goal?'· ¡Cumplida!':'· faltan '+(S.goal-xpT))+'</span></p><div class="gbar" aria-hidden="true"><i style="width:'+Math.round(100*Math.min(1,xpT/S.goal))+'%"></i></div>'+
     row('🔥','Racha','Los días seguidos en que practicas. Cuenta cualquier actividad: una lección, un juego o la lectura. Tu mejor racha: '+S.best+'.')+
     row('🛡️','Protectores: '+(S.freezes||0)+' de 2','Cuidan tu racha, incluida la de lectura, si un día no practicas ni lees. Ganas uno cada 7 días de racha.')+
-    row('⚡','XP total: '+S.xp,'Los puntos que sumas con cada lección o juego. Hoy llevas '+Math.min(xpT,S.goal)+' de '+S.goal+' (tu meta diaria).')+
+    row('⚡','XP total: '+S.xp,'Los puntos que sumas con cada lección o juego.')+
     '<button class="btn" data-a="info-x">Entendido</button>');
   $('#modal').dataset.dismiss='1';
 }
 /* el cuadro de la racha también se cierra tocando fuera de él */
 document.addEventListener('click',e=>{const m=document.getElementById('modal');if(m&&e.target===m&&m.dataset.dismiss==='1')hideModal();});
 function renderTop(){
-  const t=today(),doneToday=S.lastDay===t,alive=S.streak>0;
+  const t=today(),doneToday=S.lastDay===t,alive=S.streak>0,xpT=S.days[t]||0,pctG=Math.max(0,Math.min(1,xpT/(S.goal||20)));
   $('#top').innerHTML=
    '<button class="cbtn'+(cmInvite()?' cpulse':'')+'" data-a="cmenu" aria-haspopup="true" aria-expanded="'+(typeof CMENU!=='undefined'&&CMENU)+'" aria-label="Curso actual: '+CINFO(S.course).n+'. Cambiar de curso"><span class="ci">'+CINFO(S.course).i+'</span><span>'+CINFO(S.course).n+'</span>'+((!S.bioSeen&&S.course!=='bio')||(!S.libSeen&&S.course!=='lib')||(!S.pasSeen&&S.course!=='pas')?'<span class="nwtag sm">NUEVO</span>':'')+'<span class="car" aria-hidden="true">▼</span></button>'+
    '<div class="chips">'+(TAB==='path'?rfCardHTML():'')+
    '<button class="askb" data-a="rlib-open" aria-label="Biblioteca: pregúntale a Rollo">'+rollo('contento',38)+nwDot('dic')+'</button>'+
-   '<button class="chip streak '+(doneToday?'on':alive?'risk':'off')+'" data-a="streak-info" aria-haspopup="dialog" aria-label="Racha de '+S.streak+' días. Toca para ver tu racha, protectores y puntos">'+IC.flame+S.streak+'</button></div>';
+   '<button class="chip streak '+(doneToday?'on':alive?'risk':'off')+'" data-a="streak-info" aria-haspopup="dialog" aria-label="Racha de '+S.streak+' días. Meta de hoy: '+Math.min(xpT,S.goal)+' de '+S.goal+' XP. Toca para ver el detalle"><span class="fring" style="--a:'+Math.round(pctG*360)+'deg;--rc:'+(pctG>=1?'var(--green)':'var(--orange)')+'">'+IC.flame+'</span>'+S.streak+'</button></div>';
 }
 function renderTabs(){
   const gk=S.course==='gk';
@@ -10374,7 +10380,7 @@ function homeHTML(){
   let msg,mood='happy';
   if(xpT>=S.goal){const nm=S.me&&S.me.name?', '+S.me.name:'';msg=homeVar(['¡Meta cumplida! Tu racha está a salvo por hoy.',homeGreet()+nm+'! Hoy ya cumpliste tu meta.','Listo por hoy'+nm+'. Tu racha está a salvo.','¡Bien hecho! Cada día suma.']);mood='cheer';}
   else if(S.streak>0&&S.lastDay!==t){msg=flameMsg();mood=riskMood();}
-  else if(S.streak>0){const nm=S.me&&S.me.name?', '+S.me.name:'',dd=S.streak+(S.streak===1?' día':' días'),fl=S.goal-xpT;msg=homeVar(['Llevas '+dd+' seguidos. Te faltan '+fl+' XP para tu meta.',homeGreet()+nm+'! Te faltan '+fl+' XP para tu meta de hoy.','Vas bien: '+dd+' seguidos. Faltan '+fl+' XP.']);mood='wink';}
+  else if(S.streak>0){const nm=S.me&&S.me.name?', '+S.me.name:'',dd=S.streak+(S.streak===1?' día':' días'),fl=S.goal-xpT;msg=homeVar(['Te faltan '+fl+' XP para tu meta de hoy.',homeGreet()+nm+'! Te faltan '+fl+' XP para tu meta de hoy.','Vas bien. Faltan '+fl+' XP para tu meta.']);mood='wink';}
   else{mood='wink';msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':bio?'¡Conoce a los hombres y mujeres que Dios usó en su iglesia! Haz tu primera lección.':lib?'¡Recorre la Biblia libro por libro, mirando siempre a Cristo! Haz tu primera ficha.':pas?'¡Aprende los pasajes que más importan, versículo por versículo! Haz tu primera lección.':'¡Hola'+(S.me&&S.me.name?', '+S.me.name:'')+'! Haz tu primera lección y empieza tu racha.';}
   const week=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');week.push(wkDotHTML(d,i,t)+DOW[dt.getDay()]+'</div>');}
   const cur=firstUndone(U),ldI=lastDoneIdx(U);let flat=0;
@@ -10401,7 +10407,7 @@ function homeHTML(){
     else daily='<section class="card votd"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button>'+(seen?'<button class="vtog" data-a="vs-tog" aria-label="Plegar el versículo del día"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'')+'<span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return cmInviteHTML()+(S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
   '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+rdHomeHTML()+repCardHTML(true)+
-  '<section class="card gstrip"><div class="goalrow"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/></svg><span class="rwrap" style="filter:drop-shadow(0 0 '+(pct*5).toFixed(1)+'px '+heat(pct,.75)+')"><span class="rring"><span class="rgrad" style="--a:'+Math.round(pct*360)+'deg"></span></span><span class="rcap s"'+(pct>0?'':' hidden')+'></span><span class="rcap e"'+(pct>0&&pct<1?'':' hidden')+' style="--a:'+Math.round(pct*360)+'deg;--ce:'+heat(pct)+'"></span></span><b><span>'+Math.min(xpT,S.goal)+'/'+S.goal+'<small>⚡ XP</small></span></b></div><div class="gcol"><h3>Meta de hoy <small>'+(xpT>=S.goal?'· ¡Cumplida!':'· faltan '+(S.goal-xpT)+' XP')+'</small></h3><div class="week" aria-label="Últimos 7 días">'+week.join('')+'</div></div></div></section>'+
+  ''+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':bio?'Biografías: datos históricos resumidos de fuentes de dominio público. Textos bíblicos citados: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
 }
