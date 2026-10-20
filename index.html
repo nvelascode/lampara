@@ -2186,6 +2186,7 @@ function rlDictListHTML(){
 }
 function rlDictRail(){
   const q=rlNorm(RL.dq||''),l=rlDictItems();
+  return '';
   if(q||l.length<20)return '';
   const ls=[];l.forEach(e=>{const L=rlNorm(e.t.n).charAt(0).toUpperCase();if(ls.indexOf(L)<0)ls.push(L);});
   return ls.map(L=>'<button data-a="rlib-letter" data-l="'+L+'" aria-label="Ir a la letra '+L+'">'+L+'</button>').join('');
