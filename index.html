@@ -11439,7 +11439,8 @@ async function evgShare(){
 const EVG_S=[
  {k:'q',t:'¿Eres una buena persona?',p:'Piensa un momento antes de contestar.',o:['Sí, creo que sí','Más o menos','No mucho'],r:'Casi todos pensamos que somos buenas personas. Pero lo que importa es cómo nos mide Dios, no cómo nos medimos nosotros. Veamos algunas preguntas sencillas.'},
  {k:'m',t:'Los mandamientos de Dios',p:'Responde con sinceridad. Nadie más lo verá.',qs:[["¿Alguna vez has mentido, aunque fuera una mentira pequeña, o has hablado mal de alguien a sus espaldas?",[["No hablarás contra tu prójimo falso testimonio.","Éxodo 20:16"],["No andarás chismeando entre tu pueblo. No atentarás contra la vida de tu prójimo. Yo Jehová.","Levítico 19:16"]]],["¿Alguna vez has tomado algo que no era tuyo, aunque fuera de poco valor?",[["No hurtarás.","Éxodo 20:15"]]],["¿Alguna vez has mirado a otra persona con deseo, sin ser tu esposo o tu esposa?",[["Pero yo os digo que cualquiera que mira a una mujer para codiciarla, ya adulteró con ella en su corazón.","Mateo 5:28"]]],["¿Alguna vez has envidiado a alguien o has querido lo que tiene?",[["No codiciarás la casa de tu prójimo, no codiciarás la mujer de tu prójimo, ni su siervo, ni su criada, ni su buey, ni su asno, ni cosa alguna de tu prójimo.","Éxodo 20:17"]]],["¿Alguna vez has usado el nombre de Dios sin respeto, como exclamación o para maldecir?",[["No tomarás el nombre de Jehová tu Dios en vano; porque no dará por inocente Jehová al que tomare su nombre en vano.","Éxodo 20:7"]]],["¿Alguna vez has deshonrado o desobedecido a tus padres?",[["Honra a tu padre y a tu madre, para que tus días se alarguen en la tierra que Jehová tu Dios te da.","Éxodo 20:12"]]],["¿Alguna vez has odiado a alguien, o lo has insultado con rabia?",[["Pero yo os digo que cualquiera que se enoje contra su hermano, será culpable de juicio; y cualquiera que diga: Necio, a su hermano, será culpable ante el concilio; y cualquiera que le diga: Fatuo, quedará expuesto al infierno de fuego.","Mateo 5:22"]]],["¿Alguna vez has puesto algo por encima de Dios: el dinero, el trabajo, una persona?",[["No tendrás dioses ajenos delante de mí.","Éxodo 20:3"]]]]},
- {k:'v',t:'Tu propio veredicto',p:'Ahora ponle nombre a lo que respondiste. Tú eliges la palabra.',vj:["Porque cualquiera que guardare toda la ley, pero ofendiere en un punto, se hace culpable de todos.","Santiago 2:10"],vr:["Pero sabemos que todo lo que la ley dice, lo dice a los que están bajo la ley, para que toda boca se cierre y todo el mundo quede bajo el juicio de Dios;","Romanos 3:19"]},
+ {k:'v',t:'Tu propio veredicto',p:'Ahora ponle nombre a lo que respondiste. Tú eliges la palabra.',vjx:["Porque cualquiera que guardare toda la ley, pero ofendiere en un punto, se hace culpable de todos.","Santiago 2:10"]},
+ {k:'w',t:'Lo que tú mismo dijiste',p:'Con tus propias palabras.'},
  {k:'i',t:'Dios es justo',b:['Si Dios es bueno, no puede dejar el mal sin juzgar. Su ley no está para que nos sintamos bien, sino para mostrarnos cómo somos delante de Él.'],v:[['por cuanto todos pecaron, y están destituidos de la gloria de Dios,','Romanos 3:23'],['ya que por las obras de la ley ningún ser humano será justificado delante de él; porque por medio de la ley es el conocimiento del pecado.','Romanos 3:20'],['Y de la manera que está establecido para los hombres que mueran una sola vez, y después de esto el juicio,','Hebreos 9:27']]},
  {k:'i',t:'Lo que merecemos… y lo que Dios hizo',b:['Nuestro pecado nos separa de Dios. Pero Dios no se quedó mirando: envió a su Hijo, Jesucristo, a ocupar nuestro lugar.'],v:[['Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro.','Romanos 6:23'],['Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros.','Romanos 5:8'],['Porque primeramente os he enseñado lo que asimismo recibí: Que Cristo murió por nuestros pecados, conforme a las Escrituras; y que fue sepultado, y que resucitó al tercer día, conforme a las Escrituras;','1 Corintios 15:3-4']]},
  {k:'i',t:'Cómo se recibe',b:['No se gana siendo mejores personas. Se recibe como un regalo: confiando en Cristo y dejando que Él cambie nuestro rumbo.'],v:[['Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios; no por obras, para que nadie se gloríe.','Efesios 2:8-9'],['y diciendo: El tiempo se ha cumplido, y el reino de Dios se ha acercado; arrepentíos, y creed en el evangelio.','Marcos 1:15'],['Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.','Juan 3:16']]},
@@ -11467,29 +11468,23 @@ function evgRender(){
     body+='<p class="muted" style="margin:0 0 12px">'+esc(s.p)+'</p>';
     s.qs.forEach((q,j)=>{const a=EV.my[j];
       body+='<div class="evgq"><b>'+(j+1)+'. '+esc(q[0])+'</b><div class="row2"><button class="btn ghost sm'+(a===1?' on':'')+'" data-a="evg-yn" data-j="'+j+'" data-v="1">Sí</button><button class="btn ghost sm'+(a===0?' on':'')+'" data-a="evg-yn" data-j="'+j+'" data-v="0">No</button></div>'+
-       (a!==undefined?q[1].map(v=>'<blockquote class="verse evgv"><i>'+esc(v[0])+'</i><cite class="vref">'+esc(v[1])+'</cite></blockquote>').join(''):'')+'</div>';});
-    if(s.qs.every((_,j)=>EV.my[j]!==undefined)){
-      const yes=EV.my.filter(x=>x===1).length;
-      body+='<p class="evgr">'+(yes?'Si respondiste que sí a alguna, la Biblia lo llama pecado. Y le pasa a todos: no es para avergonzarte, es para ver con claridad dónde estamos.':'Pocas personas pueden decir que no a todas. Y Jesús enseñó que Dios mira también el corazón, no solo lo que se ve.')+'</p>';
-    }else can=false;
+       '</div>';});
+    if(!s.qs.every((_,j)=>EV.my[j]!==undefined))can=false;
   }else if(s.k==='v'){
     const rows=evgRows();
     body+='<p class="muted" style="margin:0 0 12px">'+esc(s.p)+'</p>';
     rows.forEach((it,j)=>{const d=EVG_VD[it],a=EV.vd[it];
       body+='<div class="evgq"><b>'+(j+1)+'. '+esc(d.q)+'</b><div class="sgopts">'+d.o.map((o,k)=>'<button class="sgopt'+(a===k?' ok':'')+'" data-a="evg-vd" data-it="'+it+'" data-i="'+k+'">'+esc(o)+'</button>').join('')+'</div>'+
         (a!==undefined?'<p class="evgr">'+esc(a===d.c?'Eso mismo: '+d.l+'.':'Si alguien lo hiciera contigo, ¿lo llamarías así? La palabra que usa la Biblia es «'+d.l+'».')+'</p>':'')+'</div>';});
-    const all=rows.every(it=>EV.vd[it]!==undefined);
-    if(all){
-      const nm=rows.map(it=>EVG_VN[it]),lst=nm.length>1?nm.slice(0,-1).join(', ')+' y '+nm[nm.length-1]:nm[0];
-      body+='<div class="evgq"><b>¿Crees que '+esc(lst)+' son buenas personas?</b><div class="sgopts">'+['No','Depende','Sí'].map((o,k)=>'<button class="sgopt'+(EV.vg===k?' ok':'')+'" data-a="evg-vg" data-i="'+k+'">'+o+'</button>').join('')+'</div>'+
-        (EV.vg!==undefined?'<p class="evgr">'+['Eso piensa la mayoría. Y ahora, la pregunta más difícil.','Así solemos pensar de nosotros mismos. Ahora, la pregunta más difícil.','Es una respuesta sincera. Ahora, la pregunta más difícil.'][EV.vg]+'</p>':'')+'</div>';
-    }
-    if(all&&EV.vg!==undefined){
-      body+='<div class="evgq"><b>Si Dios te juzgara hoy por sus mandamientos, ¿saldrías inocente o culpable?</b><div class="sgopts">'+['Inocente','Culpable','No lo sé'].map((o,k)=>'<button class="sgopt'+(EV.vj===k?' ok':'')+'" data-a="evg-vj" data-i="'+k+'">'+o+'</button>').join('')+'</div>'+
-        (EV.vj!==undefined?'<p class="evgr">'+['Pensemos otra vez en lo que respondiste. La Biblia dice que quien falla en un solo punto de la ley se hace culpable de todo.','Gracias por ser sincero. Reconocerlo es el primer paso, y la buena noticia viene enseguida.','Es una pregunta seria. Veamos lo que dice la Biblia.'][EV.vj]+'</p>':'')+'</div>';
-    }
-    if(EV.vj!==undefined)body+=[s.vj,s.vr].map(v=>'<blockquote class="verse evgv"><i>'+esc(v[0])+'</i><cite class="vref">'+esc(v[1])+'</cite></blockquote>').join('');
-    else can=false;
+    if(!rows.every(it=>EV.vd[it]!==undefined))can=false;
+  }else if(s.k==='w'){
+    const rows=evgRows();
+    const nm=rows.map(it=>EVG_VN[it]),lst=nm.length>1?nm.slice(0,-1).join(', ')+' y '+nm[nm.length-1]:nm[0];
+    body+='<div class="evgq"><b>¿Crees que '+esc(lst)+' son buenas personas?</b><div class="sgopts">'+['No','Depende','Sí'].map((o,k)=>'<button class="sgopt'+(EV.vg===k?' ok':'')+'" data-a="evg-vg" data-i="'+k+'">'+o+'</button>').join('')+'</div>'+
+      (EV.vg!==undefined?'<p class="evgr">'+['Eso piensa la mayoría. Y ahora, la pregunta más difícil.','Así solemos pensar de nosotros mismos. Ahora, la pregunta más difícil.','Es una respuesta sincera. Ahora, la pregunta más difícil.'][EV.vg]+'</p>':'')+'</div>';
+    if(EV.vg!==undefined)body+='<div class="evgq"><b>Si Dios te juzgara hoy por sus mandamientos, ¿saldrías inocente o culpable?</b><div class="sgopts">'+['Inocente','Culpable','No lo sé'].map((o,k)=>'<button class="sgopt'+(EV.vj===k?' ok':'')+'" data-a="evg-vj" data-i="'+k+'">'+o+'</button>').join('')+'</div>'+
+      (EV.vj!==undefined?'<p class="evgr">'+['Pensemos otra vez en lo que respondiste. La Biblia dice que quien falla en un solo punto de la ley se hace culpable de todo.','Gracias por ser sincero. Reconocerlo es el primer paso, y la buena noticia viene enseguida.','Es una pregunta seria. Veamos lo que dice la Biblia.'][EV.vj]+'</p>':'')+'</div>';
+    if(EV.vj===undefined)can=false;
   }else{
     body+=s.b.map(t=>'<p class="evgp">'+esc(t)+'</p>').join('')+s.v.map(v=>'<blockquote class="verse evgv"><i>'+esc(v[0])+'</i><cite class="vref">'+esc(v[1])+'</cite></blockquote>').join('');
   }
