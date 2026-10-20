@@ -10460,7 +10460,7 @@ function homeHTML(){
   else{mood='wink';msg=gk?'¡Vamos a leer el Nuevo Testamento en su idioma original!':bio?'¡Conoce a los hombres y mujeres que Dios usó en su iglesia! Haz tu primera lección.':lib?'¡Recorre la Biblia libro por libro, mirando siempre a Cristo! Haz tu primera ficha.':pas?'¡Aprende los pasajes que más importan, versículo por versículo! Haz tu primera lección.':'¡Hola'+(S.me&&S.me.name?', '+S.me.name:'')+'! Haz tu primera lección y empieza tu racha.';}
   const week=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');week.push(wkDotHTML(d,i,t)+DOW[dt.getDay()]+'</div>');}
   const cur=firstUndone(U),ldI=lastDoneIdx(U);let flat=0;
-  const _lo=document.getElementById('lesson'),jd=(JUST_DONE&&(!_lo||_lo.hidden))?JUST_DONE:null;if(jd)JUST_DONE=null;
+  const _lo=document.getElementById('lesson'),jd=(JUST_DONE&&(!_lo||_lo.hidden))?JUST_DONE:null;if(jd){JUST_DONE=null;window._jdTitle=jd;}
   const offs=[0,46,0,-46];
   const units=U.map((u,ui)=>{
     const dn=u.lessons.filter(l=>S.done[l.title]).length,u0=flat,full=unitDoneI(U,ui),isNew=!full&&dn===0&&u0>0&&cur>=u0&&cur<u0+u.lessons.length;
@@ -10779,6 +10779,14 @@ function render(){
   $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='read'?readHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():TAB==='fr'?amigosHTML():TAB==='set'?settingsHTML():meHTML();
   if(_kv){const _k2=document.getElementById('frcode');if(_k2){_k2.value=_kv;if(_kf){try{_k2.focus();}catch(e){}}}}
   try{const tp=document.querySelector('.top');if(tp)document.documentElement.style.setProperty('--toph',tp.offsetHeight+'px');fixSticky();}catch(e){}
+  if(TAB==='path'&&window._jdTitle){
+    const t=window._jdTitle;window._jdTitle=null;window._autoScr=1;
+    setTimeout(()=>{try{
+      const old=[...document.querySelectorAll('.node.done')].find(n=>(n.getAttribute('aria-label')||'').indexOf(t)===0),cur=myLessonNode();
+      if(old)old.scrollIntoView({block:'center'});
+      if(cur&&cur!==old)setTimeout(()=>{try{cur.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){cur.scrollIntoView();}setTimeout(updateGoto,700);},650);
+    }catch(e){}},60);
+  }
   if(TAB==='path'&&!window._autoScr){window._autoScr=1;setTimeout(()=>{try{const n=myLessonNode();if(n&&!window.scrollY){n.scrollIntoView({block:'center'});}updateGoto();}catch(e){}},120);}
   setTimeout(updateGoto,50);
   if(Date.now()-(window._actT||0)>20000){window._actT=Date.now();setTimeout(actScan,2500);}
@@ -13814,7 +13822,7 @@ document.addEventListener('click',e=>{
   if(a==='settings'){TAB='set';resetArmed=false;render();window.scrollTo(0,0);pushRefresh();return;}
   if(a==='settings-back'){TAB='me';render();window.scrollTo(0,0);return;}
   if(a==='rm-join-inv'){rmJoinInvite(b.dataset.code);return;}
-  if(a==='tab'){const _prev=TAB;TAB=b.dataset.t;if(TAB==='review')retoMark();resetArmed=false;if(_prev==='fr'&&TAB!=='fr'){FR.recv=[];FR.recvNew=[];}render();window.scrollTo(0,0);if(TAB==='fr')frOpened();}
+  if(a==='tab'){const _prev=TAB;if(_prev==='path'&&b.dataset.t!=='path'&&!(L&&!document.getElementById('lesson').hidden))window._pathY=window.scrollY;TAB=b.dataset.t;if(TAB==='review')retoMark();resetArmed=false;if(_prev==='fr'&&TAB!=='fr'){FR.recv=[];FR.recvNew=[];}render();window.scrollTo(0,(TAB==='path'&&_prev!=='path'&&window._pathY)||0);if(TAB==='fr')frOpened();}
   else if(a==='lesson'){
     const ui=+b.dataset.u,li=+b.dataset.l;
     if(b.dataset.c==='gk'){
