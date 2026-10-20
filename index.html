@@ -852,9 +852,11 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .frlist2 .frow{width:100%;text-align:left;background:none;color:var(--ink);font:inherit;font-size:15px;border:0;border-radius:0;box-shadow:none;border-top:2px solid var(--line);padding:9px 0;min-height:46px;gap:8px}
 .frlist2 .famh+.frow,.frlist2 .famh+.frm .frow{border-top:0}
 .frlist2 .fpos{width:22px}
+.frlist2 .frow>.fav{width:28px;display:grid;place-items:center}
 .frm .fcv{width:14px;flex:none;color:var(--muted);transition:transform .15s}
 .frm.open .fcv{transform:rotate(180deg)}
-.frlist2 .frme{margin:0;border-radius:0;padding-left:6px!important;padding-right:6px!important;border-top-color:var(--line)!important}
+.frlist2 .frme{margin:0 -6px;width:auto;border-radius:0;padding-left:6px!important;padding-right:6px!important;border-top-color:var(--line)!important}
+.frlist2 .frme .fcv{display:block;width:14px;flex:none}
 .frme{background:var(--blue-bg);margin:0 -8px;padding-left:8px!important;padding-right:8px!important;border-radius:12px;border-top-color:transparent!important}
 .ftd{flex:none;width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-weight:900;display:grid;place-items:center}
 .fpanel{padding:0 0 12px 30px}
