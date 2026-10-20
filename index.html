@@ -198,7 +198,7 @@ h1,h2,h3,h4{font-weight:900}
 
 /* ---------- ruta ---------- */
 .unit{margin:30px 0 8px}
-.nw{white-space:nowrap}.unit-h{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--toph,56px) - 2px);z-index:4;display:flex;justify-content:space-between;align-items:center;gap:12px;background:color-mix(in srgb,var(--u) 78%,#000);color:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 5px 0 var(--shade)}
+.nw{white-space:nowrap}.homefix{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--toph,56px) - 2px);z-index:5;background:var(--bg);padding-bottom:8px;box-shadow:0 8px 8px -8px rgba(0,0,0,.28)}.homefix.nofix{position:static;box-shadow:none}.homefix .card{margin-bottom:0}.unit-h{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--toph,56px) + var(--fixh,0px) + 4px);z-index:4;display:flex;justify-content:space-between;align-items:center;gap:12px;background:color-mix(in srgb,var(--u) 78%,#000);color:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 5px 0 var(--shade)}
 .unit-h h2{margin:0;font-size:21px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.25)}
 .unit-h p{margin:2px 0 0;font-size:14px;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.25)}
 .uemo{font-size:40px;line-height:1;filter:drop-shadow(0 2px 0 rgba(0,0,0,.15))}
@@ -10410,9 +10410,8 @@ function homeHTML(){
     if(seen&&!VOPEN)daily='<section class="card votd vmini" data-a="vs-tog" role="button" tabindex="0" aria-label="Abrir el versículo del día"><span class="tagv">✨ Versículo del día</span><span class="vref">'+esc(v.r)+'</span><span class="vtog" aria-hidden="true"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></section>';
     else daily='<section class="card votd"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button>'+(seen?'<button class="vtog" data-a="vs-tog" aria-label="Plegar el versículo del día"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'')+'<span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return cmInviteHTML()+(S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
-  '<div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+frHomeHTML()+repCardHTML(true)+
-  ''+
-  (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+daily+units+
+  '<div class="homefix" id="homefix"><div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+daily+'</div>'+frHomeHTML()+repCardHTML(true)+
+  (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':bio?'Biografías: datos históricos resumidos de fuentes de dominio público. Textos bíblicos citados: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
 }
 function lvlOf(r){
@@ -10688,6 +10687,14 @@ function gotoMyLesson(){
 let _gtRaf=0;
 window.addEventListener('scroll',()=>{if(_gtRaf)return;_gtRaf=requestAnimationFrame(()=>{_gtRaf=0;updateGoto();});},{passive:true});
 window.addEventListener('resize',()=>updateGoto());
+function fixSticky(){
+  const f=document.getElementById('homefix'),r=document.documentElement.style;
+  if(!f){r.setProperty('--fixh','0px');return;}
+  f.classList.remove('nofix');
+  const h=f.offsetHeight,vh=window.innerHeight||800;
+  if(h>vh*.36){f.classList.add('nofix');r.setProperty('--fixh','0px');}else r.setProperty('--fixh',h+'px');
+}
+window.addEventListener('resize',()=>{try{fixSticky();}catch(e){}});
 function render(){
   try{stressIcon();}catch(e){}
   if(TAB==='fr'&&!famOn())TAB='path';
@@ -10700,7 +10707,7 @@ function render(){
   const _kc=document.getElementById('frcode'),_kv=_kc?_kc.value:null,_kf=_kc&&document.activeElement===_kc;
   $('#main').innerHTML=TAB==='path'?homeHTML():TAB==='review'?reviewHTML():TAB==='read'?readHTML():TAB==='dic'?dicHTML():TAB==='games'?gamesHTML():TAB==='fr'?amigosHTML():TAB==='set'?settingsHTML():meHTML();
   if(_kv){const _k2=document.getElementById('frcode');if(_k2){_k2.value=_kv;if(_kf){try{_k2.focus();}catch(e){}}}}
-  try{const tp=document.querySelector('.top');if(tp)document.documentElement.style.setProperty('--toph',tp.offsetHeight+'px');}catch(e){}
+  try{const tp=document.querySelector('.top');if(tp)document.documentElement.style.setProperty('--toph',tp.offsetHeight+'px');fixSticky();}catch(e){}
   if(TAB==='path'&&!window._autoScr){window._autoScr=1;setTimeout(()=>{try{const n=myLessonNode();if(n&&!window.scrollY){n.scrollIntoView({block:'center'});}updateGoto();}catch(e){}},120);}
   setTimeout(updateGoto,50);
   renderCmenu();
