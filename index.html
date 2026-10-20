@@ -2195,7 +2195,7 @@ function rlFuzzyTerm(s){
 function rlAsk(q){
   q=(q||'').trim();if(!q)return;
   const s=rlPrep(q),personQ=/\b(quien|quienes)\s+(fue|fueron|es|era|son)\b/.test(s);
-  RL.view='home';RL.full=false;
+  RL.view='home';RL.full=false;RL.from=null;
   const defQ=RL_DEF.test(s),tm=rlFindTerm(s,!defQ);
   if(tm&&(defQ||rlTerms().some(e=>e===tm&&e.al.indexOf(s.replace(/^(un|una|el|la|los|las|lo)\s+/,''))>=0))){RL.ans={k:'term',e:tm};nwMark('dic');rlShow();return;}
   const rel0=rlRel(s),per=rlFindPerson(s,personQ||!!rel0),bk=rlFindBook(s),rel=per?rel0:null;
@@ -2211,13 +2211,13 @@ function rlAsk(q){
   rlShow();
 }
 function rlSync(){const i=$('#rlq'),g=$('#rlgo'),c=$('#rlclr');if(i){if(g)g.hidden=!i.value.trim();if(c)c.hidden=!i.value;}}
-function rlClear(){
+function rlClear(nf){
   const i=$('#rlq'),root=$('#rlib');if(i)i.value='';
   RL.ans=null;RL.view='home';RL.full=false;RL.intent=null;rlSync();rlBody();
   if(root){const bub=root.querySelector('.hero .bubble');if(bub){bub._tk=(bub._tk||0)+1;bub.textContent='Pregúntame por un libro de la Biblia, un personaje o una palabra, como «gracia» o «denario».';}
     const m=root.querySelector('.hero .mas');if(m){m.classList.remove('talking');if(!m.classList.contains('contento'))m.outerHTML=rollo('contento',84);}
     const lb=root.querySelector('.lb');if(lb)lb.scrollTop=0;}
-  if(i){try{i.focus();}catch(e){}}
+  if(i&&!nf){try{i.focus();}catch(e){}}
 }
 const IOS_PWA=()=>(/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))&&(navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches));
 const micKb=(sel)=>{const i=$(sel||'#rlq');if(i){try{i.focus();}catch(e){}}toast('Toca el micrófono de tu teclado (abajo a la derecha) para dictar.');};
@@ -2237,7 +2237,7 @@ function rlMic(){
   try{r.start();}catch(e){RL.rec=null;toast('No pude iniciar el dictado.');}
 }
 function rlOpen(){
-  beep('pop');RL.view='home';RL.ans=null;RL.full=false;RL.intent=null;
+  beep('pop');RL.from=null;RL.view='home';RL.ans=null;RL.full=false;RL.intent=null;
   const el=$('#rlib');
   el.innerHTML='<div class="lh"><button class="x" data-a="rlib-close" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:100%;background:var(--blue)"></i></div></div>'+
    '<div class="lb"><h1 class="page" style="margin-top:0">Biblioteca</h1><div class="hero">'+rollo('guiño',84)+'<div class="bubble">Pregúntame por un libro de la Biblia, un personaje o una palabra, como «gracia» o «denario».</div></div>'+
@@ -2254,9 +2254,21 @@ function rlClose(){
   const el=$('#rlib');el.hidden=true;el.innerHTML='';document.body.style.overflow='';
   try{renderTop();}catch(e){}
 }
+/* la X sube un nivel: respuesta → lista de donde vino → Biblioteca → cerrar */
+function rlUp(){
+  if(RL.rec){try{RL.rec.stop();}catch(e){}}
+  if(RL.view==='dict'||RL.view==='pick'){rlClear(true);return;}
+  if(RL.ans){
+    const f=RL.from;RL.from=null;
+    if(f==='dict'){rlAct('rlib-dict');return;}
+    if(f==='pick'){RL.ans=null;RL.view='pick';RL.full=false;rlClear(true);RL.view='pick';rlBody();return;}
+    rlClear(true);return;
+  }
+  rlClose();
+}
 function rlAct(a,b){
   if(a==='rlib-open')rlOpen();
-  else if(a==='rlib-close')rlClose();
+  else if(a==='rlib-close')rlUp();
   else if(a==='rlib-go'){const i=$('#rlq');rlAsk(i?i.value:'');}
   else if(a==='rlib-mic')rlMic();
   else if(a==='rlib-clear')rlClear();
@@ -2265,8 +2277,8 @@ function rlAct(a,b){
   else if(a==='rlib-back'){RL.view='home';rlBody();}
   else if(a==='rlib-dict'){nwMark('dic');RL.view='dict';RL.ans=null;rlBody();rlSync();const bub=document.querySelector('#rlib .hero .bubble');if(bub){bub.textContent='Elige una palabra y te cuento qué significa.';}const lb=document.querySelector('#rlib .lb');if(lb)lb.scrollTop=0;}
   else if(a==='rlib-cat'){RL.cat=RL.cat===b.dataset.c?null:b.dataset.c;rlBody();}
-  else if(a==='rlib-term'){const e=rlTerms()[+b.dataset.i];if(e){RL.ans={k:'term',e:e};RL.view='home';nwMark('dic');rlShow();}}
-  else if(a==='rlib-book'){const bk=rlBooks().find(x=>x.ui===+b.dataset.ui&&x.li===+b.dataset.li);if(bk){RL.ans={k:'b',b:bk,it:RL.intent||null};RL.view='home';RL.full=false;rlShow();}}
+  else if(a==='rlib-term'){const e=rlTerms()[+b.dataset.i];if(e){RL.ans={k:'term',e:e};RL.view='home';RL.from='dict';nwMark('dic');rlShow();}}
+  else if(a==='rlib-book'){const bk=rlBooks().find(x=>x.ui===+b.dataset.ui&&x.li===+b.dataset.li);if(bk){RL.ans={k:'b',b:bk,it:RL.intent||null};RL.view='home';RL.from='pick';RL.full=false;rlShow();}}
   else if(a==='rlib-pickb'){const bk=rlBooks().find(x=>x.t===b.dataset.t);if(bk){RL.ans={k:'b',b:bk,it:RL.ans&&RL.ans.it||null};RL.full=false;rlShow();}}
   else if(a==='rlib-pickp'){const p=TRB[b.dataset.id],o=RL.ans;if(p&&o){const rel=o.rel;if(rel){const L=rlRelList(p,rel,o.raw||'');RL.ans={k:'rel',p:p,rel:rel,l:L,fb:L.length?null:rlFb(p,rel)};}else RL.ans={k:'p',p:p};RL.full=false;rlShow();}}
   else if(a==='rlib-per'){const p=TRB[b.dataset.id];if(p){RL.ans={k:'p',p:p};RL.full=false;rlShow();}}
