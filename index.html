@@ -938,6 +938,19 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .rdtd{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);font-weight:800}
 .rdnote{font-size:12px;color:var(--muted);font-weight:700;margin-top:8px;line-height:1.4}
 .rdgo{position:sticky;bottom:78px;padding-top:4px;background:linear-gradient(transparent,var(--bg) 40%)}
+.rdgear{display:flex;justify-content:flex-end;margin:0 0 6px}.rdgear button{font-size:20px;width:40px;height:40px;border-radius:50%;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface)}
+.rdhero{padding:14px}.rdtg{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:900;font-size:14px;color:var(--blue-ink)}.rdtg b{background:var(--blue);color:#fff;border-radius:999px;padding:2px 11px;font-size:12px}
+.rdhero .rdbw{margin:10px 0 4px}.rdhero .bar{height:10px}.rdsm{font-size:12px;font-weight:800;color:var(--muted)}
+.rdhero .rdp{border-top:2px solid rgba(128,128,128,.18);padding:8px 0}.rdhero .rdp b{font-size:20px}.rdhero .rdp:first-of-type{margin-top:6px}
+.rdaud.ico{width:40px;height:40px;padding:0;display:grid;place-items:center;border-radius:50%;font-size:17px}
+.rdhero .btn{margin-top:8px}.rdopen{display:block;text-align:center;font-weight:900;color:var(--blue-ink);margin-top:10px;font-size:14px;text-decoration:none}
+.rdlate{display:flex;align-items:center;gap:10px;width:100%;text-align:left;margin:0 0 12px;padding:10px 12px;border-radius:16px;background:rgba(255,200,0,.12);border:2px solid rgba(255,200,0,.5);color:var(--ink);font-size:14px}.rdlate span{flex:1}.rdlate small{display:block;color:var(--muted);font-weight:800;font-size:11px}.rdlate em{font-style:normal;font-weight:900;color:#c99700}
+.rdstrip{padding:10px 12px}.rdsr{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px}.rdsr span{color:var(--purple-d);font-weight:900}
+.rdpage .repc{padding:10px 12px;margin-bottom:10px;border-color:var(--line)}.rdpage .repc .muted{margin:2px 0 8px!important;font-size:13px!important}
+.rdcalin{padding:0 10px 4px}.rdcalin .rdmon{background:var(--bg);margin-bottom:8px}
+.rcc summary{padding:10px 14px}.rcs1{display:block;flex:1;min-width:0;margin-left:0!important}.rcs1 b{display:block;font-size:16px;color:var(--ink)}.rcs1 small{display:block;color:var(--green-ink);font-weight:800;font-size:12px;margin-top:1px}
+.rcav{display:flex;margin-left:auto}.rcav i{width:26px;height:26px;border-radius:50%;background:var(--line);margin-left:-6px;border:2px solid var(--surface);font-style:normal;font-size:14px;display:grid;place-items:center}.rcav i:first-child{margin-left:0}
+.rcin{padding:0 14px 14px}
 .rdsum{background:var(--green-bg);border:2px solid var(--green);border-radius:16px;padding:12px 14px;font-weight:800;font-size:15px;line-height:1.5;margin:4px 0 14px}
 .rdmeta{margin:-6px 0 14px;color:var(--muted);font-weight:800;font-size:14px;line-height:1.4}
 .rdstreak .rdsrow{display:flex;align-items:center;gap:12px}
@@ -5169,7 +5182,7 @@ function rdStreak(){
   while(d&&on(d)){if(D[d])n++;d=addDays(d,-1);}
   return n;
 }
-function rdPending(R,idx){let n=0,first=-1;const lim=Math.min(idx,R.n);for(let i=0;i<lim;i++)if(!R.done[i]){n++;if(first<0)first=i;}return {n,first};}
+function rdPending(R,idx,win){let n=0,first=-1;const lim=Math.min(idx,R.n);let lo=0;if(win)lo=Math.max(lo,idx-win);if(R.since)lo=Math.max(lo,diffDays(R.start,R.since));for(let i=lo;i<lim;i++)if(!R.done[i]){n++;if(first<0)first=i;}return {n,first};}
 function rdLinkFor(plan,day){
   const txt=rdDayParts(plan,day).map(p=>rdPartText(p[1])).join('; ').replace(/–/g,'-');
   return 'https://www.biblegateway.com/passage/?search='+encodeURIComponent(txt)+'&version=RVR1960';
@@ -5179,8 +5192,8 @@ function rdAudioLink(part){
   try{const g=rdPartRefs(part)[0],F=rdFlat(),c=F.ch[rdChIdx(part[0])];
     return 'https://www.bible.com/audio-bible/149/'+RD_USFM[c.bi]+'.'+c.c+'.RVR1960';}catch(e){return '';}
 }
-function rdPassagesHTML(plan,day){
-  return rdDayParts(plan,day).map(p=>{const u=rdAudioLink(p[1]);return '<div class="rdp" style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:0">'+(p[0]?'<small>'+p[0]+'</small>':'')+'<b>'+esc(rdPartText(p[1]))+'</b></div>'+(u?'<a class="rdaud" href="'+u+'" target="_blank" rel="noopener" aria-label="Escuchar '+esc(rdPartText(p[1]))+'">🎧 Escuchar</a>':'')+'</div>';}).join('');
+function rdPassagesHTML(plan,day,ico){
+  return rdDayParts(plan,day).map(p=>{const u=rdAudioLink(p[1]);return '<div class="rdp" style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:0">'+(p[0]?'<small>'+p[0]+'</small>':'')+'<b>'+esc(rdPartText(p[1]))+'</b></div>'+(u?'<a class="rdaud'+(ico?' ico':'')+'" data-rdopen="1" href="'+u+'" target="_blank" rel="noopener" aria-label="Escuchar '+esc(rdPartText(p[1]))+'">'+(ico?'🎧':'🎧 Escuchar')+'</a>':'')+'</div>';}).join('');
 }
 function rdStreakCardHTML(){
   const cur=rdStreak(),best=Math.max(S.rdbest||0,cur),t=today(),D=S.rdDays||{},wk=[];
@@ -5235,7 +5248,7 @@ function rdBooksHTML(R,P){
 function readHTML(){
   const R=S.rd;if(!R)return readSetupHTML();
   const P=rdPlan(R.plan,R.n),t=today(),idx=diffDays(R.start,t),F=rdFlat(),plan=RD_PLANS[R.plan];
-  const dn=Object.keys(R.done).length,pend=rdPending(R,idx);
+  const dn=Object.keys(R.done).length,pend=rdPending(R,idx,7),pendAll=rdPending(R,idx);
   const readV=Object.keys(R.done).reduce((a,i)=>a+(P.vs[i]||0),0),pctV=Math.round(100*readV/F.T),pctD=Math.round(100*dn/R.n);
   const leaps=rdSpan(R.start,R.yrs).leaps;
   let card;
@@ -5244,23 +5257,25 @@ function readHTML(){
   }else if(idx<0){
     card='<section class="card rdtoday"><span class="rdtag">⏳ Tu plan empieza pronto</span><p style="margin:6px 0 10px;font-size:17px;font-weight:800">Empieza el <b>'+esc(rdDate(R.start))+'</b>, en '+rdNd(-idx)+'. Así será el primer día:</p>'+rdPassagesHTML(R.plan,P.days[0])+'</section>';
   }else if(idx>=R.n){
-    card='<section class="card rdtoday"><span class="rdtag">📅 Terminó el tiempo de tu plan</span><p style="margin:6px 0 10px;font-size:17px;font-weight:800">Aún te quedan '+rdNd(R.n-dn)+' por leer. ¡Puedes ponerte al día cuando quieras!</p>'+(pend.first>=0?'<button class="btn" data-a="rd-day" data-i="'+pend.first+'">Ir a la primera pendiente</button>':'')+'</section>';
+    card='<section class="card rdtoday"><span class="rdtag">📅 Terminó el tiempo de tu plan</span><p style="margin:6px 0 10px;font-size:17px;font-weight:800">Aún te quedan '+rdNd(R.n-dn)+' por leer. ¡Puedes ponerte al día cuando quieras!</p>'+(pendAll.first>=0?'<button class="btn" data-a="rd-day" data-i="'+pendAll.first+'">Ir a la primera pendiente</button>':'')+'</section>';
   }else{
     const day=P.days[idx],done=!!R.done[idx];
-    card='<section class="card rdtoday"><span class="rdtag">📖 Lectura de hoy · día '+(idx+1)+' de '+R.n+'</span><p class="muted" style="margin:0 0 4px;font-weight:800">'+esc(rdDate(t))+'</p>'+rdPassagesHTML(R.plan,day)+
-     '<div class="row2" style="margin:12px 0 0"><a class="btn ghost" href="'+rdLinkFor(R.plan,day)+'" target="_blank" rel="noopener">Abrir pasaje</a><button class="btn '+(done?'good':'blue')+'" data-a="rd-toggle" data-i="'+idx+'">'+(done?'✔ Leído':'Marcar leído')+'</button></div>'+(done?'<p class="muted" style="margin:8px 0 0;font-size:13px">Toca «Leído» si quieres desmarcarlo.</p>':'')+'</section>';
+    card='<section class="card rdtoday rdhero"><div class="rdtg"><span>📖 Lectura de hoy</span><b>Día '+(idx+1)+' de '+R.n+'</b></div><div class="rdbw"><div class="bar" style="--gcol:var(--green)"><i style="width:'+Math.max(pctV,2)+'%"></i></div></div><div class="rdsm">'+pctV+'% de la Biblia leída · '+dn+(dn===1?' día leído':' días leídos')+'</div>'+rdPassagesHTML(R.plan,day,true)+
+     '<button class="btn '+(done?'good':'blue')+'" data-a="rd-toggle" data-i="'+idx+'">'+(done?'✔ Leído':'Marcar leído')+'</button><a class="rdopen" data-rdopen="1" href="'+rdLinkFor(R.plan,day)+'" target="_blank" rel="noopener">Abrir pasaje</a>'+(done?'<p class="rdsm" style="text-align:center;margin:6px 0 0">Toca «Leído» si quieres desmarcarlo.</p>':'')+'</section>';
   }
-  const late=(pend.n>0&&dn<R.n&&idx>=0&&idx<R.n)?'<section class="card"><b>📚 Tienes '+pend.n+(pend.n===1?' lectura atrasada':' lecturas atrasadas')+'</b><p class="muted" style="margin:4px 0 10px;font-size:14px">No pasa nada: puedes ponerte al día cuando quieras.</p><button class="btn ghost sm" data-a="rd-day" data-i="'+pend.first+'">Ver la más antigua</button></section>':'';
-  const st=rdStreak();
-  return '<h1 class="page">Lectura</h1>'+card+rdStreakCardHTML()+repCardHTML()+repBookCardHTML()+late+
-   '<section class="card"><b>Tu avance</b><div class="rdbarrow"><span>Días leídos</span><b>'+dn+' de '+R.n+'</b></div><div class="rdbw"><div class="bar" style="--gcol:var(--blue)"><i style="width:'+pctD+'%"></i></div></div>'+
-   '<div class="rdbarrow" style="margin-top:12px"><span>Biblia leída</span><b>'+pctV+'%</b></div><div class="rdbw"><div class="bar"><i style="width:'+pctV+'%"></i></div></div></section>'+
+  const late=(pend.n>0&&dn<R.n&&idx>=0&&idx<R.n)?'<button class="rdlate" data-a="rd-day" data-i="'+pend.first+'"><span>📚 <b>'+pend.n+(pend.n===1?' lectura por recuperar':' lecturas por recuperar')+'</b><small>No pasa nada, ponte al día cuando quieras</small></span><em>Ver ›</em></button>':'';
+  const st=rdStreak(),mk=(idx>=0&&idx<R.n?t:R.start).slice(0,7);
+  let mt=0,md=0;for(let i=0;i<R.n;i++){if(addDays(R.start,i).slice(0,7)===mk){mt++;if(R.done[i])md++;}}
+  const mn=RD_MONF[+mk.slice(5)-1]+' '+mk.slice(0,4);
+  return '<div class="rdpage"><div class="rdgear"><button data-a="rd-menu" aria-label="Ajustes del plan">⚙️</button></div>'+card+late+rdStripHTML()+repCardHTML()+repBookCardHTML()+
    rdBooksHTML(R,P)+
-   '<h3 style="margin:18px 0 8px">Calendario</h3>'+rdCalHTML(R,P,idx)+
-   rcHTML()+
-   '<p class="rdmeta" style="margin-top:16px">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+' · '+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+
-   '<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">'+(st>0?'<button class="btn ghost sm" data-a="share" data-k="read">'+SHARE_I+'Compartir mi racha</button>':'')+'<button class="link-danger" data-a="rd-reset">Cambiar o reiniciar mi plan</button></div>'+
-   '<p class="foot">Para leer, usa tu Biblia de siempre o toca «Abrir pasaje». Cada día que marques una lectura mantiene tu racha 🔥 y suma a tu racha de lectura.</p>';
+   '<details class="rdmon" data-k="cal"'+(RD_OPEN.cal?' open':'')+'><summary><b>🗓️ Calendario</b><span>'+esc(mn)+' · '+md+' / '+mt+'</span></summary><div class="rdcalin">'+rdCalHTML(R,P,idx)+'</div></details>'+
+   rcHTML()+'</div>';
+}
+function rdStripHTML(){
+  const cur=rdStreak(),best=Math.max(S.rdbest||0,cur),t=today(),D=S.rdDays||{},wk=[];
+  for(let i=6;i>=0;i--){const d=addDays(t,-i);wk.push('<div class="day"><div class="dot rd'+(D[d]?' on':((S.fz&&S.fz[d])?' on fz':''))+(i===0?' today':'')+'">'+IC.check+'</div>'+DOW[rdDt(d).getDay()]+'</div>');}
+  return '<section class="card rdstreak rdstrip"><div class="rdsr"><b>📖 '+cur+(cur===1?' día seguido':' días seguidos')+'</b><span>🏆 '+best+' mejor</span></div><div class="week">'+wk.join('')+'</div></section>';
 }
 function rdHomeHTML(){
   const R=S.rd;if(!R)return '';
@@ -5275,6 +5290,20 @@ function rdStatsHTML(){
   const cur=rdStreak();
   return '<div class="stat s5"><span class="se">📖</span><div><b>'+cur+'</b><span>Racha de lectura</span></div></div><div class="stat s6"><span class="se">🔖</span><div><b>'+Math.max(S.rdbest||0,cur)+'</b><span>Mejor racha lectura</span></div></div>';
 }
+var RD_OPENED=null;
+try{
+  document.addEventListener('click',e=>{const a=e.target&&e.target.closest&&e.target.closest('[data-rdopen]');if(!a||!S.rd)return;const i=diffDays(S.rd.start,today());if(i>=0&&i<S.rd.n&&!S.rd.done[i])RD_OPENED={i:i,t:Date.now()};},true);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)return;const o=RD_OPENED;if(!o||!S.rd)return;
+    if(Date.now()-o.t<12000)return;
+    RD_OPENED=null;if(S.rd.done[o.i])return;
+    setTimeout(()=>{
+      if(L||G||!$('#modal').hidden)return;
+      const P=rdPlan(S.rd.plan,S.rd.n),txt=rdDayParts(S.rd.plan,P.days[o.i]).map(p=>rdPartText(p[1])).join(' · ');
+      showModal('<h3>¿Ya leíste?</h3><p style="margin:0 0 12px">'+esc(txt)+'</p><button class="btn" data-a="rd-yes" data-i="'+o.i+'">Sí, marcar como leído</button><button class="btn ghost" data-a="stay">Todavía no</button>');
+    },450);
+  });
+}catch(e){}
 function rdStartPlan(){
   const st=rdStartFor(RDSET.mode,RDSET.other),sp=rdSpan(st,RDSET.yrs);
   S.rd={plan:RDSET.plan,yrs:RDSET.yrs,start:st,n:sp.n,done:{}};
@@ -5511,18 +5540,21 @@ async function rcPush(){
   }
 }
 function rcMemberHTML(c,m){
-  const n=rdSpan(c.start,c.yrs).n;
   const nm=esc(m.me?'Tú':(m.name||'Amigo'));
   if(m.status!=='joined')return '<div class="rcm"><span class="fav">'+esc(m.avatar||'🙂')+'</span><div class="rcmb"><b>'+nm+'</b><small>Invitación enviada</small></div></div>';
-  const pct=Math.min(100,Math.round(100*m.done/n)),read=m.last_read===today();
-  const own=m.my_start&&(!c.members.find(x=>x.me)||m.my_start!==c.members.find(x=>x.me).my_start)&&!m.me?' · empezó el '+rdShortY(m.my_start):'';
-  return '<div class="rcm"><span class="fav">'+esc(m.avatar||'🙂')+'</span><div class="rcmb"><b>'+nm+(read?' <span class="rcok">✔ leyó hoy</span>':'')+'</b><small>'+(m.day>0?'Va en el día '+m.day+' · '+m.done+(m.done===1?' lectura':' lecturas'):'Aún no marca lecturas')+(m.show_streak&&m.streak>0?' · 📖 '+m.streak+(m.streak===1?' día':' días')+' de racha':'')+own+'</small><div class="bar"><i style="width:'+pct+'%"></i></div></div></div>';
+  const read=m.last_read===today();
+  const me0=c.members.find(x=>x.me);
+  const own=m.my_start&&(!me0||m.my_start!==me0.my_start)&&!m.me?' · empezó el '+rdShortY(m.my_start):'';
+  return '<div class="rcm"><span class="fav">'+esc(m.avatar||'🙂')+'</span><div class="rcmb"><b>'+nm+(read?' <span class="rcok">✔ leyó hoy</span>':'')+'</b><small>'+(m.day>0?'Va en el día '+m.day:'Aún no marca lecturas')+(m.show_streak&&m.streak>0?' · 📖 '+m.streak+(m.streak===1?' día':' días')+' de racha':'')+own+'</small></div></div>';
 }
 function rcClubHTML(c){
-  return '<section class="card rcclub"><div class="famh"><b>🤝 '+esc(c.name||'Leer juntos')+'</b></div><p class="muted" style="margin:0 0 6px;font-size:14px">'+esc(rcPlanName(c.plan,c.yrs))+'</p>'+
+  const J=c.members.filter(m=>m.status==='joined'),others=J.filter(m=>!m.me),rd=others.filter(m=>m.last_read===today());
+  const sub=rd.length?'✔ '+rd.map(m=>esc(m.name||'Amigo')).join(', ')+' leyó hoy':(others.length?'Aún nadie leyó hoy':'');
+  const av=J.slice(0,4).map(m=>'<i>'+esc(m.avatar||'🙂')+'</i>').join('');
+  return '<details class="rdmon rcc" data-k="club'+esc(c.id)+'"'+(RD_OPEN['club'+c.id]?' open':'')+'><summary><span class="rcs1"><b>🤝 '+esc(c.name||'Leer juntos')+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</span><span class="rcav">'+av+'</span></summary><div class="rcin"><p class="muted" style="margin:0 0 6px;font-size:14px">'+esc(rcPlanName(c.plan,c.yrs))+'</p>'+
    c.members.map(m=>rcMemberHTML(c,m)).join('')+
    (S.rd&&S.rd.plan===c.plan&&S.rd.yrs===c.yrs?'<div class="rcshow"><span>Mostrar mi racha de lectura a este club<small>Opcional. Si la apagas, nadie la ve.</small></span><button class="rcsw'+(S.rcShow&&S.rcShow[c.id]?' on':'')+'" data-a="rc-show" data-c="'+esc(c.id)+'" role="switch" aria-checked="'+(S.rcShow&&S.rcShow[c.id]?'true':'false')+'" aria-label="Mostrar mi racha de lectura"><i></i></button></div>':'')+
-   '<div class="row2" style="margin:12px 0 0"><button class="btn ghost sm" data-a="rc-inv-open" data-c="'+esc(c.id)+'">➕ Invitar</button><button class="btn ghost sm" data-a="rc-leave" data-c="'+esc(c.id)+'">Salir</button></div></section>';
+   '<div class="row2" style="margin:12px 0 0"><button class="btn ghost sm" data-a="rc-inv-open" data-c="'+esc(c.id)+'">➕ Invitar</button><button class="btn ghost sm" data-a="rc-leave" data-c="'+esc(c.id)+'">Salir</button></div></div></details>';
 }
 function rcHTML(){
   if(!famOn()||!frActive())return '';
@@ -5565,7 +5597,7 @@ function rcJoinOpen(cid){
   const late=diffDays(i.start,today()),warn=loss?'<small>Reemplaza tu plan actual y sus lecturas marcadas.</small>':'';
   let opts='';
   if(keep)opts+='<button class="btn giftopt" data-a="rc-join" data-c="'+esc(cid)+'" data-m="keep">Seguir con mi plan<small>Empezó el '+esc(rdShortY(R.start))+'. No pierdes nada.</small></button>';
-  opts+='<button class="btn ghost giftopt" data-a="rc-join" data-c="'+esc(cid)+'" data-m="same">Mismo calendario que '+esc(i.from||'tu amigo')+'<small>Empieza el '+esc(rdShortY(i.start))+(late>0?'. Tendrías '+rdNd(late)+' por ponerte al día, sin prisa.':'.')+'</small>'+(keep?'<small>Reemplaza tu plan actual.</small>':warn)+'</button>';
+  opts+='<button class="btn ghost giftopt" data-a="rc-join" data-c="'+esc(cid)+'" data-m="same">Mismo calendario que '+esc(i.from||'tu amigo')+'<small>Empieza el '+esc(rdShortY(i.start))+(late>0?'. Los días anteriores no cuentan como atrasados.':'.')+'</small>'+(keep?'<small>Reemplaza tu plan actual.</small>':warn)+'</button>';
   opts+='<button class="btn ghost giftopt" data-a="rc-join" data-c="'+esc(cid)+'" data-m="today">Empezar hoy, en el día 1<small>Leen el mismo plan cada uno a su ritmo, y ven en qué día va el otro.</small>'+(keep?'<small>Reemplaza tu plan actual.</small>':warn)+'</button>';
   showModal('<h3>Leer con '+esc(i.from||'tu amigo')+'</h3><p class="muted" style="margin:0 0 8px">'+esc(rcPlanName(i.plan,i.yrs))+'</p>'+opts+'<button class="btn ghost" data-a="stay">Cerrar</button>');
 }
@@ -5577,7 +5609,7 @@ async function rcJoin(cid,mode){
   try{
     const r=await rpc('rp_respond',frArgs({p_club:cid,p_accept:true,p_start:start}));
     if(!(r&&r.ok)){toast(rcErr(r&&r.error));return;}
-    if(mode!=='keep'||!R){S.rd={plan:i.plan,yrs:i.yrs,start:start,n:rdSpan(start,i.yrs).n,done:{}};save();}
+    if(mode!=='keep'||!R){S.rd={plan:i.plan,yrs:i.yrs,start:start,n:rdSpan(start,i.yrs).n,done:{}};if(mode==='same')S.rd.since=today();save();}
     RC.sent={};toast('¡Listo! Ya leen juntos.');await rcLoad(true);render();
   }catch(e){toast(rcMsg(e));}
 }
@@ -14001,6 +14033,8 @@ document.addEventListener('click',e=>{
   else if(a==='rd-toggle'){rdToggle(+b.dataset.i);}
   else if(a==='rd-day'){rdDayModal(+b.dataset.i);}
   else if(a==='rd-tog-close'){hideModal();rdToggle(+b.dataset.i);}
+  else if(a==='rd-menu'){const R=S.rd;if(R){const plan=RD_PLANS[R.plan],leaps=rdSpan(R.start,R.yrs).leaps;showModal('<h3>Tu plan de lectura</h3><p class="muted" style="margin:0 0 10px">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+'<br>'+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+(rdStreak()>0?'<button class="btn ghost" data-a="share" data-k="read">'+SHARE_I+'Compartir mi racha</button>':'')+'<button class="btn ghost" data-a="rd-reset" style="color:var(--red)">Cambiar o reiniciar mi plan</button><p class="foot" style="margin:6px 0 10px">Para leer, usa tu Biblia de siempre o toca «Abrir pasaje». Cada día que marques una lectura mantiene tu racha 🔥.</p><button class="btn" data-a="stay">Cerrar</button>');}}
+  else if(a==='rd-yes'){hideModal();rdToggle(+b.dataset.i);}
   else if(a==='rd-reset'){showModal('<h3>¿Empezar un plan nuevo?</h3><p>Se borrarán las lecturas que marcaste en este plan. Tu racha de lectura y tus logros se conservan.</p><button class="btn" data-a="stay">Seguir con mi plan</button><button class="btn ghost" data-a="rd-reset-yes">Sí, empezar de nuevo</button>');}
   else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
