@@ -897,11 +897,11 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .mstats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:15px}
 .chb{display:flex;gap:8px;margin-top:10px}
 .ftd:empty{background:transparent}.frlist2 .frow>.fnm{flex:1;min-width:0}.frlist2 .fst,.frlist2 .fxp{flex:none;text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}.frlist2 .fst{width:50px}.frlist2 .fxp{width:62px}
-.frtoday{margin:0 4px 8px;font-size:13px;font-weight:800;color:var(--muted)}.frtn{color:var(--green)}
+.frtoday{margin:0 4px 8px;font-size:13px;font-weight:800;color:var(--muted)}.frtn{color:var(--green)}.frlist2 .famh .muted{white-space:nowrap}
 .frlist2 .frm{border:2px solid transparent;border-radius:14px;margin-bottom:4px;padding:0 6px}.frlist2 .frm .frow,.frlist2 .frme{gap:5px}.frlist2 .fst{width:46px!important}.frlist2 .fxp{width:60px!important}.frlist2 .fcv{margin-left:2px}.frlist2 .fpos{width:24px!important}
 .frlist2 .frm .frow{border-top:0!important}
 .frlist2 .frm.off:not(.open):not(.first) .frow{opacity:.62}
-.frlist2 .frme{margin:0 0 4px;padding:9px 6px!important;border:2px solid #1cb0f6;border-radius:14px;background:var(--blue-bg)}
+.frlist2 .frme{margin:0 0 4px;padding:9px 8px 9px 10px!important;border:0!important;border-left:4px solid #1cb0f6!important;border-radius:14px;background:var(--blue-bg)}.frlist2 .frme .fnm{color:var(--blue-ink)}
 .frlist2 .fpos{font-size:20px;line-height:1}
 .fnb .wbar{display:block;height:4px;border-radius:4px;background:var(--line);margin-top:4px;overflow:hidden}.wbar i{display:block;height:100%;background:#ffc800;border-radius:4px}
 .frlist2 .fpanel{padding:0 0 10px 0}
@@ -909,6 +909,10 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .frlist2 .chbtn{padding:6px 0;font-size:11px;font-weight:800;color:var(--muted);line-height:1.2}
 .frlist2 .chbtn span{display:block;font-size:20px;line-height:1.1}
 .frlist2 .chbtn.buzzb{color:#fff}
+.actsec2{margin:0 0 14px}.actlbl{font-size:13px;font-weight:900;color:var(--muted);margin:0 4px 6px}
+.act2{display:flex;align-items:center;gap:10px;padding:8px 10px;margin-bottom:6px;background:var(--surface);border:2px solid var(--line);border-radius:16px}
+.act2 .fav{font-size:26px;flex:none;width:32px;text-align:center}.act2 .at{flex:1;min-width:0;font-size:14px;line-height:1.25}.act2 .at small{display:block;color:var(--muted);font-weight:800;font-size:11px;margin-top:1px}
+.felc{flex:none;width:40px;height:40px;border-radius:50%;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:20px;display:grid;place-items:center;padding:0}.felc:active{transform:translateY(2px)}
 .frm .frfoot,.frf .frfoot,.fpanel .frfoot{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;margin-top:10px}.frfoot .frun,.fpanel .frfoot .frun{margin:0;padding:7px 6px;font-weight:800;text-align:center;white-space:nowrap;border:2px solid var(--line);border-bottom-width:3px;border-radius:12px;background:var(--surface);color:var(--muted);text-decoration:none;font-size:12px}.frfoot .frun[data-a="fr-unf"],.frfoot .frun[data-a="fr-rem"]{color:var(--red)}
 .actsec{margin:0 0 14px}.actrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:2px solid var(--line)}.actrow:first-of-type{border-top:0}.actrow .fav{font-size:26px;flex:none}.actrow .at{flex:1;min-width:0;font-size:15px;line-height:1.25}.actrow .at small{display:block;color:var(--muted);font-weight:800;font-size:12px;margin-top:2px}.actrow .felb{flex:none;border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;background:var(--surface);padding:6px 10px;font-weight:900;font-size:14px}.actrow .felb.done{opacity:.6;border-bottom-width:2px}.buzzb{background:linear-gradient(135deg,#8A6BFF,#5B3FD9)!important;border-color:#4430A8!important}@keyframes bzz{0%,100%{transform:translate(0,0)}10%{transform:translate(-9px,3px) rotate(-1deg)}20%{transform:translate(8px,-4px) rotate(1deg)}30%{transform:translate(-8px,-3px)}40%{transform:translate(7px,4px)}50%{transform:translate(-6px,2px)}60%{transform:translate(5px,-2px)}70%{transform:translate(-4px,1px)}80%{transform:translate(3px,-1px)}}body.bzz #app,body.bzz main,body.bzz #main{animation:bzz 1.2s linear}
 .chbtn{flex:1;padding:8px 0;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:24px;line-height:1.2}
@@ -8683,9 +8687,9 @@ function actWhen(ts){const d=Math.floor((Date.now()-new Date(ts).getTime())/864e
 function actNew(){const a=FR.feed||[];if(!a.length||!S.actSeen)return 0;return a.filter(x=>x.ts>S.actSeen).length;}
 function actSeenNow(){const a=FR.feed||[];if(!a.length)return;const m=a.reduce((p,x)=>x.ts>p?x.ts:p,'');if(m!==S.actSeen){S.actSeen=m;save();}}
 function actHTML(){
-  const a=(FR.feed||[]).slice(0,6);if(!a.length)return '';
-  return '<section class="card actsec"><b>📣 Actividad de tus amigos</b><div style="margin-top:6px">'+a.map(x=>'<div class="actrow"><span class="fav">'+esc(x.avatar)+'</span><div class="at"><b>'+esc(x.name)+'</b> '+esc(ACT_V[x.kind]||'logró')+' <b>«'+esc(x.title)+'»</b><small>'+actWhen(x.ts)+'</small></div>'+
-    (x.done?'<span class="felb done">Felicitado ✓</span>':'<button class="felb" data-a="fr-fel" data-to="'+esc(x.device)+'" data-id="'+x.id+'">🎉 Felicitar</button>')+'</div>').join('')+'</div></section>';
+  const a=(FR.feed||[]).filter(x=>!x.done).slice(0,3);if(!a.length)return '';
+  return '<section class="actsec2"><div class="actlbl">📣 Actividad de tus amigos</div>'+a.map(x=>'<div class="act2"><span class="fav">'+esc(x.avatar)+'</span><div class="at"><b>'+esc(x.name)+'</b> '+esc(ACT_V[x.kind]||'logró')+' <b>«'+esc(x.title)+'»</b><small>'+actWhen(x.ts)+'</small></div>'+
+    '<button class="felc" data-a="fr-fel" data-to="'+esc(x.device)+'" data-id="'+x.id+'" aria-label="Felicitar a '+esc(x.name)+'" title="Felicitar">🎉</button></div>').join('')+'</section>';
 }
 async function frFeedPoll(){
   try{
@@ -8957,7 +8961,7 @@ function frListHTML(d){
     return frRowHTML(x.m,i);}).join('');
   const only=(d.followers||[]).filter(f=>!d.following.some(m=>m.device===f.device)),OL=3,olim=!FRALL&&only.length>OL;
   const onlyRows=(olim?only.slice(0,OL):only).map(frOnlyHTML).join('');
-  return '<section class="card famcard frlist2"><div class="famh"><b>🏆 Esta semana</b><span class="muted">'+(d.following.length?'🔥 <b class="frtn">'+nT+' de '+d.following.length+'</b> practicaron hoy':'🔥 racha · ⚡ XP')+'</span></div><p class="muted wkrs">De lunes a domingo · se reinicia el lunes</p>'+rows+(onlyRows?'<div class="fsep"></div>'+onlyRows:'')+
+  return '<section class="card famcard frlist2"><div class="famh"><b>🏆 Esta semana</b><span class="muted">'+(d.following.length?'🔥 <b class="frtn">'+nT+' de '+d.following.length+'</b> hoy':'🔥 racha · ⚡ XP')+'</span></div><p class="muted wkrs">De lunes a domingo · se reinicia el lunes</p>'+rows+(onlyRows?'<div class="fsep"></div>'+onlyRows:'')+
     ((all.length>LIM+1||only.length>OL)?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-all">'+(FRALL?'Ver menos':'Ver todos ('+(all.length-1+only.length)+')')+'</button>':'')+'</section>';
 }
 function frFollowingHTML(m){
