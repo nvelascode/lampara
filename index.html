@@ -897,12 +897,10 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .mstats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:15px}
 .chb{display:flex;gap:8px;margin-top:10px}
 .ftd:empty{background:transparent}.frlist2 .frow>.fnm{flex:1;min-width:0}.frlist2 .fst,.frlist2 .fxp{flex:none;text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}.frlist2 .fst{width:50px}.frlist2 .fxp{width:62px}
-.frtoday{margin:0 4px 8px;font-size:13px;font-weight:800;color:var(--muted)}.frtoday b{color:var(--green)}
+.frtoday{margin:0 4px 8px;font-size:13px;font-weight:800;color:var(--muted)}.frtn{color:var(--green)}
 .frlist2 .frm{border:2px solid transparent;border-radius:14px;margin-bottom:4px;padding:0 6px}.frlist2 .frm .frow,.frlist2 .frme{gap:5px}.frlist2 .fst{width:46px!important}.frlist2 .fxp{width:60px!important}.frlist2 .fcv{margin-left:2px}.frlist2 .fpos{width:24px!important}
 .frlist2 .frm .frow{border-top:0!important}
-.frlist2 .frm.done{background:var(--green-bg)}
-.frlist2 .frm.first{border-color:#ffc800;background:rgba(255,200,0,.09)}
-.frlist2 .frm.off:not(.open) .frow{opacity:.62}
+.frlist2 .frm.off:not(.open):not(.first) .frow{opacity:.62}
 .frlist2 .frme{margin:0 0 4px;padding:9px 6px!important;border:2px solid #1cb0f6;border-radius:14px;background:var(--blue-bg)}
 .frlist2 .fpos{font-size:20px;line-height:1}
 .fnb .wbar{display:block;height:4px;border-radius:4px;background:var(--line);margin-top:4px;overflow:hidden}.wbar i{display:block;height:100%;background:#ffc800;border-radius:4px}
@@ -8959,7 +8957,7 @@ function frListHTML(d){
     return frRowHTML(x.m,i);}).join('');
   const only=(d.followers||[]).filter(f=>!d.following.some(m=>m.device===f.device)),OL=3,olim=!FRALL&&only.length>OL;
   const onlyRows=(olim?only.slice(0,OL):only).map(frOnlyHTML).join('');
-  return (d.following.length?'<div class="frtoday">🔥 <b>'+nT+' de '+d.following.length+'</b> ya practicaron hoy</div>':'')+'<section class="card famcard frlist2"><div class="famh"><b>🏆 Esta semana</b><span class="muted">🔥 racha · ⚡ XP</span></div><p class="muted wkrs">De lunes a domingo · se reinicia el lunes</p>'+rows+(onlyRows?'<div class="fsep"></div>'+onlyRows:'')+
+  return '<section class="card famcard frlist2"><div class="famh"><b>🏆 Esta semana</b><span class="muted">'+(d.following.length?'🔥 <b class="frtn">'+nT+' de '+d.following.length+'</b> practicaron hoy':'🔥 racha · ⚡ XP')+'</span></div><p class="muted wkrs">De lunes a domingo · se reinicia el lunes</p>'+rows+(onlyRows?'<div class="fsep"></div>'+onlyRows:'')+
     ((all.length>LIM+1||only.length>OL)?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-all">'+(FRALL?'Ver menos':'Ver todos ('+(all.length-1+only.length)+')')+'</button>':'')+'</section>';
 }
 function frFollowingHTML(m){
