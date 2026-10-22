@@ -939,6 +939,7 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .rdnote{font-size:12px;color:var(--muted);font-weight:700;margin-top:8px;line-height:1.4}
 .rdgo{position:sticky;bottom:78px;padding-top:4px;background:linear-gradient(transparent,var(--bg) 40%)}
 .rdgear{display:flex;justify-content:flex-end;margin:0 0 6px}.rdgear button{font-size:20px;width:40px;height:40px;border-radius:50%;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface)}
+.rdplan{display:flex;align-items:center;gap:10px;width:100%;text-align:left;margin:4px 0 8px;padding:10px 4px;background:none;border:0;color:var(--ink);font-size:14px}.rdplan span{flex:1;min-width:0}.rdplan small{display:block;color:var(--muted);font-weight:700;font-size:12px;margin-top:1px}.rdplan em{font-style:normal;font-size:22px;color:var(--muted)}
 .rdhero{padding:14px}.rdtg{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:900;font-size:14px;color:var(--blue-ink)}.rdtg b{background:var(--blue);color:#fff;border-radius:999px;padding:2px 11px;font-size:12px}
 .rdhero .rdbw{margin:10px 0 4px}.rdhero .bar{height:10px}.rdsm{font-size:12px;font-weight:800;color:var(--muted)}
 .rdhero .rdp{border-top:2px solid rgba(128,128,128,.18);padding:8px 0}.rdhero .rdp b{font-size:20px}.rdhero .rdp:first-of-type{margin-top:6px}
@@ -5277,10 +5278,10 @@ function readHTML(){
   const st=rdStreak(),mk=(idx>=0&&idx<R.n?t:R.start).slice(0,7);
   let mt=0,md=0;for(let i=0;i<R.n;i++){if(addDays(R.start,i).slice(0,7)===mk){mt++;if(R.done[i])md++;}}
   const mn=RD_MONF[+mk.slice(5)-1]+' '+mk.slice(0,4);
-  return '<div class="rdpage"><div class="rdgear"><button data-a="rd-menu" aria-label="Ajustes del plan">⚙️</button></div>'+card+late+rdStripHTML()+repCardHTML()+repBookCardHTML()+
+  return '<div class="rdpage">'+card+late+rdStripHTML()+repCardHTML()+repBookCardHTML()+
    rdBooksHTML(R,P)+
    '<details class="rdmon" data-k="cal"'+(RD_OPEN.cal?' open':'')+'><summary><b>🗓️ Calendario</b><span>'+esc(mn)+' · '+md+' / '+mt+'</span></summary><div class="rdcalin">'+rdCalHTML(R,P,idx)+'</div></details>'+
-   rcHTML()+'</div>';
+   rcHTML()+'<button class="rdplan" data-a="rd-menu"><span>'+plan.icon+' <b>Mi plan</b><small>'+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+' · '+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+'</small></span><em>›</em></button></div>';
 }
 function rdStripHTML(){
   const cur=rdStreak(),best=Math.max(S.rdbest||0,cur),t=today(),D=S.rdDays||{},wk=[];
