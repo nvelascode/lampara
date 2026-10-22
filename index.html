@@ -896,6 +896,8 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .minfo .muted{font-size:13px}
 .mstats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:15px}
 .chb{display:flex;gap:8px;margin-top:10px}
+.ftd:empty{background:transparent}.frlist2 .frow>.fnm{flex:1;min-width:0}.frlist2 .fst,.frlist2 .fxp{flex:none;text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}.frlist2 .fst{width:50px}.frlist2 .fxp{width:62px}
+.frm .frfoot,.frf .frfoot,.fpanel .frfoot{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;margin-top:10px}.frfoot .frun,.fpanel .frfoot .frun{margin:0;padding:7px 6px;font-weight:800;text-align:center;white-space:nowrap;border:2px solid var(--line);border-bottom-width:3px;border-radius:12px;background:var(--surface);color:var(--muted);text-decoration:none;font-size:12px}.frfoot .frun[data-a="fr-unf"],.frfoot .frun[data-a="fr-rem"]{color:var(--red)}
 .actsec{margin:0 0 14px}.actrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:2px solid var(--line)}.actrow:first-of-type{border-top:0}.actrow .fav{font-size:26px;flex:none}.actrow .at{flex:1;min-width:0;font-size:15px;line-height:1.25}.actrow .at small{display:block;color:var(--muted);font-weight:800;font-size:12px;margin-top:2px}.actrow .felb{flex:none;border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;background:var(--surface);padding:6px 10px;font-weight:900;font-size:14px}.actrow .felb.done{opacity:.6;border-bottom-width:2px}.buzzb{background:linear-gradient(135deg,#8A6BFF,#5B3FD9)!important;border-color:#4430A8!important}@keyframes bzz{0%,100%{transform:translate(0,0)}10%{transform:translate(-9px,3px) rotate(-1deg)}20%{transform:translate(8px,-4px) rotate(1deg)}30%{transform:translate(-8px,-3px)}40%{transform:translate(7px,4px)}50%{transform:translate(-6px,2px)}60%{transform:translate(5px,-2px)}70%{transform:translate(-4px,1px)}80%{transform:translate(3px,-1px)}}body.bzz #app,body.bzz main,body.bzz #main{animation:bzz .7s linear}
 .chbtn{flex:1;padding:8px 0;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:24px;line-height:1.2}
 .chbtn:active{transform:translateY(2px)}
@@ -8891,18 +8893,18 @@ function frBoardHTML(d,limit){
 let FRX='',FRALL=false;
 function frRowHTML(m,i){
   const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name),open=FRX===m.device,fw=((FR.data&&FR.data.followers)||[]).find(f=>f.device===m.device),isNew=fw&&FR.recvNew.indexOf(m.device)>=0;
-  return '<div class="frm'+(open?' open':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+': racha '+frStreak(m)+', '+frWeek(m)+' XP esta semana. Ver opciones"><span class="fpos">'+(i===0&&frWeek(m)>0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><span class="fnb"><b class="fnm">'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b>'+(fw?'<small class="fsub">'+(isNew?'<span class="frpill new">Nuevo</span> ':'')+'Te sigue</small>':'')+'</span>'+(frToday(m)?'<span class="ftd" title="Ya practicó hoy" aria-label="Ya practicó hoy">✔</span>':'')+'<span class="fst">🔥 '+frStreak(m)+'</span><span class="fxp">⚡ '+kfmt(frWeek(m))+'</span><span class="fcv" aria-hidden="true">▾</span></button>'+
+  return '<div class="frm'+(open?' open':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+': racha '+frStreak(m)+', '+frWeek(m)+' XP esta semana. Ver opciones"><span class="fpos">'+(i===0&&frWeek(m)>0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><span class="fnb"><b class="fnm">'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b>'+(fw?'<small class="fsub">'+(isNew?'<span class="frpill new">Nuevo</span> ':'')+'Te sigue</small>':'')+'</span>'+(frToday(m)?'<span class="ftd" title="Ya practicó hoy" aria-label="Ya practicó hoy">✔</span>':'<span class="ftd"></span>')+'<span class="fst">🔥 '+frStreak(m)+'</span><span class="fxp">⚡ '+kfmt(frWeek(m))+'</span><span class="fcv" aria-hidden="true">▾</span></button>'+
     '<div class="fpanel"'+(open?'':' hidden')+'><div class="fmeta muted">'+esc(frWhen(m.last_day))+' · 📚 '+(m.lessons||0)+' lecciones'+(frNoName(m)?' · Aún no puso su nombre':'')+'</div>'+
     '<div class="chb"><button class="chbtn buzzb" data-a="fr-buzz" data-to="'+to+'" aria-label="Mandar un Buzz a '+nm+'" title="Mandar un Buzz">⚡</button>'+
     '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar">🎁</button>'+
     '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar">🎮</button></div>'+
-    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+own+'">'+(frAlias(m)?'Cambiar apodo':'Poner apodo')+'</button><button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button>'+(fw?'<button class="frun" data-a="fr-rem" data-to="'+to+'" data-n="'+nm+'">Quitar de mis seguidores</button>':'')+'</div></div></div>';
+    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+own+'">✏️ Apodo</button><button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button>'+(fw?'<button class="frun" data-a="fr-rem" data-to="'+to+'" data-n="'+nm+'">Quitar seguidor</button>':'')+'</div></div></div>';
 }
 function frOnlyHTML(f){
   const to=esc(f.device),nm=esc(frName(f)),open=FRX===f.device,isNew=FR.recvNew.indexOf(f.device)>=0;
   return '<div class="frm'+(open?' open':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+' te sigue. Ver opciones"><span class="fpos"></span><span class="fav">'+esc(f.avatar)+'</span><span class="fnb"><b class="fnm">'+nm+(f.badge?' '+badgeE(f.badge):'')+'</b><small class="fsub">'+(isNew?'<span class="frpill new">Nuevo</span> ':'')+'Te sigue</small></span><span class="fcv" aria-hidden="true">▾</span></button>'+
     '<div class="fpanel"'+(open?'':' hidden')+'><button class="btn sm" data-a="fr-back" data-to="'+to+'" aria-label="Seguir también a '+nm+'">Seguir también</button>'+
-    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+esc(f.name)+'">Poner apodo</button><button class="frun" data-a="fr-rem" data-to="'+to+'" data-n="'+nm+'">Quitar de mis seguidores</button></div></div></div>';
+    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+esc(f.name)+'">Poner apodo</button><button class="frun" data-a="fr-rem" data-to="'+to+'" data-n="'+nm+'">Quitar seguidor</button></div></div></div>';
 }
 function frListHTML(d){
   const mine=famStats();
@@ -8912,7 +8914,7 @@ function frListHTML(d){
   let shown=lim?all.slice(0,LIM):all;
   if(lim&&!shown.some(x=>x.me))shown=shown.slice(0,LIM-1).concat(all.filter(x=>x.me));
   const rows=shown.map(x=>{const i=all.indexOf(x);
-    if(x.me)return '<div class="frow frme"><span class="fpos">'+(i===0&&x.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc((d.me&&d.me.avatar)||'🙂')+'</span><b class="fnm">Tú'+(S.badge?' '+badgeE(S.badge):'')+'</b>'+(S.lastDay===today()?'<span class="ftd" aria-label="Ya practicaste hoy">✔</span>':'')+'<span class="fst">🔥 '+x.st+'</span><span class="fxp">⚡ '+kfmt(x.wk)+'</span><span class="fcv" aria-hidden="true"></span></div>';
+    if(x.me)return '<div class="frow frme"><span class="fpos">'+(i===0&&x.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc((d.me&&d.me.avatar)||'🙂')+'</span><b class="fnm">Tú'+(S.badge?' '+badgeE(S.badge):'')+'</b>'+(S.lastDay===today()?'<span class="ftd" aria-label="Ya practicaste hoy">✔</span>':'<span class="ftd"></span>')+'<span class="fst">🔥 '+x.st+'</span><span class="fxp">⚡ '+kfmt(x.wk)+'</span><span class="fcv" aria-hidden="true"></span></div>';
     return frRowHTML(x.m,i);}).join('');
   const only=(d.followers||[]).filter(f=>!d.following.some(m=>m.device===f.device)),OL=3,olim=!FRALL&&only.length>OL;
   const onlyRows=(olim?only.slice(0,OL):only).map(frOnlyHTML).join('');
@@ -8926,7 +8928,7 @@ function frFollowingHTML(m){
     '<div class="chb"><button class="chbtn buzzb" data-a="fr-buzz" data-to="'+to+'" aria-label="Mandar un Buzz a '+nm+'" title="Mandar un Buzz">⚡</button>'+
     '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar">🎁</button>'+
     '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar">🎮</button></div>'+
-    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+own+'">'+(frAlias(m)?'Cambiar apodo':'Poner apodo')+'</button><button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button></div></div>';
+    '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+own+'">✏️ Apodo</button><button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button></div></div>';
 }
 function frFollowerHTML(f){
   const isNew=FR.recvNew.indexOf(f.device)>=0,fname=frName(f);
