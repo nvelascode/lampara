@@ -943,7 +943,7 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .rdhero .rdbw{margin:10px 0 4px}.rdhero .bar{height:10px}.rdsm{font-size:12px;font-weight:800;color:var(--muted)}
 .rdhero .rdp{border-top:2px solid rgba(128,128,128,.18);padding:8px 0}.rdhero .rdp b{font-size:20px}.rdhero .rdp:first-of-type{margin-top:6px}
 .rdaud.ico{width:40px;height:40px;padding:0;display:grid;place-items:center;border-radius:50%;font-size:17px}
-.rdhero .btn{margin-top:8px}.rdopen{display:block;text-align:center;font-weight:900;color:var(--blue-ink);margin-top:10px;font-size:14px;text-decoration:none}
+.rdhero .btn{margin-top:8px}.rdhero .row2 .btn{font-size:13px;padding-left:6px;padding-right:6px;letter-spacing:.3px;white-space:nowrap}.rdopen{display:block;text-align:center;font-weight:900;color:var(--blue-ink);margin-top:10px;font-size:14px;text-decoration:none}
 .rdlate{display:flex;align-items:center;gap:10px;width:100%;text-align:left;margin:0 0 12px;padding:10px 12px;border-radius:16px;background:rgba(255,200,0,.12);border:2px solid rgba(255,200,0,.5);color:var(--ink);font-size:14px}.rdlate span{flex:1}.rdlate small{display:block;color:var(--muted);font-weight:800;font-size:11px}.rdlate em{font-style:normal;font-weight:900;color:#c99700}
 .rdstrip{padding:10px 12px}.rdsr{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px}.rdsr span{color:var(--purple-d);font-weight:900}
 .rdpage .repc{padding:10px 12px;margin-bottom:10px;border-color:var(--line)}.rdpage .repc .muted{margin:2px 0 8px!important;font-size:13px!important}
@@ -1614,6 +1614,10 @@ button.cog.trref{display:inline-block;background:var(--yellow-bg);border:2px sol
 .rcsw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .15s}
 .rcsw.on{background:var(--green)}.rcsw.on i{left:25px}
 .repc{border-color:var(--purple,#a560e8)}
+.rvtop{display:flex;align-items:center;gap:10px;margin:0 0 10px}.rvbar{flex:1;height:12px;border-radius:99px;background:var(--line);overflow:hidden}.rvbar i{display:block;height:100%;border-radius:99px;background:var(--green);transition:width .35s ease}.rvtop span{font-size:13px;font-weight:900;color:var(--muted)}
+.rvq .opts{gap:10px}.rvq .opt{min-height:62px;font-size:17px;line-height:1.25}.rvq .opt span{flex:1}
+.rvmiss{margin:12px 0 14px;text-align:left}.rvmiss>b{display:block;margin:0 0 6px;font-size:14px;color:var(--muted)}
+.rvm{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:2px solid var(--line)}.rvm>div{flex:1;min-width:0}.rvm span{display:block;font-weight:900;font-size:15px}.rvm small{display:block;color:var(--muted);font-weight:700;font-size:12px;line-height:1.3;margin-top:2px}.rvm .btn{flex:none;width:auto;margin:0;padding:8px 12px;font-size:12px}
 .repc2{margin:0 0 12px;padding:10px 12px;border-radius:18px;border:2px solid var(--line);border-left:5px solid var(--purple,#a560e8);background:var(--surface)}
 .rc2r{display:flex;align-items:center;gap:10px}.rc2i{font-size:26px;flex:none}.rc2t{flex:1;min-width:0}.rc2t b{display:block;font-size:15px}.rc2t small{display:block;color:var(--muted);font-weight:700;font-size:12px;line-height:1.3;margin-top:1px}
 .repc2 .btn.sm{flex:none;width:auto;margin:0;padding:8px 14px}
@@ -5265,7 +5269,9 @@ function readHTML(){
   }else{
     const day=P.days[idx],done=!!R.done[idx];
     card='<section class="card rdtoday rdhero"><div class="rdtg"><span>📖 Lectura de hoy</span><b>Día '+(idx+1)+' de '+R.n+'</b></div><div class="rdbw"><div class="bar" style="--gcol:var(--green)"><i style="width:'+Math.max(pctV,2)+'%"></i></div></div><div class="rdsm">'+pctV+'% de la Biblia leída · '+dn+(dn===1?' día leído':' días leídos')+'</div>'+rdPassagesHTML(R.plan,day,true)+
-     '<button class="btn '+(done?'good':'blue')+'" data-a="rd-toggle" data-i="'+idx+'">'+(done?'✔ Leído':'Marcar leído')+'</button><a class="rdopen" data-rdopen="1" href="'+rdLinkFor(R.plan,day)+'" target="_blank" rel="noopener">Abrir pasaje</a>'+(done?'<p class="rdsm" style="text-align:center;margin:6px 0 0">Toca «Leído» si quieres desmarcarlo.</p>':'')+'</section>';
+     (()=>{const lk=rdLinkFor(R.plan,day),opened=!!(S.rdOpen&&S.rdOpen.d===t&&S.rdOpen.i===idx);
+       if(done)return '<button class="btn good" data-a="rd-toggle" data-i="'+idx+'">✔ Leído</button><a class="rdopen" data-rdopen="1" href="'+lk+'" target="_blank" rel="noopener">Abrir pasaje</a>';
+       return '<div class="row2" style="margin:10px 0 0"><a class="btn '+(opened?'ghost':'blue')+'" data-rdopen="1" href="'+lk+'" target="_blank" rel="noopener">Abrir pasaje</a><button class="btn '+(opened?'blue':'ghost')+'" data-a="rd-toggle" data-i="'+idx+'">Marcar leído</button></div>';})()+(done?'<p class="rdsm" style="text-align:center;margin:6px 0 0">Toca «Leído» si quieres desmarcarlo.</p>':'')+'</section>';
   }
   const late=(pend.n>0&&dn<R.n&&idx>=0&&idx<R.n)?'<button class="rdlate" data-a="rd-day" data-i="'+pend.first+'"><span>📚 <b>'+pend.n+(pend.n===1?' lectura por recuperar':' lecturas por recuperar')+'</b><small>No pasa nada, ponte al día cuando quieras</small></span><em>Ver ›</em></button>':'';
   const st=rdStreak(),mk=(idx>=0&&idx<R.n?t:R.start).slice(0,7);
@@ -5296,7 +5302,7 @@ function rdStatsHTML(){
 }
 var RD_OPENED=null;
 try{
-  document.addEventListener('click',e=>{const a=e.target&&e.target.closest&&e.target.closest('[data-rdopen]');if(!a||!S.rd)return;const i=diffDays(S.rd.start,today());if(i>=0&&i<S.rd.n&&!S.rd.done[i])RD_OPENED={i:i,t:Date.now()};},true);
+  document.addEventListener('click',e=>{const a=e.target&&e.target.closest&&e.target.closest('[data-rdopen]');if(!a||!S.rd)return;const i=diffDays(S.rd.start,today());if(i>=0&&i<S.rd.n&&!S.rd.done[i]){RD_OPENED={i:i,t:Date.now()};S.rdOpen={d:today(),i:i};}},true);
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden)return;const o=RD_OPENED;if(!o||!S.rd)return;
     if(Date.now()-o.t<12000)return;
@@ -5356,7 +5362,7 @@ const REPASO=[[0,1,14,19,"¿En cuál día de la creación hizo Dios el sol, la l
 /* ============================================================
    REPASO (preguntas sobre la lectura reciente · Pentateuco)
    ============================================================ */
-const REP={j:-1,free:false,book:-1,qs:[],i:0,opts:[],ans:-1,ok:0};
+const REP={j:-1,free:false,book:-1,qs:[],i:0,opts:[],ans:-1,ok:0,miss:[]};
 /* Banco derivado de las fichas de «Libro por libro»: una sola fuente de preguntas.
    Con versículo → se activa el día que lees ese pasaje. Sin versículo (autor, fecha, tema…) → al terminar el libro. */
 function repHash(t){let h=5381;for(let i=0;i<t.length;i++)h=((h<<5)+h+t.charCodeAt(i))|0;return (h>>>0).toString(36);}
@@ -5465,7 +5471,7 @@ function repOpen(j,free,book){
   else if(free)ids=repPick(repSeeded(repPool(),Date.now()%100000),5,Date.now()%9973);
   else ids=repPick(repEligible(j),2,j+1);
   if(!ids.length)return;
-  REP.j=j;REP.free=!!free||book>=0;REP.book=book>=0?book:-1;REP.qs=ids;REP.i=0;REP.ok=0;repQ();
+  REP.j=j;REP.free=!!free||book>=0;REP.book=book>=0?book:-1;REP.qs=ids;REP.i=0;REP.ok=0;REP.miss=[];repQ();
 }
 function repQ(){
   const x=REPASO[REP.qs[REP.i]];
@@ -5483,7 +5489,11 @@ function repDraw(){
     fb='<div class="rvfb '+(right?'ok':'no')+'"><b>'+(right?'¡Correcto!':'Respuesta: '+esc(x[5]))+'</b>'+(x[9]?'<span class="rvcr">✝️ El Nuevo Testamento lo relaciona con Cristo:</span>':'')+(x[8]?'<p><i>«'+esc(x[8])+'»</i></p>':'')+(x[7]?'<small>'+esc(x[7])+' · RVR1960</small>':'')+'</div>'+
       '<button class="btn" data-a="rv-next">'+(REP.i+1<n?'Siguiente':'Terminar')+'</button>';
   }
-  showModal('<p class="muted" style="margin:0 0 6px;font-weight:900">'+(REP.book>=0?'Cierre de '+esc(RD_B[REP.book][0]):REP.free?'Practicar':'Repaso')+' · '+(REP.i+1)+' de '+n+'</p>'+(REP.book<0?'<p class="muted" style="margin:0 0 6px;font-size:13px;font-weight:800">📖 '+esc(RD_B[x[0]][0])+'</p>':'')+'<h3 style="margin:0 0 12px">'+esc(x[4])+'</h3><div class="opts">'+opts+'</div>'+fb+(answered?'':'<button class="btn ghost" data-a="stay" style="margin-top:12px">Salir</button>'));
+  showModal('<div class="rvq"><div class="rvtop"><div class="rvbar"><i style="width:'+Math.round(100*(REP.i+(answered?1:0))/n)+'%"></i></div><span>'+(REP.i+1)+' / '+n+'</span></div><p class="muted" style="margin:0 0 6px;font-weight:900">'+(REP.book>=0?'Cierre de '+esc(RD_B[REP.book][0]):REP.free?'Practicar':'Repaso')+'</p>'+(REP.book<0?'<p class="muted" style="margin:0 0 6px;font-size:13px;font-weight:800">📖 '+esc(RD_B[x[0]][0])+'</p>':'')+'<h3 style="margin:0 0 12px">'+esc(x[4])+'</h3><div class="opts">'+opts+'</div>'+fb+(answered?'':'<button class="btn ghost" data-a="stay" style="margin-top:12px">Salir</button>')+'</div>');
+}
+function repMissHTML(){
+  const m=(REP.miss||[]).map(q=>REPASO[q]).filter(x=>x&&x[7]);if(!m.length)return '';
+  return '<div class="rvmiss"><b>Para repasar</b>'+m.map(x=>'<div class="rvm"><div><span>'+esc(x[7])+'</span><small>'+esc(x[4])+'</small></div><a class="btn ghost sm" href="https://www.biblegateway.com/passage/?search='+encodeURIComponent(x[7].replace(/–/g,'-'))+'&version=RVR1960" target="_blank" rel="noopener">Releer el pasaje</a></div>').join('')+'</div>';
 }
 function repEnd(){
   const n=REP.qs.length,ok=REP.ok,xp=REP.book>=0?0:ok*(REP.free?2:5);
@@ -5494,14 +5504,14 @@ function repEnd(){
   const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);
   save();
   beep(ok===n?'win':'good');if(ok===n)confetti(60);
-  showModal('<div style="display:flex;justify-content:center">'+mascot(ok===n?'cheer':ok>0?'happy':'think',96)+'</div><h3 style="text-align:center">'+ok+' de '+n+(ok===1?' correcta':' correctas')+'</h3><p style="text-align:center">'+(xp>0?'Ganaste <b>'+xp+' XP</b>. ':'')+(ok===n?'¡Muy bien! Sigue guardando la Palabra en tu corazón.':'Repasar es parte de aprender. Mañana habrá más.')+'</p><button class="btn" data-a="stay">Listo</button>');
+  showModal('<div style="display:flex;justify-content:center">'+mascot(ok===n?'cheer':ok>0?'happy':'think',96)+'</div><h3 style="text-align:center">'+ok+' de '+n+(ok===1?' correcta':' correctas')+'</h3><p style="text-align:center">'+(xp>0?'Ganaste <b>'+xp+' XP</b>. ':'')+(ok===n?'¡Muy bien! Sigue guardando la Palabra en tu corazón.':'Repasar es parte de aprender. Mañana habrá más.')+'</p>'+repMissHTML()+'<button class="btn" data-a="stay">Listo</button>');
   render();
 }
 function repAct(a,b){
   if(a==='rv-go')repOpen(+b.dataset.i,false);
   else if(a==='rv-free')repOpen(-1,true);
   else if(a==='rv-book')repOpen(-1,false,+b.dataset.i);
-  else if(a==='rv-ans'){if(REP.ans>=0)return;REP.ans=+b.dataset.i;const x=REPASO[REP.qs[REP.i]];if(REP.opts[REP.ans]===x[5]){REP.ok++;beep('good');}else beep('bad');repDraw();}
+  else if(a==='rv-ans'){if(REP.ans>=0)return;REP.ans=+b.dataset.i;const x=REPASO[REP.qs[REP.i]];if(REP.opts[REP.ans]===x[5]){REP.ok++;beep('good');}else{REP.miss.push(REP.qs[REP.i]);beep('bad');}repDraw();}
   else if(a==='rv-next'){if(REP.i+1<REP.qs.length){REP.i++;repQ();}else repEnd();}
 }
 
