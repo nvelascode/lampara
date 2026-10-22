@@ -8762,14 +8762,22 @@ async function frFeedPoll(){
   }catch(e){}
 }
 var BZ_PEND=0;
-function buzzSnd(){
+function audioUnlock(){
+  try{
+    try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state!=='running'&&AC.resume)return AC.resume();
+  }catch(e){}
+  return Promise.resolve();
+}
+try{['touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,()=>{audioUnlock();},{capture:true,passive:true}));}catch(e){}
+async function buzzSnd(){
   if(!S.sound)return;
   try{
-    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
-    if(AC.state!=='running'){
-      AC.resume&&AC.resume();
-      if(!BZ_PEND){BZ_PEND=1;const go=()=>{document.removeEventListener('pointerdown',go,true);document.removeEventListener('keydown',go,true);BZ_PEND=0;buzzSnd();};document.addEventListener('pointerdown',go,true);document.addEventListener('keydown',go,true);}
-      if(AC.state!=='running')return;
+    await Promise.race([audioUnlock(),new Promise(r=>setTimeout(r,350))]);
+    if(!AC||AC.state!=='running'){
+      if(!BZ_PEND){BZ_PEND=1;const go=()=>{['touchend','click','keydown'].forEach(ev=>document.removeEventListener(ev,go,true));BZ_PEND=0;setTimeout(buzzSnd,60);};['touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,go,true));}
+      return;
     }
     const t=AC.currentTime+.02,m=AC.createGain(),f=AC.createBiquadFilter();
     f.type='lowpass';f.frequency.value=1400;m.gain.value=.5;m.connect(f);f.connect(AC.destination);
