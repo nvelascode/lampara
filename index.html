@@ -897,6 +897,20 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .mstats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:15px}
 .chb{display:flex;gap:8px;margin-top:10px}
 .ftd:empty{background:transparent}.frlist2 .frow>.fnm{flex:1;min-width:0}.frlist2 .fst,.frlist2 .fxp{flex:none;text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}.frlist2 .fst{width:50px}.frlist2 .fxp{width:62px}
+.frtoday{margin:0 4px 8px;font-size:13px;font-weight:800;color:var(--muted)}.frtoday b{color:var(--green)}
+.frlist2 .frm{border:2px solid transparent;border-radius:14px;margin-bottom:4px;padding:0 6px}.frlist2 .frm .frow,.frlist2 .frme{gap:5px}.frlist2 .fst{width:46px!important}.frlist2 .fxp{width:60px!important}.frlist2 .fcv{margin-left:2px}.frlist2 .fpos{width:24px!important}
+.frlist2 .frm .frow{border-top:0!important}
+.frlist2 .frm.done{background:var(--green-bg)}
+.frlist2 .frm.first{border-color:#ffc800;background:rgba(255,200,0,.09)}
+.frlist2 .frm.off:not(.open) .frow{opacity:.62}
+.frlist2 .frme{margin:0 0 4px;padding:9px 6px!important;border:2px solid #1cb0f6;border-radius:14px;background:var(--blue-bg)}
+.frlist2 .fpos{font-size:20px;line-height:1}
+.fnb .wbar{display:block;height:4px;border-radius:4px;background:var(--line);margin-top:4px;overflow:hidden}.wbar i{display:block;height:100%;background:#ffc800;border-radius:4px}
+.frlist2 .fpanel{padding:0 0 10px 0}
+.frlist2 .chb{gap:6px;margin-top:6px}
+.frlist2 .chbtn{padding:6px 0;font-size:11px;font-weight:800;color:var(--muted);line-height:1.2}
+.frlist2 .chbtn span{display:block;font-size:20px;line-height:1.1}
+.frlist2 .chbtn.buzzb{color:#fff}
 .frm .frfoot,.frf .frfoot,.fpanel .frfoot{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;margin-top:10px}.frfoot .frun,.fpanel .frfoot .frun{margin:0;padding:7px 6px;font-weight:800;text-align:center;white-space:nowrap;border:2px solid var(--line);border-bottom-width:3px;border-radius:12px;background:var(--surface);color:var(--muted);text-decoration:none;font-size:12px}.frfoot .frun[data-a="fr-unf"],.frfoot .frun[data-a="fr-rem"]{color:var(--red)}
 .actsec{margin:0 0 14px}.actrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:2px solid var(--line)}.actrow:first-of-type{border-top:0}.actrow .fav{font-size:26px;flex:none}.actrow .at{flex:1;min-width:0;font-size:15px;line-height:1.25}.actrow .at small{display:block;color:var(--muted);font-weight:800;font-size:12px;margin-top:2px}.actrow .felb{flex:none;border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;background:var(--surface);padding:6px 10px;font-weight:900;font-size:14px}.actrow .felb.done{opacity:.6;border-bottom-width:2px}.buzzb{background:linear-gradient(135deg,#8A6BFF,#5B3FD9)!important;border-color:#4430A8!important}@keyframes bzz{0%,100%{transform:translate(0,0)}10%{transform:translate(-9px,3px) rotate(-1deg)}20%{transform:translate(8px,-4px) rotate(1deg)}30%{transform:translate(-8px,-3px)}40%{transform:translate(7px,4px)}50%{transform:translate(-6px,2px)}60%{transform:translate(5px,-2px)}70%{transform:translate(-4px,1px)}80%{transform:translate(3px,-1px)}}body.bzz #app,body.bzz main,body.bzz #main{animation:bzz .7s linear}
 .chbtn{flex:1;padding:8px 0;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);font-size:24px;line-height:1.2}
@@ -8891,13 +8905,17 @@ function frBoardHTML(d,limit){
     (limit?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-go">Ver amigos</button>':'')+'</section>';
 }
 let FRX='',FRALL=false;
+var FRMAX=0;
+function frMedal(i,wk){return wk>0&&i<3?['🥇','🥈','🥉'][i]:(i+1);}
+function frBar(wk){return '<span class="wbar" aria-hidden="true"><i style="width:'+(FRMAX>0?Math.round(Math.max(0,wk)/FRMAX*100):0)+'%"></i></span>';}
 function frRowHTML(m,i){
   const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name),open=FRX===m.device,fw=((FR.data&&FR.data.followers)||[]).find(f=>f.device===m.device),isNew=fw&&FR.recvNew.indexOf(m.device)>=0;
-  return '<div class="frm'+(open?' open':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+': racha '+frStreak(m)+', '+frWeek(m)+' XP esta semana. Ver opciones"><span class="fpos">'+(i===0&&frWeek(m)>0?'👑':(i+1))+'</span><span class="fav">'+esc(m.avatar)+'</span><span class="fnb"><b class="fnm">'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b>'+(fw?'<small class="fsub">'+(isNew?'<span class="frpill new">Nuevo</span> ':'')+'Te sigue</small>':'')+'</span>'+(frToday(m)?'<span class="ftd" title="Ya practicó hoy" aria-label="Ya practicó hoy">✔</span>':'<span class="ftd"></span>')+'<span class="fst">🔥 '+frStreak(m)+'</span><span class="fxp">⚡ '+kfmt(frWeek(m))+'</span><span class="fcv" aria-hidden="true">▾</span></button>'+
+  const td=frToday(m),wk=frWeek(m);
+  return '<div class="frm'+(open?' open':'')+(td?' done':' off')+(i===0&&wk>0?' first':'')+'"><button class="frow frbtn" data-a="fr-x" data-to="'+to+'" aria-expanded="'+open+'" aria-label="'+nm+': racha '+frStreak(m)+', '+frWeek(m)+' XP esta semana. Ver opciones"><span class="fpos">'+frMedal(i,wk)+'</span><span class="fav">'+esc(m.avatar)+'</span><span class="fnb"><b class="fnm">'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b>'+(fw?'<small class="fsub">'+(isNew?'<span class="frpill new">Nuevo</span> ':'')+'Te sigue</small>':'')+frBar(wk)+'</span>'+(frToday(m)?'<span class="ftd" title="Ya practicó hoy" aria-label="Ya practicó hoy">✔</span>':'<span class="ftd"></span>')+'<span class="fst">🔥 '+frStreak(m)+'</span><span class="fxp">⚡ '+kfmt(frWeek(m))+'</span><span class="fcv" aria-hidden="true">▾</span></button>'+
     '<div class="fpanel"'+(open?'':' hidden')+'><div class="fmeta muted">'+esc(frWhen(m.last_day))+' · 📚 '+(m.lessons||0)+' lecciones'+(frNoName(m)?' · Aún no puso su nombre':'')+'</div>'+
-    '<div class="chb"><button class="chbtn buzzb" data-a="fr-buzz" data-to="'+to+'" aria-label="Mandar un Buzz a '+nm+'" title="Mandar un Buzz">⚡</button>'+
-    '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar">🎁</button>'+
-    '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar">🎮</button></div>'+
+    '<div class="chb"><button class="chbtn buzzb" data-a="fr-buzz" data-to="'+to+'" aria-label="Mandar un Buzz a '+nm+'" title="Mandar un Buzz"><span>⚡</span>Buzz</button>'+
+    '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar"><span>🎁</span>Regalo</button>'+
+    '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar"><span>🎮</span>Juego</button></div>'+
     '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+own+'">✏️ Apodo</button><button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button>'+(fw?'<button class="frun" data-a="fr-rem" data-to="'+to+'" data-n="'+nm+'">Quitar seguidor</button>':'')+'</div></div></div>';
 }
 function frOnlyHTML(f){
@@ -8910,24 +8928,26 @@ function frListHTML(d){
   const mine=famStats();
   const all=d.following.map(m=>({m,wk:frWeek(m),st:frStreak(m)})).concat([{me:true,wk:mine.p_week_xp,st:S.streak}]);
   all.sort((a,b)=>b.wk-a.wk||b.st-a.st);
+  FRMAX=all.length?Math.max(0,all[0].wk):0;
+  const nT=d.following.filter(frToday).length;
   const LIM=5,lim=!FRALL&&all.length>LIM+1;
   let shown=lim?all.slice(0,LIM):all;
   if(lim&&!shown.some(x=>x.me))shown=shown.slice(0,LIM-1).concat(all.filter(x=>x.me));
   const rows=shown.map(x=>{const i=all.indexOf(x);
-    if(x.me)return '<div class="frow frme"><span class="fpos">'+(i===0&&x.wk>0?'👑':(i+1))+'</span><span class="fav">'+esc((d.me&&d.me.avatar)||'🙂')+'</span><b class="fnm">Tú'+(S.badge?' '+badgeE(S.badge):'')+'</b>'+(S.lastDay===today()?'<span class="ftd" aria-label="Ya practicaste hoy">✔</span>':'<span class="ftd"></span>')+'<span class="fst">🔥 '+x.st+'</span><span class="fxp">⚡ '+kfmt(x.wk)+'</span><span class="fcv" aria-hidden="true"></span></div>';
+    if(x.me)return '<div class="frow frme"><span class="fpos">'+frMedal(i,x.wk)+'</span><span class="fav">'+esc((d.me&&d.me.avatar)||'🙂')+'</span><span class="fnb"><b class="fnm">Tú'+(S.badge?' '+badgeE(S.badge):'')+'</b>'+frBar(x.wk)+'</span>'+(S.lastDay===today()?'<span class="ftd" aria-label="Ya practicaste hoy">✔</span>':'<span class="ftd"></span>')+'<span class="fst">🔥 '+x.st+'</span><span class="fxp">⚡ '+kfmt(x.wk)+'</span><span class="fcv" aria-hidden="true"></span></div>';
     return frRowHTML(x.m,i);}).join('');
   const only=(d.followers||[]).filter(f=>!d.following.some(m=>m.device===f.device)),OL=3,olim=!FRALL&&only.length>OL;
   const onlyRows=(olim?only.slice(0,OL):only).map(frOnlyHTML).join('');
-  return '<section class="card famcard frlist2"><div class="famh"><b>🏆 Esta semana</b><span class="muted">🔥 racha · ⚡ XP</span></div><p class="muted wkrs">De lunes a domingo · se reinicia el lunes</p>'+rows+(onlyRows?'<div class="fsep"></div>'+onlyRows:'')+
+  return (d.following.length?'<div class="frtoday">🔥 <b>'+nT+' de '+d.following.length+'</b> ya practicaron hoy</div>':'')+'<section class="card famcard frlist2"><div class="famh"><b>🏆 Esta semana</b><span class="muted">🔥 racha · ⚡ XP</span></div><p class="muted wkrs">De lunes a domingo · se reinicia el lunes</p>'+rows+(onlyRows?'<div class="fsep"></div>'+onlyRows:'')+
     ((all.length>LIM+1||only.length>OL)?'<button class="btn ghost sm" style="margin-top:10px" data-a="fr-all">'+(FRALL?'Ver menos':'Ver todos ('+(all.length-1+only.length)+')')+'</button>':'')+'</section>';
 }
 function frFollowingHTML(m){
   const to=esc(m.device),nm=esc(frName(m)),own=esc(m.name);
   return '<div class="mrow"><div class="mtop"><span class="fav big">'+esc(m.avatar)+'</span><div class="minfo"><b>'+nm+(m.badge?' '+badgeE(m.badge):'')+'</b><span class="muted">'+esc(frWhen(m.last_day))+'</span>'+(frNoName(m)?'<span class="frnote">Aún no puso su nombre</span>':'')+'</div>'+(frToday(m)?'<span class="frpill">hoy ✔</span>':'')+'</div>'+
     '<div class="mstats"><span>🔥 <b>'+frStreak(m)+'</b> racha</span><span>⚡ <b>'+kfmt(frWeek(m))+'</b> esta semana</span><span>📚 <b>'+(m.lessons||0)+'</b></span></div>'+
-    '<div class="chb"><button class="chbtn buzzb" data-a="fr-buzz" data-to="'+to+'" aria-label="Mandar un Buzz a '+nm+'" title="Mandar un Buzz">⚡</button>'+
-    '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar">🎁</button>'+
-    '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar">🎮</button></div>'+
+    '<div class="chb"><button class="chbtn buzzb" data-a="fr-buzz" data-to="'+to+'" aria-label="Mandar un Buzz a '+nm+'" title="Mandar un Buzz"><span>⚡</span>Buzz</button>'+
+    '<button class="chbtn" data-a="gift-open" data-to="'+to+'" data-n="'+nm+'" aria-label="Regalar a '+nm+'" title="Regalar"><span>🎁</span>Regalo</button>'+
+    '<button class="chbtn" data-a="fr-play" data-to="'+to+'" aria-label="Invitar a jugar a '+nm+'" title="Invitar a jugar"><span>🎮</span>Juego</button></div>'+
     '<div class="frfoot"><button class="frun" data-a="fr-alias" data-to="'+to+'" data-n="'+own+'">✏️ Apodo</button><button class="frun" data-a="fr-unf" data-to="'+to+'" data-n="'+nm+'">Dejar de seguir</button></div></div>';
 }
 function frFollowerHTML(f){
