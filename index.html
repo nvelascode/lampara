@@ -67,6 +67,9 @@ h1,h2,h3,h4{font-weight:900}
 .mas svg{width:100%;height:100%;overflow:visible}
 .mas .fl{transform-origin:50px 32px;animation:flick 1.6s ease-in-out infinite}
 .mas.cheer{animation:none}
+.mas.cheer,.mas.wink,.mas.sport{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mas .body{transform-origin:50px 90px}.mas .boost{transform-origin:50px 36px}
+.mas .chA{transition:opacity .12s}.mas .chO{transform-box:fill-box;transform-origin:50% 50%;transition:opacity .12s,transform .06s}.mas .chO.bl{transform:scaleY(.08)}
 .mas .tw{transform-origin:80px 49px;animation:twinkle 2.2s ease-in-out infinite}
 @keyframes twinkle{0%,100%{transform:scale(1) rotate(0);opacity:1}50%{transform:scale(.55) rotate(25deg);opacity:.7}}
 .mas.sad{animation:wiggle .9s ease-in-out 2}
@@ -1832,7 +1835,7 @@ function mascot(mood,size,flv){
   const eyes=mood==='wink'
     ?'<ellipse cx="38" cy="53" rx="5.6" ry="6.4" fill="'+ink+'"/><circle cx="40" cy="50.6" r="2.1" fill="#fff"/><path d="M54 54q8-9 16 0" fill="none" stroke="'+ink+'" stroke-width="3.8" stroke-linecap="round"/>'
     :mood==='cheer'
-    ?'<path d="M30 52q8-10 16 0M54 52q8-10 16 0" fill="none" stroke="'+ink+'" stroke-width="3.8" stroke-linecap="round"/>'
+    ?'<g class="chA"><path d="M30 52q8-10 16 0M54 52q8-10 16 0" fill="none" stroke="'+ink+'" stroke-width="3.8" stroke-linecap="round"/></g><g class="chO" opacity="0"><ellipse cx="38" cy="53" rx="5.6" ry="6.4" fill="'+ink+'"/><ellipse cx="62" cy="53" rx="5.6" ry="6.4" fill="'+ink+'"/><circle cx="40" cy="50.6" r="2.1" fill="#fff"/><circle cx="64" cy="50.6" r="2.1" fill="#fff"/></g>'
     :mood==='panic'
     ?'<circle cx="38" cy="52" r="8.6" fill="#fff" stroke="'+ink+'" stroke-width="2.8"/><circle cx="62" cy="52" r="8.6" fill="#fff" stroke="'+ink+'" stroke-width="2.8"/><circle cx="38.6" cy="53" r="2.8" fill="'+ink+'"/><circle cx="61.4" cy="53" r="2.8" fill="'+ink+'"/>'
     :mood==='worried'
@@ -1844,7 +1847,7 @@ function mascot(mood,size,flv){
     :mood==='uneasy'?'<path d="M30 44l14-3M70 44l-14-3" stroke="'+ink+'" stroke-width="3.2" stroke-linecap="round"/>'
     :mood==='worried'?'<path d="M29 46l15-7M71 46l-15-7" stroke="'+ink+'" stroke-width="3.4" stroke-linecap="round"/>'
     :mood==='panic'?'<path d="M27 42l17-10M73 42l-17-10" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>':'';
-  const mouth=mood==='wink'?'<path d="M37 63q13 15 27-3" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/><path d="M50 71q5 7 10 1" fill="#FF8FA3" stroke="#E0607A" stroke-width="1.4" stroke-linejoin="round"/>'
+  const mouth=mood==='wink'?'<path d="M49.4 69.2C48.6 73.4 50.8 76.2 54.2 76.2C57.6 76.2 59.4 73.2 58.2 67.8Z" fill="#FF8FA3" stroke="#E0607A" stroke-width="1.4" stroke-linejoin="round"/><path d="M53.9 71.6V73.8" stroke="#E0607A" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M37 63q13 15 27-3" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>'
     :mood==='cheer'?'<path d="M36 62q14 20 28 0z" fill="#C62828"/><path d="M43 70q7 6 14 0" fill="#FF8FA3"/>'
     :mood==='sad'?'<path d="M39 72q11-11 22 0" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>'
     :mood==='think'?'<ellipse cx="54" cy="69" rx="4.4" ry="3.6" fill="'+ink+'"/>'
@@ -1853,8 +1856,7 @@ function mascot(mood,size,flv){
     :mood==='worried'?'<path d="M40 72q10-9 20 0" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>'
     :mood==='panic'?'<path d="M41 74q9-12 18 0q-9 5-18 0z" fill="#8E1B1B" stroke="'+ink+'" stroke-width="2.4" stroke-linejoin="round"/>'
     :'<path d="M38 64q12 12 24 0" fill="none" stroke="'+ink+'" stroke-width="3.6" stroke-linecap="round"/>';
-  const extra=mood==='wink'?'<g class="tw" fill="#1CB0F6"><path d="M80 42l2.2 5 5 2.2-5 2.2-2.2 5-2.2-5-5-2.2 5-2.2z"/></g>'
-    :mood==='sad'?'<path d="M30 59C28.4 63.4 24.6 66.6 24.6 70.6A5.4 5.4 0 0 0 35.4 70.6C35.4 66.6 31.6 63.4 30 59Z" fill="#1CB0F6"/><circle cx="28.3" cy="70.2" r="1.5" fill="#fff" opacity=".85"/>'
+  const extra=mood==='sad'?'<path d="M30 59C28.4 63.4 24.6 66.6 24.6 70.6A5.4 5.4 0 0 0 35.4 70.6C35.4 66.6 31.6 63.4 30 59Z" fill="#1CB0F6"/><circle cx="28.3" cy="70.2" r="1.5" fill="#fff" opacity=".85"/>'
     :mood==='think'?'<text class="qm" x="76" y="24" font-size="24" font-weight="900" fill="#1CB0F6" font-family="Nunito,sans-serif">?</text>'
     :mood==='curious'?'<text class="qm" x="78" y="30" font-size="20" font-weight="900" fill="#1CB0F6" font-family="Nunito,sans-serif">?</text>'
     :mood==='uneasy'?'<g class="sw"><path d="M80 40C78.4 44.4 74.6 47.6 74.6 51.6A5.4 5.4 0 0 0 85.4 51.6C85.4 47.6 81.6 44.4 80 40Z" fill="#7CC8F8"/><circle cx="78.3" cy="51.2" r="1.4" fill="#fff" opacity=".85"/></g>'
@@ -1863,7 +1865,7 @@ function mascot(mood,size,flv){
     :mood==='cheer'?'<g fill="#FFC800"><path class="st st1" d="M10 20l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path class="st st2" d="M88 10l2.5 5.5 5.5 2.5-5.5 2.5-2.5 5.5-2.5-5.5-5.5-2.5 5.5-2.5z"/></g>':'';
   const flame='<path d="M50 2C58 12 64 18 64 25C64 32 58 36 50 36C42 36 36 32 36 25C36 18 42 12 50 2Z" fill="#FF9600"/><path d="M50 15C54 21 57 24 57 28C57 32 54 34 50 34C46 34 43 32 43 28C43 24 46 21 50 15Z" fill="#FFD84D"/>';
   const live=typeof flv==='number',sc=live?flv:(mood==='sad'?.6:1);
-  const fl='<g class="flw" transform="translate(50 36) scale('+sc.toFixed(2)+') translate(-50 -36)"'+(live?' opacity="'+(.55+.45*Math.min(1,sc)).toFixed(2)+'"':'')+'><g class="fl">'+flame+'</g></g>';
+  const fl='<g class="flw" transform="translate(50 36) scale('+sc.toFixed(2)+') translate(-50 -36)"'+(live?' opacity="'+(.55+.45*Math.min(1,sc)).toFixed(2)+'"':'')+'>'+(mood==='cheer'?'<circle class="glow" cx="50" cy="20" r="30" fill="url(#lpGlow)" opacity="0"/>':'')+'<g class="boost"><g class="fl">'+flame+'</g></g></g>';
   const blk=!(mood==='wink'||mood==='cheer'||mood==='panic');
   const lev=size>=70&&(mood==='happy'||mood==='curious'||mood==='cheer'||mood==='wink');
   return '<span class="mas '+mood+(blk?' blk':'')+(lev?' lev':'')+'"'+(live?' data-live="1"':'')+' style="width:'+size+'px;height:'+size+'px"><svg viewBox="0 0 100 100" aria-hidden="true"><g class="body">'+
@@ -1953,6 +1955,50 @@ document.addEventListener('click',e=>{
   const m=e.target.closest&&e.target.closest('.mas.happy');if(!m)return;
   beep('twinkle');m.classList.remove('sway');void m.offsetWidth;m.classList.add('sway');setTimeout(()=>m.classList.remove('sway'),1150);
 });
+/* Lampy reacciona al tocarlo: el de estrellas agranda la llamita con sonido de encendido; el del guiño suelta chispas */
+const LP_RM=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
+(function(){try{if(document.getElementById('lpDefs'))return;const d=document.createElementNS('http://www.w3.org/2000/svg','svg');d.id='lpDefs';d.setAttribute('width','0');d.setAttribute('height','0');d.setAttribute('aria-hidden','true');d.style.cssText='position:absolute;width:0;height:0';
+  d.innerHTML='<defs><radialGradient id="lpGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFE58A" stop-opacity=".95"/><stop offset=".55" stop-color="#FFB02E" stop-opacity=".45"/><stop offset="1" stop-color="#FF9600" stop-opacity="0"/></radialGradient></defs>';
+  (document.body||document.documentElement).appendChild(d);}catch(e){}})();
+function lpDot(body,x,y,col,dx,dy,dur,r){
+  const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',r);c.setAttribute('fill',col);body.appendChild(c);
+  const a=c.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) scale(.3)',opacity:0}],{duration:dur,easing:'cubic-bezier(.2,.7,.4,1)',fill:'forwards'});
+  a.onfinish=()=>c.remove();
+}
+function lpSparks(m,n,grow){
+  const svg=m.querySelector('svg'),body=svg&&svg.querySelector('.body'),bo=svg&&svg.querySelector('.boost');if(!body||LP_RM)return;
+  if(bo)bo.animate([{transform:'scale(1)'},{transform:'scale('+(1+grow)+')',offset:.25},{transform:'scale(1)'}],{duration:800,easing:'ease-out'});
+  for(let i=0;i<n;i++)lpDot(body,50+(Math.random()*14-7),6+Math.random()*6,i%2?'#FF9600':'#FFC800',(Math.random()*30-15),-(14+Math.random()*22),600+Math.random()*400,1.5+Math.random()*.8);
+}
+function lpFlare(m){
+  const svg=m.querySelector('svg');if(!svg||LP_RM)return;
+  const bo=svg.querySelector('.boost'),gl=svg.querySelector('.glow'),body=svg.querySelector('.body');
+  if(bo)bo.animate([{transform:'scale(1)'},{transform:'scale(1.32)',offset:.16},{transform:'scale(1.25)',offset:.5},{transform:'scale(1)'}],{duration:1200,easing:'cubic-bezier(.2,.8,.3,1)'});
+  if(gl){gl.style.transformOrigin='50px 20px';gl.animate([{opacity:0,transform:'scale(.7)'},{opacity:.9,transform:'scale(1.4)',offset:.2},{opacity:0,transform:'scale(1.55)'}],{duration:1200,easing:'ease-out'});}
+  if(body){
+    body.animate([{transform:'translateY(0) scale(1,1)'},{transform:'translateY(2px) scale(1.04,.94)',offset:.15},{transform:'translateY(-5px) scale(.97,1.04)',offset:.4},{transform:'translateY(0) scale(1,1)'}],{duration:520,easing:'ease-out'});
+    for(let i=0;i<7;i++)lpDot(body,50+(Math.random()*20-10),8+Math.random()*6,Math.random()>.5?'#FFD84D':'#FF9600',(Math.random()*34-17),-(18+Math.random()*26),600+Math.random()*500,1+Math.random()*1.6);
+  }
+  svg.querySelectorAll('.st').forEach((st,i)=>st.animate([{transform:'scale(1) rotate(0)'},{transform:'scale(1.5) rotate('+(i?-90:90)+'deg)',offset:.4},{transform:'scale(1) rotate(0)'}],{duration:700,easing:'ease-out'}));
+}
+document.addEventListener('click',e=>{
+  const m=e.target.closest&&e.target.closest('.mas');if(!m)return;
+  if(m.classList.contains('cheer')){beep('fuum');lpFlare(m);}
+  else if(m.classList.contains('wink')){beep('twinkle');lpSparks(m,9,.2);}
+});
+/* El Lampy de estrellas, de vez en cuando, abre los ojos, parpadea y vuelve a su cara feliz */
+(function(){
+  if(LP_RM)return;
+  const T=(f,ms)=>setTimeout(f,ms);
+  function seq(m){
+    const A=m.querySelector('.chA'),O=m.querySelector('.chO');if(!A||!O||m._eb)return;m._eb=1;
+    const open=()=>{A.setAttribute('opacity','0');O.setAttribute('opacity','1');},close=()=>{O.setAttribute('opacity','0');A.setAttribute('opacity','1');m._eb=0;};
+    const bl=cb=>{O.classList.add('bl');T(()=>{O.classList.remove('bl');if(cb)cb();},130);};
+    const end=()=>T(close,500);
+    open();T(()=>bl(()=>T(()=>{if(Math.random()<.5)bl(()=>T(end,900));else T(end,700);},350)),800+Math.random()*400);
+  }
+  (function loop(){T(()=>{try{document.querySelectorAll('.mas.cheer').forEach(m=>{if(m.isConnected&&m.offsetParent!==null)seq(m);});}catch(e){}loop();},4000+Math.random()*4000);})();
+})();
 /* ===== Rollo, el bibliotecario ===== */
 function rollo(mood,size){
   mood=mood||'contento';size=size||80;
@@ -2434,6 +2480,14 @@ function beep(kind,delay,force){
         bel(1568,.4,.9,.12);bel(2093,.5,.9,.1);bel(2637,.6,1.1,.08);break;
       case 'fan': [[523,0],[659,.1],[784,.2],[1047,.3],[784,.52],[1047,.62]].forEach(z=>mar(z[0],z[1],.22,.17));                /* unidad terminada */
         bel(1319,.74,1.4,.16);bel(1568,.78,1.3,.1);bel(2093,.84,1.5,.08);break;
+      case 'fuum': {                                                                                                            /* Lampy de estrellas: encendido, un «fuum» corto */
+        const n=Math.floor(AC.sampleRate*.9),bf=AC.createBuffer(1,n,AC.sampleRate),ar=bf.getChannelData(0);for(let i=0;i<n;i++)ar[i]=Math.random()*2-1;
+        const src=AC.createBufferSource();src.buffer=bf;const f=AC.createBiquadFilter();f.type='lowpass';
+        f.frequency.setValueAtTime(180,t);f.frequency.exponentialRampToValueAtTime(1100,t+.18);f.frequency.exponentialRampToValueAtTime(260,t+.8);
+        const e=AC.createGain();e.gain.setValueAtTime(.0001,t);e.gain.exponentialRampToValueAtTime(1,t+.1);e.gain.exponentialRampToValueAtTime(.0001,t+.85);
+        src.connect(f);f.connect(e);e.connect(master);src.start(t);src.stop(t+.9);
+        const o=AC.createOscillator(),og=AC.createGain();o.type='sine';o.frequency.setValueAtTime(60,t);o.frequency.exponentialRampToValueAtTime(120,t+.15);o.frequency.exponentialRampToValueAtTime(70,t+.6);
+        og.gain.setValueAtTime(.0001,t);og.gain.exponentialRampToValueAtTime(.45,t+.05);og.gain.exponentialRampToValueAtTime(.0001,t+.6);o.connect(og);og.connect(master);o.start(t);o.stop(t+.7);break;}
       case 'twinkle': bel(1568,0,.7,.1);bel(2093,.09,.8,.09);bel(2637,.18,1.0,.08);break;                                       /* Lampy: destello al tocarlo */
       case 'page': noise(0,.22,3200,.9,.07);noise(.1,.16,5200,1.2,.04);bel(1760,.2,.5,.05);break;                                /* Rollo: roce de pergamino y una campanita */
       case 'pop': note(520,0,.14,.12,[[1,1,1]],.01);note(780,.06,.16,.1,[[1,1,1]],.01);break;                                    /* Rollo: abrir */
@@ -10804,8 +10858,8 @@ function mascotSport(size){return '<span class="mas sport ph" data-sz="'+size+'"
   let G=0,lastConn=0;
   function resetFace(box){const q=k=>box.querySelector(k);
     box.querySelectorAll('.sb,.db,.sw').forEach(e=>e.getAnimations().forEach(x=>x.cancel()));
-    q('.eo').style.display='';q('.ec').style.display='none';q('.ms').style.display='';q('.mt').style.display='none';q('.mo').style.display='none';q('.sw').style.opacity=0;}
-  async function run(box,g){
+    q('.eo').style.display='';q('.ec').style.display='none';q('.ms').style.display='';q('.mt').style.display='none';q('.mo').style.display='none';q('.sw').style.opacity=0;box._rep=false;}
+  async function run(box,g,skip){
     const q=k=>box.querySelector(k);
     const E={b:q('.sb'),db:q('.db'),eo:q('.eo'),ec:q('.ec'),ms:q('.ms'),mt:q('.mt'),mo:q('.mo'),sw:q('.sw')};
     const sh=(n,on)=>{E[n].style.display=on?'':'none';},mouth=m=>{sh('ms',m==='s');sh('mt',m==='t');sh('mo',m==='o');},eyes=o=>{sh('eo',o);sh('ec',!o);};
@@ -10813,10 +10867,11 @@ function mascotSport(size){return '<span class="mas sport ph" data-sz="'+size+'"
     const ok=()=>g===G;
     const conn=async()=>{while(!box.isConnected&&ok())await sl(400);return ok();};
     while(ok()){
-      /* reposo: sonriendo, sin sudor, levitando 2 a 5 veces */
-      const n=rn(2,5);
+      /* reposo: sonriendo, sin sudor, levitando 2 a 5 veces (se salta si lo tocaron) */
+      if(!skip){const n=rn(2,5);
       for(let i=0;i<n&&ok();i++){if(!await conn())return;await A(E.b,[{transform:'translateY(0)'},{transform:'translateY(-4px)'},{transform:'translateY(0)'}],{duration:2200,easing:'ease-in-out'});}
-      await sl(rn(500,1100));if(!await conn())return;
+      await sl(rn(500,1100));if(!await conn())return;}
+      skip=false;box._rep=true;
       /* sube lento con ojos cerrados y una gota de sudor */
       eyes(false);mouth('t');
       const up=A(E.db,[{transform:'translate(0,0) rotate(0deg)'},{transform:'translate(2px,-22px) rotate(-24deg)'}],{duration:3400,easing:'ease-in-out'});
@@ -10826,13 +10881,13 @@ function mascotSport(size){return '<span class="mas sport ph" data-sz="'+size+'"
       /* abre los ojos, sopla y baja rápido */
       eyes(true);mouth('o');
       await A(E.db,[{transform:'translate(2px,-22px) rotate(-24deg)'},{transform:'translate(0,0) rotate(0deg)'}],{duration:420,easing:'cubic-bezier(.5,0,.9,.6)'});
-      if(!ok())return;await sl(350);mouth('s');
+      if(!ok())return;await sl(350);mouth('s');box._rep=false;
     }
   }
   setInterval(()=>{if(SPORT_EL&&SPORT_EL.isConnected)lastConn=Date.now();},400);
   window.sportInit=function(){
     const ph=document.querySelector('.mas.sport.ph');if(!ph)return;
-    if(!SPORT_EL){SPORT_EL=document.createElement('span');SPORT_EL.className='mas sport';SPORT_EL.innerHTML=SPORT_SVG;}
+    if(!SPORT_EL){SPORT_EL=document.createElement('span');SPORT_EL.className='mas sport';SPORT_EL.innerHTML=SPORT_SVG;SPORT_EL.addEventListener('click',()=>{if(rm||SPORT_EL._rep||!SPORT_EL._on)return;G++;resetFace(SPORT_EL);run(SPORT_EL,G,true);});}
     SPORT_EL.style.width=SPORT_EL.style.height=ph.dataset.sz+'px';
     const fresh=!lastConn||Date.now()-lastConn>1500;
     ph.replaceWith(SPORT_EL);lastConn=Date.now();
