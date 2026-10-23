@@ -452,7 +452,13 @@ h1,h2,h3,h4{font-weight:900}
 .rtabs{z-index:3}
 .wk{background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;padding:12px 14px 14px;margin:0 0 14px}
 .wk.ok{border-color:var(--green);background:color-mix(in srgb,var(--green) 10%,var(--surface))}
-.wk .wkh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+.wk .wkh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;width:100%;background:none;border:0;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.wk .wkv{width:18px;height:18px;flex:none;color:var(--muted);transition:transform .2s}
+.wk.cl .wkv{transform:rotate(-90deg)}
+.wk.cl{padding:9px 14px}.wk.cl .wkh{margin:0}
+.wk .wkm{display:flex;gap:4px;flex:1;justify-content:flex-end;align-items:center}
+.wk .wkm i{width:22px;height:7px;border-radius:99px;background:var(--line)}
+.wk .wkm i.on{background:var(--orange)}.wk.ok .wkm i.on{background:var(--green)}
 .wk .wkt{font-size:11px;font-weight:900;letter-spacing:.09em;color:var(--orange-ink)}
 .wk.ok .wkt{color:var(--green-ink)}
 .wk .wkn{font-size:12px;font-weight:900;background:var(--orange-bg);color:var(--orange-ink);border-radius:999px;padding:2px 10px;white-space:nowrap}
@@ -10882,12 +10888,18 @@ function wkGoals(){
 }
 function wkCheck(){
   try{const c=wkc();if(c.done)return;
-    if(wkGoals().every(g=>g.v>=g.n)){c.done=true;S.wkDone=(S.wkDone||0)+1;S.xp=(S.xp||0)+30;save();toast('🏆 ¡Reto de la semana completado! +30 XP');if(TAB==='review'){confetti(90);beep('win');render();}}
+    if(wkGoals().every(g=>g.v>=g.n)){c.done=true;WK_OPEN=true;S.wkDone=(S.wkDone||0)+1;S.xp=(S.xp||0)+30;save();toast('🏆 ¡Reto de la semana completado! +30 XP');if(TAB==='review'){confetti(90);beep('win');render();}}
     else save();}catch(e){}
 }
+let WK_OPEN=null,WK_W=-1;
+const WK_CH='<svg class="wkv" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function wkHTML(){
   const c=wkc(),g=wkGoals(),ok=c.done;
-  return '<section class="wk'+(ok?' ok':'')+'"><div class="wkh"><span class="wkt">'+(ok?'¡RETO DE LA SEMANA COMPLETADO!':'RETO DE LA SEMANA')+'</span>'+(S.wkDone?'<span class="wkn" title="Semanas completadas">🏆 '+S.wkDone+'</span>':'')+'</div>'+
+  if(WK_W!==c.w){WK_W=c.w;WK_OPEN=null;}
+  if(WK_OPEN===null){WK_OPEN=!c.seen;if(!c.seen){c.seen=true;try{save();}catch(e){}}}
+  const nd=g.filter(x=>x.v>=x.n).length,tt=(ok?'¡RETO DE LA SEMANA COMPLETADO!':'RETO DE LA SEMANA');
+  if(!WK_OPEN)return '<section class="wk cl'+(ok?' ok':'')+'"><button class="wkh" data-a="wk-tog" aria-expanded="false" aria-label="Mostrar el reto de la semana"><span class="wkt">'+(ok?'✅ RETO COMPLETADO':'RETO DE LA SEMANA')+'</span><span class="wkm">'+g.map(x=>'<i class="'+(x.v>=x.n?'on':'')+'"></i>').join('')+'<span class="wkc">'+nd+'/'+g.length+'</span></span>'+WK_CH+'</button></section>';
+  return '<section class="wk'+(ok?' ok':'')+'"><button class="wkh" data-a="wk-tog" aria-expanded="true" aria-label="Ocultar el reto de la semana"><span class="wkt">'+tt+'</span><span class="wkm">'+(S.wkDone?'<span class="wkn" title="Semanas completadas">🏆 '+S.wkDone+'</span>':'')+'</span>'+WK_CH+'</button>'+
     g.map(x=>'<div class="wkr'+(x.v>=x.n?' ok':'')+'"><span class="wke" aria-hidden="true">'+(x.v>=x.n?'✅':x.e)+'</span><span class="wkx">'+x.t+'</span><span class="wkc">'+x.v+x.u+'</span><div class="wkb" role="progressbar" aria-valuemin="0" aria-valuemax="'+x.n+'" aria-valuenow="'+x.v+'"><i style="width:'+Math.round(100*x.v/x.n)+'%"></i></div></div>').join('')+
     (ok?'<p class="wkf">+30 XP ganados. ¡Nuevo reto la próxima semana!</p>':'')+'</section>';
 }
@@ -14257,6 +14269,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='vs-'){vsAct(a,b);}
   else if(a.slice(0,4)==='mem-'){memAct(a,b);}
   else if(a.slice(0,4)==='msr-'){msrAct(a,b);}
+  else if(a==='wk-tog'){WK_OPEN=!WK_OPEN;render();}
   else if(a.slice(0,3)==='rp-'){rpAct(a);}
   else if(a.slice(0,3)==='rc-'){rcAct(a,b);}
   else if(a.slice(0,3)==='rv-'){repAct(a,b);}
