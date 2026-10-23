@@ -13013,6 +13013,20 @@ function cwRender(){
   const cur=el.querySelector('.cwc.cur');if(cur&&cur.scrollIntoView){try{cur.scrollIntoView({block:'nearest'});}catch(e){}}
 }
 function cwSelect(w,i){CW.sel={w,i};}
+/* Tras escribir o pedir pista: si la palabra quedó completa, pasa a la siguiente incompleta; si no, a la próxima casilla que falte */
+function cwAdvance(){
+  const w=CW.sel.w,p=CW.words[w],n=p.w.length;
+  const need=j=>{const [a,b]=cwCellPos(w,j);return CW.inp[a][b]!==p.w[j];};
+  if(cwWordDone(p)){
+    for(let k=1;k<=CW.words.length;k++){
+      const nx=(w+k)%CW.words.length;if(nx===w)continue;const q=CW.words[nx];
+      if(!cwWordDone(q)){let j=0;while(j<q.w.length-1){const [a,b]=cwCellPos(nx,j);if(CW.inp[a][b]!==q.w[j])break;j++;}CW.sel={w:nx,i:j};return;}
+    }
+    return;
+  }
+  for(let j=CW.sel.i+1;j<n;j++)if(need(j)){CW.sel.i=j;return;}
+  for(let j=0;j<=CW.sel.i;j++)if(need(j)){CW.sel.i=j;return;}
+}
 function cwType(k){
   if(!CW||CW.done||!CW.sel)return;
   const p=CW.words[CW.sel.w];
@@ -13024,10 +13038,7 @@ function cwType(k){
     else{let j=CW.sel.i-1;while(j>=0&&lkI(j))j--;if(j>=0){CW.sel.i=j;const [r2,c2]=cwCellPos(CW.sel.w,j);CW.inp[r2][c2]='';}}
   }else{
     if(!lkI(CW.sel.i))CW.inp[R][C]=k;
-    if(CW.sel.i<p.w.length-1){let j=CW.sel.i+1;while(j<p.w.length-1&&lkI(j))j++;CW.sel.i=j;}
-    else{ // palabra completa: salta a la siguiente incompleta
-      if(cwWordDone(p)){const nx=CW.words.findIndex((q,qi)=>qi!==CW.sel.w&&!cwWordDone(q));if(nx>=0){const q=CW.words[nx];let j=0;while(j<q.w.length-1){const [a,b]=cwCellPos(nx,j);if(CW.inp[a][b]!==q.w[j])break;j++;}CW.sel={w:nx,i:j};}}
-    }
+    cwAdvance();
   }
   haptic&&haptic([8]);
   if(CW.words.every(cwWordDone)){cwEnd();return;}
@@ -13036,6 +13047,7 @@ function cwType(k){
 function cwAct(a,b){
   if(a==='cw-solo'){cwStart();return;}
   if(!CW)return;
+  if(CW.done&&/^cw-(cell|word|key|check|hint)$/.test(a))return;
   if(a==='cw-cell'){
     const r=+b.dataset.r,c=+b.dataset.c,x=CW.grid[r][c];
     const cur=CW.sel&&cwCellPos(CW.sel.w,CW.sel.i);
@@ -13058,7 +13070,7 @@ function cwAct(a,b){
     const [R,C]=cwCellPos(CW.sel.w,CW.sel.i);
     if(cwLocked(R,C)){const p0=CW.words[CW.sel.w];if(CW.sel.i<p0.w.length-1)CW.sel.i++;cwRender();return;}
     CW.inp[R][C]=CW.grid[R][C].ch;CW.rev[R+','+C]=1;delete CW.wrong[R+','+C];CW.hints++;
-    const p=CW.words[CW.sel.w];if(CW.sel.i<p.w.length-1)CW.sel.i++;
+    cwAdvance();
     if(CW.words.every(cwWordDone)){cwEnd();return;}
     cwRender();
   }
@@ -13073,9 +13085,14 @@ function cwAct(a,b){
 }
 function cwExit(){CW=null;gClose();}
 function cwEnd(){
-  CW.done=true;CW.wrong={};
+  CW.done=true;CW.wrong={};CW.sel=null;
+  const me=CW;
   const r=recordDay(10);S.gplays=(S.gplays||0)+1;
   const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
+  cwRender();beep('win');confetti(60);haptic([20,70,20,70,50]);
+  setTimeout(()=>{if(CW!==me||$('#game').hidden)return;cwShowEnd(r,fresh);},3000);
+}
+function cwShowEnd(r,fresh){
   const lst=CW.words.slice().sort((a,b)=>a.n-b.n).map(p=>'<div class="li"><span><b>'+esc(p.w)+'</b> — '+esc(p.c)+'</span><span class="muted" style="white-space:nowrap">'+esc(p.ref)+'</span></div>').join('');
   $('#game').innerHTML=
    '<div class="lb"><div class="res"><div style="display:flex;justify-content:center">'+mascot('cheer',130)+'</div><h1>¡Crucigrama completo!</h1><p class="muted" style="margin:0">'+(CW.hints?'Con '+CW.hints+(CW.hints===1?' pista':' pistas'):'Sin usar pistas')+'</p>'+
@@ -13086,7 +13103,7 @@ function cwEnd(){
    '<h3 style="text-align:left;margin:18px 0 6px">Palabras y pasajes</h3><div class="list" style="text-align:left">'+lst+'</div></div></div>'+
    '<div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="cw-close">Salir</button><button class="btn" data-a="cw-new" data-primary>Otro crucigrama</button></div></div></div>';
   setTimeout(famSync,400);
-  beep('win');confetti(120);haptic([20,70,20,70,50]);
+  confetti(120);
 }
 document.addEventListener('keydown',e=>{
   if(!CW||$('#game').hidden||!$('#modal').hidden||e.ctrlKey||e.metaKey||e.altKey)return;
