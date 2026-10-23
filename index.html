@@ -450,6 +450,27 @@ h1,h2,h3,h4{font-weight:900}
 .card.votd.vmini .vtog{position:static;width:24px;height:24px;background:none;border:0;box-shadow:none;border-radius:0;display:grid;place-items:center;color:var(--blue-ink);flex:none}
 .card.votd.vmini .vch{width:22px;height:22px}
 .rtabs{z-index:3}
+.wk{background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;padding:12px 14px 14px;margin:0 0 14px}
+.wk.ok{border-color:var(--green);background:color-mix(in srgb,var(--green) 10%,var(--surface))}
+.wk .wkh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+.wk .wkt{font-size:11px;font-weight:900;letter-spacing:.09em;color:var(--orange-ink)}
+.wk.ok .wkt{color:var(--green-ink)}
+.wk .wkn{font-size:12px;font-weight:900;background:var(--orange-bg);color:var(--orange-ink);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.wk .wkr{display:grid;grid-template-columns:26px 1fr auto;gap:2px 10px;align-items:center;padding:6px 0}
+.wk .wkr+.wkr{border-top:1px solid var(--line)}
+.wk .wke{font-size:20px;grid-row:1/3;text-align:center}
+.wk .wkx{font-weight:800;font-size:14px;line-height:1.25}
+.wk .wkc{font-weight:900;font-size:13px;color:var(--muted)}
+.wk .wkb{grid-column:2/4;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.wk .wkb i{display:block;height:100%;border-radius:99px;background:var(--orange);transition:width .5s}
+.wk .wkr.ok .wkb i{background:var(--green)}.wk .wkr.ok .wkc{color:var(--green-ink)}
+.wk .wkf{margin:8px 0 0;font-size:13px;font-weight:800;color:var(--green-ink)}
+.mlib{margin:18px 0 20px}.mlib h3{margin:0 0 8px;font-size:16px}
+.mlib .mrow{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:9px 12px;margin:0 0 6px;cursor:pointer}
+.mlib .mrow span{font-size:12px;font-weight:800;color:var(--muted);white-space:nowrap}
+.mlib .mrow.due{border-color:var(--orange)}.mlib .mrow.due span{color:var(--orange-ink)}
+.mlib .btn{margin:0 0 10px}
+
 .rf .rtab.on{margin-bottom:-3px;padding-bottom:15px}
 .avsvg{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.2em;border-radius:50%;overflow:hidden;flex:none}
 .avE{transform-box:fill-box;transform-origin:50% 50%;animation:avBlink 5s infinite}
@@ -10828,7 +10849,7 @@ function memWin(m){
   let adv=false;
   if(m.ld!==today()){m.lvl++;m.ld=today();adv=true;S.xp=(S.xp||0)+15;save();}
   MEM.res={ok:true,adv:adv};MEM.txt='';MEM.fill={};beep('win');haptic([20,40,20]);if(adv)confetti(m.lvl>5?160:70);
-  render();
+  wkCheck();render();
 }
 function memCheckFill(m,mm){
   const bad=[];
@@ -10852,6 +10873,66 @@ function memCheck(text){
   memWin(m);
 }
 const RT={k:''};
+/* ===== Reto de la semana ===== */
+function wkc(){const w=memWeek();if(!S.wkc||S.wkc.w!==w)S.wkc={w:w,rep:0,evg:0,done:false};return S.wkc;}
+function wkGoals(){
+  const c=wkc();try{memState();}catch(e){}
+  const m=S.mem&&S.mem.wk===memWeek()?S.mem:null,lv=m?(m.lvl>5?5:Math.max(0,m.lvl-1)):0;
+  return [{e:'📖',t:'Memoriza el versículo de la semana',v:lv,n:5,u:' de 5 niveles'},{e:'🔁',t:'Repasa 3 veces',v:Math.min(3,c.rep),n:3,u:' de 3'},{e:'🕯️',t:'Comparte el mensaje de fe 1 vez',v:Math.min(1,c.evg),n:1,u:' de 1'}];
+}
+function wkCheck(){
+  try{const c=wkc();if(c.done)return;
+    if(wkGoals().every(g=>g.v>=g.n)){c.done=true;S.wkDone=(S.wkDone||0)+1;S.xp=(S.xp||0)+30;save();toast('🏆 ¡Reto de la semana completado! +30 XP');if(TAB==='review'){confetti(90);beep('win');render();}}
+    else save();}catch(e){}
+}
+function wkHTML(){
+  const c=wkc(),g=wkGoals(),ok=c.done;
+  return '<section class="wk'+(ok?' ok':'')+'"><div class="wkh"><span class="wkt">'+(ok?'¡RETO DE LA SEMANA COMPLETADO!':'RETO DE LA SEMANA')+'</span>'+(S.wkDone?'<span class="wkn" title="Semanas completadas">🏆 '+S.wkDone+'</span>':'')+'</div>'+
+    g.map(x=>'<div class="wkr'+(x.v>=x.n?' ok':'')+'"><span class="wke" aria-hidden="true">'+(x.v>=x.n?'✅':x.e)+'</span><span class="wkx">'+x.t+'</span><span class="wkc">'+x.v+x.u+'</span><div class="wkb" role="progressbar" aria-valuemin="0" aria-valuemax="'+x.n+'" aria-valuenow="'+x.v+'"><i style="width:'+Math.round(100*x.v/x.n)+'%"></i></div></div>').join('')+
+    (ok?'<p class="wkf">+30 XP ganados. ¡Nuevo reto la próxima semana!</p>':'')+'</section>';
+}
+/* ===== Versículos memorizados + repaso espaciado ===== */
+const MSR_INT=[3,10,30,60];
+function dAdd(n){const d=new Date();d.setDate(d.getDate()+n);return dstr(d);}
+function memList(){const h=(S.memHist||[]).map(x=>x.r);if(S.mem&&S.mem.lvl>5)h.push(S.mem.r);return h.filter((r,i)=>VBY[r]&&h.indexOf(r)===i).reverse();}
+function msrData(){S.msr=S.msr||{};let ch=false;memList().forEach(r=>{if(!S.msr[r]){S.msr[r]={b:0,d:dAdd(MSR_INT[0])};ch=true;}});if(ch)save();return S.msr;}
+function msrDue(){const m=msrData(),t=today();return memList().filter(r=>m[r]&&m[r].d<=t);}
+function memLibHTML(){
+  const L=memList();
+  if(!L.length)return '<section class="mlib"><h3>📚 Versículos memorizados</h3><p class="muted" style="margin:0">Aquí irán apareciendo los versículos que memorices. Te los haremos repasar a los 3, 10 y 30 días para que no se te olviden.</p></section>';
+  const sr=msrData(),t=today(),due=msrDue();
+  const days=d=>Math.round((new Date(d+'T12:00:00')-new Date(t+'T12:00:00'))/864e5);
+  return '<section class="mlib"><h3>📚 Versículos memorizados · '+L.length+'</h3>'+
+    (due.length?'<button class="btn orange" data-a="msr-start">🔁 Repasar de memoria ('+due.length+(due.length===1?' versículo':' versículos')+')</button>':'<p class="muted" style="margin:0 0 8px;font-size:14px">Todo al día. ¡Bien hecho!</p>')+
+    L.slice(0,8).map(r=>{const n=days(sr[r].d);return '<button class="mrow'+(n<=0?' due':'')+'" data-a="msr-view" data-r="'+esc(r)+'"><b>'+esc(r)+'</b><span>'+(n<=0?'Toca repasar':'En '+n+(n===1?' día':' días'))+'</span></button>';}).join('')+
+    (L.length>8?'<p class="muted" style="margin:4px 0 0;font-size:13px">Y '+(L.length-8)+' más.</p>':'')+'</section>';
+}
+let MSR={q:[],i:0,show:false};
+function msrRender(){
+  const r=MSR.q[MSR.i],v=VBY[r];
+  if(!v){MSR.i++;if(MSR.i>=MSR.q.length)return msrEnd();return msrRender();}
+  showModal('<div class="mtag" style="font-size:11px;font-weight:900;letter-spacing:.08em;color:var(--blue)">REPASO DE MEMORIA · '+(MSR.i+1)+' DE '+MSR.q.length+'</div><h3 style="margin:6px 0 10px">'+esc(r)+'</h3>'+
+    (MSR.show?'<blockquote style="font-family:Georgia,serif;font-style:italic;font-size:18px;line-height:1.6;margin:0 0 12px;padding:0;border:0">'+esc(v.t)+'</blockquote><p class="muted" style="margin:0 0 10px">¿Lo recitaste bien?</p><button class="btn" data-a="msr-ok">Lo recordé</button><button class="btn ghost" data-a="msr-bad">Me costó</button>'
+    :'<p class="muted" style="margin:0 0 12px">Recítalo en voz alta o en tu mente. Cuando termines, míralo.</p><button class="btn" data-a="msr-show">Mostrar el versículo</button><button class="mlink" data-a="msr-end">Salir</button>'));
+}
+function msrEnd(){
+  hideModal();
+  if(MSR.i>0){const c=wkc();c.rep++;save();toast('¡Repaso de memoria listo!');wkCheck();}
+  MSR={q:[],i:0,show:false};render();
+}
+function msrAct(a,b){
+  if(a==='msr-start'){const q=msrDue().slice(0,5);if(!q.length)return;MSR={q:q,i:0,show:false};msrRender();}
+  else if(a==='msr-show'){MSR.show=true;msrRender();}
+  else if(a==='msr-ok'||a==='msr-bad'){
+    const r=MSR.q[MSR.i],m=msrData(),e=m[r]||{b:0};
+    if(a==='msr-ok'){const nb=Math.min(MSR_INT.length-1,(e.b||0)+1);m[r]={b:nb,d:dAdd(MSR_INT[nb])};S.xp=(S.xp||0)+5;beep('win');}
+    else m[r]={b:0,d:dAdd(1)};
+    save();MSR.i++;MSR.show=false;
+    if(MSR.i>=MSR.q.length)msrEnd();else msrRender();
+  }
+  else if(a==='msr-end')msrEnd();
+  else if(a==='msr-view'){const r=b.dataset.r,v=VBY[r];if(!v)return;showModal('<h3 style="margin:0 0 8px">'+esc(r)+'</h3><blockquote style="font-family:Georgia,serif;font-style:italic;font-size:18px;line-height:1.6;margin:0 0 12px;padding:0;border:0">'+esc(v.t)+'</blockquote><button class="btn" data-a="stay">Cerrar</button>');}
+}
 const SPORT_SVG='<svg viewBox="-6 -4 112 108" aria-hidden="true"><defs><linearGradient id="sdg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9BE0FF"/><stop offset="1" stop-color="#34AEEF"/></linearGradient></defs><g class="sb"><path d="M17 56C5 54 3 70 15 73" fill="none" stroke="#E5A600" stroke-width="6" stroke-linecap="round"/><path d="M83 50C93 46 98 40 96 33C91 39 87 41 80 42Z" fill="#E5A600"/><path d="M12 62C12 42 28 37 50 37C72 37 88 42 88 62C88 80 72 92 50 92C28 92 12 80 12 62Z" fill="#FFC800"/><path d="M18 74C24 86 36 91 50 91C64 91 76 86 82 74C74 82 62 84 50 84C38 84 26 82 18 74Z" fill="#E5A600" opacity=".55"/><path d="M22 53q4-9 13-12" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="4" stroke-linecap="round"/><rect x="41" y="28" width="18" height="13" rx="4" fill="#E5A600"/><g class="sf" style="transform-origin:50px 36px"><path d="M50 2C58 12 64 18 64 25C64 32 58 36 50 36C42 36 36 32 36 25C36 18 42 12 50 2Z" fill="#FF9600"/><path d="M50 15C54 21 57 24 57 28C57 32 54 34 50 34C46 34 43 32 43 28C43 24 46 21 50 15Z" fill="#FFD84D"/></g><circle cx="27" cy="63" r="5.6" fill="#FF8FA3" opacity=".65"/><circle cx="73" cy="63" r="5.6" fill="#FF8FA3" opacity=".65"/><g class="eo"><ellipse cx="38" cy="53" rx="5.6" ry="6.4" fill="#3C3C3C"/><ellipse cx="62" cy="53" rx="5.6" ry="6.4" fill="#3C3C3C"/><circle cx="40" cy="50.6" r="2.1" fill="#fff"/><circle cx="64" cy="50.6" r="2.1" fill="#fff"/></g><g class="ec" style="display:none"><path d="M32 54q6 6 12 0M56 54q6 6 12 0" fill="none" stroke="#3C3C3C" stroke-width="3.8" stroke-linecap="round"/></g><path class="ms" d="M38 64q12 12 24 0" fill="none" stroke="#3C3C3C" stroke-width="3.6" stroke-linecap="round"/><path class="mt" style="display:none" d="M42 67h16" fill="none" stroke="#3C3C3C" stroke-width="3.6" stroke-linecap="round"/><ellipse class="mo" style="display:none" cx="50" cy="67" rx="4.6" ry="5.2" fill="#7A1F1F" stroke="#3C3C3C" stroke-width="2.6"/><g class="sw" opacity="0" style="transform-origin:24px 46px;transform-box:view-box"><path d="M24 40.5C26.6 44.2 28 46.6 28 48.6A4 4 0 0 1 20 48.6C20 46.6 21.4 44.2 24 40.5Z" fill="url(#sdg)" stroke="#2E98DE" stroke-width=".9"/><ellipse cx="22.4" cy="48" rx="1.1" ry="1.8" fill="#fff" opacity=".85"/></g><g><path d="M16 49Q50 28 84 49" fill="none" stroke="#E03A3A" stroke-width="6.5" stroke-linecap="round"/><path d="M16 49Q50 28 84 49" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.6" stroke-dasharray="2 5"/><path d="M82 47Q94 44 97 54Q90 50 83 52Z" fill="#E03A3A"/><path d="M80 48Q92 50 95 62Q87 56 80 53Z" fill="#C82E2E"/></g><g class="db" style="transform-origin:82px 80px;transform-box:view-box"><g transform="translate(-5 0) rotate(-18 82 80)"><rect x="66" y="78" width="32" height="4.5" rx="2" fill="#555"/><rect x="62" y="71" width="7" height="18" rx="3" fill="#333"/><rect x="95" y="71" width="7" height="18" rx="3" fill="#333"/></g></g></g></svg>';
 let SPORT_EL=null;
 function mascotSport(size){return '<span class="mas sport ph" data-sz="'+size+'" style="width:'+size+'px;height:'+size+'px"></span>';}
@@ -10901,10 +10982,11 @@ function mascotSport(size){return '<span class="mas sport ph" data-sz="'+size+'"
 const RT_T=[['mem','📖','Memoriza','¡Un versículo por semana! Apréndelo en cinco niveles.'],['evg','🕯️','Evangeliza','¡Comparte la esperanza que tienes en Cristo!'],['rev','🔁','Repasa','¡Entrena lo que ya aprendiste para no olvidarlo!']];
 function reviewHTML(){setTimeout(()=>{try{sportInit();}catch(e){}},0);
   const mh=memHTML();if(!RT.k||(RT.k==='mem'&&!mh))RT.k=mh?'mem':'evg';
+  if(RT.k==='mem'&&!mh)RT.k='evg';
   const cur=RT_T.find(t=>t[0]===RT.k);
   const pills='<div class="rtabs" role="tablist">'+RT_T.map(t=>'<button role="tab" aria-selected="'+(RT.k===t[0])+'" class="rtab r-'+t[0]+(RT.k===t[0]?' on':'')+'" data-a="rt-tab" data-k="'+t[0]+'"><span aria-hidden="true">'+t[1]+'</span> '+t[2]+(nwSeen('rt_'+t[0])?'':'<i class="gdot" aria-label="Nuevo"></i>')+'</button>').join('')+'</div>';
-  const body=RT.k==='mem'?mh:RT.k==='evg'?evgCardHTML():reviewHTML0().replace('<h1 class="page">Repaso</h1>','');
-  return '<h1 class="page">Reto</h1><div class="hero">'+mascotSport(84)+'<div class="bubble"><span>'+cur[3]+'</span></div></div><div class="rf rf-'+RT.k+'">'+pills+'<div class="rfb">'+body+'</div></div>';
+  const body=RT.k==='mem'?mh+memLibHTML():RT.k==='evg'?evgCardHTML():reviewHTML0().replace('<h1 class="page">Repaso</h1>','');
+  return '<h1 class="page">Reto</h1><div class="hero">'+mascotSport(84)+'<div class="bubble"><span>'+cur[3]+'</span></div></div>'+wkHTML()+'<div class="rf rf-'+RT.k+'">'+pills+'<div class="rfb">'+body+'</div></div>';
 }
 function reviewHTML0(){
   if(S.course==='gk')return gkReviewHTML();
@@ -10914,7 +10996,7 @@ function reviewHTML0(){
   const weak=seen.map(r=>({r,s:S.verses[r].c-S.verses[r].w*1.5})).sort((a,b)=>a.s-b.s).slice(0,6);
   return '<h1 class="page">Repaso</h1>'+
    '<section class="revhero">'+'<div style="flex:1"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Repasa los versículos que ya viste en las lecciones, empezando por los que más te cuestan. Has visto <b>'+seen.length+'</b> de los '+ALLV.length+' versículos del curso.':'Haz tu primera lección y aquí aparecerán tus versículos.')+'</p>'+
-   '<button class="btn orange" data-a="review" '+(ready?'':'disabled')+'>'+(ready?'Empezar repaso':'Bloqueado')+'</button></div></section>'+
+   '<button class="btn orange" data-a="review" '+(ready?'':'disabled')+'>'+(ready?'Empezar repaso':'Bloqueado')+'</button>'+(ready?'<button class="btn ghost" data-a="review-quick" style="margin-top:8px">⏱️ Repaso de 2 minutos</button>':'')+'</div></section>'+
    (ready?'<h3 style="margin:18px 0 8px">Los que más te cuestan</h3><div class="list">'+weak.map(w=>{const l=lvlOf(w.r);return '<div class="li"><cite>'+esc(w.r)+'</cite> <span class="lvl" style="background:'+l.c+'">'+l.t+'</span><p>'+esc(VBY[w.r].t)+'</p><div class="meter"><i style="width:'+l.w+'%;background:'+l.c+'"></i></div></div>';}).join('')+'</div>':'');
 }
 /* ===== Celebración de logros: sale sola cuando termina lo que se estaba haciendo (lección, juego, sala) ===== */
@@ -11359,7 +11441,7 @@ function finishLesson(){
   const r=recordDay(xp);
   const isReview=L.meta.type==='review';
   L.wasDone=!isReview&&!!S.done[L.meta.key];
-  if(isReview)S.reviews++;
+  if(isReview){S.reviews++;try{wkc().rep++;wkCheck();}catch(e){}}
   else{if(!S.done[L.meta.key])JUST_DONE=L.meta.key;const p=S.done[L.meta.key]||{n:0};S.done[L.meta.key]={n:p.n+1,acc:Math.max(p.acc||0,L.firstTry/L.total)};}
   if(!isReview){
     const gkc=L.meta.course==='gk',cc=L.meta.course||'bib',UU=gkc?GK_UNITS:cc==='bio'?BIO_UNITS:cc==='lib'?LIB_UNITS:cc==='pas'?PAS_UNITS:UNITS,ui0=unitOf(UU,L.meta.key);
@@ -11932,7 +12014,7 @@ async function evgShare(){
   if(!ok){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');ok=true;}
   S.evg=S.evg||{n:0,t:0};
   if(Date.now()-(S.evg.t||0)>30000){
-    S.evg.n++;S.evg.t=Date.now();
+    S.evg.n++;S.evg.t=Date.now();wkc().evg++;wkCheck();
     ACH.filter(a=>!S.ach[a.id]&&a.f(S)).forEach(a=>S.ach[a.id]=true);
     toast('¡Gracias por compartir! Llevas '+S.evg.n+(S.evg.n===1?' vez.':' veces.'));
   }
@@ -14117,6 +14199,13 @@ document.addEventListener('click',e=>{
     const ids=seen.map(id=>({id,s:S.gw[id].c-S.gw[id].w*1.5+Math.random()})).sort((x,y)=>x.s-y.s).slice(0,6).map(x=>x.id);
     startLesson({type:'review',title:'Repaso diario',verses:[],words:ids,course:'gk'},gkWords({ids}));
   }
+  else if(a==='review-quick'){
+    const seen=Object.keys(S.verses).filter(r=>VBY[r]);if(seen.length<3)return;
+    const vs=seen.map(r=>({r,s:S.verses[r].c-S.verses[r].w*1.5+Math.random()})).sort((x,y)=>x.s-y.s).slice(0,3).map(x=>VBY[x.r]);
+    const les=[];[UNITS,PAS_UNITS,LIB_UNITS].forEach(U=>U.forEach(u=>u.lessons.forEach(l=>{if(l.qs&&l.qs.length&&S.done[l.title])les.push(l);})));
+    const hand=[];shuffle(les).slice(0,3).forEach(l=>{const q=l.qs[Math.floor(Math.random()*l.qs.length)];if(q&&q.length>=3)hand.push(q);});
+    startLesson({type:'review',title:'Repaso de 2 minutos',verses:vs},buildQuestions(vs,hand,6));
+  }
   else if(a==='review'){
     const seen=Object.keys(S.verses).filter(r=>VBY[r]);if(seen.length<3)return;
     const pick5=seen.map(r=>({r,s:S.verses[r].c-S.verses[r].w*1.5+Math.random()})).sort((x,y)=>x.s-y.s).slice(0,5).map(x=>VBY[x.r]);
@@ -14167,6 +14256,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='tr-'){trAct(a,b);}
   else if(a.slice(0,3)==='vs-'){vsAct(a,b);}
   else if(a.slice(0,4)==='mem-'){memAct(a,b);}
+  else if(a.slice(0,4)==='msr-'){msrAct(a,b);}
   else if(a.slice(0,3)==='rp-'){rpAct(a);}
   else if(a.slice(0,3)==='rc-'){rcAct(a,b);}
   else if(a.slice(0,3)==='rv-'){repAct(a,b);}
