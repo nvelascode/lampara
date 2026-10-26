@@ -188,9 +188,9 @@ h1,h2,h3,h4{font-weight:900}
 .dot.today{border-color:var(--blue)}
 .dot.on.today{border-color:var(--orange)}
 .dot.on.lost{background:#C4CAD3;border-color:#C4CAD3;color:#fff;box-shadow:none}
-.dot.on.halo{animation:wkHalo 2.8s ease-in-out infinite}
+.dot.on.whalo{animation:wkHalo 2.8s ease-in-out infinite}
 @keyframes wkHalo{0%,100%{box-shadow:0 0 0 3px rgba(232,64,47,.26),0 0 12px 1px rgba(232,64,47,.55)}50%{box-shadow:0 0 0 5px rgba(232,64,47,.16),0 0 20px 4px rgba(232,64,47,.8)}}
-@media (prefers-reduced-motion:reduce){.dot.on.halo{animation:none}}
+@media (prefers-reduced-motion:reduce){.dot.on.whalo{animation:none}}
 .dot.on.fz{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 0 3px rgba(28,176,246,.26),0 0 14px 2px rgba(28,176,246,.7);animation:wkHaloB 2.8s ease-in-out infinite}
 @keyframes wkHaloB{0%,100%{box-shadow:0 0 0 3px rgba(28,176,246,.26),0 0 12px 1px rgba(28,176,246,.55)}50%{box-shadow:0 0 0 5px rgba(28,176,246,.16),0 0 20px 4px rgba(28,176,246,.85)}}
 @media (prefers-reduced-motion:reduce){.dot.on.fz{animation:none}}
@@ -10701,8 +10701,9 @@ function streakInfo(){
   const t=today(),xpT=S.days[t]||0,pg=Math.max(0,Math.min(1,xpT/(S.goal||20)));
   let wk='';for(let i=6;i>=0;i--){const d=addDays(t,-i);const dt=new Date(d+'T00:00:00');wk+=wkDotHTML(d,i,t)+DOW[dt.getDay()]+'</div>';}
   const row=(e,tt,d)=>'<div style="display:flex;gap:10px;text-align:left;align-items:flex-start"><span style="font-size:24px;line-height:1.1">'+e+'</span><div><b>'+tt+'</b><p class="muted" style="margin:2px 0 0;font-size:14px">'+d+'</p></div></div>';
-  showModal('<h3>🔥 '+S.streak+(S.streak===1?' día':' días')+' de racha</h3><div class="week" style="margin:0">'+wk+'</div>'+
+  showModal('<h3>🔥 '+S.streak+(S.streak===1?' día':' días')+' de racha</h3>'+
     '<div class="goalrow gmodal"><div class="ring"><svg viewBox="0 0 70 70" aria-hidden="true"><circle class="rbg" cx="35" cy="35" r="28"/></svg><span class="rwrap" style="filter:drop-shadow(0 0 '+(pg*6).toFixed(1)+'px '+heat(pg,.8)+')"><span class="rring"><span class="rgrad" style="--a:'+Math.round(pg*360)+'deg"></span></span><span class="rcap s"'+(pg>0?'':' hidden')+'></span><span class="rcap e"'+(pg>0&&pg<1?'':' hidden')+' style="--a:'+Math.round(pg*360)+'deg;--ce:'+heat(pg)+'"></span></span><b><span>'+Math.min(xpT,S.goal)+'/'+S.goal+'<small>⚡ XP</small></span></b></div><div style="text-align:left"><b style="font-size:18px">Meta de hoy</b><p class="muted" style="margin:2px 0 0;font-size:14px">'+(xpT>=S.goal?'¡Cumplida!':'Faltan '+(S.goal-xpT)+' XP')+'</p></div></div>'+
+    '<div class="week" style="margin:0">'+wk+'</div>'+
     row('🔥','Racha','Los días seguidos en que practicas. Cuenta cualquier actividad: una lección, un juego o la lectura. Tu mejor racha: '+S.best+'.')+
     row('🛡️','Protectores: '+(S.freezes||0)+' de 2','Cuidan tu racha, incluida la de lectura, si un día no practicas ni lees. Ganas uno cada 7 días de racha.')+
     row('⚡','XP total: '+S.xp,'Los puntos que sumas con cada lección o juego.')+
@@ -12089,7 +12090,7 @@ function wkDotHTML(d,i,t){
   let cls='',st='';
   if(fz&&j>=0)cls=' on fz';
   else if(has){
-    if(j>=0){const c=heat(run.length>1?j/(run.length-1):1),last=j===run.length-1,halo=last&&d===t;cls=' on'+(halo?' halo':'');st=' style="background:'+c+';border-color:'+c+';box-shadow:'+(halo?'0 0 0 3px rgba(232,64,47,.26),0 0 14px 2px rgba(232,64,47,.7)':'0 0 '+(last?9:5)+'px '+heat(run.length>1?j/(run.length-1):1,.55))+'"';}
+    if(j>=0){const c=heat(run.length>1?j/(run.length-1):1),last=j===run.length-1,halo=last&&d===t;cls=' on'+(halo?' whalo':'');st=' style="background:'+c+';border-color:'+c+';box-shadow:'+(halo?'0 0 0 3px rgba(232,64,47,.26),0 0 14px 2px rgba(232,64,47,.7)':'0 0 '+(last?9:5)+'px '+heat(run.length>1?j/(run.length-1):1,.55))+'"';}
     else cls=' on lost';
   }
   return '<div class="day"><div class="dot'+cls+(i===0?' today':'')+'"'+st+'>'+IC.check+'</div>';
