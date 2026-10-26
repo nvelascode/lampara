@@ -8,8 +8,8 @@
    - Recibe las notificaciones (push) y las muestra; al tocarlas abre Lampy en la pantalla indicada.
    Si algún día cambias ESTE archivo, cambia también el número de VERSION.
    ============================================================ */
-const VERSION = 'lampara-v2';
-const SHELL = ['index.html', 'config.js', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
+const VERSION = 'lampara-v3';
+const SHELL = ['index.html', 'config.js', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'icon-512.png', 'badge-96.png'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 const NET_WAIT = 4000; // si la red tarda más y hay copia guardada, se usa la copia
 
@@ -107,7 +107,7 @@ self.addEventListener('push', ev => {
   const opts = {
     body: d.body || '',
     icon: 'icon-192.png',
-    badge: 'icon-192.png',
+    badge: 'badge-96.png',
     lang: 'es',
     data: { url: d.url || '' }
   };
