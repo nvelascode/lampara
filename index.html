@@ -9225,8 +9225,8 @@ function frHTML(){
     '<div class="jr-in" style="margin-top:10px"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></section></details>';
   /* 4. Regalos y tarjetas */
   const gn=giftN();
-  out+='<div class="frtiles"><button class="frtile" data-a="'+(gn?'gift-inbox':'gift-mine')+'"><span class="te" aria-hidden="true">🎁</span><b>Regalos</b><small>'+(gn?'Tienes '+gn+' por abrir':'Lo que te regalaron. Para regalar, toca 🎁 en un amigo')+'</small>'+(gn?'<em class="gbadge">'+gn+'</em>':'')+'</button>'+
-    '<button class="frtile" data-a="card-open"><span class="te" aria-hidden="true">💌</span><b>Tarjetas</b><small>Un versículo o una cita para compartir</small></button></div>';
+  out+='<div class="frtiles"><button class="frtile" data-a="'+(gn?'gift-inbox':'gift-mine')+'"><span class="te" aria-hidden="true">🎁</span><b>Regalos</b><small>'+(gn?'Tienes '+gn+' por abrir':'Regalos recibidos')+'</small>'+(gn?'<em class="gbadge">'+gn+'</em>':'')+'</button>'+
+    '<button class="frtile" data-a="card-open"><span class="te" aria-hidden="true">💌</span><b>Tarjetas</b><small>Un versículo o una cita para compartir en redes</small></button></div>';
   out+='<section class="invcard"><span class="ie" aria-hidden="true"><svg viewBox="0 0 24 24" style="width:40px;height:40px"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></span><div><b>Invita a alguien a Lampy</b><span>Mándale el enlace por WhatsApp para que la instale.</span></div><button data-a="fr-invite">Invitar</button></section>';
   return out;
 }
