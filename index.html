@@ -9225,7 +9225,7 @@ function frHTML(){
     '<div class="jr-in" style="margin-top:10px"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></section></details>';
   /* 4. Regalos y tarjetas */
   const gn=giftN();
-  out+='<div class="frtiles"><button class="frtile" data-a="'+(gn?'gift-inbox':'gift-mine')+'"><span class="te" aria-hidden="true">🎁</span><b>Regalos</b><small>'+(gn?'Tienes '+gn+' por abrir':'Mis regalos')+'</small>'+(gn?'<em class="gbadge">'+gn+'</em>':'')+'</button>'+
+  out+='<div class="frtiles"><button class="frtile" data-a="'+(gn?'gift-inbox':'gift-mine')+'"><span class="te" aria-hidden="true">🎁</span><b>Regalos</b><small>'+(gn?'Tienes '+gn+' por abrir':'Lo que te regalaron. Para regalar, toca 🎁 en un amigo')+'</small>'+(gn?'<em class="gbadge">'+gn+'</em>':'')+'</button>'+
     '<button class="frtile" data-a="card-open"><span class="te" aria-hidden="true">💌</span><b>Tarjetas</b><small>Un versículo o una cita para compartir</small></button></div>';
   out+='<section class="invcard"><span class="ie" aria-hidden="true"><svg viewBox="0 0 24 24" style="width:40px;height:40px"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></span><div><b>Invita a alguien a Lampy</b><span>Mándale el enlace por WhatsApp para que la instale.</span></div><button data-a="fr-invite">Invitar</button></section>';
   return out;
@@ -11125,7 +11125,6 @@ function meHTML(){
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+kfmt(S.xp)+'</b><span>XP total</span></div></div>'+
    '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length+BIOKEYS.length+LIBKEYS.length+PASKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+(signedIn()?'':cloudCardHTML())+
    '<section class="card goalc"><b>🎯 Meta diaria</b><div class="seg">'+[10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
-   giftsCardHTML()+
    '<p class="shline" title="Ganas uno cada 7 días de racha; se usa solo si un día no alcanzas a practicar ni a leer.">🛡️ <b>'+S.freezes+'</b> de 2 protectores de racha · ganas uno cada 7 días y se usa solo si un día no practicas ni lees.</p>'+
    (function(){const got=ACH.filter(a=>S.ach[a.id]),rest=ACH.filter(a=>!S.ach[a.id]);
      return '<details class="achd"><summary><b>🏅 Logros · '+got.length+' de '+ACH.length+'</b></summary><div class="achin"><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+got.concat(rest).map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div></div></details>';})()+
