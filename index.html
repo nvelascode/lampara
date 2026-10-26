@@ -5882,7 +5882,7 @@ function giftReplyOpen(id){
 }
 function giftMine(){
   const cs=S.cards||[],bs=S.badges||[];
-  showModal('<h3>🎁 Mis regalos</h3>'+
+  showModal('<h3>'+((S.cards||[]).length||(S.badges||[]).length?'📬':'📭')+' Mi buzón</h3>'+
    '<b>Insignias</b><div class="mybadges">'+(bs.length?bs.map(k=>'<button class="bdg'+(S.badge===k?' on':'')+'" data-a="gift-equip" data-k="'+k+'"><span>'+badgeE(k)+'</span><small>'+(BADGES[k]||['',''])[1]+(S.badge===k?' · puesta':'')+'</small></button>').join('')+(S.badge?'<button class="bdg" data-a="gift-equip" data-k=""><span>🚫</span><small>Quitar</small></button>':''):'<p class="muted" style="margin:4px 0 8px">Aún no tienes insignias.</p>')+'</div>'+
    '<b style="display:block;margin-top:10px">Tarjetas</b><div class="mycards">'+(cs.length?cs.map(c=>'<div class="mcard"><q>'+esc(c.text)+'</q><cite>'+esc(c.ref)+'</cite><small>De '+esc(c.from)+(c.msg?' · «'+esc(c.msg)+'»':'')+'</small>'+(c.id?(c.replied?'<small>✅ Ya respondiste</small>':'<button class="btn ghost sm" style="margin-top:6px" data-a="gift-reply-open" data-id="'+c.id+'">💬 Responder</button>'):'')+'</div>').join(''):'<p class="muted" style="margin:4px 0 8px">Aún no tienes tarjetas.</p>')+'</div>'+
    '<button class="btn ghost" data-a="stay">Cerrar</button>');
@@ -9225,7 +9225,7 @@ function frHTML(){
     '<div class="jr-in" style="margin-top:10px"><input id="frcode" class="inp" maxlength="6" placeholder="ABC234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de usuario"><button class="btn" data-a="fr-follow">Seguir</button></div></section></details>';
   /* 4. Regalos y tarjetas */
   const gn=giftN();
-  out+='<div class="frtiles"><button class="frtile" data-a="'+(gn?'gift-inbox':'gift-mine')+'"><span class="te" aria-hidden="true">🎁</span><b>Regalos</b><small>'+(gn?'Tienes '+gn+' por abrir':'Regalos recibidos')+'</small>'+(gn?'<em class="gbadge">'+gn+'</em>':'')+'</button>'+
+  out+='<div class="frtiles"><button class="frtile" data-a="'+(gn?'gift-inbox':'gift-mine')+'"><span class="te" aria-hidden="true">'+(gn?'📬':'📭')+'</span><b>Mi buzón</b><small>'+(gn?'Tienes '+gn+' por abrir':'Regalos recibidos')+'</small>'+(gn?'<em class="gbadge">'+gn+'</em>':'')+'</button>'+
     '<button class="frtile" data-a="card-open"><span class="te" aria-hidden="true">💌</span><b>Tarjetas</b><small>Un versículo o una cita para compartir en redes</small></button></div>';
   out+='<section class="invcard"><span class="ie" aria-hidden="true"><svg viewBox="0 0 24 24" style="width:40px;height:40px"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></span><div><b>Invita a alguien a Lampy</b><span>Mándale el enlace por WhatsApp para que la instale.</span></div><button data-a="fr-invite">Invitar</button></section>';
   return out;
