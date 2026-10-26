@@ -5778,9 +5778,38 @@ function rcAct(a,b){
    ============================================================ */
 const BADGES={star:['⭐','Estrella'],crown:['👑','Corona'],dove:['🕊️','Paloma'],flame:['🔥','Llama'],medal:['🏅','Medalla'],book:['📖','Libro'],heart:['💖','Corazón'],sun:['☀️','Sol']};
 const badgeE=k=>(BADGES[k]||['',''])[0];
-Object.assign(FAM_ERR,{regalo_invalido:'Revisa el regalo: faltan datos.',no_disponible:'Ese regalo ya no está disponible.',sala_no_existe:'Esa sala no existe. Revisa el código.',ya_empezo:'Esa partida ya empezó.',sala_llena:'La sala está llena.',faltan_jugadores:'Faltan jugadores para empezar.',equipos_incompletos:'Cada equipo necesita al menos un jugador.',solo_anfitrion:'Solo quien creó la sala puede hacer eso.',no_estas:'Ya no estás en esa sala.',preguntas_invalidas:'No se pudieron preparar las preguntas.',fuera_de_turno:'Esa respuesta llegó fuera de turno.',tarde:'Llegaste tarde a esa pregunta.',ya_respondiste:'Ya respondiste esta pregunta.',no_es_tuya:'Esa pieza la tiene otra persona.',ya_colocada:'Esa pieza ya está puesta.',hueco_ocupado:'Ese hueco ya está ocupado.',modo_invalido:'Modo de juego no válido.',no_permitido:'No se puede hacer eso ahora.',opcion_invalida:'Opción no válida.'});
+Object.assign(FAM_ERR,{respuesta_invalida:'Escribe una respuesta corta (hasta 120 letras).',ya_respondiste:'Ya respondiste este regalo.',regalo_invalido:'Revisa el regalo: faltan datos.',no_disponible:'Ese regalo ya no está disponible.',sala_no_existe:'Esa sala no existe. Revisa el código.',ya_empezo:'Esa partida ya empezó.',sala_llena:'La sala está llena.',faltan_jugadores:'Faltan jugadores para empezar.',equipos_incompletos:'Cada equipo necesita al menos un jugador.',solo_anfitrion:'Solo quien creó la sala puede hacer eso.',no_estas:'Ya no estás en esa sala.',preguntas_invalidas:'No se pudieron preparar las preguntas.',fuera_de_turno:'Esa respuesta llegó fuera de turno.',tarde:'Llegaste tarde a esa pregunta.',ya_respondiste:'Ya respondiste esta pregunta.',no_es_tuya:'Esa pieza la tiene otra persona.',ya_colocada:'Esa pieza ya está puesta.',hueco_ocupado:'Ese hueco ya está ocupado.',modo_invalido:'Modo de juego no válido.',no_permitido:'No se puede hacer eso ahora.',opcion_invalida:'Opción no válida.'});
 function rpcMsg(e){const m=String((e&&e.message)||'');return /Could not find the function|schema cache|PGRST202/i.test(m)?'Falta instalar en Supabase el SQL de amigos (supabase-amigos.sql).':'Sin conexión con el servidor. Inténtalo de nuevo.';}
-let GIFT={to:null,name:'',kind:null},GIFTS=[];
+let GIFT={to:null,name:'',kind:null},GIFTS=[],GR=[];
+const GREPLY=['🙏 Gracias','💛 Dios te bendiga','🔥 Seguimos'];
+async function giftRepliesLoad(){
+  if(!frActive())return;
+  try{const r=await rpc('fr_gift_replies',frArgs({p_mark:false}));
+    if(r&&r.ok){const n=GR.length;GR=r.replies||[];if(n!==GR.length&&!L&&!G&&!RM.code&&!(document.querySelector('#modal')&&!document.querySelector('#modal').hidden))frRefresh();}
+  }catch(e){}
+}
+function giftRepliesBanner(){
+  return GR.length?'<button class="banner cheerb" data-a="gift-replies">💬 <b>'+GR.length+'</b> '+(GR.length===1?'respuesta':'respuestas')+' a tus regalos</button>':'';
+}
+async function giftReplies(){
+  if(!GR.length)await giftRepliesLoad();
+  if(!GR.length){showModal('<h3>💬 Respuestas</h3><p class="muted">No tienes respuestas nuevas.</p><button class="btn ghost" data-a="stay">Cerrar</button>');return;}
+  const kl={shield:'el protector de racha',card:'la tarjeta',badge:'la insignia'};
+  showModal('<h3>💬 Respondieron a tus regalos</h3><div class="giftlist">'+GR.map(g=>'<div class="gift"><span class="gico">'+esc(g.avatar||'💬')+'</span><div class="gtx"><b>'+esc(g.from)+'</b><small>Por '+(kl[g.kind]||'tu regalo')+'</small><span style="font-weight:800">«'+esc(g.reply)+'»</span></div></div>').join('')+'</div><button class="btn" data-a="stay">Cerrar</button>');
+  GR=[];frRefresh();
+  try{await rpc('fr_gift_replies',frArgs({p_mark:true}));}catch(e){}
+}
+async function giftReplySend(id,txt){
+  const t=String(txt||(($('#grtxt')||{}).value)||'').trim();
+  if(!t){toast('Escribe una respuesta corta.');return;}
+  try{
+    const r=await rpc('fr_gift_reply',frArgs({p_id:id,p_text:t}));
+    const box=$('#grbox');
+    if(r&&(r.ok||r.error==='ya_respondiste')){const c=(S.cards||[]).find(x=>x.id===id);if(c){c.replied=true;save();}}
+    if(r&&r.ok){if(box)box.innerHTML='<p class="muted" style="margin:6px 0 0">✅ Respuesta enviada: «'+esc(t)+'»</p>';beep('good');}
+    else toast(famMsg(r&&r.error));
+  }catch(e){toast(rpcMsg(e));}
+}
 const giftN=()=>(FR.data&&FR.data.gifts)||0;
 function giftOpen(to,name){
   GIFT={to,name,kind:null};
@@ -5837,21 +5866,25 @@ async function giftClaim(id){
     if(!(r&&r.ok)){toast(famMsg(r&&r.error));return;}
     const p=r.payload||{};let big='',txt='';
     if(r.kind==='shield'){S.freezes=Math.min(2,(S.freezes||0)+1);big='🛡️';txt='Un protector de racha: te cuidará un día en que no puedas practicar.';}
-    else if(r.kind==='card'){S.cards=S.cards||[];S.cards.unshift({ref:p.ref,text:p.text,msg:p.msg||'',from:r.from,at:today()});S.cards=S.cards.slice(0,60);big='💌';txt='';CARD_LAST={k:'v',t:p.text,r:p.ref};}
+    else if(r.kind==='card'){S.cards=S.cards||[];S.cards.unshift({ref:p.ref,text:p.text,msg:p.msg||'',from:r.from,at:today(),id:id});S.cards=S.cards.slice(0,60);big='💌';txt='';CARD_LAST={k:'v',t:p.text,r:p.ref};}
     else{S.badges=S.badges||[];if(S.badges.indexOf(p.badge)<0)S.badges.push(p.badge);big=badgeE(p.badge);txt='Insignia «'+(BADGES[p.badge]||['',''])[1]+'». Puedes lucirla en Perfil → Mis regalos.';}
     S.giftsGot=(S.giftsGot||0)+1;
     const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
     if(FR.data)FR.data.gifts=Math.max(0,(FR.data.gifts||1)-1);
     GIFTS=GIFTS.filter(x=>x.id!==id);renderTop();confetti(70);beep('win');
-    showModal('<div style="text-align:center"><div style="font-size:64px;line-height:1.1">'+(r.kind==='card'?'':big)+'</div><h3>'+esc(r.from)+' te regaló</h3>'+(r.kind==='card'?cardHTML(CARD_LAST,cardStyleFor(CARD_LAST.r)):'<p style="margin:0 0 8px;font-weight:800">'+esc(txt)+'</p>')+(p.msg?'<p class="nota" style="text-align:left">💬 «'+esc(p.msg)+'»</p>':'')+(fresh.length?'<p class="muted">🏅 Logro: '+esc(fresh[0].t)+'</p>':'')+'</div>'+(r.kind==='card'?'<button class="btn blue" data-a="card-open-sel">Compartir esta tarjeta</button>':'')+(GIFTS.length?'<button class="btn" data-a="gift-inbox">Abrir el siguiente ('+GIFTS.length+')</button>':'')+'<button class="btn ghost" data-a="stay">Cerrar</button>');
+    showModal('<div style="text-align:center"><div style="font-size:64px;line-height:1.1">'+(r.kind==='card'?'':big)+'</div><h3>'+esc(r.from)+' te regaló</h3>'+(r.kind==='card'?cardHTML(CARD_LAST,cardStyleFor(CARD_LAST.r)):'<p style="margin:0 0 8px;font-weight:800">'+esc(txt)+'</p>')+(p.msg?'<p class="nota" style="text-align:left">💬 «'+esc(p.msg)+'»</p>':'')+(fresh.length?'<p class="muted">🏅 Logro: '+esc(fresh[0].t)+'</p>':'')+'</div>'+(r.kind==='card'?'<button class="btn blue" data-a="card-open-sel">Compartir esta tarjeta</button>':'')+'<div id="grbox" style="margin:10px 0"><p class="muted" style="margin:0 0 6px;font-weight:800">Responder a '+esc(r.from)+'</p><div class="row2" style="margin:0 0 6px;flex-wrap:wrap">'+GREPLY.map(t=>'<button class="btn ghost sm" data-a="gift-reply" data-id="'+id+'" data-t="'+esc(t)+'">'+esc(t)+'</button>').join('')+'</div><div style="display:flex;gap:6px"><input id="grtxt" class="inp" maxlength="120" placeholder="Escribe tu respuesta" autocomplete="off" style="flex:1;min-width:0"><button class="btn sm" data-a="gift-reply" data-id="'+id+'">Enviar</button></div></div>'+(GIFTS.length?'<button class="btn" data-a="gift-inbox">Abrir el siguiente ('+GIFTS.length+')</button>':'')+'<button class="btn ghost" data-a="stay">Cerrar</button>');
     if(TAB==='me'||TAB==='path'||TAB==='fr')render();else renderTabs();
   }catch(e){toast('Sin conexión. Inténtalo de nuevo.');}
+}
+function giftReplyOpen(id){
+  const c=(S.cards||[]).find(x=>x.id===id);if(!c)return;
+  showModal('<h3>💬 Responder a '+esc(c.from)+'</h3><div id="grbox" style="margin:10px 0"><div class="row2" style="margin:0 0 6px;flex-wrap:wrap">'+GREPLY.map(t=>'<button class="btn ghost sm" data-a="gift-reply" data-id="'+id+'" data-t="'+esc(t)+'">'+esc(t)+'</button>').join('')+'</div><div style="display:flex;gap:6px"><input id="grtxt" class="inp" maxlength="120" placeholder="Escribe tu respuesta" autocomplete="off" style="flex:1;min-width:0"><button class="btn sm" data-a="gift-reply" data-id="'+id+'">Enviar</button></div></div><button class="btn ghost" data-a="gift-mine">Volver</button>');
 }
 function giftMine(){
   const cs=S.cards||[],bs=S.badges||[];
   showModal('<h3>🎁 Mis regalos</h3>'+
    '<b>Insignias</b><div class="mybadges">'+(bs.length?bs.map(k=>'<button class="bdg'+(S.badge===k?' on':'')+'" data-a="gift-equip" data-k="'+k+'"><span>'+badgeE(k)+'</span><small>'+(BADGES[k]||['',''])[1]+(S.badge===k?' · puesta':'')+'</small></button>').join('')+(S.badge?'<button class="bdg" data-a="gift-equip" data-k=""><span>🚫</span><small>Quitar</small></button>':''):'<p class="muted" style="margin:4px 0 8px">Aún no tienes insignias.</p>')+'</div>'+
-   '<b style="display:block;margin-top:10px">Tarjetas</b><div class="mycards">'+(cs.length?cs.map(c=>'<div class="mcard"><q>'+esc(c.text)+'</q><cite>'+esc(c.ref)+'</cite><small>De '+esc(c.from)+(c.msg?' · «'+esc(c.msg)+'»':'')+'</small></div>').join(''):'<p class="muted" style="margin:4px 0 8px">Aún no tienes tarjetas.</p>')+'</div>'+
+   '<b style="display:block;margin-top:10px">Tarjetas</b><div class="mycards">'+(cs.length?cs.map(c=>'<div class="mcard"><q>'+esc(c.text)+'</q><cite>'+esc(c.ref)+'</cite><small>De '+esc(c.from)+(c.msg?' · «'+esc(c.msg)+'»':'')+'</small>'+(c.id?(c.replied?'<small>✅ Ya respondiste</small>':'<button class="btn ghost sm" style="margin-top:6px" data-a="gift-reply-open" data-id="'+c.id+'">💬 Responder</button>'):'')+'</div>').join(''):'<p class="muted" style="margin:4px 0 8px">Aún no tienes tarjetas.</p>')+'</div>'+
    '<button class="btn ghost" data-a="stay">Cerrar</button>');
 }
 async function giftEquip(k){
@@ -8487,6 +8520,7 @@ function frOpened(){
   if(!frActive()){frEnsure();return;}
   frSync();
   frPoll(true,true);
+  giftRepliesLoad();
 }
 /* Enlace de invitación: lampy…/?a=CÓDIGO */
 function frBoot(){
@@ -8507,7 +8541,7 @@ function frBoot(){
     }
   }catch(e){}
   if(!famOn())return;
-  if(frActive()){setTimeout(frSync,2500);setTimeout(frApplyPending,2800);setTimeout(pushSync,3600);}
+  if(frActive()){setTimeout(frSync,2500);setTimeout(giftRepliesLoad,3000);setTimeout(frApplyPending,2800);setTimeout(pushSync,3600);}
   else setTimeout(frEnsure,900);
 }
 try{setInterval(()=>{
@@ -8791,6 +8825,7 @@ async function frNotifRoute(){
   try{await frPoll(true,false);}catch(e){}
   if(frInviteN()>0&&TAB==='fr'&&!L&&!G&&!RM.code)goTab('games');
   else if(giftN()>0&&!L&&!G&&!RM.code&&!document.querySelector('.modal:not([hidden])'))giftInbox();
+  else if(!L&&!G&&!RM.code){await giftRepliesLoad();if(GR.length&&!document.querySelector('.modal:not([hidden])'))giftReplies();}
 }
 function goTab(t){
   if(L||G||RM.code||!/^(fr|games|path)$/.test(t))return;
@@ -9203,6 +9238,7 @@ function frHomeHTML(){
     out+='<div class="banner rminvb"><span>'+M.emo+' <b>'+esc(i.from)+'</b> te invita a jugar: '+esc(M.t)+'</span><button class="btn sm" data-a="rm-join-inv" data-code="'+esc(i.code)+'">Unirme</button></div>';
   });
   if(giftN()>0)out+='<button class="banner cheerb" data-a="gift-inbox">🎁 Tienes <b>'+giftN()+'</b> '+(giftN()===1?'regalo':'regalos')+' por abrir</button>';
+  out+=giftRepliesBanner();
   if((d.cheers||[]).length){
     const c=d.cheers[0],more=d.cheers.length-1;
     out+='<button class="banner cheerb" data-a="fr-go">'+(KIND_E[c.kind]||'🫶')+' <b>'+esc(c.from)+'</b> te mandó: '+esc(KIND_T[c.kind]||'¡Ánimo!')+(more>0?' (y '+more+' más)':'')+'</button>';
@@ -10691,7 +10727,7 @@ function renderTabs(){
   tabs.push(['games','Juegos',IC.users]);
   if(famOn())tabs.push(['fr','Amigos',IC.heart]);
   tabs.push(['me','Perfil',IC.trophy]);
-  const pend=(typeof giftN==='function'?giftN():0)+(typeof frPend==='function'?frPend():0);
+  const pend=(typeof giftN==='function'?giftN()+GR.length:0)+(typeof frPend==='function'?frPend():0);
   $('#tabs').firstElementChild.innerHTML=tabs.map(t=>{const on=TAB===t[0]||(t[0]==='me'&&TAB==='set');
     return '<button class="tab '+(on?'on':'')+'" data-a="tab" data-t="'+t[0]+'" '+(on?'aria-current="page"':'')+(t[0]==='fr'&&pend?' aria-label="Amigos, tienes '+pend+' avisos"':'')+'>'+t[2]+(((t[0]==='fr'&&pend&&frActive())||(t[0]==='games'&&frInviteN()>0)||(t[0]==='review'&&nwRetoAny())||(t[0]==='games'&&nwAny())||(t[0]==='me'&&!nwSeen('av')))?'<i class="dot" aria-hidden="true"></i>':'')+'<span>'+t[1]+'</span></button>';}).join('');
 }
@@ -14357,6 +14393,9 @@ document.addEventListener('click',e=>{
   else if(a==='gift-inbox'){giftInbox();}
   else if(a==='gift-claim'){giftClaim(+b.dataset.id);}
   else if(a==='gift-mine'){giftMine();}
+  else if(a==='gift-reply'){giftReplySend(+b.dataset.id,b.dataset.t||'');}
+  else if(a==='gift-replies'){giftReplies();}
+  else if(a==='gift-reply-open'){giftReplyOpen(+b.dataset.id);}
   else if(a==='gift-equip'){giftEquip(b.dataset.k);}
   else if(a==='fam-open'){famOpen();}
   else if(a==='fr-go'){TAB='fr';render();window.scrollTo(0,0);frOpened();}
