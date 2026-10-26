@@ -790,6 +790,15 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .revhero{display:flex;gap:12px;align-items:center;background:var(--orange-bg);border:2px solid var(--orange);border-bottom-width:5px;border-radius:22px;padding:16px;margin-bottom:14px}
 .revhero h2{margin:0 0 4px;font-size:22px;color:var(--orange-ink)}
 .revhero p{margin:0 0 12px;font-size:15px;font-weight:800}
+.rvh{margin:18px 0 8px;font-size:16px}.rvl{display:grid;gap:10px}
+.rvp{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;padding:12px 14px;cursor:pointer}
+.rvp .e{font-size:26px;line-height:1}.rvp b{display:block;font-size:16px}.rvp small{display:block;color:var(--muted);font-weight:700;font-size:13px;margin-top:2px}
+.rvp .go{margin-left:auto;font-weight:900;font-size:20px;color:var(--blue)}
+.rvp .rvn{margin-left:auto;font-size:11px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;background:var(--red);color:#fff;border-radius:99px;padding:3px 8px}.rvp .rvn+.go{margin-left:0}
+.rvp.lock{cursor:default;border-style:dashed;background:transparent}.rvp.lock .e,.rvp.lock b{opacity:.55}
+.rvp:disabled{cursor:default;opacity:.7}
+.rvu{text-align:left;display:flex;align-items:center;gap:10px;background:var(--orange-bg);border:2px solid var(--orange);border-radius:14px;padding:10px 12px;margin:0 0 8px;font-weight:800}.rvu span{font-size:24px}
+
 .lvl{display:inline-block;font-size:12px;font-weight:900;border-radius:999px;padding:1px 10px;color:#fff}
 
 /* ---------- juegos ---------- */
@@ -11091,16 +11100,99 @@ function reviewHTML(){setTimeout(()=>{try{sportInit();}catch(e){}},0);
   const body=RT.k==='mem'?mh+memLibHTML():RT.k==='evg'?evgCardHTML():reviewHTML0().replace('<h1 class="page">Repaso</h1>','');
   return '<h1 class="page">Reto</h1><div class="hero">'+mascotSport(84)+'<div class="bubble"><span>'+cur[3]+'</span></div></div>'+wkHTML()+'<div class="rf rf-'+RT.k+'">'+pills+'<div class="rfb">'+body+'</div></div>';
 }
+
+/* ===== Repasa: prácticas de conceptos que se van desbloqueando ===== */
+let RV_NEXT=null,RV_UC=false,RV_GO=false;
+const RV_GEN=/^(Une cada (dato con su respuesta|uno con su dato|cosa con su descripción|paso con lo que ocurre|uno con lo que hace o recibe|nombre con su dato|dato con su idea|cita con lo que significa)|Ordena estos sucesos)$/;
+const RV_HS=()=>UNITS.filter(u=>/^Historia Sagrada/.test(u.title));
+const RV_PE=()=>UNITS.filter(u=>u.title==='Personajes bíblicos'||u.title==='Eventos bíblicos');
+const rvLessons=us=>us.flatMap(u=>u.lessons).filter(l=>S.done[l.title]);
+const rvLibUnits=()=>LIB_UNITS.filter(u=>!/versión anterior/.test(u.title));
+function RV_LIBBK(){const nm={};BKDIV.forEach(d=>nm[d[0]]=d[1]);return [nm.ley,nm.hist,nm.poes,nm.prof.slice(0,5),nm.prof.slice(5),[...nm.evan,...nm.hech],nm.cart.slice(0,13),nm.cart.slice(13),nm.apoc];}
+function rvLibDoneIdx(){const g=RV_LIBBK(),o=[];rvLibUnits().forEach((u,i)=>{if(i<g.length&&u.lessons.every(l=>S.done[l.title]))o.push(i);});return o;}
+const RVP=[
+ {id:'lib',e:'📚',t:'Orden de los libros',d:'Ordena y ubica los libros de la Biblia',lock:'Se abre al terminar la primera unidad de Libro por libro',ok:()=>rvLibDoneIdx().length>=1},
+ {id:'tp',e:'🕰️',t:'Los tiempos de la Historia Sagrada',d:'Ordena los tiempos y ubica qué pasó en cada uno',lock:'Se abre al terminar la primera unidad de la Historia Sagrada',ok:()=>{const u=UNITS.find(x=>x.title==='Historia Sagrada: el Antiguo Testamento (1)');return !!u&&unitDone(u);}},
+ {id:'pe',e:'👤',t:'Personajes y eventos',d:'Quién fue y qué pasó',lock:'Se abre al terminar 3 lecciones de Personajes o Eventos',ok:()=>rvLessons(RV_PE()).length>=3},
+ {id:'fall',e:'🎯',t:'Lo que más fallas',d:'Preguntas que se te han dificultado',lock:'Aparece cuando tengas preguntas por reforzar',ok:()=>Object.keys(S.miss||{}).length>=4}
+];
+const rvUnlockedIds=()=>RVP.filter(p=>{try{return p.ok();}catch(e){return false;}}).map(p=>p.id);
+const rvIsOpen=p=>!!(S.rvUn&&S.rvUn[p.id])||(()=>{try{return p.ok();}catch(e){return false;}})();
+/* preguntas que fallaste: se guardan para reforzarlas */
+function rvMiss(q){try{
+  if(q.type!=='mc'||!q.prompt||q.wid||q.gko||!q.opts||q.opts.length<2||(L&&L.meta&&(L.meta.course==='gk'||L.meta.course==='bio')))return;
+  const h=repHash(q.prompt),m=(S.miss=S.miss||{});
+  if(m[h])m[h].n++;else m[h]={p:q.prompt,r:q.opts[q.a],w:q.opts.filter((_,i)=>i!==q.a),f:q.ref||'',n:1};
+  m[h].t=Date.now();
+  const ks=Object.keys(m);if(ks.length>60)ks.sort((a,b)=>m[a].t-m[b].t).slice(0,ks.length-60).forEach(k=>delete m[k]);
+}catch(e){}}
+function rvHit(q){try{if(!S.miss||!q.prompt)return;const h=repHash(q.prompt),m=S.miss[h];if(m){m.n--;if(m.n<=0)delete S.miss[h];}}catch(e){}}
+const rvMissQs=n=>Object.values(S.miss||{}).sort((a,b)=>(b.n-a.n)||(b.t-a.t)).slice(0,n).map(m=>mkMC([m.p,m.r,m.w,m.f||'','']));
+function rvCxFrom(ls,n){
+  const sp=[];ls.forEach(l=>(l.cx||[]).forEach(c=>{if(c.k==='order'||c.k==='match')sp.push([l,c]);}));
+  const out=[];
+  shuffle(sp).slice(0,n).forEach(([l,c])=>{const t=Object.assign({},c,{n:1});if(RV_GEN.test(c.prompt))t.prompt=c.prompt+' · '+l.title.split(':')[0];out.push(...mkCx(t).slice(0,1));});
+  return out;
+}
+function rvLessonQs(us,max,ncx){
+  const ls=rvLessons(us),out=rvCxFrom(ls,ncx),used=new Set(),hand=[];
+  ls.forEach(l=>(l.qs||[]).forEach(q=>{if(q&&q.length>=3)hand.push(q);}));
+  shuffle(hand).forEach(q=>{if(out.length<max&&!used.has(q[0])){used.add(q[0]);out.push(mkMC(q));}});
+  return out;
+}
+function rvDailyLessons(){const les=[];[UNITS,PAS_UNITS,rvLibUnits()].forEach(U=>U.forEach(u=>u.lessons.forEach(l=>{if(l.qs&&l.qs.length&&S.done[l.title])les.push(l);})));return les;}
+function rvDaily(){
+  const miss=rvMissQs(2),used=new Set(miss.map(q=>q.prompt)),les=rvDailyLessons();
+  const cx=rvCxFrom(rvLessons([...RV_HS(),...RV_PE()]),2),out=[...miss,...cx];
+  shuffle(les).forEach(l=>{if(out.length>=8)return;const q=l.qs[rnd(l.qs.length)];if(q&&q.length>=3&&!used.has(q[0])){used.add(q[0]);out.push(mkMC(q));}});
+  return out;
+}
+function rvBooksQs(){
+  const g=RV_LIBBK(),un=rvLibUnits(),done=rvLibDoneIdx(),out=[],base=n=>String(n).replace(/^\d\s+/,'');
+  const win=done.filter(i=>g[i].length>=4);
+  if(win.length)for(let k=0;k<2;k++){const bs=g[pickOne(win)],n=Math.min(4,bs.length),st=rnd(bs.length-n+1);out.push(mkOrderCx('Ordena estos libros como están en la Biblia',bs.slice(st,st+n)));}
+  const bet=[];done.forEach(i=>{const bs=g[i];for(let k=1;k<bs.length-1;k++){const a=bs[k-1],m=bs[k],z=bs[k+1];if(base(a)!==base(z)&&base(m)!==base(a)&&base(m)!==base(z))bet.push([a,m,z]);}});
+  const all=done.flatMap(j=>g[j]);
+  shuffle(bet).slice(0,3).forEach(([a,m,z])=>{
+    const bad=x=>x===m||x===a||x===z||base(x)===base(m);
+    const wr=[...new Set([...shuffle(all).filter(x=>!bad(x)),...shuffle(BK.map(b=>b.n)).filter(x=>!bad(x))])].slice(0,3);
+    out.push(mkMC(['¿Qué libro está entre '+a+' y '+z+' en la Biblia?',m,wr,'','']));});
+  const gq=[];done.forEach(i=>g[i].forEach(b=>{if(b!=='Hebreos')gq.push([b,i]);}));
+  const gt=un.map(u=>u.title);
+  shuffle(gq).slice(0,3).forEach(([b,i])=>out.push(mkMC(['¿En qué grupo de libros está '+b+'?',gt[i],shuffle(gt.filter((_,j)=>j!==i)).slice(0,3),'',''])));
+  return out;
+}
+function rvStart(id){
+  let qs=[];
+  if(id==='lib')qs=rvBooksQs();
+  else if(id==='tp')qs=rvLessonQs(RV_HS(),8,3);
+  else if(id==='pe')qs=rvLessonQs(RV_PE(),8,3);
+  else if(id==='fall')qs=rvMissQs(8);
+  else qs=rvDaily();
+  if(qs.length<3){toast('Aún no hay suficientes preguntas para este repaso.');return;}
+  const p=RVP.find(x=>x.id===id);
+  S.rvSeen=S.rvSeen||{};S.rvSeen[id]=1;save();
+  startLesson({type:'review',title:p?p.t:'Repaso del día',verses:[]},shuffle(qs));
+}
+function rvHTML(){
+  const ready=rvDailyLessons().length>=1;
+  const hero='<section class="revhero"><div style="flex:1"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Preguntas de lo que ya aprendiste en tus lecciones.':'Haz tu primera lección y aquí aparecerán tus repasos.')+'</p><button class="btn orange" data-a="rvp-go" data-id="daily" '+(ready?'':'disabled')+'>'+(ready?'Repaso del día':'Bloqueado')+'</button></div></section>';
+  const rows=RVP.map(p=>{
+    if(!rvIsOpen(p))return '<div class="rvp lock" aria-disabled="true"><span class="e" aria-hidden="true">🔒</span><div><b>'+esc(p.t)+'</b><small>'+esc(p.lock)+'</small></div></div>';
+    const n=Object.keys(S.miss||{}).length,fall=p.id==='fall',sub=fall?(n?n+(n===1?' pregunta por reforzar':' preguntas por reforzar'):'Todo al día. ¡Bien hecho!'):p.d;
+    return '<button class="rvp" data-a="rvp-go" data-id="'+p.id+'"'+(fall&&!n?' disabled':'')+'><span class="e" aria-hidden="true">'+p.e+'</span><div><b>'+esc(p.t)+'</b><small>'+esc(sub)+'</small></div>'+((S.rvSeen&&S.rvSeen[p.id])||(fall&&!n)?'':'<span class="rvn">Nuevo</span>')+'<span class="go" aria-hidden="true">›</span></button>';}).join('');
+  return '<h1 class="page">Repaso</h1>'+hero+'<h3 class="rvh">Prácticas</h3><div class="rvl">'+rows+'</div>';
+}
+function showRvUnlock(ids){
+  const ps=ids.map(id=>RVP.find(p=>p.id===id)).filter(Boolean);if(!ps.length){const f=RV_NEXT;RV_NEXT=null;if(f)f();return;}
+  showModal('<div style="display:flex;justify-content:center">'+mascot('cheer',96)+'</div><h3 style="text-align:center">¡Desbloqueaste '+(ps.length===1?'un nuevo repaso':'nuevos repasos')+'!</h3>'+ps.map(p=>'<div class="rvu"><span aria-hidden="true">'+p.e+'</span><b>'+esc(p.t)+'</b></div>').join('')+'<button class="btn" data-a="rvu-go">Ir a Repasa</button><button class="btn ghost" data-a="rvu-no">Ahora no</button>');
+  beep('encc');haptic([20,60,20]);
+}
+function rvGoRepasa(){TAB='review';RT.k='rev';try{nwMark('rt_rev');}catch(e){}try{retoMark();}catch(e){}render();window.scrollTo(0,0);}
 function reviewHTML0(){
   if(S.course==='gk')return gkReviewHTML();
   if(S.course==='bio')return bioReviewHTML();
-  const seen=Object.keys(S.verses).filter(r=>VBY[r]);
-  const ready=seen.length>=3;
-  const weak=seen.map(r=>({r,s:S.verses[r].c-S.verses[r].w*1.5})).sort((a,b)=>a.s-b.s).slice(0,6);
-  return '<h1 class="page">Repaso</h1>'+
-   '<section class="revhero">'+'<div style="flex:1"><h2>'+(ready?'¡Hora de repasar!':'Aún no hay nada que repasar')+'</h2><p>'+(ready?'Repasa los versículos que ya viste en las lecciones, empezando por los que más te cuestan. Has visto <b>'+seen.length+'</b> de los '+ALLV.length+' versículos del curso.':'Haz tu primera lección y aquí aparecerán tus versículos.')+'</p>'+
-   '<button class="btn orange" data-a="review" '+(ready?'':'disabled')+'>'+(ready?'Empezar repaso':'Bloqueado')+'</button>'+(ready?'<button class="btn ghost" data-a="review-quick" style="margin-top:8px">⏱️ Repaso de 2 minutos</button>':'')+'</div></section>'+
-   (ready?'<h3 style="margin:18px 0 8px">Los que más te cuestan</h3><div class="list">'+weak.map(w=>{const l=lvlOf(w.r);return '<div class="li"><cite>'+esc(w.r)+'</cite> <span class="lvl" style="background:'+l.c+'">'+l.t+'</span><p>'+esc(VBY[w.r].t)+'</p><div class="meter"><i style="width:'+l.w+'%;background:'+l.c+'"></i></div></div>';}).join('')+'</div>':'');
+  return rvHTML();
 }
 /* ===== Celebración de logros: sale sola cuando termina lo que se estaba haciendo (lección, juego, sala) ===== */
 const achBusy=()=>!!document.querySelector('.overlay:not([hidden]),.authov:not([hidden]),.ucel:not([hidden]),.modal:not([hidden])');
@@ -11492,14 +11584,14 @@ function check(){
   const st=q.ref?(S.verses[q.ref]||(S.verses[q.ref]={c:0,w:0})):{c:0,w:0};
   const gw=q.wid?((S.gw=S.gw||{})[q.wid]||(S.gw[q.wid]={c:0,w:0})):null;
   if(ok){
-    if(q.tries===0){L.firstTry++;L.xp+=2;st.c++;if(gw)gw.c++;L.combo++;ui.fresh=true;
+    if(q.tries===0){L.firstTry++;L.xp+=2;st.c++;if(gw)gw.c++;L.combo++;ui.fresh=true;rvHit(q);
       if(L.meta&&L.meta.course==='lib'&&q.type==='mc'&&q.prompt){S.libOk=S.libOk||{};S.libOk[repHash(q.prompt)]=1;}}
     L.done++;
     ui.head=L.combo>=3&&q.tries===0?'¡'+L.combo+' seguidas!':pickOne(['¡Eso es!','¡Perfecto!','¡Muy bien!','¡Así se hace!','¡Genial!','¡Excelente!']);
     beep('good');
     if(q.tries===0&&L.combo>0&&L.combo%5===0)confetti(50);
   }else{
-    if(q.tries===0){st.w++;if(gw)gw.w++;}
+    if(q.tries===0){st.w++;if(gw)gw.w++;rvMiss(q);}
     q.tries++;L.mistakes++;L.queue.push(q);L.combo=0;
     ui.head=pickOne(['¡Casi!','¡Uy, esa no!','¡Ups!','Se te escapó']);
     beep('bad');
@@ -11534,6 +11626,7 @@ function showUnitCel(uc){
 }
 function ucGo(){
   const el=document.getElementById('ucel');el.hidden=true;el.innerHTML='';document.body.style.overflow='';
+  if(RV_GO){RV_GO=false;rvGoRepasa();return;}
   TAB='path';render();window.scrollTo(0,0);setTimeout(()=>{try{gotoMyLesson();}catch(e){}},200);
 }
 let JUST_DONE=null;
@@ -11543,12 +11636,14 @@ function finishLesson(){
   const r=recordDay(xp);
   const isReview=L.meta.type==='review';
   L.wasDone=!isReview&&!!S.done[L.meta.key];
+  const rvPre=isReview?null:rvUnlockedIds();
   if(isReview){S.reviews++;try{wkc().rep++;wkCheck();}catch(e){}}
   else{if(!S.done[L.meta.key])JUST_DONE=L.meta.key;const p=S.done[L.meta.key]||{n:0};S.done[L.meta.key]={n:p.n+1,acc:Math.max(p.acc||0,L.firstTry/L.total)};}
   if(!isReview){
     const gkc=L.meta.course==='gk',cc=L.meta.course||'bib',UU=gkc?GK_UNITS:cc==='bio'?BIO_UNITS:cc==='lib'?LIB_UNITS:cc==='pas'?PAS_UNITS:UNITS,ui0=unitOf(UU,L.meta.key);
     if(!L.wasDone&&ui0>=0&&unitDoneI(UU,ui0)&&!(S.cel&&S.cel[UU[ui0].title])){S.cel=S.cel||{};S.cel[UU[ui0].title]=1;L.unitCel={ui:ui0,gk:gkc,c:cc};}
   }
+  if(!isReview){try{if(!S.rvUn){S.rvUn={};rvPre.forEach(id=>S.rvUn[id]=1);}const fr=rvUnlockedIds().filter(id=>!S.rvUn[id]);if(fr.length){fr.forEach(id=>S.rvUn[id]=1);L.rvNew=fr;}}catch(e){}}
   S.lessons++;if(L.mistakes===0)S.perfect++;
   if(S.lessons===1&&!S.cloudAsked&&cloudOn()&&!signedIn())L.offerCloud=true;
   if(S.lessons>=2&&!L.offerCloud&&pushCanOffer())L.offerPush=true;
@@ -14329,7 +14424,10 @@ document.addEventListener('click',e=>{
   else if(a==='don-open')donModal();
   else if(a==='don-copy')donCopy();
   else if(a==='leave'){hideModal();closeLesson();}
-  else if(a==='finish'){const uc=L&&L.unitCel,oc=L&&L.offerCloud,po=L&&L.offerPush;closeLesson();if(uc)setTimeout(()=>showUnitCel(uc),300);else if(oc){S.cloudAsked=true;save();setTimeout(()=>authOpen(),450);}else if(po&&pushCanOffer())setTimeout(pushOffer,500);}
+  else if(a==='finish'){const uc=L&&L.unitCel,oc=L&&L.offerCloud,po=L&&L.offerPush,un=L&&L.rvNew;const after=()=>{if(uc)setTimeout(()=>showUnitCel(uc),300);else if(oc){S.cloudAsked=true;save();setTimeout(()=>authOpen(),450);}else if(po&&pushCanOffer())setTimeout(pushOffer,500);};closeLesson();if(un&&un.length){RV_NEXT=after;RV_UC=!!uc;setTimeout(()=>showRvUnlock(un),300);}else after();}
+  else if(a==='rvp-go'){rvStart(b.dataset.id);}
+  else if(a==='rvu-go'){hideModal();if(RV_UC){RV_GO=true;const f=RV_NEXT;RV_NEXT=null;RV_UC=false;if(f)f();}else{RV_NEXT=null;rvGoRepasa();}}
+  else if(a==='rvu-no'){hideModal();const f=RV_NEXT;RV_NEXT=null;RV_UC=false;if(f)f();}
   else if(a==='share'){sharePreview(b.dataset.k,b.dataset.id);}
   else if(a==='share-go'){doShare(b.dataset.k,b.dataset.id||undefined);}
   else if(a==='rd-plan'){RDSET.plan=b.dataset.p;render();}
