@@ -5824,6 +5824,7 @@ async function giftInbox(){
     const r=await rpc('fr_gift_inbox',frArgs());
     GIFTS=(r&&r.gifts)||[];
     if(!GIFTS.length){showModal('<h3>🎁 Tus regalos</h3><p class="muted">No tienes regalos por abrir.</p><button class="btn ghost" data-a="stay">Cerrar</button>');return;}
+    if(GIFTS.length===1){giftClaim(GIFTS[0].id);return;}
     const kl={shield:'Un protector de racha',card:'Una tarjeta con versículo',badge:'Una insignia'};
     showModal('<h3>🎁 Tienes '+GIFTS.length+(GIFTS.length===1?' regalo':' regalos')+'</h3><div class="giftlist">'+GIFTS.map(g=>'<div class="gift"><span class="gico">'+esc(g.avatar||'🎁')+'</span><div class="gtx"><b>De '+esc(g.from)+'</b><small>'+kl[g.kind]+'</small></div><button class="btn sm" data-a="gift-claim" data-id="'+g.id+'">Abrir</button></div>').join('')+'</div><button class="btn ghost" data-a="stay">Después</button>');
   }catch(e){showModal('<h3>🎁 Tus regalos</h3><p class="muted">'+esc(rpcMsg(e))+'</p><button class="btn ghost" data-a="stay">Cerrar</button>');}
@@ -8789,6 +8790,7 @@ async function frNotifRoute(){
   if(!frActive())return;
   try{await frPoll(true,false);}catch(e){}
   if(frInviteN()>0&&TAB==='fr'&&!L&&!G&&!RM.code)goTab('games');
+  else if(giftN()>0&&!L&&!G&&!RM.code&&!document.querySelector('.modal:not([hidden])'))giftInbox();
 }
 function goTab(t){
   if(L||G||RM.code||!/^(fr|games|path)$/.test(t))return;
@@ -11087,6 +11089,7 @@ function meHTML(){
    '<div class="stat s3"><span class="se">⚡</span><div><b>'+kfmt(S.xp)+'</b><span>XP total</span></div></div>'+
    '<div class="stat s4"><span class="se">📚</span><div><b>'+ld+'/'+(ALLKEYS.length+GKKEYS.length+BIOKEYS.length+LIBKEYS.length+PASKEYS.length)+'</b><span>Lecciones</span></div></div>'+rdStatsHTML()+'</div>'+(signedIn()?'':cloudCardHTML())+
    '<section class="card goalc"><b>🎯 Meta diaria</b><div class="seg">'+[10,20,30,50].map(g=>'<button class="'+(S.goal===g?'on':'')+'" data-a="goal" data-g="'+g+'">'+g+' XP</button>').join('')+'</div></section>'+
+   giftsCardHTML()+
    '<p class="shline" title="Ganas uno cada 7 días de racha; se usa solo si un día no alcanzas a practicar ni a leer.">🛡️ <b>'+S.freezes+'</b> de 2 protectores de racha · ganas uno cada 7 días y se usa solo si un día no practicas ni lees.</p>'+
    (function(){const got=ACH.filter(a=>S.ach[a.id]),rest=ACH.filter(a=>!S.ach[a.id]);
      return '<details class="achd"><summary><b>🏅 Logros · '+got.length+' de '+ACH.length+'</b></summary><div class="achin"><p class="muted" style="margin:0 0 8px;font-size:13px">Toca un logro desbloqueado para compartirlo.</p><div class="ach">'+got.concat(rest).map(a=>'<div class="a '+(S.ach[a.id]?'on':'')+'" '+(S.ach[a.id]?'data-a="share" data-k="ach" data-id="'+a.id+'" role="button" tabindex="0" title="Toca para compartir"':'')+'><div class="ico">'+(ACH_E[a.id]||'⭐')+'</div><b>'+a.t+'</b><small>'+a.d+'</small></div>').join('')+'</div></div></details>';})()+
@@ -14468,4 +14471,4 @@ if(!authGoogleBoot())welcomeCheck();
 frBoot();
 </script>
 </body>
-</html>
+</html>
