@@ -1551,6 +1551,53 @@ html.ios.fs-xl{zoom:1;--zm:1;-webkit-text-size-adjust:130%;text-size-adjust:130%
 .cwli.dn{opacity:.75}
 .cwli em{font-style:normal;color:var(--green-ink);font-weight:800}
 .cwkb{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+/* ===== Acertijos · Lampy en peligro ===== */
+.acs{position:relative;height:210px;max-width:340px;margin:2px auto 10px;border-radius:22px;border:2px solid var(--line);background:linear-gradient(var(--surface2),var(--bg));overflow:hidden}
+.acbk{position:absolute;left:50%;top:6px;width:96px;margin-left:-48px;transform-origin:82% 10%;transition:transform .8s cubic-bezier(.4,0,.2,1);z-index:4}
+.acstm{position:absolute;left:50%;width:12px;margin-left:-6px;height:0;opacity:0;background:linear-gradient(#4db8f0,#7ccdf5);border-radius:6px;transition:height .5s ease-in,opacity .15s;z-index:4}
+.aclamp{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:2;line-height:0}
+.aclamp .mas .fl{transform-box:fill-box;transform-origin:50% 100%}
+.acpool{position:absolute;left:50%;bottom:14px;width:150px;margin-left:-75px;height:0;background:#8fd0f3;border-radius:42% 58% 46% 54%/62% 48% 52% 38%;transition:height 1.2s ease-out;z-index:1}
+.acpool::before,.acpool::after{content:'';position:absolute;background:#8fd0f3}
+.acpool::before{left:-9%;top:30%;width:26%;height:55%;border-radius:60% 40% 55% 45%/50% 60% 40% 50%}
+.acpool::after{right:-7%;top:10%;width:30%;height:60%;border-radius:45% 55% 40% 60%/55% 45% 55% 45%}
+.acwick{position:absolute;left:50%;width:5px;height:9px;margin-left:-2px;background:#2b2b2b;border-radius:2px 2px 1px 1px;display:none;z-index:3}
+.acsmk i{position:absolute;left:50%;bottom:92px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#9aa0a6;opacity:0;z-index:3}
+.acsmk.on i{animation:acsm 2.2s ease-out forwards}
+.acsmk.on i:nth-child(2){animation-delay:.25s;margin-left:-1px}.acsmk.on i:nth-child(3){animation-delay:.5s;margin-left:-14px}
+@keyframes acsm{0%{opacity:.8;transform:translateY(0) scale(.5)}100%{opacity:0;transform:translateY(-70px) scale(2.2)}}
+.acsp{position:absolute;width:6px;height:8px;border-radius:50%;background:#4db8f0;opacity:0;z-index:3}
+.acsp.on{animation:acspl .9s ease-out forwards}
+@keyframes acspl{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(var(--x),var(--y))}}
+.achint{text-align:center;font-weight:900;color:var(--muted);margin:0 0 8px;font-size:15px}
+.actr,.acsl{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:6px;max-width:340px;margin:0 auto 12px}
+.actile{aspect-ratio:1;max-height:48px;display:grid;place-items:center;font-weight:900;font-size:22px;border-radius:12px;border:2px solid var(--blue);border-bottom-width:4px;background:var(--blue-bg);color:var(--blue-ink);font-family:inherit;padding:0;animation:acpop .35s cubic-bezier(.3,1.5,.5,1)}
+.actile.ph,.actile.slot{background:transparent;border:2px dashed var(--line);animation:none}
+.actile.gone{opacity:.25}
+button.actile{cursor:pointer}
+.actile.fly{position:fixed;z-index:60;pointer-events:none;animation:none}
+@keyframes acpop{from{transform:scale(.4)}to{transform:scale(1)}}
+.acclue{background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;padding:12px 14px;margin:0 0 12px;text-align:left}
+.acclue span{display:block;font-size:12px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-ink)}
+.acclue p{margin:4px 0 0;font-size:18px;line-height:1.35}
+.acopts{display:grid;gap:8px}
+.acopt{display:block;width:100%;text-align:left;font:inherit;font-weight:800;font-size:16px;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;padding:12px 14px;cursor:pointer}
+.acopt:active{transform:translateY(2px);border-bottom-width:2px}
+.acopt.ok{background:var(--green-bg);border-color:var(--green);color:var(--green-ink)}
+.acopt.no{background:var(--red-bg);border-color:var(--red);color:var(--red-ink)}
+.acopt.dim{opacity:.5}
+.acopt .acl{display:inline-block;background:var(--green);color:#fff;border-radius:6px;padding:0 5px;margin:0 1px}
+.acord{text-align:center}
+.acord h3{margin:0 0 2px;font-size:22px}
+.acord p{margin:0 0 12px}
+.aclose{text-align:center;padding:4px 0}
+.aclose h3{margin:0 0 4px;font-size:24px;color:var(--red-ink)}
+.aclose p{margin:2px 0}
+.aclose .acw{font-size:30px;font-weight:900;letter-spacing:.08em;color:var(--ink)}
+.acfb{margin:0 0 10px;padding:10px 12px;border-radius:14px;background:var(--red-bg);color:var(--red-ink);font-weight:800;font-size:15px}
+.lf:empty{display:none}
+.btn[disabled]{opacity:.45;pointer-events:none}
+
 .cwkb>div{display:flex;gap:4px;justify-content:center}
 .cwkb button{flex:1;max-width:38px;height:40px;padding:0;border:2px solid var(--line);border-bottom-width:4px;border-radius:8px;background:var(--surface);color:var(--ink);font:800 16px var(--sans);cursor:pointer}
 .cwkb button.wide{max-width:56px}
@@ -2381,6 +2428,7 @@ function rlDictGo(){
   if(l.length){RL.from='dict';RL.ans={k:'term',e:l[0]};RL.view='home';nwMark('dic');rlShow();try{i.blur();}catch(e){}}
   else rlAsk(q);
 }
+const RL_SHOW_BOOKS=false; /* «Los libros de la Biblia» oculto en la Biblioteca; poner true para mostrarlo de nuevo */
 function rlMapsHTML(){
   return '<button class="rch" data-a="rlib-back">← Volver</button><h2 style="margin:12px 0 4px">Mapas</h2><p class="muted" style="margin:0 0 10px">Toca uno para verlo.</p>'+
     MAP_LIST.map(m=>'<section class="card trentry" data-a="rlib-map" data-id="'+m.id+'" style="border-color:var(--blue)"><div class="tre">🗺️</div><div class="trt"><b>'+esc(m.t)+'</b><p>'+esc(m.d)+'</p></div><button class="btn blue sm" data-a="rlib-map" data-id="'+m.id+'">Ver</button></section>').join('');
@@ -2398,8 +2446,8 @@ function rlBodyHTML(){
   const qs=[['autor','¿Quién lo escribió?'],['fecha','¿Cuándo se escribió?'],['tema','¿De qué trata?'],['prop','¿Para qué se escribió?'],['div','¿Cómo se divide?']];
   return (RL.ans?rlAnsHTML():'')+'<h4 class="rlh">Preguntas rápidas</h4><div class="rchips">'+qs.map(x=>'<button class="rch" data-a="rlib-int" data-k="'+x[0]+'">'+x[1]+'</button>').join('')+'</div>'+
     '<h4 class="rlh">Para explorar</h4><section class="card trentry" data-a="rlib-dict" style="border-color:var(--blue)">'+nwDot('dic')+'<div class="tre">📖</div><div class="trt"><b>Diccionario</b><p>Gracia, pacto, codo, denario y más, con versículos.</p></div><button class="btn blue sm" data-a="rlib-dict">Ver</button></section>'+trCardHTML()+
-    '<section class="card trentry" data-a="rlib-books" style="border-color:var(--blue)"><div class="tre">📚</div><div class="trt"><b>Los libros de la Biblia</b><p>Autor, fecha y tema de cada libro, según las fichas del curso.</p></div><button class="btn blue sm" data-a="rlib-books">Ver</button></section>'+
-    '<section class="card trentry" data-a="rlib-maps" style="border-color:var(--blue)"><div class="tre">🗺️</div><div class="trt"><b>Mapas</b><p>El Reino Unido, el Reino Dividido y Asiria, con fechas.</p></div><button class="btn blue sm" data-a="rlib-maps">Ver</button></section>';
+    (RL_SHOW_BOOKS?'<section class="card trentry" data-a="rlib-books" style="border-color:var(--blue)"><div class="tre">📚</div><div class="trt"><b>Los libros de la Biblia</b><p>Autor, fecha y tema de cada libro, según las fichas del curso.</p></div><button class="btn blue sm" data-a="rlib-books">Ver</button></section>':'')+
+    '<section class="card trentry" data-a="rlib-maps" style="border-color:var(--blue)">'+nwDot('maps')+'<div class="tre">🗺️</div><div class="trt"><b>Mapas</b><p>El Reino Unido, el Reino Dividido y Asiria, con fechas.</p></div><button class="btn blue sm" data-a="rlib-maps">Ver</button></section>';
 }
 function rlBody(){const el=$('#rlbody');if(el)el.innerHTML=rlBodyHTML();if(el&&RL.view==='map'){const lb=$('#rlib .lb');if(lb)mapWatch(lb);}const rr=$('#rlib');if(rr)rr.classList.toggle('rdict',RL.view==='dict');const i=$('#rlq');if(i)i.placeholder=RL.view==='dict'?'Buscar una palabra…':'Pregúntale a Rollo…';}
 function rlShow(){
@@ -2519,7 +2567,7 @@ function rlAct(a,b){
   else if(a==='rlib-int'){RL.intent=b.dataset.k;RL.view='pick';rlBody();}
   else if(a==='rlib-books'){RL.intent=null;RL.view='pick';rlBody();}
   else if(a==='rlib-back'){RL.view='home';rlBody();}
-  else if(a==='rlib-maps'){RL.view='maps';RL.ans=null;rlBody();}
+  else if(a==='rlib-maps'){nwMark('maps');RL.view='maps';RL.ans=null;rlBody();}
   else if(a==='rlib-map'){rlOpenMap(b.dataset.id);}
   else if(a==='rlib-dict'){nwMark('dic');RL.view='dict';RL.ans=null;if(!(b&&b.keep)){RL.dq='';RL.cat=null;const qi=$('#rlq');if(qi)qi.value='';}else{const qi=$('#rlq');if(qi)qi.value=RL.dq||'';}rlBody();rlSync();const bub=document.querySelector('#rlib .hero .bubble');if(bub){bub.textContent='¿Qué palabra buscas?';}const lb=document.querySelector('#rlib .lb');if(lb)lb.scrollTop=0;}
   else if(a==='rlib-cat'){RL.cat=b.dataset.c||null;rlBody();const sc=document.querySelector('#rlib .dcats .rch.on');if(sc&&sc.scrollIntoView)try{sc.scrollIntoView({inline:'center',block:'nearest'});}catch(e){}}
@@ -7216,6 +7264,10 @@ function evAnnounce(){
       S.evAnn[e.id+'_s']=1;if(kind==='e')S.evAnn[e.id+'_e']=1;save();
       const t=kind==='s'?'¡Nuevo evento!':(d===1?'Último día del evento':'Quedan '+d+' días');
       showModal('<div class="evann"><div class="eve" aria-hidden="true">'+e.emoji+'</div><span class="evtag">'+t+'</span><h3>'+esc(e.name)+'</h3><p>'+esc(e.blurb)+'</p><p class="muted" style="font-size:13px">Termina el '+e.to+'.</p></div><button class="btn" data-a="'+e.open+'">Ver evento</button><button class="btn ghost" data-a="stay">Luego</button>');
+      return;
+    }
+    if(!S.evAnn.maps198){S.evAnn.maps198=1;save();
+      showModal('<div class="evann"><div class="eve" aria-hidden="true">🗺️</div><span class="evtag">¡Novedad!</span><h3>Nuevo módulo de mapas</h3><p>En la Biblioteca de Rollo encontrarás los mapas del Reino Unido, el Reino Dividido y la caída del reino del norte ante Asiria.</p><p class="muted" style="font-size:14px">Próximamente habrá más.</p></div><button class="btn" data-a="maps-go">Ver los mapas</button><button class="btn ghost" data-a="stay">Después</button>');
       return;
     }
   }catch(err){}
@@ -12255,7 +12307,7 @@ const DECKS={quien:dQuien,pers:dPers,vf:dVF,comp:dComp,libros:dLibros,conv:dConv
    · «Comparte la fe en Cristo»: un mensaje corto que se abre desde un enlace (sin instalar nada ni dar datos)
      y que se comparte por WhatsApp; insignia de cobre, plata y oro según cuántas veces se comparte.
    ============================================================ */
-const NW_SOLO=['sg_mix','sg_img','sg_cad','sg_det','sg_bib','sg_tl','sg_sopa'],NW_FR=['rm_wsop','rm_draw','rm_mime'],NW_NEW=NW_SOLO.concat(NW_FR,['evg','rt_mem','rt_evg','rt_rev','av','avc','dic','ev_ip']);
+const NW_SOLO=['sg_mix','sg_img','sg_cad','sg_det','sg_bib','sg_tl','sg_sopa'],NW_FR=['rm_wsop','rm_draw','rm_mime'],NW_NEW=NW_SOLO.concat(NW_FR,['evg','rt_mem','rt_evg','rt_rev','av','avc','dic','ev_ip','maps']);
 function nwGet(){try{const o=JSON.parse(localStorage.getItem('lampy_nw')||'{}')||{};if(!o._m108){delete o.sg_img;o._m108=1;localStorage.setItem('lampy_nw',JSON.stringify(o));}return o;}catch(e){return null;}}
 function nwSeen(id){const o=nwGet();return o===null?true:!!o[id];}
 function nwMark(id){try{const o=nwGet()||{};if(!o[id]){o[id]=1;localStorage.setItem('lampy_nw',JSON.stringify(o));}}catch(e){}}
@@ -13496,6 +13548,274 @@ document.addEventListener('keydown',e=>{
   else if(CW.sel&&(k==='ArrowRight'||k==='ArrowLeft'||k==='ArrowDown'||k==='ArrowUp')){e.preventDefault();const p=CW.words[CW.sel.w];const f=(k==='ArrowRight'||k==='ArrowDown')?1:-1;CW.sel.i=Math.max(0,Math.min(p.w.length-1,CW.sel.i+f));cwRender();}
 },true);
 
+/* ============================================================
+   ACERTIJOS · «Lampy en peligro»
+   Cada acierto da una letra de la palabra secreta; con todas las letras hay que ordenarlas.
+   Cada error inclina el balde; al sexto, o si falla al ordenar, se vuelca sobre Lampy.
+   ============================================================ */
+const AC_CL={"Gracia": "Un regalo que se da sin que la persona lo haya merecido.", "Misericordia": "Alguien que merecía castigo y recibe compasión en vez de eso.", "Pecado": "Desobedecer a Dios: hacer lo que prohíbe o dejar de hacer lo que manda.", "Arrepentimiento": "Reconocer el mal hecho, dolerse de él y cambiar de rumbo.", "Fe": "Confiar en lo que Dios ha dicho y descansar en Cristo.", "Justificación": "Como un juez que absuelve: Dios declara justo al que cree en Cristo.", "Expiación": "Un sacrificio que cubre el pecado para que sea perdonado.", "Propiciación": "Un sacrificio que aparta la ira de Dios contra el pecado.", "Redención": "Cuando una persona en Roma pagaba por la libertad de un esclavo.", "Reconciliación": "Dos que estaban enemistados vuelven a tener paz.", "Perdón": "Dios no toma en cuenta la ofensa del que se arrepiente.", "Conversión": "El giro de quien deja el pecado y se vuelve a Dios.", "Regeneración": "Nacer de nuevo: recibir vida nueva por el Espíritu.", "Santificación": "Ser apartado para Dios y crecer toda la vida en agradarle.", "Glorificación": "La etapa final: el creyente recibe un cuerpo glorioso.", "Adopción": "Alguien que no era hijo es recibido como hijo, con todos sus derechos.", "Elección": "Dios escogió a un pueblo para sí antes de la fundación del mundo.", "Predestinación": "Dios determinó de antemano lo que haría con los que eligió.", "Perseverancia": "Dios guarda a los suyos hasta el fin, y ellos siguen creyendo.", "Salvación": "Ser librado del pecado y de sus consecuencias por la obra de Cristo.", "Evangelio": "Las buenas noticias: Cristo murió, resucitó y ofrece perdón.", "Juicio": "El día en que Dios juzgará a todos con justicia.", "Condenación": "La sentencia de Dios sobre el pecador.", "Santo": "Apartado para Dios y puro.", "Trinidad": "Un solo Dios que existe en tres personas.", "Encarnación": "El Hijo de Dios se hizo hombre sin dejar de ser Dios.", "Mesías": "El Ungido: el Rey y Salvador prometido por Dios.", "Cordero de Dios": "Título de Jesús: el sacrificio que quita el pecado del mundo.", "Mediador": "El que se pone en medio para unir a dos partes.", "Pacto": "Un compromiso solemne de Dios con su pueblo, con promesas y condiciones.", "Ley": "Lo que Dios mandó a su pueblo por medio de Moisés.", "Sábado": "El séptimo día de la semana, apartado para descansar.", "Pascua": "La fiesta que recuerda la salida de Egipto y las casas marcadas con sangre.", "Pentecostés": "La fiesta de los cincuenta días, cuando fue derramado el Espíritu Santo.", "Diezmo": "La décima parte de lo que uno gana, entregada a Dios.", "Tabernáculo": "La tienda sagrada que Israel llevó por el desierto.", "Holocausto": "El sacrificio que se quemaba entero sobre el altar.", "Jubileo": "Cada cincuenta años: se devolvían las tierras y se liberaba a los esclavos.", "Circuncisión": "La señal que Dios dio a Abraham, hecha a los varones.", "Bautismo": "Un rito con agua para entrar a la vida de la iglesia.", "Santa Cena": "La comida con pan y copa que Jesús instituyó en memoria de su muerte.", "Iglesia": "Los que pertenecen a Cristo, reunidos como pueblo de Dios.", "Anciano": "El responsable de pastorear y enseñar a la comunidad de creyentes.", "Diácono": "Quien sirve en tareas prácticas; su nombre significa «siervo».", "Exilio": "Cuando Israel fue llevado preso a Babilonia por su desobediencia.", "Ayuno": "Dejar de comer un tiempo para dedicarse a orar.", "Oración": "Hablar con Dios: alabarlo, agradecerle, confesar y pedirle.", "Resurrección": "Volver a la vida después de morir, como Cristo al tercer día.", "Segunda venida": "Jesucristo volverá en gloria.", "Cielo": "El lugar donde Dios mora.", "Reino de Dios": "El gobierno soberano sobre su pueblo, con Cristo como rey.", "Infierno": "El lugar del castigo para los que no se arrepienten.", "Ángel": "Un ser espiritual creado para servir a Dios; su nombre significa «mensajero».", "Satanás": "Un ángel caído, enemigo de Dios y de su pueblo.", "Parábola": "Una historia sencilla con la que Jesús enseñaba una verdad.", "Sinagoga": "Lugar donde los judíos se reunían a leer las Escrituras; allí no se ofrecían sacrificios."};
+const AC_W=[["Adán", "Un personaje"], ["Eva", "Un personaje"], ["Noé", "Un personaje"], ["Abel", "Un personaje"], ["Caín", "Un personaje"], ["Sara", "Un personaje"], ["Isaac", "Un personaje"], ["Jacob", "Un personaje"], ["José", "Un personaje"], ["Moisés", "Un personaje"], ["Aarón", "Un personaje"], ["Josué", "Un personaje"], ["Rut", "Un personaje"], ["Ester", "Un personaje"], ["David", "Un personaje"], ["Saúl", "Un personaje"], ["Elías", "Un personaje"], ["Eliseo", "Un personaje"], ["Job", "Un personaje"], ["Jonás", "Un personaje"], ["Daniel", "Un personaje"], ["Pedro", "Un personaje"], ["Pablo", "Un personaje"], ["Juan", "Un personaje"], ["Lucas", "Un personaje"], ["Marcos", "Un personaje"], ["Mateo", "Un personaje"], ["María", "Un personaje"], ["Marta", "Un personaje"], ["Judas", "Un personaje"], ["Esteban", "Un personaje"], ["Timoteo", "Un personaje"], ["Samuel", "Un personaje"], ["Gedeón", "Un personaje"], ["Sansón", "Un personaje"], ["Débora", "Un personaje"], ["Noemí", "Un personaje"], ["Salomón", "Un personaje"], ["Belén", "Un lugar"], ["Edén", "Un lugar"], ["Sinaí", "Un lugar"], ["Jordán", "Un lugar"], ["Sion", "Un lugar"], ["Betel", "Un lugar"], ["Egipto", "Un lugar"], ["Babel", "Un lugar"], ["Moab", "Un lugar"], ["Galilea", "Un lugar"], ["Jericó", "Un lugar"], ["Sodoma", "Un lugar"], ["Ararat", "Un lugar"], ["Carmelo", "Un lugar"], ["Patmos", "Un lugar"], ["Éfeso", "Un lugar"], ["Corinto", "Un lugar"], ["Damasco", "Un lugar"], ["Samaria", "Un lugar"], ["Génesis", "Un libro"], ["Salmos", "Un libro"], ["Isaías", "Un libro"], ["Amós", "Un libro"], ["Oseas", "Un libro"], ["Joel", "Un libro"], ["Romanos", "Un libro"], ["Gálatas", "Un libro"], ["Santiago", "Un libro"], ["Números", "Un libro"], ["Jueces", "Un libro"], ["Esdras", "Un libro"]];
+const AC_LV={f:{t:'Fácil',d:'3 a 4 letras',a:3,b:4},m:{t:'Medio',d:'5 a 6 letras',a:5,b:6},d:{t:'Difícil',d:'7 a 8 letras',a:7,b:8}};
+const AC_ANG=[0,10,24,38,54,70];
+let AZ=null,AZ_LAST='';
+function acN(s){return String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z]/g,'');}
+function acMood(e){return e<=1?'happy':e<=3?'worried':'panic';}
+function acPlan(w){
+  const L=acN(w).split(''),terms=Object.keys(AC_CL);
+  const cand=L.map(ch=>shuffle(terms.filter(t=>acN(t).indexOf(ch)>=0)));
+  if(cand.some(c=>c.length<2))return null;
+  const order=L.map((_,i)=>i).sort((a,b)=>cand[a].length-cand[b].length);
+  const used=new Set(),asg=[];let steps=0;
+  const bt=k=>{
+    if(k===order.length)return true;
+    if(++steps>4000)return false;
+    const p=order[k];
+    for(const t of cand[p]){if(used.has(t))continue;used.add(t);asg[p]=t;if(bt(k+1))return true;used.delete(t);}
+    return false;
+  };
+  return bt(0)?{L,cand,asg,used}:null;
+}
+function acNew(lv){
+  const V=AC_LV[lv]||AC_LV.m;
+  const pool=shuffle(AC_W.filter(x=>{const n=acN(x[0]).length;return n>=V.a&&n<=V.b&&x[0]!==AZ_LAST;}));
+  for(const x of pool){const pl=acPlan(x[0]);if(pl){AZ_LAST=x[0];return Object.assign({w:x[0],cat:x[1]},pl);}}
+  return null;
+}
+function acSetup(){
+  AZ=null;
+  const el=$('#game');el.className='overlay gamed';el.style.setProperty('--gc','#1CB0F6');el.style.setProperty('--gcol','#1CB0F6');
+  const lv=S.acl||'m';
+  el.innerHTML='<div class="lh"><button class="x" data-a="ac-exit" aria-label="Cerrar">'+IC.close+'</button><div class="bar"><i style="width:0%"></i></div></div>'+
+   '<div class="lb"><div class="res" style="padding-top:0"><div style="display:flex;justify-content:center">'+mascot('worried',120)+'</div><h1 style="color:var(--blue-ink)">Acertijos</h1><p class="muted" style="margin:0 0 4px;font-size:18px">Lampy en peligro</p></div>'+
+   '<p style="text-align:center;margin:8px 0 14px">Adivina conceptos para ganar letras y descubre la palabra secreta antes de que se vuelque el balde.</p>'+
+   '<section class="sec"><h3>Nivel</h3><div class="seg">'+Object.keys(AC_LV).map(k=>'<button class="'+(lv===k?'on':'')+'" data-a="ac-lv" data-l="'+k+'">'+AC_LV[k].t+'</button>').join('')+'</div><p class="muted" style="font-size:14px;margin:6px 0 0">'+AC_LV[lv].d+'</p></section>'+
+   '<p class="muted" style="font-size:14px">Al ganar sumas +10 XP a tu racha. 🔥</p></div>'+
+   '<div class="lf"><div class="in"><button class="btn" data-a="ac-go" data-primary>¡A jugar!</button></div></div>';
+  gShow();
+}
+function acShell(){
+  const n=AZ.n;
+  return '<div class="lh"><button class="x" data-a="ac-close" aria-label="Salir del juego">'+IC.close+'</button><div class="bar"><i id="acbar" style="width:0%"></i></div></div>'+
+   '<div class="lb">'+
+   '<div class="acs" id="acs">'+
+    '<div class="acpool" id="acpool"></div>'+
+    '<div class="aclamp" id="aclamp">'+mascot('happy',104)+'</div>'+
+    '<i class="acwick" id="acwick"></i>'+
+    '<div class="acsmk" id="acsmk"><i></i><i></i><i></i></div>'+
+    '<div class="acstm" id="acstm"></div>'+
+    '<svg class="acbk" id="acbk" viewBox="0 0 150 130" aria-hidden="true"><path d="M20 38 L20 100 Q20 110 30 110 L96 110 Q106 110 106 100 L106 38 Z" fill="#9aa3ad" stroke="#5b6570" stroke-width="4"/><path d="M27 48 L99 48 L96 98 L30 98 Z" fill="#4db8f0"/><rect id="aclip" x="14" y="30" width="98" height="10" rx="4" fill="#b8c0c8" stroke="#5b6570" stroke-width="4"/><path d="M20 36 Q63 -14 106 36" fill="none" stroke="#5b6570" stroke-width="4"/></svg>'+
+   '</div>'+
+   '<p class="achint">'+esc(AZ.cat)+' · '+n+' letras</p>'+
+   '<div class="actr" id="actr" style="--n:'+n+'"></div>'+
+   '<div id="acq"></div></div>'+
+   '<div class="lf" id="acf"></div>';
+}
+function acMeasure(){
+  const sc=$('#acs'),bk=$('#acbk'),lamp=$('#aclamp'),lip=$('#aclip');if(!sc||!bk||!lip)return;
+  const sr=sc.getBoundingClientRect();
+  bk.style.transition='none';bk.style.marginLeft='-48px';bk.style.transform='rotate(-85deg)';
+  const l=lip.getBoundingClientRect(),fe=lamp.querySelector('.fl'),fl=fe?fe.getBoundingClientRect():lamp.getBoundingClientRect();
+  const dx=sr.width/2-(l.left-sr.left+l.width*.5);
+  bk.style.marginLeft=(-48+dx)+'px';
+  const l2=lip.getBoundingClientRect(),ly=l2.bottom-sr.top-3;
+  AZ.geo={top:ly,h:Math.max(20,(fl.top-sr.top+fl.height*1.1)-ly),wt:fl.bottom-sr.top-13};
+  void bk.offsetWidth;bk.style.transform='rotate(0deg)';
+  requestAnimationFrame(()=>{bk.style.transition='';});
+}
+function acStart(){
+  const lv=S.acl||'m',r=acNew(lv);
+  if(!r){toast('No se pudo preparar el acertijo');return;}
+  const me=AZ={lv,w:r.w,cat:r.cat,L:r.L,n:r.L.length,asg:r.asg,cand:r.cand,used:r.used,queue:null,tiles:[],slots:[],err:0,mood:'happy',phase:'q',cur:null,busy:false,learned:[],done:false,geo:null};
+  me.queue=shuffle(r.L.map((_,i)=>i));
+  me.slots=Array(me.n).fill(null);
+  const el=$('#game');el.className='overlay gamed';el.style.setProperty('--gc','#1CB0F6');el.style.setProperty('--gcol','#1CB0F6');
+  el.innerHTML=acShell();gShow();
+  acMeasure();acPaint();acQ();
+}
+function acBar(){const b=$('#acbar');if(b)b.style.width=Math.round(100*AZ.tiles.length/AZ.n)+'%';}
+function acPaint(){
+  const tr=$('#actr');if(!tr)return;
+  const ord=AZ.phase==='ord';let h='';
+  for(let i=0;i<AZ.n;i++){
+    const t=AZ.tiles[i];
+    h+=t?(ord&&!t.used?'<button class="actile" data-a="ac-tile" data-i="'+i+'" aria-label="Letra '+t.ch+'">'+t.ch+'</button>':'<span class="actile'+(t.used?' gone':'')+'">'+t.ch+'</span>'):'<span class="actile ph"></span>';
+  }
+  tr.innerHTML=h;
+  const sl=$('#acsl');
+  if(sl){
+    let s='';
+    for(let j=0;j<AZ.n;j++){const k=AZ.slots[j];s+=k!==null?'<button class="actile" data-a="ac-slot" data-i="'+j+'" aria-label="Quitar '+AZ.tiles[k].ch+'">'+AZ.tiles[k].ch+'</button>':'<span class="actile slot"></span>';}
+    sl.innerHTML=s;
+  }
+  acBar();
+}
+function acFoot(h){const f=$('#acf');if(f)f.innerHTML=h||'';}
+function acQ(){
+  if(!AZ||AZ.done)return;
+  if(!AZ.queue.length){acOrder();return;}
+  const p=AZ.queue.shift(),t=AZ.asg[p];
+  const dis=shuffle(Object.keys(AC_CL).filter(k=>k!==t)).slice(0,3);
+  const opts=shuffle([t].concat(dis));
+  AZ.cur={p,t,opts,res:null};AZ.phase='q';
+  acFoot('');
+  $('#acq').innerHTML='<div class="acclue"><span>¿Qué concepto es?</span><p>'+esc(AC_CL[t])+'</p></div><div class="acopts">'+
+   opts.map((o,i)=>'<button class="acopt" data-a="ac-opt" data-i="'+i+'">'+esc(o)+'</button>').join('')+'</div>';
+}
+function acMark(term,ch){
+  let out='',done=false;
+  for(const c of term){
+    if(!done&&acN(c)===ch){out+='<span class="acl">'+esc(c.toUpperCase())+'</span>';done=true;}
+    else out+=esc(c);
+  }
+  return out;
+}
+function acPick(i){
+  if(!AZ||AZ.busy||AZ.phase!=='q'||!AZ.cur||AZ.cur.res)return;
+  const c=AZ.cur,o=c.opts[i],btns=Array.prototype.slice.call(document.querySelectorAll('.acopt'));
+  if(!btns[i])return;
+  if(o===c.t){
+    c.res='ok';AZ.busy=true;beep('good');haptic([12]);
+    btns.forEach((b,k)=>{if(k!==i)b.classList.add('dim');});
+    btns[i].classList.add('ok');btns[i].innerHTML=acMark(o,AZ.L[c.p]);
+    AZ.learned.push(c.t);
+    const me=AZ;setTimeout(()=>{if(AZ===me)acFly(btns[i],c.p);},500);
+  }else{
+    c.res='no';beep('bad');haptic([30]);
+    btns.forEach((b,k)=>{if(k!==i)b.classList.add('dim');});
+    btns[i].classList.remove('dim');btns[i].classList.add('no');
+    const ok=btns[c.opts.indexOf(c.t)];ok.classList.remove('dim');ok.classList.add('ok');
+    AZ.err++;
+    /* esa letra se pedirá de nuevo con otro concepto */
+    const p=c.p,pool=AZ.cand[p].filter(t=>!AZ.used.has(t)),alt=pool.length?pool[0]:AZ.cand[p].filter(t=>t!==c.t)[0]||c.t;
+    AZ.used.add(alt);AZ.asg[p]=alt;AZ.queue.push(p);
+    if(AZ.err>=6){AZ.busy=true;acTilt();acLose();return;}
+    acTilt();
+    acFoot('<div class="in"><p class="acfb">Era <b>'+esc(c.t)+'</b></p><button class="btn" data-a="ac-next" data-primary>Continuar</button></div>');
+  }
+}
+function acTilt(){
+  const bk=$('#acbk');if(bk)bk.style.transform='rotate(-'+AC_ANG[Math.min(AZ.err,5)]+'deg)';
+  const m=acMood(AZ.err);
+  if(m!==AZ.mood){AZ.mood=m;const l=$('#aclamp');if(l)l.innerHTML=mascot(m,104);}
+}
+function acFly(btn,p){
+  const ch=AZ.L[p],src=(btn.querySelector('.acl')||btn).getBoundingClientRect(),idx=AZ.tiles.length;
+  const dst=document.querySelectorAll('#actr .actile')[idx],me=AZ;let dn=false;
+  const done=()=>{
+    if(dn||AZ!==me)return;dn=true;
+    AZ.tiles.push({ch,p,used:false});AZ.busy=false;acPaint();
+    if(AZ.tiles.length>=AZ.n)acOrder();else acQ();
+  };
+  if(!dst||!btn.animate){done();return;}
+  const d=dst.getBoundingClientRect(),f=document.createElement('span');
+  f.className='actile fly';f.textContent=ch;
+  f.style.cssText='left:'+src.left+'px;top:'+src.top+'px;width:'+d.width+'px;height:'+d.height+'px';
+  document.body.appendChild(f);
+  const dx=d.left-src.left,dy=d.top-src.top;
+  try{
+    const an=f.animate([{transform:'translate(0,0) scale(.6)'},{transform:'translate('+dx*.5+'px,'+(dy*.5-30)+'px) scale(1.25)',offset:.5},{transform:'translate('+dx+'px,'+dy+'px) scale(1)'}],{duration:650,easing:'ease-in-out',fill:'forwards'});
+    an.onfinish=()=>{f.remove();done();};
+  }catch(e){f.remove();done();}
+  setTimeout(()=>{try{f.remove();}catch(e){}done();},1300);
+}
+function acOrder(){
+  AZ.phase='ord';AZ.cur=null;
+  $('#acq').innerHTML='<div class="acord"><h3>¡Ordena las letras!</h3><p class="muted">Forma la palabra. Solo tienes un intento.</p><div class="acsl" id="acsl" style="--n:'+AZ.n+'"></div></div>';
+  acPaint();acOrdFoot();
+}
+function acOrdFoot(){
+  const full=AZ.slots.every(k=>k!==null);
+  acFoot('<div class="in"><button class="btn" data-a="ac-check" data-primary'+(full?'':' disabled')+'>Comprobar</button></div>');
+}
+function acTile(i){
+  if(!AZ||AZ.phase!=='ord'||AZ.busy)return;
+  const t=AZ.tiles[i];if(!t||t.used)return;
+  const j=AZ.slots.indexOf(null);if(j<0)return;
+  AZ.slots[j]=i;t.used=true;haptic([8]);acPaint();acOrdFoot();
+}
+function acSlot(j){
+  if(!AZ||AZ.phase!=='ord'||AZ.busy)return;
+  const k=AZ.slots[j];if(k===null)return;
+  AZ.slots[j]=null;AZ.tiles[k].used=false;acPaint();acOrdFoot();
+}
+function acCheck(){
+  if(!AZ||AZ.phase!=='ord'||AZ.busy||AZ.slots.some(k=>k===null))return;
+  const w=AZ.slots.map(k=>AZ.tiles[k].ch).join('');
+  AZ.busy=true;acFoot('');
+  if(w===AZ.L.join(''))acWin();else acLose();
+}
+function acWin(){
+  AZ.phase='end';AZ.done=true;
+  const me=AZ,l=$('#aclamp');if(l)l.innerHTML=mascot('cheer',104);
+  const r=recordDay(10);S.gplays=(S.gplays||0)+1;
+  const fresh=ACH.filter(a=>!S.ach[a.id]&&a.f(S));fresh.forEach(a=>S.ach[a.id]=true);save();
+  beep('win');confetti(80);haptic([20,70,20,70,50]);
+  $('#acq').innerHTML='<div class="aclose"><h3 style="color:var(--green-ink)">¡Lampy está a salvo!</h3><p class="acw">'+esc(me.w.toUpperCase())+'</p></div>';
+  setTimeout(()=>{if(AZ!==me||$('#game').hidden)return;acShowEnd(r,fresh);},2200);
+}
+function acShowEnd(r,fresh){
+  const lst=AZ.learned.map(t=>'<div class="li"><span><b>'+esc(t)+'</b> — '+esc(AC_CL[t])+'</span></div>').join('');
+  $('#game').innerHTML=
+   '<div class="lb"><div class="res"><div style="display:flex;justify-content:center">'+mascot('cheer',130)+'</div><h1>¡Lampy está a salvo!</h1><p class="muted" style="margin:0">La palabra era <b>'+esc(AZ.w)+'</b></p>'+
+   '<div class="rs" style="grid-template-columns:1fr 1fr"><div><i>⚡</i><b>+10</b><span>XP</span></div><div><i>🔥</i><b>'+S.streak+'</b><span>Días de racha</span></div></div>'+
+   (r.newDay?'<div class="note fl">🔥 <b>¡Racha de '+S.streak+(S.streak===1?' día':' días')+'!</b></div>':'')+
+   (r.gotFreeze?'<div class="note fl">🛡️ <b>¡Ganaste un protector de racha!</b></div>':'')+
+   fresh.map(a=>'<div class="note">'+(ACH_E[a.id]||'⭐')+' <b>Logro: '+a.t+'.</b> '+a.d+'.</div>').join('')+
+   '<h3 style="text-align:left;margin:18px 0 6px">Lo que repasaste</h3><div class="list" style="text-align:left">'+lst+'</div></div></div>'+
+   '<div class="lf"><div class="in"><div class="row2"><button class="btn ghost" data-a="ac-exit">Salir</button><button class="btn" data-a="ac-go" data-primary>Otra palabra</button></div></div></div>';
+  setTimeout(famSync,400);confetti(120);
+}
+function acLose(){
+  const me=AZ;me.phase='end';me.done=true;me.busy=true;acFoot('');
+  beep('bad');haptic([40,60,40]);
+  acSpill(me,()=>{
+    if(AZ!==me)return;
+    $('#acq').innerHTML='<div class="aclose"><h3>Se apagó la llama…</h3><p>La palabra era</p><p class="acw">'+esc(me.w.toUpperCase())+'</p><p class="muted">'+esc(me.cat)+'</p></div>';
+    acFoot('<div class="in"><div class="row2"><button class="btn ghost" data-a="ac-exit">Salir</button><button class="btn" data-a="ac-go" data-primary>Otra palabra</button></div></div>');
+  });
+}
+function acSpill(me,cb){
+  const bk=$('#acbk'),stm=$('#acstm'),smk=$('#acsmk'),pool=$('#acpool'),lamp=$('#aclamp'),wk=$('#acwick'),sc=$('#acs'),g=me.geo;
+  if(!bk||!g){cb();return;}
+  const T=(ms,f)=>setTimeout(()=>{if(AZ===me)try{f();}catch(e){}},ms);
+  lamp.innerHTML=mascot('panic',104);me.mood='panic';
+  bk.style.transform='rotate(-85deg)';
+  T(800,()=>{stm.style.top=g.top+'px';stm.style.opacity=1;stm.style.height=g.h+'px';});
+  T(1300,()=>{
+    pool.style.height='14px';
+    const f=lamp.querySelector('.fl');if(f){f.style.animation='none';f.style.transition='transform .5s,opacity .5s';f.style.transform='scale(.3)';f.style.opacity='.4';}
+    for(let i=0;i<8;i++){const s=document.createElement('i');s.className='acsp';s.style.left=(sc.clientWidth/2+Math.random()*40-20)+'px';s.style.top=(g.top+g.h-6)+'px';s.style.setProperty('--x',(Math.random()*110-55)+'px');s.style.setProperty('--y',(-Math.random()*50-8)+'px');sc.appendChild(s);requestAnimationFrame(()=>s.classList.add('on'));setTimeout(()=>{try{s.remove();}catch(e){}},1000);}
+  });
+  T(1800,()=>{
+    lamp.innerHTML=mascot('sad',104);
+    const f=lamp.querySelector('.flw');if(f)f.style.display='none';
+    wk.style.top=g.wt+'px';wk.style.display='block';
+    smk.classList.add('on');pool.style.height='20px';beep('bad',.05);
+  });
+  T(2300,()=>{stm.style.height='0';stm.style.opacity=0;});
+  T(3400,cb);
+}
+function acExit(){AZ=null;gClose();}
+function acAct(a,b){
+  if(a==='ac-solo'){acSetup();return;}
+  if(a==='ac-lv'){S.acl=b.dataset.l;save();acSetup();return;}
+  if(a==='ac-go'){acStart();return;}
+  if(a==='ac-exit'){acExit();return;}
+  if(a==='ac-close'){
+    if(!AZ||AZ.done||(!AZ.tiles.length&&!AZ.err))acExit();
+    else showModal('<h3>¿Salir del juego?</h3><p>Perderás el avance de esta palabra.</p><button class="btn" data-a="ac-stay">Seguir jugando</button><button class="btn ghost" data-a="ac-leave">Salir</button>');
+    return;
+  }
+  if(a==='ac-stay'){hideModal();return;}
+  if(a==='ac-leave'){hideModal();acExit();return;}
+  if(!AZ)return;
+  if(a==='ac-opt')acPick(+b.dataset.i);
+  else if(a==='ac-next'){if(!AZ.busy&&AZ.phase==='q'&&AZ.cur&&AZ.cur.res==='no')acQ();}
+  else if(a==='ac-tile')acTile(+b.dataset.i);
+  else if(a==='ac-slot')acSlot(+b.dataset.i);
+  else if(a==='ac-check')acCheck();
+}
+
 /* ===== Crucigrama a dos (un celular, turnos con tiempo) ===== */
 let CD=null,CDSET={secs:45,names:['','']};
 const CD_COL=['#FF9600','#1CB0F6'];
@@ -14259,7 +14579,7 @@ function gSoloTiles(){
   return '<div class="gtiles">'+sgTileHTML('mix')+GAMES.filter(g=>!(fam&&g.id==='conv')&&!/^(quien|pers|vf|libros)$/.test(g.id)).map(g=>'<button class="gcard" style="--gc:'+g.c+'" data-a="g-open" data-g="'+g.id+'"><span class="gemo" aria-hidden="true">'+g.emo+'</span><b>'+esc(g.t)+'</b><span>'+esc(g.d)+'</span></button>').join('')+
    '<button class="gcard" style="--gc:#FF9600" data-a="sp-solo"><span class="gemo" aria-hidden="true">🏁</span><b>Carrera de versículos</b><span>Contrarreloj: ¿cuántos puedes acertar?</span></button>'+
    '<button class="gcard" style="--gc:#E84393" data-a="gw-solo"><span class="gemo" aria-hidden="true">🃏</span><b>¿Quién es quién?</b><span>Descarta cartas y adivina el personaje secreto</span></button>'+
-   '<button class="gcard" style="--gc:#7C5CFC" data-a="cw-solo"><span class="gemo" aria-hidden="true">🧩</span><b>Crucigrama bíblico</b><span>Resuelve las pistas y descubre el pasaje de cada palabra</span></button>'+['img','cad','det','bib','tl','sopa'].map(sgTileHTML).join('')+'</div>';
+   '<button class="gcard" style="--gc:#7C5CFC" data-a="cw-solo"><span class="gemo" aria-hidden="true">🧩</span><b>Crucigrama bíblico</b><span>Resuelve las pistas y descubre el pasaje de cada palabra</span></button>'+'<button class="gcard" style="--gc:#1CB0F6" data-a="ac-solo"><span class="gemo" aria-hidden="true">🪣</span><b>Acertijos</b><span>Lampy en peligro</span></button>'+['img','cad','det','bib','tl','sopa'].map(sgTileHTML).join('')+'</div>';
 }
 function gamesHTML(){
   const fam=famOn();
@@ -14533,6 +14853,7 @@ document.addEventListener('click',e=>{
   else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
   else if(a.slice(0,3)==='cw-'){cwAct(a,b);}
+  else if(a.slice(0,3)==='ac-'){acAct(a,b);}
   else if(a.slice(0,3)==='sg-'){sgAct(a,b);}
   else if(a.slice(0,4)==='evg-'){evgAct(a,b);}
   else if(a.slice(0,4)==='avx-'){avxAct(a,b);}
@@ -14553,6 +14874,7 @@ document.addEventListener('click',e=>{
   else if(a.slice(0,3)==='rv-'){repAct(a,b);}
   else if(a.slice(0,5)==='card-'){cardAct(a,b);}
   else if(a==='rf-open'){rfOpen();}
+  else if(a==='maps-go'){hideModal();rlOpen();nwMark('maps');RL.view='maps';RL.ans=null;rlBody();}
   else if(a==='rf-go'){rfGo(+b.dataset.i);}
   else if(a==='ip-open'){ipOpen();}
   else if(a==='ip-go'){ipGo(+b.dataset.i);}
