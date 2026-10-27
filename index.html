@@ -683,6 +683,17 @@ textarea.code{width:100%;min-height:76px;font:inherit;font-size:13px;border:2px 
 .mad b{display:block;font-size:15px;font-weight:900}.mad span{display:block;font-size:11px;font-weight:700}
 .mad.on{color:var(--ink)}.mad.on i{background:var(--green);box-shadow:0 0 0 4px var(--green-bg)}.mad.done i{background:var(--green)}
 .intro p.macap{transition:opacity .35s ease;min-height:3.9em}
+.tbx{width:100%;margin:0 auto 10px}
+.tbtr{display:flex;gap:6px;margin:0 0 10px}
+.tbtr span{flex:1;text-align:center;font-size:12px;font-weight:800;color:var(--muted);border-bottom:4px solid var(--line);padding-bottom:4px;line-height:1.15}
+.tbtr span.on{color:var(--ink);border-color:var(--green)}.tbtr span.done{border-color:var(--green)}
+.tbst{position:relative;width:100%;aspect-ratio:1408/768;border-radius:16px;overflow:hidden;border:2px solid var(--line);background:#2b2216}
+.tbst img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .6s ease}
+.tbst img.on{opacity:1}
+.tbn{font-size:13px;font-weight:800;color:var(--muted);text-align:center;margin:10px 0 2px}
+.tbt{font-size:21px;font-weight:900;text-align:center;margin:2px 0 6px}
+.tbp{font-size:18px;line-height:1.45;text-align:center;min-height:6.5em;margin:0 0 10px}
+.tbx .row2 .btn{flex:1}
 .mapdiv{cursor:pointer}.mapdiv .md{opacity:0}
 .mapdiv.play .md{animation:mapRev 4.8s ease-in-out both}
 @keyframes mapRev{0%,28%{opacity:0}52%,100%{opacity:1}}
@@ -1787,7 +1798,7 @@ button.cog.trref{display:inline-block;background:var(--yellow-bg);border:2px sol
 
 <script src="config.js"></script>
 <script src="mapas.js"></script>
-<script>window.MAPS=window.MAPS||{};window.ASSY=window.ASSY||{b:[],u:[]};window.ASSY2=window.ASSY2||{b:[],u:[]};window.ASSY3=window.ASSY3||{b:[],u:[]};</script>
+<script>window.MAPS=window.MAPS||{};window.ASSY=window.ASSY||{b:[],u:[]};window.ASSY2=window.ASSY2||{b:[],u:[]};window.ASSY3=window.ASSY3||{b:[],u:[]};window.TABI=window.TABI||[];</script>
 <script>
 /* ============================================================
    CONTENIDO — Texto bíblico: Reina-Valera 1960
@@ -2449,9 +2460,9 @@ function rlBodyHTML(){
   return (RL.ans?rlAnsHTML():'')+'<h4 class="rlh">Preguntas rápidas</h4><div class="rchips">'+qs.map(x=>'<button class="rch" data-a="rlib-int" data-k="'+x[0]+'">'+x[1]+'</button>').join('')+'</div>'+
     '<h4 class="rlh">Para explorar</h4><section class="card trentry" data-a="rlib-dict" style="border-color:var(--blue)">'+nwDot('dic')+'<div class="tre">📖</div><div class="trt"><b>Diccionario</b><p>Gracia, pacto, codo, denario y más, con versículos.</p></div><button class="btn blue sm" data-a="rlib-dict">Ver</button></section>'+trCardHTML()+
     (RL_SHOW_BOOKS?'<section class="card trentry" data-a="rlib-books" style="border-color:var(--blue)"><div class="tre">📚</div><div class="trt"><b>Los libros de la Biblia</b><p>Autor, fecha y tema de cada libro, según las fichas del curso.</p></div><button class="btn blue sm" data-a="rlib-books">Ver</button></section>':'')+
-    '<section class="card trentry" data-a="rlib-maps" style="border-color:var(--blue)">'+nwDot('maps')+'<div class="tre">🗺️</div><div class="trt"><b>Mapas</b><p>El Reino Unido, el Reino Dividido y Asiria, con fechas.</p></div><button class="btn blue sm" data-a="rlib-maps">Ver</button></section>';
+    '<section class="card trentry" data-a="rlib-maps" style="border-color:var(--blue)">'+nwDot('maps')+'<div class="tre">🗺️</div><div class="trt"><b>Mapas</b><p>Reinos, imperios y un recorrido por el tabernáculo.</p></div><button class="btn blue sm" data-a="rlib-maps">Ver</button></section>';
 }
-function rlBody(){const el=$('#rlbody');if(el)el.innerHTML=rlBodyHTML();if(el&&RL.view==='map'){const lb=$('#rlib .lb');if(lb)mapWatch(lb);}const rr=$('#rlib');if(rr)rr.classList.toggle('rdict',RL.view==='dict');const i=$('#rlq');if(i)i.placeholder=RL.view==='dict'?'Buscar una palabra…':'Pregúntale a Rollo…';}
+function rlBody(){const el=$('#rlbody');if(el)el.innerHTML=rlBodyHTML();if(el&&RL.view==='map'&&RL.map==='tabernaculo')tabShow(0);if(el&&RL.view==='map'){const lb=$('#rlib .lb');if(lb)mapWatch(lb);}const rr=$('#rlib');if(rr)rr.classList.toggle('rdict',RL.view==='dict');const i=$('#rlq');if(i)i.placeholder=RL.view==='dict'?'Buscar una palabra…':'Pregúntale a Rollo…';}
 function rlShow(){
   rlBody();if(RL.ans&&RL.ans.k!=='none')beep('page');
   const root=$('#rlib');if(!root||!RL.ans)return;
@@ -2571,6 +2582,7 @@ function rlAct(a,b){
   else if(a==='rlib-back'){RL.view='home';rlBody();}
   else if(a==='rlib-maps'){nwMark('maps');RL.view='maps';RL.ans=null;rlBody();}
   else if(a==='rlib-map'){rlOpenMap(b.dataset.id);}
+  else if(a==='rlib-tab'){tabNav(+b.dataset.d);}
   else if(a==='rlib-dict'){nwMark('dic');RL.view='dict';RL.ans=null;if(!(b&&b.keep)){RL.dq='';RL.cat=null;const qi=$('#rlq');if(qi)qi.value='';}else{const qi=$('#rlq');if(qi)qi.value=RL.dq||'';}rlBody();rlSync();const bub=document.querySelector('#rlib .hero .bubble');if(bub){bub.textContent='¿Qué palabra buscas?';}const lb=document.querySelector('#rlib .lb');if(lb)lb.scrollTop=0;}
   else if(a==='rlib-cat'){RL.cat=b.dataset.c||null;rlBody();const sc=document.querySelector('#rlib .dcats .rch.on');if(sc&&sc.scrollIntoView)try{sc.scrollIntoView({inline:'center',block:'nearest'});}catch(e){}}
   else if(a==='rlib-letter'){const h=document.getElementById('dl-'+b.dataset.l);if(h)try{h.scrollIntoView({block:'start'});}catch(e){h.scrollIntoView();}}
@@ -11495,7 +11507,23 @@ function introMD(txt){
 function introHasMD(p){return /(^|\n)(---|## |- |> |\d+\. |:: )/.test(String(p||''));}
 const ASS_CAPS=["Asiria crece bajo Tiglat-pileser y avanza hacia el oeste. (2 Reyes 15:19)", "Acaz pidió ayuda a Asiria, que tomó Damasco y mató a Rezín. (2 Reyes 16:7-9)", "Siria desaparece y Asiria queda a las puertas del reino del norte.", "Asiria toma gran parte del reino del norte y sitia Samaria por tres años. (2 Reyes 15:29; 17:5)", "Samaria cae: el reino del norte desaparece y pasa a ser parte de Asiria. (2 Reyes 17:6)", "Senaquerib toma las ciudades fortificadas de Judá y rodea Jerusalén, pero no logra entrar. (2 Reyes 18:13; 19:35-36)", "Asiria llega hasta Egipto, pero Judá y su capital siguen en pie: <em>«ampararé esta ciudad para salvarla»</em> (2 Reyes 19:34)"],ASS_ALT=["Mapa de 745 a. C.: Asiria crece al noreste", "Mapa de 732 a. C.: Asiria llega a Siria", "Mapa de 732 a. C.: Siria desaparece", "Mapa de 725 a 722 a. C.: el sitio de Samaria", "Mapa de 722 a. C.: cae el reino del norte", "Mapa de 701 a. C.: Jerusalén resiste", "Mapa de 670 a. C.: Asiria llega a Egipto"],ASS_DOT=[0,1,1,2,3,4,5],ASS_YR=['745','732','725','722','701','670'];
 const ASQ={asiria:{caps:ASS_CAPS,alt:ASS_ALT,dot:ASS_DOT,yr:ASS_YR,long:[0,3,5],get y(){return ASSY;}},babilonia:{caps:["Asiria domina, pero Judá y Jerusalén siguen en pie. (2 Reyes 19:34)", "Babilonia se levanta en el sur de Mesopotamia: <em>«he aquí, yo levanto a los caldeos»</em> (Habacuc 1:6)", "Cae Nínive: <em>«Asolada es Nínive»</em> (Nahúm 3:7). Babilonia se queda con Mesopotamia.", "Primera deportación: Babilonia llega al Mediterráneo, y Daniel y otros jóvenes nobles son llevados. Empieza el periodo de la cautividad. (2 Reyes 24:1; Daniel 1:1-4)", "Segunda deportación: el rey Joaquín, Ezequiel, los príncipes y los artesanos van a Babilonia. (2 Reyes 24:10-16)", "Tercera deportación: Jerusalén cae y el templo es quemado; Sedequías y el resto del pueblo son llevados. (2 Reyes 25:1-11)", "Periodo de la cautividad: los judíos viven en Babilonia. <em>«Edificad casas, y habitadlas»</em> (Jeremías 29:5). El imperio llega hasta el delta de Egipto. (Jeremías 43:10-13)"],alt:["Mapa de 670 a. C.: Asiria domina y Judá sigue en pie", "Mapa de 625 a. C.: Babilonia se levanta", "Mapa de 612 a. C.: cae Nínive", "Mapa de 605 a. C.: primera deportación", "Mapa de 597 a. C.: segunda deportación", "Mapa de 586 a. C.: tercera deportación", "Mapa de 568 a. C.: el imperio de Babilonia y los judíos en cautiverio"],dot:[0,1,2,3,4,5,6],yr:['670','625','612','605','597','586','568'],long:[0,3,4,5,6],get y(){return ASSY2;}},persia:{caps:["Periodo de la cautividad: <em>«Cuando se cumplan en Babilonia los setenta años, yo os visitaré»</em> (Jeremías 29:10)", "Persia se levanta en el este. Daniel anuncia que el reino de Babilonia pasará a los medos y a los persas. (Daniel 5:28)", "Ciro, rey de Persia, avanza hacia Babilonia. (Isaías 45:1)", "Cae Babilonia: el reino pasa a los medos y a los persas. (Daniel 5:30-31)", "Primera oleada, 538 a. C.: bajo Zorobabel regresan los primeros judíos para reconstruir el templo. Comienza el periodo de la restauración. (Esdras 1:1-4; 2:1-2)", "Segunda oleada, 458 a. C.: el sacerdote Esdras regresa y vuelve los corazones del pueblo a Dios. (Esdras 7:6-10)", "Tercera oleada, 445 a. C.: Nehemías, que estaba en Susa, regresa para reconstruir los muros de Jerusalén. (Nehemías 1:1; 2:1-11)", "No todos regresaron: muchos judíos se quedaron en Babilonia y en Susa, como cuenta el libro de Ester. (Ester 3:8)", "El imperio persa llegaba <em>«desde la India hasta Etiopía sobre ciento veintisiete provincias»</em> (Ester 1:1). Ester ocurre hacia 483 a. C., entre la primera y la segunda oleada."],alt:["Mapa de 568 a. C.: los judíos en cautiverio en Babilonia", "Mapa de 550 a. C.: Persia se levanta", "Mapa de 540 a. C.: Persia avanza sobre Babilonia", "Mapa de 539 a. C.: cae Babilonia", "Mapa de 538 a. C.: primera oleada de regreso", "Mapa de 458 a. C.: segunda oleada de regreso", "Mapa de 445 a. C.: tercera oleada de regreso", "Mapa del libro de Ester: judíos que se quedaron en Babilonia y Susa", "Mapa del imperio persa, de la India a Etiopía"],dot:[0,1,2,2,3,4,5,6,6],yr:['568','550','539','538','458','445','Ester'],long:[0,4,5,6,7,8],get y(){return ASSY3;}}};
-const MAP_LIST=[{id:'unido',t:'El Reino Unido',d:'hacia 1060–940 a. C.',cap:'Un solo reino, de Dan a Beerseba.'},{id:'dividido',t:'El Reino Dividido',d:'hacia 930 a. C.',cap:'Israel al norte, Judá al sur.'},{id:'asiria',t:'Asiria y el reino del norte',d:'hacia 745–670 a. C.',cap:''},{id:'babilonia',t:'Babilonia y Judá',d:'hacia 670–568 a. C.',cap:''},{id:'persia',t:'Persia y la restauración',d:'hacia 568–445 a. C.',cap:''}];
+const MAP_LIST=[{id:'unido',t:'El Reino Unido',d:'hacia 1060–940 a. C.',cap:'Un solo reino, de Dan a Beerseba.'},{id:'dividido',t:'El Reino Dividido',d:'hacia 930 a. C.',cap:'Israel al norte, Judá al sur.'},{id:'asiria',t:'Asiria y el reino del norte',d:'hacia 745–670 a. C.',cap:''},{id:'babilonia',t:'Babilonia y Judá',d:'hacia 670–568 a. C.',cap:''},{id:'persia',t:'Persia y la restauración',d:'hacia 568–445 a. C.',cap:''},{id:'tabernaculo',t:'El tabernáculo',d:'Un recorrido por dentro, en 10 paradas.',cap:''}];
+const TB_TR=["Atrio", "Altar y fuente", "Lugar Santo", "Santísimo", "Arca"],TB_ST=[["Vista desde arriba", 0, "El tabernáculo visto desde arriba: un atrio rodeado de cortinas de lino (Éxodo 27:9-18) y, al fondo, la tienda con el Lugar Santo y el Lugar Santísimo. Dios mandó hacer un santuario para habitar en medio de su pueblo (Éxodo 25:8)."], ["Entrando al atrio", 0, "Se entraba por una sola puerta, de azul, púrpura, carmesí y lino torcido (Éxodo 27:16). Dentro del atrio estaban el altar del holocausto y la fuente de bronce."], ["El altar del holocausto", 1, "Aquí se ofrecían los sacrificios. Era de madera de acacia cubierta de bronce, con cuatro cuernos (Éxodo 27:1-8). El fuego del altar debía arder continuamente (Levítico 6:13)."], ["El lavatorio", 1, "Antes de servir, Aarón y sus hijos se lavaban las manos y los pies con el agua de la fuente de bronce (Éxodo 30:17-21)."], ["El sacerdote entra al Lugar Santo", 2, "Los sacerdotes entraban cada día a la primera sala de la tienda (Éxodo 26:33; Hebreos 9:2, 6)."], ["El candelabro", 2, "De oro puro, hecho a martillo, con seis brazos y siete lámparas (Éxodo 25:31-37). Debía arder siempre delante de Jehová (Levítico 24:2-4)."], ["La mesa de los panes", 2, "Sobre la mesa de oro se ponían doce panes, en dos hileras de seis, que se renovaban cada día de reposo (Levítico 24:5-8)."], ["El altar del incienso", 2, "Era de oro y estaba delante del velo. Sobre él se quemaba incienso aromático cada mañana y cada tarde (Éxodo 30:1-8)."], ["El sumo sacerdote entra al Santísimo", 3, "Un velo separaba el Lugar Santo del Lugar Santísimo (Éxodo 26:31-33). Solo el sumo sacerdote entraba, una vez al año (Levítico 16:2, 34; Hebreos 9:7)."], ["El arca y su contenido", 4, "Un cofre de madera de acacia cubierto de oro, con el propiciatorio y dos querubines encima (Éxodo 25:10-22). Dentro estaban las tablas del pacto, la urna con el maná y la vara de Aarón que reverdeció (Hebreos 9:4)."]],TB={i:0};
+function tabHTML(){
+  TB.i=0;const n=TB_ST.length;
+  return '<div class="tbx"><div class="tbtr">'+TB_TR.map((t,k)=>'<span'+(k===0?' class="on"':'')+'>'+esc(t)+'</span>').join('')+'</div>'+
+    (TABI.length?'<div class="tbst">'+TABI.map((b,k)=>'<img class="'+(k?'':'on')+'" alt="'+esc(TB_ST[k][0])+'" src="data:image/webp;base64,'+b+'">').join('')+'</div>':'')+
+    '<p class="tbn"></p><h3 class="tbt"></h3><p class="tbp"></p>'+
+    '<div class="row2"><button type="button" class="btn ghost" data-a="rlib-tab" data-d="-1">Anterior</button><button type="button" class="btn blue" data-a="rlib-tab" data-d="1">Siguiente</button></div></div>';
+}
+function tabShow(i){
+  const r=document.querySelector('.tbx');if(!r)return;const n=TB_ST.length;TB.i=i;const st=TB_ST[i];
+  r.querySelectorAll('.tbst img').forEach((im,k)=>im.classList.toggle('on',k===i));
+  r.querySelectorAll('.tbtr span').forEach((sp,k)=>{sp.classList.toggle('on',k===st[1]);sp.classList.toggle('done',k<st[1]);});
+  r.querySelector('.tbn').textContent=(i+1)+' de '+n;r.querySelector('.tbt').textContent=st[0];r.querySelector('.tbp').textContent=st[2];
+  const bs=r.querySelectorAll('.row2 .btn');bs[0].disabled=i===0;bs[0].style.opacity=i===0?'.45':'';bs[1].textContent=i===n-1?'Volver a empezar':'Siguiente';
+}
+function tabNav(d){const n=TB_ST.length;let i=TB.i+d;if(i>=n)i=0;if(i<0)i=0;tabShow(i);const r=document.querySelector('.tbx');if(r&&r.scrollIntoView)try{r.scrollIntoView({block:'nearest'});}catch(e){}}
 function assHTML(id){
   id=id||'asiria';const Q=ASQ[id],Y=Q.y,ASS_ALT=Q.alt,ASS_CAPS=Q.caps,ASS_YR=Q.yr,ASSY=Y;
   return '<div class="mapass" data-map="'+id+'" role="button" tabindex="0" aria-label="Repetir la animación del mapa"><div class="mastage">'+
@@ -11528,6 +11556,7 @@ function assPlay(fig){
 }
 function mapFig(id,cap){
   if(ASQ[id])return assHTML(id);
+  if(id==='tabernaculo')return tabHTML();
   const d=id==='dividido';
   return '<div class="mapfig'+(d?' mapdiv':'')+'" data-map="'+id+'"'+(d?' role="button" tabindex="0" aria-label="Repetir la animación del mapa"':'')+'>'+
     '<img class="mu" alt="'+(d?'Mapa del Reino Unido':'Mapa del Reino Unido de Israel')+'" src="'+MAPS.unido+'">'+(d?'<img class="md" alt="Mapa del Reino Dividido: Israel al norte y Judá al sur" src="'+MAPS.dividido+'">':'')+'</div>'+
