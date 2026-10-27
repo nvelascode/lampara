@@ -1,6 +1,6 @@
 /* ============================================================
    Lámpara · service worker
-   - La app (index.html, config.js, íconos) se guarda en el teléfono.
+   - La app (index.html, config.js, mapas.js, íconos) se guarda en el teléfono.
    - Con internet: siempre se baja la versión más nueva.
    - Sin internet (o con señal muy lenta): se abre la versión guardada.
    - Nunca toca las llamadas a Supabase ni nada de otros sitios,
@@ -8,8 +8,8 @@
    - Recibe las notificaciones (push) y las muestra; al tocarlas abre Lampy en la pantalla indicada.
    Si algún día cambias ESTE archivo, cambia también el número de VERSION.
    ============================================================ */
-const VERSION = 'lampara-v3';
-const SHELL = ['index.html', 'config.js', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'icon-512.png', 'badge-96.png'];
+const VERSION = 'lampara-v4';
+const SHELL = ['index.html', 'config.js', 'mapas.js', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'icon-512.png', 'badge-96.png'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 const NET_WAIT = 4000; // si la red tarda más y hay copia guardada, se usa la copia
 
@@ -80,7 +80,7 @@ self.addEventListener('fetch', ev => {
       ev.respondWith(networkFirst(req, INDEX_URL()));
       return;
     }
-    if (/\/(config\.js|manifest\.webmanifest)$/.test(p)) {
+    if (/\/(config\.js|mapas\.js|manifest\.webmanifest)$/.test(p)) {
       ev.respondWith(networkFirst(req, url.origin + p));
       return;
     }
