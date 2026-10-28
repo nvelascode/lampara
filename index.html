@@ -1386,6 +1386,7 @@ a.btn{text-decoration:none;text-align:center}
 .rfbtn.ip.ok{background:linear-gradient(135deg,#3A9C5A,#1F5E3A)}
 .rfbtn .gdot{top:-6px;left:-6px;right:auto;width:12px;height:12px}
 .rfrow{position:relative}.rfrow .gdot{top:8px;right:10px}
+#fxc{position:fixed;left:0;top:0;width:100%;height:100%;z-index:-1;pointer-events:none}
 .nvrs{display:grid;gap:8px;text-align:left;margin:0 0 12px}.nvrs h4{margin:0}.nvr{border:2px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface);color:var(--ink)}.nvr.done{opacity:.85}.nvr summary{font-weight:800;cursor:pointer}.nvr p{margin:8px 0;font-size:14px;line-height:1.45}.nvr .btn{margin-top:4px}
 .evann{text-align:center;padding:4px 0 8px}.evann .eve{font-size:54px;line-height:1}.evann .evtag{display:inline-block;margin:8px 0 2px;padding:4px 12px;border-radius:99px;background:#FFD54A;color:#5A2A00;font-weight:900;font-size:12px;letter-spacing:.04em;text-transform:uppercase}.evann h3{margin:6px 0 4px;font-size:24px}.evann p{margin:6px 0}
 @media(max-width:420px){.top:has(.rfbtn) .cbtn .nwtag{display:none}}
@@ -7345,6 +7346,54 @@ function nvGo(i){
   const hand=les.qs.map(q=>[q[0],q[1],q[2],(q[3]&&RF_V(q[3]))?q[3]:'',q[4]||'']);
   startLesson({type:'lesson',key:les.title,title:les.title,verses},buildQuestions([],hand,14,les.cx),les.intro);
 }
+
+/* ============================================================
+   FONDO DE TEMPORADA: nieve (1 de noviembre de 2026 → 1 de enero de 2027)
+   · Detrás del contenido (z-index -1), sin tocar nada. No se muestra en lecciones, juegos ni en la lectura.
+   · Se activa sola en esas fechas; en Ajustes se puede activar o desactivar siempre (S.fx true/false).
+   · Después del 1 de enero queda apagada por defecto y se avisa una vez.
+   ============================================================ */
+const FX_FROM='2026-11-01',FX_TO='2027-01-01';
+const fxInWin=()=>{const t=today();return t>=FX_FROM&&t<=FX_TO;};
+const fxOn=()=>S.fx===true||(S.fx!==false&&fxInWin());
+const FX={cv:null,ctx:null,fl:[],raf:0,w:0,h:0,dpr:1,last:0};
+function fxWant(){
+  try{
+    if(!fxOn()||document.hidden)return false;
+    if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return false;
+    if(['#lesson','#game','#auth','#welcome'].some(q=>{const e=$(q);return e&&!e.hidden;}))return false;
+    if(typeof TAB!=='undefined'&&TAB==='read')return false;
+    return true;
+  }catch(e){return false;}
+}
+function fxInit(){
+  if(!FX.cv){const c=document.createElement('canvas');c.id='fxc';c.setAttribute('aria-hidden','true');document.body.insertBefore(c,document.body.firstChild);FX.cv=c;FX.ctx=c.getContext('2d');window.addEventListener('resize',fxSize);}
+  fxSize();
+  if(!FX.fl.length){for(let i=0;i<30;i++)FX.fl.push({x:Math.random(),y:Math.random(),r:1.6+Math.random()*3,v:14+Math.random()*22,p:Math.random()*6.28,a:.55+Math.random()*.4});}
+}
+function fxSize(){
+  if(!FX.cv)return;
+  FX.dpr=Math.min(2,window.devicePixelRatio||1);FX.w=window.innerWidth;FX.h=window.innerHeight;
+  FX.cv.width=Math.round(FX.w*FX.dpr);FX.cv.height=Math.round(FX.h*FX.dpr);
+}
+function fxLoop(t){
+  if(!fxWant()){FX.raf=0;if(FX.ctx)FX.ctx.clearRect(0,0,FX.cv.width,FX.cv.height);return;}
+  FX.raf=requestAnimationFrame(fxLoop);
+  if(t-FX.last<33)return;
+  const dt=Math.min(.1,(t-FX.last)/1000||.033);FX.last=t;
+  const c=FX.ctx,dk=S.theme==='dark';
+  c.setTransform(FX.dpr,0,0,FX.dpr,0,0);c.clearRect(0,0,FX.w,FX.h);
+  for(const f of FX.fl){
+    f.y+=f.v*dt/FX.h;f.p+=dt*.9;
+    if(f.y>1.03){f.y=-.03;f.x=Math.random();}
+    const x=f.x*FX.w+Math.sin(f.p)*12,y=f.y*FX.h;
+    c.globalAlpha=f.a;c.beginPath();c.arc(x,y,f.r,0,6.2832);
+    c.fillStyle='#fff';c.fill();
+    if(!dk){c.lineWidth=.8;c.strokeStyle='#9DB8D6';c.stroke();}
+  }
+  c.globalAlpha=1;
+}
+setInterval(()=>{try{if(!FX.raf&&fxWant()){fxInit();FX.last=0;FX.raf=requestAnimationFrame(fxLoop);}}catch(e){}},600);
 /* Anuncio de eventos: una tarjeta el primer día que el usuario entra y otra faltando 5 días (si no ha terminado) */
 const EVS=[
  {id:'rf',emoji:'📜',name:'Reforma',on:()=>rfOn(),left:()=>rfDaysLeft(),done:()=>rfDone()>=RF.length,open:'rf-open',to:'31 de octubre',blurb:'7 lecciones sobre cómo la Biblia llegó a tu idioma.'},
@@ -7363,6 +7412,10 @@ function evAnnounce(){
        if(!first&&pxp>0&&S.lastDay){showModal('<div class="evann"><div class="eve" aria-hidden="true">🗓️</div><span class="evtag">Semana nueva</span><h3>La semana pasada sumaste '+kfmt(pxp)+' XP</h3><p>Hoy lunes la tabla de Amigos empieza de cero. ¡A por otra semana!</p></div><button class="btn" data-a="stay">¡Vamos!</button>');return;}}}
     if(!S.evAnn.tab209){S.evAnn.tab209=1;S.evAnn.maps198=1;save();
       showModal('<div class="evann"><div class="eve" aria-hidden="true">⛺</div><span class="evtag">¡Novedad!</span><h3>¿Quieres conocer el tabernáculo de reunión?</h3><p>Visita nuestro nuevo mapa del tabernáculo: un recorrido por dentro, en 11 paradas.</p></div><button class="btn" data-a="tab-go">Ir al tabernáculo</button><button class="btn ghost" data-a="stay">Después</button>');
+      return;
+    }
+    if(today()>FX_TO&&!S.evAnn.fxEnd){S.evAnn.fxEnd=1;save();
+      showModal('<div class="evann"><div class="eve" aria-hidden="true">❄️</div><span class="evtag">Fondos de temporada</span><h3>Terminó la nieve</h3><p>Los fondos de temporada se despiden. En tu perfil, dentro de Ajustes, puedes activarlos o desactivarlos cuando quieras.</p></div><button class="btn" data-a="fx-go">Ir a Ajustes</button><button class="btn ghost" data-a="stay">Luego</button>');
       return;
     }
     for(const e of EVS){
@@ -11436,7 +11489,7 @@ function settingsHTML(){
   return '<button class="back" data-a="settings-back" aria-label="Volver al perfil">← Perfil</button><h1 class="page" style="margin-top:2px">Ajustes</h1>'+
    hd('Pantalla y sonido')+
    '<section class="card"><b>Tamaño de letra</b><div class="seg">'+[['n','Normal'],['l','Grande'],['xl','Muy grande']].map(o=>'<button class="'+((S.fs||'n')===o[0]?'on':'')+'" data-a="fs" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div><div style="margin-top:8px">'+
-     sw('Modo oscuro',S.theme==='dark','theme',S.theme==='dark'?'light':'dark')+sw('Sonido',!!S.sound,'sound',S.sound?'0':'1')+sw('Vibración',!!S.haptic,'haptic',S.haptic?'0':'1')+'</div></section>'+
+     sw('Modo oscuro',S.theme==='dark','theme',S.theme==='dark'?'light':'dark')+sw('Sonido',!!S.sound,'sound',S.sound?'0':'1')+sw('Vibración',!!S.haptic,'haptic',S.haptic?'0':'1')+sw('Fondos de temporada',fxOn(),'fx',fxOn()?'0':'1')+'</div></section>'+
    vozPickHTML()+
    (famOn()?hd('Avisos'):'')+pushCardHTML()+
    hd('Cuenta')+accountCardHTML()+privCardHTML()+installCardHTML()+
@@ -14979,6 +15032,7 @@ document.addEventListener('click',e=>{
   if(a==='cloud-now'){cloudSync().then(r=>{toast(r.ok?'Progreso sincronizado.':'No se pudo sincronizar. Lo intentaremos otra vez.');});return;}
   if(a==='auth-out'){showModal('<h3>¿Cerrar sesión?</h3><p>Tu progreso se queda en este teléfono y en tu cuenta. Para volver a sincronizar, entras otra vez con tu correo.</p><button class="btn" data-a="auth-out-yes">Cerrar sesión</button><button class="btn ghost" data-a="stay">Cancelar</button>');return;}
   if(a==='auth-out-yes'){hideModal();authSignOut();return;}
+  if(a==='fx-go'){hideModal();TAB='set';resetArmed=false;render();window.scrollTo(0,0);pushRefresh();return;}
   if(a==='settings'){TAB='set';resetArmed=false;render();window.scrollTo(0,0);pushRefresh();return;}
   if(a==='settings-back'){TAB='me';render();window.scrollTo(0,0);return;}
   if(a==='rm-join-inv'){rmJoinInvite(b.dataset.code);return;}
@@ -15183,6 +15237,7 @@ document.addEventListener('click',e=>{
   else if(a==='say-w'){sayWord(b.dataset.w);}
   else if(a==='say-t'){gkSpeak(b.dataset.t,{rate:.75});}
   else if(a==='theme'){S.theme=b.dataset.v;save();applyTheme();render();}
+  else if(a==='fx'){S.fx=b.dataset.v==='1';save();render();}
   else if(a==='rem-ics'){remICS();}
   else if(a==='vsel'){const v=b.dataset.v||'';S.vname=v;save();document.querySelectorAll('#vozcard .vrow').forEach(x=>x.classList.toggle('on',(x.dataset.v||'')===v));gkSpeak('Así suena esta voz. Lámpara es a mis pies tu palabra.',{rate:.95,vn:v,force:true});}
   else if(a==='rl-say'){const t=b.dataset.t;if(t)gkSpeak(t,{rate:.95,force:true});}
