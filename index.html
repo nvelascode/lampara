@@ -5474,7 +5474,7 @@ function rdRowHTML(R,P,i,idx){
   const d=addDays(R.start,i),dt=rdDt(d),done=!!R.done[i],fut=i>idx;
   const txt=rdDayParts(R.plan,P.days[i]).map(p=>rdPartText(p[1])).join(' · ');
   return '<div class="rdrow'+(done?' done':'')+(i===idx?' today':'')+(fut?' fut':'')+'"><button class="rdmain" data-a="rd-day" data-i="'+i+'" aria-label="Día '+(i+1)+': '+esc(txt)+'"><span class="rdd"><b>'+dt.getDate()+'</b><small>'+RD_DOW[dt.getDay()]+'</small></span><span class="rdt">'+esc(txt)+'</span></button>'+
-   '<button class="rdck" data-a="rd-toggle" data-i="'+i+'" aria-label="'+(done?'Desmarcar':'Marcar')+' lectura del día '+(i+1)+'" '+(fut?'disabled':'')+'><span class="rdbox">'+IC.check+'</span></button></div>';
+   '<button class="rdck" data-a="rd-toggle" data-i="'+i+'" aria-label="'+(done?'Desmarcar':'Marcar')+' lectura del día '+(i+1)+'" '+(fut&&i!==rdFocus(R)?'disabled':'')+'><span class="rdbox">'+IC.check+'</span></button></div>';
 }
 function rdCalHTML(R,P,idx){
   const months=[],focus=Math.min(Math.max(idx,0),R.n-1);let cur=null;
@@ -5510,11 +5510,11 @@ function readHTML(){
   }else if(idx>=R.n){
     card='<section class="card rdtoday"><span class="rdtag">📅 Terminó el tiempo de tu plan</span><p style="margin:6px 0 10px;font-size:17px;font-weight:800">Aún te quedan '+rdNd(R.n-dn)+' por leer. ¡Puedes ponerte al día cuando quieras!</p>'+(pendAll.first>=0?'<button class="btn" data-a="rd-day" data-i="'+pendAll.first+'">Ir a la primera pendiente</button>':'')+'</section>';
   }else{
-    const day=P.days[idx],done=!!R.done[idx];
-    card='<section class="card rdtoday rdhero"><div class="rdtg"><span>📖 Lectura de hoy</span><b>Día '+(idx+1)+' de '+R.n+'</b></div><div class="rdbw"><div class="bar" style="--gcol:var(--green)"><i style="width:'+Math.max(pctV,2)+'%"></i></div></div><div class="rdsm">'+pctV+'% de la Biblia leída · '+dn+(dn===1?' día leído':' días leídos')+'</div>'+rdPassagesHTML(R.plan,day,true)+
-     (()=>{const lk=rdLinkFor(R.plan,day),opened=!!(S.rdOpen&&S.rdOpen.d===t&&S.rdOpen.i===idx);
-       if(done)return '<button class="btn good" data-a="rd-toggle" data-i="'+idx+'">✔ Leído</button><a class="rdopen" data-rdopen="1" href="'+lk+'" target="_blank" rel="noopener">Abrir pasaje</a>';
-       return '<div class="row2" style="margin:10px 0 0"><a class="btn '+(opened?'ghost':'blue')+'" data-rdopen="1" href="'+lk+'" target="_blank" rel="noopener">Abrir pasaje</a><button class="btn '+(opened?'blue':'ghost')+'" data-a="rd-toggle" data-i="'+idx+'">Marcar leído</button></div>';})()+(done?'<p class="rdsm" style="text-align:center;margin:6px 0 0">Toca «Leído» si quieres desmarcarlo.</p>':'')+'</section>';
+    const tm=Object.keys(R.done).map(Number).filter(k=>k>=idx&&R.done[k]===t),fo=rdFocus(R),ci=tm.length?Math.max.apply(null,tm):fo,ahead=fo-idx-1,day=P.days[ci],done=!!R.done[ci];
+    card='<section class="card rdtoday rdhero"><div class="rdtg"><span>'+(!done&&ci>idx?'📖 Tu próxima lectura':'📖 Lectura de hoy')+'</span><b>Día '+(ci+1)+' de '+R.n+'</b></div><div class="rdbw"><div class="bar" style="--gcol:var(--green)"><i style="width:'+Math.max(pctV,2)+'%"></i></div></div><div class="rdsm">'+pctV+'% de la Biblia leída · '+dn+(dn===1?' día leído':' días leídos')+'</div>'+(ahead>=1?'<div class="rdsm">🚀 Llevas '+ahead+(ahead===1?' día':' días')+' de adelanto en tu plan</div>':'')+rdPassagesHTML(R.plan,day,true)+
+     (()=>{const lk=rdLinkFor(R.plan,day),opened=!!(S.rdOpen&&S.rdOpen.d===t&&S.rdOpen.i===ci);
+       if(done)return '<button class="btn good" data-a="rd-toggle" data-i="'+ci+'">✔ Leído</button><a class="rdopen" data-rdopen="1" href="'+lk+'" target="_blank" rel="noopener">Abrir pasaje</a>';
+       return '<div class="row2" style="margin:10px 0 0"><a class="btn '+(opened?'ghost':'blue')+'" data-rdopen="1" href="'+lk+'" target="_blank" rel="noopener">Abrir pasaje</a><button class="btn '+(opened?'blue':'ghost')+'" data-a="rd-toggle" data-i="'+ci+'">Marcar leído</button></div>';})()+(done?'<p class="rdsm" style="text-align:center;margin:6px 0 0">Toca «Leído» si quieres desmarcarlo.</p>':'')+'</section>';
   }
   const late=(pend.n>0&&dn<R.n&&idx>=0&&idx<R.n)?'<button class="rdlate" data-a="rd-day" data-i="'+pend.first+'"><span>📚 <b>'+pend.n+(pend.n===1?' lectura por recuperar':' lecturas por recuperar')+'</b><small>No pasa nada, ponte al día cuando quieras</small></span><em>Ver ›</em></button>':'';
   const st=rdStreak(),mk=(idx>=0&&idx<R.n?t:R.start).slice(0,7);
@@ -5534,9 +5534,10 @@ function rdHomeHTML(){
   const R=S.rd;if(!R)return '';
   const idx=diffDays(R.start,today());
   if(idx<0||idx>=R.n||Object.keys(R.done).length>=R.n)return '';
-  const P=rdPlan(R.plan,R.n),done=!!R.done[idx],cur=rdStreak();
-  return '<section class="card rdhome"><div class="famh"><b>📖 Lectura de hoy</b><span class="muted">🔥 '+S.streak+(S.streak===1?' día':' días')+' de racha</span></div>'+rdPassagesHTML(R.plan,P.days[idx])+
-   '<div class="row2" style="margin:8px 0 0"><button class="btn ghost sm" data-a="tab" data-t="read">Ver plan</button><button class="btn sm '+(done?'good':'blue')+'" data-a="rd-toggle" data-i="'+idx+'">'+(done?'✔ Leído':'Marcar leído')+'</button></div></section>';
+  const P=rdPlan(R.plan,R.n),tm=Object.keys(R.done).map(Number).filter(k=>k>=idx&&R.done[k]===today()),ci=tm.length?Math.max.apply(null,tm):rdFocus(R),done=!!R.done[ci],cur=rdStreak();
+  if(ci>=R.n)return '';
+  return '<section class="card rdhome"><div class="famh"><b>📖 '+(!done&&ci>idx?'Tu próxima lectura':'Lectura de hoy')+'</b><span class="muted">🔥 '+S.streak+(S.streak===1?' día':' días')+' de racha</span></div>'+rdPassagesHTML(R.plan,P.days[ci])+
+   '<div class="row2" style="margin:8px 0 0"><button class="btn ghost sm" data-a="tab" data-t="read">Ver plan</button><button class="btn sm '+(done?'good':'blue')+'" data-a="rd-toggle" data-i="'+ci+'">'+(done?'✔ Leído':'Marcar leído')+'</button></div></section>';
 }
 function rdStatsHTML(){
   if(!S.rd&&!(S.rdbest>0))return '';
@@ -5557,15 +5558,48 @@ try{
     },450);
   });
 }catch(e){}
+
+/* ---- Plan de lectura: conservar lo leído al cambiar de plan, y leer por adelantado ----
+   Un día «heredado» se guarda con la fecha RD_CARRY (no toca la racha: la racha sale de S.rdDays). */
+const RD_CARRY='2000-01-01';
+function rdFocus(R){const idx=diffDays(R.start,today());let i=Math.max(0,idx);while(i<R.n&&R.done[i])i++;return i;}
+function rdMerge(a){a=a.slice().sort((x,y)=>x[0]-y[0]);const o=[];a.forEach(r=>{const l=o[o.length-1];if(l&&r[0]<=l[1])l[1]=Math.max(l[1],r[1]);else o.push([r[0],r[1]]);});return o;}
+function rdCovered(m,a,b){return m.some(r=>r[0]<=a&&b<=r[1]);}
+function rdKeepFrom(R){
+  const P=rdPlan(R.plan,R.n),out=[];
+  Object.keys(R.done).forEach(k=>{const d=P.days[+k];if(d)rdDayParts(R.plan,d).forEach(p=>out.push([p[1][0],p[1][1]]));});
+  return out;
+}
+function rdApplyKeep(R,ranges){
+  if(!ranges||!ranges.length)return 0;
+  const m=rdMerge(ranges),P=rdPlan(R.plan,R.n);let n=0;
+  P.days.forEach((d,i)=>{if(R.done[i])return;if(rdDayParts(R.plan,d).every(p=>rdCovered(m,p[1][0],p[1][1]))){R.done[i]=RD_CARRY;n++;}});
+  return n;
+}
+function rdUptoHTML(){
+  const bo=RD_B.map((b,i)=>'<option value="'+i+'">'+esc(b[0])+'</option>').join('');
+  return '<h3>Ya leí hasta…</h3><p class="muted" style="margin:0 0 6px">Elige hasta dónde llegaste. Marco como leídos los días de tu plan que quedan antes.</p><select id="rdub" class="rdinp">'+bo+'</select><select id="rduc" class="rdinp">'+rdChOpts(0)+'</select><button class="btn" data-a="rd-upto-go" style="margin-top:12px">Marcar lo leído</button><button class="btn ghost" data-a="stay">Cancelar</button>';
+}
+function rdChOpts(bi){const n=RD_B[bi][2].length;let h='';for(let c=1;c<=n;c++)h+='<option value="'+c+'">Capítulo '+c+'</option>';return h;}
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rdub'){const c=document.getElementById('rduc');if(c)c.innerHTML=rdChOpts(+t.value);}});
+function rdUptoGo(){
+  const R=S.rd;if(!R||R.plan!=='a')return;
+  const bi=+$('#rdub').value,c=+$('#rduc').value,F=rdFlat(),ch=F.ch.find(x=>x.bi===bi&&x.c===c);if(!ch)return;
+  const n=rdApplyKeep(R,[[0,ch.e]]);
+  hideModal();save();render();
+  toast(n>0?'Marqué '+n+(n===1?' día':' días')+' que ya habías leído':'No hay días completos antes de ese punto.');
+}
 function rdStartPlan(){
   const st=rdStartFor(RDSET.mode,RDSET.other),sp=rdSpan(st,RDSET.yrs);
   S.rd={plan:RDSET.plan,yrs:RDSET.yrs,start:st,n:sp.n,done:{}};
+  const kept=rdApplyKeep(S.rd,S.rdKeep);S.rdKeep=null;
   save();render();window.scrollTo(0,0);confetti(60);beep('win');
+  if(kept>0)setTimeout(()=>showModal('<h3>Tu plan nuevo está listo</h3><p>Marqué <b>'+kept+(kept===1?' día':' días')+'</b> que ya habías leído, así que no los repites. Tu racha sigue igual.</p><button class="btn" data-a="stay">Entendido</button>'),600);
 }
 function rdToggle(i){
   const R=S.rd;if(!R||!(i>=0&&i<R.n))return;
   const t=today();
-  if(diffDays(R.start,t)<i){toast('Todavía no llega ese día.');return;}
+  if(diffDays(R.start,t)<i&&i!==rdFocus(R)){toast('Todavía no llega ese día.');return;}
   S.rdDays=S.rdDays||{};
   if(R.done[i]){
     const d=R.done[i];delete R.done[i];
@@ -5596,7 +5630,7 @@ function rdDayModal(i){
   const idx=diffDays(R.start,today()),done=!!R.done[i],fut=i>idx;
   showModal('<h3>Día '+(i+1)+' de '+R.n+'</h3><p class="muted" style="margin:0 0 8px;font-weight:800">'+esc(rdDate(addDays(R.start,i)))+'</p>'+rdPassagesHTML(R.plan,day)+
    '<a class="btn blue" href="'+rdLinkFor(R.plan,day)+'" target="_blank" rel="noopener">Abrir pasaje</a>'+
-   (fut?'<p class="muted" style="margin:10px 0">Todavía no llega este día.</p>':'<button class="btn '+(done?'ghost':'')+'" data-a="rd-tog-close" data-i="'+i+'">'+(done?'Desmarcar lectura':'Marcar como leído')+'</button>')+
+   (fut&&i!==rdFocus(R)?'<p class="muted" style="margin:10px 0">Todavía no llega este día.</p>':'<button class="btn '+(done?'ghost':'')+'" data-a="rd-tog-close" data-i="'+i+'">'+(done?'Desmarcar lectura':'Marcar como leído')+'</button>')+
    '<button class="btn ghost" data-a="stay">Cerrar</button>');
 }
 
@@ -15109,10 +15143,12 @@ document.addEventListener('click',e=>{
   else if(a==='rd-toggle'){rdToggle(+b.dataset.i);}
   else if(a==='rd-day'){rdDayModal(+b.dataset.i);}
   else if(a==='rd-tog-close'){hideModal();rdToggle(+b.dataset.i);}
-  else if(a==='rd-menu'){const R=S.rd;if(R){const plan=RD_PLANS[R.plan],leaps=rdSpan(R.start,R.yrs).leaps;showModal('<h3>Tu plan de lectura</h3><p class="muted" style="margin:0 0 10px">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+'<br>'+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+(rdStreak()>0?'<button class="btn ghost" data-a="share" data-k="read">'+SHARE_I+'Compartir mi racha</button>':'')+'<button class="btn ghost" data-a="rd-reset" style="color:var(--red)">Cambiar o reiniciar mi plan</button><p class="foot" style="margin:6px 0 10px">Para leer, usa tu Biblia de siempre o toca «Abrir pasaje». Cada día que marques una lectura mantiene tu racha 🔥.</p><button class="btn" data-a="stay">Cerrar</button>');}}
+  else if(a==='rd-menu'){const R=S.rd;if(R){const plan=RD_PLANS[R.plan],leaps=rdSpan(R.start,R.yrs).leaps;showModal('<h3>Tu plan de lectura</h3><p class="muted" style="margin:0 0 10px">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+'<br>'+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+(rdStreak()>0?'<button class="btn ghost" data-a="share" data-k="read">'+SHARE_I+'Compartir mi racha</button>':'')+''+(R.plan==='a'?'<button class="btn ghost" data-a="rd-upto">Ya leí hasta…</button>':'')+'<button class="btn ghost" data-a="rd-reset" style="color:var(--red)">Cambiar o reiniciar mi plan</button><p class="foot" style="margin:6px 0 10px">Para leer, usa tu Biblia de siempre o toca «Abrir pasaje». Cada día que marques una lectura mantiene tu racha 🔥.</p><button class="btn" data-a="stay">Cerrar</button>');}}
   else if(a==='rd-yes'){hideModal();rdToggle(+b.dataset.i);}
-  else if(a==='rd-reset'){showModal('<h3>¿Empezar un plan nuevo?</h3><p>Se borrarán las lecturas que marcaste en este plan. Tu racha de lectura y tus logros se conservan.</p><button class="btn" data-a="stay">Seguir con mi plan</button><button class="btn ghost" data-a="rd-reset-yes">Sí, empezar de nuevo</button>');}
-  else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
+  else if(a==='rd-reset'){showModal('<h3>¿Empezar un plan nuevo?</h3><p>Lo que ya leíste se conserva: en el plan nuevo se marcan como leídos los días que esos pasajes ya cubren. Tu racha de lectura y tus logros también se conservan.</p><button class="btn" data-a="stay">Seguir con mi plan</button><button class="btn ghost" data-a="rd-reset-yes">Sí, empezar de nuevo</button>');}
+  else if(a==='rd-reset-yes'){hideModal();if(S.rd){const k=rdKeepFrom(S.rd).concat(S.rdKeep||[]);S.rdKeep=k.length?rdMerge(k):null;}S.rd=null;save();render();window.scrollTo(0,0);}
+  else if(a==='rd-upto'){showModal(rdUptoHTML());}
+  else if(a==='rd-upto-go'){rdUptoGo();}
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
   else if(a.slice(0,3)==='cw-'){cwAct(a,b);}
   else if(a.slice(0,3)==='ac-'){acAct(a,b);}
