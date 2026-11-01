@@ -449,6 +449,7 @@ h1,h2,h3,h4{font-weight:900}
 .mestrip .fav.big .avsvg{display:block;width:54px;height:54px;margin:-6px 0}
 .card.votd.vmini .vtog{position:static;width:24px;height:24px;background:none;border:0;box-shadow:none;border-radius:0;display:grid;place-items:center;color:var(--blue-ink);flex:none}
 .card.votd.vmini .vch{width:22px;height:22px}
+.card.votd.vmini{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;row-gap:1px;column-gap:8px;padding:10px 14px}.card.votd.vmini .tagv{position:static;grid-column:1;margin:0;white-space:nowrap}.card.votd.vmini .vref{grid-column:1;margin:0;white-space:normal}.card.votd.vmini .vtog{grid-column:2;grid-row:1/3}
 .rtabs{z-index:3}
 .wk{background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;padding:12px 14px 14px;margin:0 0 14px}
 .wk.ok{border-color:var(--green);background:color-mix(in srgb,var(--green) 10%,var(--surface))}
@@ -5557,27 +5558,6 @@ try{
     },450);
   });
 }catch(e){}
-
-/* ---- «Ya leí hasta…» (opción temporal): marca como leídos los días anteriores y ajusta las fechas
-   del plan para que la próxima lectura sea mañana. Solo para el plan «En orden». ---- */
-const RD_CARRY='2000-01-01';
-function rdChOpts(bi){const n=RD_B[bi][2].length;let h='';for(let c=1;c<=n;c++)h+='<option value="'+c+'">Capítulo '+c+'</option>';return h;}
-function rdUptoHTML(){
-  const bo=RD_B.map((b,i)=>'<option value="'+i+'">'+esc(b[0])+'</option>').join('');
-  return '<h3>Ya leí hasta…</h3><p class="muted" style="margin:0 0 6px">Elige el último capítulo que leíste. Tu plan seguirá mañana con lo que sigue.</p><select id="rdub" class="rdinp">'+bo+'</select><select id="rduc" class="rdinp">'+rdChOpts(0)+'</select><button class="btn" data-a="rd-upto-go" style="margin-top:12px">Ajustar mi plan</button><button class="btn ghost" data-a="stay">Cancelar</button>';
-}
-document.addEventListener('change',e=>{const t=e.target;if(t&&t.id==='rdub'){const c=document.getElementById('rduc');if(c)c.innerHTML=rdChOpts(+t.value);}});
-function rdUptoGo(){
-  const R=S.rd;if(!R||R.plan!=='a')return;
-  const bi=+$('#rdub').value,c=+$('#rduc').value,F=rdFlat(),ch=F.ch.find(x=>x.bi===bi&&x.c===c);if(!ch)return;
-  const P=rdPlan(R.plan,R.n);let f=0;
-  for(let i=0;i<R.n;i++){const d=P.days[i];if(R.done[i]||d.a[1]<=ch.e){if(!R.done[i])R.done[i]=RD_CARRY;f=i+1;}else break;}
-  if(f>=R.n){hideModal();save();render();return;}
-  R.start=addDays(addDays(today(),1),-f);
-  hideModal();save();render();
-  const P2=rdPlan(R.plan,R.n);
-  toast('Listo. Mañana sigues con '+rdPartText(P2.days[f].a));
-}
 function rdStartPlan(){
   const st=rdStartFor(RDSET.mode,RDSET.other),sp=rdSpan(st,RDSET.yrs);
   S.rd={plan:RDSET.plan,yrs:RDSET.yrs,start:st,n:sp.n,done:{}};
@@ -11106,7 +11086,7 @@ function homeHTML(){
     if(seen&&!VOPEN)daily='<section class="card votd vmini" style="'+VST+'" data-a="vs-tog" role="button" tabindex="0" aria-label="Abrir el versículo del día"><span class="tagv">✨ Versículo del día</span><span class="vref">'+esc(v.r)+'</span><span class="vtog" aria-hidden="true"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></section>';
     else daily='<section class="card votd" style="'+VST+'"><button class="vshare" data-a="vs-open" aria-label="Compartir versículo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l7 7-7 7v-4c-6 0-9.5 1.5-12 5 .8-6.5 4.6-10.5 12-11z" fill="currentColor"/></svg></button>'+(seen?'<button class="vtog" data-a="vs-tog" aria-label="Plegar el versículo del día"><svg class="vch" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>':'')+'<span class="tagv">✨ Versículo del día</span><q>'+esc(v.t)+'</q><cite>'+esc(v.r)+' · RVR1960</cite><div class="think"><b>Para pensar:</b> '+esc(v.p)+'</div></section>';}
   return cmInviteHTML()+(S.froze?'<div class="banner">🛡️ Se usó un protector de racha para cubrir '+S.froze+(S.froze===1?' día':' días')+' sin práctica. ¡Tu racha sigue viva!</div>':'')+tip+cloudBannerHTML()+
-  '<div class="homefix" id="homefix"><div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+daily+'</div>'+frHomeHTML()+repCardHTML(true)+
+  '<div class="homefix'+(!gk&&daily.indexOf('vmini')<0?' nofix':'')+'" id="homefix"><div class="hero">'+mascot(mood,84,flameLevel())+'<div class="bubble" id="homebub"'+(S.streak>0&&S.lastDay!==t&&xpT<S.goal?' data-fl="1"':'')+'>'+esc(msg)+'</div></div>'+daily+'</div>'+frHomeHTML()+repCardHTML(true)+
   (gk?'<button class="btn ghost" style="margin:0 0 14px" data-a="abc-go">🔊 Escucha el alfabeto griego</button>':'')+units+
   '<p class="foot">'+(gk?'Griego: Texto Recibido (Robinson, dominio público) y diccionario de Strong. Textos bíblicos en español: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':bio?'Biografías: datos históricos resumidos de fuentes de dominio público. Textos bíblicos citados: Reina-Valera 1960®, © Sociedades Bíblicas en América Latina, 1960.':'Texto bíblico: Reina-Valera 1960®. © Sociedades Bíblicas en América Latina, 1960. Derechos renovados 1988, Sociedades Bíblicas Unidas.')+'</p>';
 }
@@ -11527,7 +11507,7 @@ function myLessonNode(){return document.querySelector('.node.current');}
 function alignMyLesson(smooth){
   const n=myLessonNode();if(!n)return false;
   const tp=document.querySelector('.top'),f=document.getElementById('homefix'),tb=document.querySelector('.tabs');
-  const sb=(tp?tp.getBoundingClientRect().bottom:56)-2+(f?f.offsetHeight:0);
+  const sb=(tp?tp.getBoundingClientRect().bottom:56)-2+(f&&!f.classList.contains('nofix')?f.offsetHeight:0);
   const u=n.closest('.unit'),uh=u&&u.querySelector('.unit-h');
   const nr=n.getBoundingClientRect(),vh=window.innerHeight||800;
   let y;
@@ -11563,8 +11543,7 @@ window.addEventListener('resize',()=>updateGoto());
 function fixSticky(){
   const f=document.getElementById('homefix'),r=document.documentElement.style;
   if(!f){r.setProperty('--fixh','0px');return;}
-  f.classList.remove('nofix');
-  const h=f.offsetHeight,vh=window.innerHeight||800;
+  const h=f.classList.contains('nofix')?0:f.offsetHeight;
   r.setProperty('--fixh',h+'px');
 }
 window.addEventListener('resize',()=>{try{fixSticky();}catch(e){}});
@@ -15130,11 +15109,9 @@ document.addEventListener('click',e=>{
   else if(a==='rd-toggle'){rdToggle(+b.dataset.i);}
   else if(a==='rd-day'){rdDayModal(+b.dataset.i);}
   else if(a==='rd-tog-close'){hideModal();rdToggle(+b.dataset.i);}
-  else if(a==='rd-menu'){const R=S.rd;if(R){const plan=RD_PLANS[R.plan],leaps=rdSpan(R.start,R.yrs).leaps;showModal('<h3>Tu plan de lectura</h3><p class="muted" style="margin:0 0 10px">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+'<br>'+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+(rdStreak()>0?'<button class="btn ghost" data-a="share" data-k="read">'+SHARE_I+'Compartir mi racha</button>':'')+''+(R.plan==='a'?'<button class="btn ghost" data-a="rd-upto">Ya leí hasta…</button>':'')+'<button class="btn ghost" data-a="rd-reset" style="color:var(--red)">Cambiar o reiniciar mi plan</button><p class="foot" style="margin:6px 0 10px">Para leer, usa tu Biblia de siempre o toca «Abrir pasaje». Cada día que marques una lectura mantiene tu racha 🔥.</p><button class="btn" data-a="stay">Cerrar</button>');}}
+  else if(a==='rd-menu'){const R=S.rd;if(R){const plan=RD_PLANS[R.plan],leaps=rdSpan(R.start,R.yrs).leaps;showModal('<h3>Tu plan de lectura</h3><p class="muted" style="margin:0 0 10px">'+plan.icon+' '+esc(plan.name)+' · '+(R.yrs===1?'1 año':'2 años')+'<br>'+rdShortY(R.start)+' → '+rdShortY(addDays(R.start,R.n-1))+' · '+rdNd(R.n)+(leaps.length?' (incluye el 29 de febrero)':'')+'</p>'+(rdStreak()>0?'<button class="btn ghost" data-a="share" data-k="read">'+SHARE_I+'Compartir mi racha</button>':'')+'<button class="btn ghost" data-a="rd-reset" style="color:var(--red)">Cambiar o reiniciar mi plan</button><p class="foot" style="margin:6px 0 10px">Para leer, usa tu Biblia de siempre o toca «Abrir pasaje». Cada día que marques una lectura mantiene tu racha 🔥.</p><button class="btn" data-a="stay">Cerrar</button>');}}
   else if(a==='rd-yes'){hideModal();rdToggle(+b.dataset.i);}
   else if(a==='rd-reset'){showModal('<h3>¿Empezar un plan nuevo?</h3><p>Se borrarán las lecturas que marcaste en este plan. Tu racha de lectura y tus logros se conservan.</p><button class="btn" data-a="stay">Seguir con mi plan</button><button class="btn ghost" data-a="rd-reset-yes">Sí, empezar de nuevo</button>');}
-  else if(a==='rd-upto'){showModal(rdUptoHTML());}
-  else if(a==='rd-upto-go'){rdUptoGo();}
   else if(a==='rd-reset-yes'){hideModal();S.rd=null;save();render();window.scrollTo(0,0);}
   else if(a.slice(0,3)==='gw-'){gwAct(a,b);}
   else if(a.slice(0,3)==='cw-'){cwAct(a,b);}
