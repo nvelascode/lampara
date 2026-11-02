@@ -2716,207 +2716,130 @@ const isStandalone=()=>{try{return !!(window.navigator.standalone||(window.match
 const isIOS=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent||'');
 
 const VOTD=[
-{
-"r": "Juan 3:16",
-"t": "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.",
-"p": "Dios no dio lo que le sobraba: dio lo que más amaba. ¿Cómo respondes tú hoy?"
-},
-{
-"r": "Salmo 23:1",
-"t": "Jehová es mi pastor; nada me faltará.",
-"p": "Si Jehová es tu pastor, nada te faltará. ¿De qué temerás hoy?"
-},
-{
-"r": "Salmo 46:1",
-"t": "Dios es nuestro amparo y fortaleza, Nuestro pronto auxilio en las tribulaciones.",
-"p": "Cuando todo se mueve, él sigue firme. Acude a él primero."
-},
-{
-"r": "Salmo 34:8",
-"t": "Gustad, y ved que es bueno Jehová; Dichoso el hombre que confía en él.",
-"p": "Dios invita a confiar en él y llama dichoso a quien lo hace. ¿En qué le confiarás hoy?"
-},
-{
-"r": "Salmo 119:11",
-"t": "En mi corazón he guardado tus dichos, Para no pecar contra ti.",
-"p": "Guardar la Palabra en el corazón te protege. ¿Qué versículo aprenderás esta semana?"
-},
-{
-"r": "Salmo 119:105",
-"t": "Lámpara es a mis pies tu palabra, Y lumbrera a mi camino.",
-"p": "Sin luz nadie sabe por dónde ir, y es fácil tropezar. Sin el Señor y su Palabra, pasa igual. ¿Estás caminando con su luz hoy?"
-},
-{
-"r": "Proverbios 3:5-6",
-"t": "Fíate de Jehová de todo tu corazón, Y no te apoyes en tu propia prudencia. Reconócelo en todos tus caminos, Y él enderezará tus veredas.",
-"p": "Confiar no es entenderlo todo, es dejar que Dios dirija. ¿Dónde te cuesta soltar el control?"
-},
-{
-"r": "Proverbios 15:1",
-"t": "La blanda respuesta quita la ira; Mas la palabra áspera hace subir el furor.",
-"p": "Una respuesta amable apaga una pelea. Piensa en tu próxima conversación difícil."
-},
-{
-"r": "Isaías 41:10",
-"t": "No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te esfuerzo; siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia.",
-"p": "Dios no promete que no pasará nada: promete que está contigo."
-},
-{
-"r": "Isaías 40:31",
-"t": "pero los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas; correrán, y no se cansarán; caminarán, y no se fatigarán.",
-"p": "Las fuerzas nuevas son para quienes confían en Jehová. ¿Dónde estás buscando fuerzas hoy?"
-},
-{
-"r": "Jeremías 29:11",
-"t": "Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis.",
-"p": "Dios tiene planes de paz, aun cuando el camino se alargue."
-},
-{
-"r": "Lamentaciones 3:22-23",
-"t": "Por la misericordia de Jehová no hemos sido consumidos, porque nunca decayeron sus misericordias. Nuevas son cada mañana; grande es tu fidelidad.",
-"p": "Cada mañana trae misericordias nuevas: hoy empiezas con la cuenta saldada."
-},
-{
-"r": "Deuteronomio 31:6",
-"t": "Esforzaos y cobrad ánimo; no temáis, ni tengáis miedo de ellos, porque Jehová tu Dios es el que va contigo; no te dejará, ni te desamparará.",
-"p": "Ser valiente es obedecer aunque tengas miedo, porque Dios va contigo."
-},
-{
-"r": "Josué 1:9",
-"t": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehová tu Dios estará contigo en dondequiera que vayas.",
-"p": "No estás solo en lo que Dios te manda: él va contigo."
-},
-{
-"r": "Mateo 5:16",
-"t": "Así alumbre vuestra luz delante de los hombres, para que vean vuestras buenas obras, y glorifiquen a vuestro Padre que está en los cielos.",
-"p": "Tus buenas obras no son para lucirte: son para que otros vean al Padre."
-},
-{
-"r": "Mateo 6:33",
-"t": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.",
-"p": "Lo primero que buscas ordena todo lo demás."
-},
-{
-"r": "Mateo 6:34",
-"t": "Así que, no os afanéis por el día de mañana, porque el día de mañana traerá su afán. Basta a cada día su propio mal.",
-"p": "El afán de mañana no te toca cargarlo hoy."
-},
-{
-"r": "Mateo 11:28",
-"t": "Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar.",
-"p": "Jesús no pide que llegues arreglado, sino cansado. Ven."
-},
-{
-"r": "Marcos 10:45",
-"t": "Porque el Hijo del Hombre no vino para ser servido, sino para servir, y para dar su vida en rescate por muchos.",
-"p": "Jesús vino a servir y a dar su vida: esa es la medida del amor."
-},
-{
-"r": "Juan 8:12",
-"t": "Otra vez Jesús les habló, diciendo: Yo soy la luz del mundo; el que me sigue, no andará en tinieblas, sino que tendrá la luz de la vida.",
-"p": "Seguir a Jesús es caminar con luz, no a tientas."
-},
-{
-"r": "Juan 10:11",
-"t": "Yo soy el buen pastor; el buen pastor su vida da por las ovejas.",
-"p": "El buen pastor da su vida por las ovejas. Eso hizo Jesús por ti."
-},
-{
-"r": "Juan 14:6",
-"t": "Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí.",
-"p": "Hay un solo camino al Padre, y es una persona: Jesús."
-},
-{
-"r": "Romanos 5:8",
-"t": "Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros.",
-"p": "Dios no esperó a que fueras mejor para amarte: murió por ti siendo aún pecador."
-},
-{
-"r": "Romanos 6:23",
-"t": "Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro.",
-"p": "El pecado paga con muerte; Dios regala vida eterna. Un regalo no se gana, se recibe."
-},
-{
-"r": "Romanos 8:1",
-"t": "Ahora, pues, ninguna condenación hay para los que están en Cristo Jesús, los que no andan conforme a la carne, sino conforme al Espíritu.",
-"p": "En Cristo, la condenación ya no es tu veredicto."
-},
-{
-"r": "Romanos 8:28",
-"t": "Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien, esto es, a los que conforme a su propósito son llamados.",
-"p": "Aun lo que duele, Dios puede usarlo para el bien de los que lo aman."
-},
-{
-"r": "Romanos 10:9",
-"t": "que si confesares con tu boca que Jesús es el Señor, y creyeres en tu corazón que Dios le levantó de los muertos, serás salvo.",
-"p": "La salvación empieza confesando a Jesús como Señor y creyendo que resucitó."
-},
-{
-"r": "2 Corintios 5:17",
-"t": "De modo que si alguno está en Cristo, nueva criatura es; las cosas viejas pasaron; he aquí todas son hechas nuevas.",
-"p": "En Cristo no eres una versión mejorada de ti: eres nuevo."
-},
-{
-"r": "Gálatas 6:2",
-"t": "Sobrellevad los unos las cargas de los otros, y cumplid así la ley de Cristo.",
-"p": "Llevar la carga de otro es cumplir la ley de Cristo. ¿Quién necesita tu ayuda hoy?"
-},
-{
-"r": "Efesios 2:8",
-"t": "Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios;",
-"p": "La salvación es un regalo: ni la ganas ni la compras."
-},
-{
-"r": "Efesios 4:32",
-"t": "Antes sed benignos unos con otros, misericordiosos, perdonándoos unos a otros, como Dios también os perdonó a vosotros en Cristo.",
-"p": "Perdona como fuiste perdonado. ¿A quién le debes un perdón hoy?"
-},
-{
-"r": "Filipenses 1:21",
-"t": "Porque para mí el vivir es Cristo, y el morir es ganancia.",
-"p": "Si Cristo es tu vida, ni la muerte te quita nada."
-},
-{
-"r": "Filipenses 4:6",
-"t": "Por nada estéis afanosos, sino sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias.",
-"p": "Cambia el afán por oración con gracias. ¿Por qué darás gracias hoy?"
-},
-{
-"r": "Filipenses 4:13",
-"t": "Todo lo puedo en Cristo que me fortalece.",
-"p": "No es «puedo lograr lo que sea», sino «Cristo me sostiene en cada situación»."
-},
-{
-"r": "Colosenses 3:23",
-"t": "Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres;",
-"p": "Hasta lo rutinario puede ser adoración si lo haces para el Señor."
-},
-{
-"r": "1 Tesalonicenses 5:18",
-"t": "Dad gracias en todo, porque esta es la voluntad de Dios para con vosotros en Cristo Jesús.",
-"p": "Dar gracias en todo: también cuando es difícil."
-},
-{
-"r": "Hebreos 11:1",
-"t": "Es, pues, la fe la certeza de lo que se espera, la convicción de lo que no se ve.",
-"p": "Fe es confiar en lo que Dios dijo, aunque todavía no lo veas."
-},
-{
-"r": "Santiago 1:5",
-"t": "Y si alguno de vosotros tiene falta de sabiduría, pídala a Dios, el cual da a todos abundantemente y sin reproche, y le será dada.",
-"p": "Dios da sabiduría sin regañar. Pídela."
-},
-{
-"r": "1 Pedro 5:7",
-"t": "echando toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros.",
-"p": "Tus preocupaciones no le pesan a Dios. Entrégaselas."
-},
-{
-"r": "1 Juan 1:9",
-"t": "Si confesamos nuestros pecados, él es fiel y justo para perdonar nuestros pecados, y limpiarnos de toda maldad.",
-"p": "Confesar no es humillarte: es volver a la luz, donde Dios perdona."
-}
+{"r": "Lamentaciones 3:22-23", "t": "Por la misericordia de Jehová no hemos sido consumidos, porque nunca decayeron sus misericordias. Nuevas son cada mañana; grande es tu fidelidad.", "p": "Cada mañana trae misericordias nuevas, y de ellas dependemos día tras día."},
+{"r": "Isaías 43:18-19", "t": "No os acordéis de las cosas pasadas, ni traigáis a memoria las cosas antiguas. He aquí que yo hago cosa nueva; pronto saldrá a luz; ¿no la conoceréis? Otra vez abriré camino en el desierto, y ríos en la soledad.", "p": "Dios no se queda en lo viejo: él hace cosa nueva. ¿Qué estás cargando del pasado?"},
+{"r": "Salmo 119:105", "t": "Lámpara es a mis pies tu palabra, Y lumbrera a mi camino.", "p": "Sin luz nadie sabe por dónde ir, y es fácil tropezar. Sin el Señor y su Palabra, pasa igual. ¿Estás caminando con su luz hoy?"},
+{"r": "Josué 1:9", "t": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehová tu Dios estará contigo en dondequiera que vayas.", "p": "No estás solo en lo que Dios te manda: él va contigo."},
+{"r": "Proverbios 3:5-6", "t": "Fíate de Jehová de todo tu corazón, Y no te apoyes en tu propia prudencia. Reconócelo en todos tus caminos, Y él enderezará tus veredas.", "p": "Confiar no es entenderlo todo, es dejar que Dios dirija. ¿Dónde te cuesta soltar el control?"},
+{"r": "Mateo 6:33", "t": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.", "p": "Lo primero que buscas ordena todo lo demás."},
+{"r": "Salmo 90:12", "t": "Enséñanos de tal modo a contar nuestros días, Que traigamos al corazón sabiduría.", "p": "Contar los días, en este fragmento de la eternidad, es recordar que tienen límite. ¿Cómo usarás este con propósito eterno?"},
+{"r": "Filipenses 3:13-14", "t": "Hermanos, yo mismo no pretendo haberlo ya alcanzado; pero una cosa hago: olvidando ciertamente lo que queda atrás, y extendiéndome a lo que está delante, prosigo a la meta, al premio del supremo llamamiento de Dios en Cristo Jesús.", "p": "Pablo no mira atrás ni se da por llegado: hace una sola cosa. ¿Persigues tú la misma meta?"},
+{"r": "Salmo 1:1-2", "t": "Bienaventurado el varón que no anduvo en consejo de malos, Ni estuvo en camino de pecadores, Ni en silla de escarnecedores se ha sentado; Sino que en la ley de Jehová está su delicia, Y en su ley medita de día y de noche.", "p": "Su delicia está en la ley de Jehová. ¿Dónde está la tuya?"},
+{"r": "Colosenses 3:17", "t": "Y todo lo que hacéis, sea de palabra o de hecho, hacedlo todo en el nombre del Señor Jesús, dando gracias a Dios Padre por medio de él.", "p": "Que tus palabras y hechos de hoy dejen en el aire la fragancia del Señor."},
+{"r": "Génesis 1:1", "t": "En el principio creó Dios los cielos y la tierra.", "p": "Todo empieza con Dios. Antes de lo que ves, ya estaba él."},
+{"r": "Hebreos 11:6", "t": "Pero sin fe es imposible agradar a Dios; porque es necesario que el que se acerca a Dios crea que le hay, y que es galardonador de los que le buscan.", "p": "Acercarse a Dios exige creer que existe y que recompensa a quienes lo buscan."},
+{"r": "Salmo 37:5", "t": "Encomienda a Jehová tu camino, Y confía en él; y él hará.", "p": "Encomendar es poner el camino en sus manos. ¿Qué le entregas hoy?"},
+{"r": "Juan 15:5", "t": "Yo soy la vid, vosotros los pámpanos; el que permanece en mí, y yo en él, éste lleva mucho fruto; porque separados de mí nada podéis hacer.", "p": "Separado de Cristo nada puedes hacer; permaneciendo en él, hay fruto."},
+{"r": "Isaías 40:31", "t": "pero los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas; correrán, y no se cansarán; caminarán, y no se fatigarán.", "p": "Las fuerzas nuevas son para quienes confían en Jehová. ¿Dónde estás buscando fuerzas hoy?"},
+{"r": "Salmo 143:8", "t": "Hazme oír por la mañana tu misericordia, Porque en ti he confiado; Hazme saber el camino por donde ande, Porque a ti he elevado mi alma.", "p": "Pide dirección por la mañana, antes de empezar a caminar."},
+{"r": "Santiago 1:5", "t": "Y si alguno de vosotros tiene falta de sabiduría, pídala a Dios, el cual da a todos abundantemente y sin reproche, y le será dada.", "p": "Dios da sabiduría a todos, sin reproche. Pídela."},
+{"r": "Proverbios 16:3", "t": "Encomienda a Jehová tus obras, Y tus pensamientos serán afirmados.", "p": "Lo que encomiendas a Jehová conforme a su voluntad, él lo afirma."},
+{"r": "Romanos 12:2", "t": "No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento, para que comprobéis cuál sea la buena voluntad de Dios, agradable y perfecta.", "p": "La mente se renueva, no se amolda. ¿Qué pensamiento necesita renovarse hoy?"},
+{"r": "Salmo 19:14", "t": "Sean gratos los dichos de mi boca y la meditación de mi corazón delante de ti, Oh Jehová, roca mía, y redentor mío.", "p": "Antes de hablar: ¿agradarían a Dios tus palabras y pensamientos de hoy?"},
+{"r": "2 Timoteo 1:7", "t": "Porque no nos ha dado Dios espíritu de cobardía, sino de poder, de amor y de dominio propio.", "p": "Dios no te dio cobardía: te dio poder, amor y dominio propio."},
+{"r": "Salmo 27:14", "t": "Aguarda a Jehová; Esfuérzate, y aliéntese tu corazón; Sí, espera a Jehová.", "p": "Esperar a Jehová pide ánimo. No te rindas a mitad del camino."},
+{"r": "Efesios 2:10", "t": "Porque somos hechura suya, creados en Cristo Jesús para buenas obras, las cuales Dios preparó de antemano para que anduviésemos en ellas.", "p": "Dios preparó de antemano buenas obras para que las hagas. ¿Las ves hoy?"},
+{"r": "Éxodo 14:14", "t": "Jehová peleará por vosotros, y vosotros estaréis tranquilos.", "p": "Él pelea; a ti te toca estar tranquilo."},
+{"r": "Salmo 121:1-2", "t": "Alzaré mis ojos a los montes; ¿De dónde vendrá mi socorro? Mi socorro viene de Jehová, Que hizo los cielos y la tierra.", "p": "Tu socorro no viene de los montes, sino del que los hizo."},
+{"r": "Mateo 7:7", "t": "Pedid, y se os dará; buscad, y hallaréis; llamad, y se os abrirá.", "p": "Pedir, buscar, llamar: tres formas de acudir a Dios. ¿Cuál has dejado de hacer?"},
+{"r": "Deuteronomio 31:8", "t": "Y Jehová va delante de ti; él estará contigo, no te dejará, ni te desamparará; no temas ni te intimides.", "p": "Jehová va delante de ti. No enfrentarás solo lo que viene."},
+{"r": "Colosenses 3:23", "t": "Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres;", "p": "Hasta lo rutinario puede ser adoración si lo haces para el Señor."},
+{"r": "Salmo 118:24", "t": "Este es el día que hizo Jehová; Nos gozaremos y alegraremos en él.", "p": "Este día lo hizo Jehová. Recíbelo con alegría."},
+{"r": "Nehemías 8:10", "t": "Luego les dijo: Id, comed grosuras, y bebed vino dulce, y enviad porciones a los que no tienen nada preparado; porque día santo es a nuestro Señor; no os entristezcáis, porque el gozo de Jehová es vuestra fuerza.", "p": "El gozo de Jehová es tu fuerza, también cuando hay motivos para entristecerse."},
+{"r": "Filipenses 4:13", "t": "Todo lo puedo en Cristo que me fortalece.", "p": "No es «puedo lograr lo que sea», sino «Cristo me sostiene en cada situación»."},
+{"r": "Salmo 23:4", "t": "Aunque ande en valle de sombra de muerte, No temeré mal alguno, porque tú estarás conmigo; Tu vara y tu cayado me infundirán aliento.", "p": "El valle es real, pero el Pastor también. ¿Qué valle recorres hoy con él?"},
+{"r": "Juan 14:27", "t": "La paz os dejo, mi paz os doy; yo no os la doy como el mundo la da. No se turbe vuestro corazón, ni tenga miedo.", "p": "La paz que Cristo da no se parece a la del mundo. Recíbela hoy."},
+{"r": "Proverbios 4:23", "t": "Sobre toda cosa guardada, guarda tu corazón; Porque de él mana la vida.", "p": "De tu corazón sale la vida. ¿Qué estás dejando entrar en él?"},
+{"r": "Romanos 8:31", "t": "¿Qué, pues, diremos a esto? Si Dios es por nosotros, ¿quién contra nosotros?", "p": "Si Dios está de tu lado, ninguna oposición es la última palabra."},
+{"r": "Salmo 46:10", "t": "Estad quietos, y conoced que yo soy Dios; Seré exaltado entre las naciones; enaltecido seré en la tierra.", "p": "Detente un momento. Conocer a Dios empieza por callar y mirarlo a él."},
+{"r": "Mateo 11:29-30", "t": "Llevad mi yugo sobre vosotros, y aprended de mí, que soy manso y humilde de corazón; y hallaréis descanso para vuestras almas; porque mi yugo es fácil, y ligera mi carga.", "p": "Cristo invita a aprender de él. Su carga es ligera. ¿Cuál otra cargas tú?"},
+{"r": "1 Corintios 10:13", "t": "No os ha sobrevenido ninguna tentación que no sea humana; pero fiel es Dios, que no os dejará ser tentados más de lo que podéis resistir, sino que dará también juntamente con la tentación la salida, para que podáis soportar.", "p": "Junto a cada tentación, Dios pone una salida. Búscala."},
+{"r": "Isaías 26:3", "t": "Tú guardarás en completa paz a aquel cuyo pensamiento en ti persevera; porque en ti ha confiado.", "p": "La paz completa viene de mantener el pensamiento en Dios. ¿En qué está el tuyo?"},
+{"r": "Hebreos 13:8", "t": "Jesucristo es el mismo ayer, y hoy, y por los siglos.", "p": "Todo cambia, menos Cristo. Puedes apoyarte en él hoy."},
+{"r": "Salmo 34:18", "t": "Cercano está Jehová a los quebrantados de corazón; Y salva a los contritos de espíritu.", "p": "Cuando el corazón está roto, Jehová está cerca."},
+{"r": "Gálatas 6:9", "t": "No nos cansemos, pues, de hacer bien; porque a su tiempo segaremos, si no desmayamos.", "p": "La cosecha llega a su tiempo. No te canses de hacer el bien."},
+{"r": "Jeremías 33:3", "t": "Clama a mí, y yo te responderé, y te enseñaré cosas grandes y ocultas que tú no conoces.", "p": "Dios invita a clamar y promete responder. ¿Qué le vas a pedir hoy?"},
+{"r": "Jeremías 31:3", "t": "Jehová se manifestó a mí hace ya mucho tiempo, diciendo: Con amor eterno te he amado; por tanto, te prolongué mi misericordia.", "p": "Su amor no empezó contigo ni termina contigo: es eterno."},
+{"r": "1 Corintios 13:13", "t": "Y ahora permanecen la fe, la esperanza y el amor, estos tres; pero el mayor de ellos es el amor.", "p": "De todo lo que permanece, el mayor es el amor. ¿A quién se lo mostrarás hoy?"},
+{"r": "Salmo 51:10", "t": "Crea en mí, oh Dios, un corazón limpio, Y renueva un espíritu recto dentro de mí.", "p": "Un corazón limpio no se fabrica: se pide a Dios."},
+{"r": "1 Pedro 4:8", "t": "Y ante todo, tened entre vosotros ferviente amor; porque el amor cubrirá multitud de pecados.", "p": "Ante todo, amor. Pedro lo pone en primer lugar."},
+{"r": "Salmo 139:14", "t": "Te alabaré; porque formidables, maravillosas son tus obras; Estoy maravillado, Y mi alma lo sabe muy bien.", "p": "Tú también eres obra de sus manos. Alábalo por ello."},
+{"r": "Santiago 1:2-3", "t": "Hermanos míos, tened por sumo gozo cuando os halléis en diversas pruebas, sabiendo que la prueba de vuestra fe produce paciencia.", "p": "La prueba de la fe produce paciencia. ¿Qué te está enseñando la tuya?"},
+{"r": "Zacarías 4:6", "t": "Entonces respondió y me habló diciendo: Esta es palabra de Jehová a Zorobabel, que dice: No con ejército, ni con fuerza, sino con mi Espíritu, ha dicho Jehová de los ejércitos.", "p": "La obra de Dios no avanza con fuerza humana, sino con su Espíritu."},
+{"r": "Salmo 62:1", "t": "En Dios solamente está acallada mi alma; De él viene mi salvación.", "p": "Solo en Dios el alma encuentra calma."},
+{"r": "Filipenses 4:6-7", "t": "Por nada estéis afanosos, sino sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias. Y la paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones y vuestros pensamientos en Cristo Jesús.", "p": "Presenta tus peticiones con gratitud y su paz guardará tu corazón."},
+{"r": "Proverbios 17:17", "t": "En todo tiempo ama el amigo, Y es como un hermano en tiempo de angustia.", "p": "Un amigo ama en todo tiempo. ¿A quién le serás ese amigo hoy?"},
+{"r": "Josué 24:15", "t": "Y si mal os parece servir a Jehová, escogeos hoy a quién sirváis; si a los dioses a quienes sirvieron vuestros padres, cuando estuvieron al otro lado del río, o a los dioses de los amorreos en cuya tierra habitáis; pero yo y mi casa serviremos a Jehová.", "p": "Josué pidió elegir «hoy» y declaró su decisión. ¿Y la tuya?"},
+{"r": "Salmo 103:12", "t": "Cuanto está lejos el oriente del occidente, Hizo alejar de nosotros nuestras rebeliones.", "p": "Tan lejos como el oriente del occidente: así aleja Dios tus rebeliones."},
+{"r": "Salmo 94:19", "t": "En la multitud de mis pensamientos dentro de mí, Tus consolaciones alegraban mi alma.", "p": "Cuando los pensamientos se multiplican, sus consolaciones alegran."},
+{"r": "Miqueas 6:8", "t": "Oh hombre, él te ha declarado lo que es bueno, y qué pide Jehová de ti: solamente hacer justicia, y amar misericordia, y humillarte ante tu Dios.", "p": "Dios ya declaró lo que pide: justicia, misericordia y humildad."},
+{"r": "Salmo 34:1", "t": "Bendeciré a Jehová en todo tiempo; Su alabanza estará de continuo en mi boca.", "p": "«En todo tiempo»: también hoy, sea cual sea tu día."},
+{"r": "Salmo 100:4-5", "t": "Entrad por sus puertas con acción de gracias, Por sus atrios con alabanza; Alabadle, bendecid su nombre. Porque Jehová es bueno; para siempre es su misericordia, Y su verdad por todas las generaciones.", "p": "Se entra a su presencia con gratitud. ¿Por qué darás gracias hoy?"},
+{"r": "Salmo 23:1", "t": "Jehová es mi pastor; nada me faltará.", "p": "Si Jehová es tu pastor, nada te faltará. ¿De qué temerás hoy?"},
+{"r": "Isaías 41:13", "t": "Porque yo Jehová soy tu Dios, quien te sostiene de tu mano derecha, y te dice: No temas, yo te ayudo.", "p": "Él te toma de la mano y te dice: «No temas, yo te ayudo»."},
+{"r": "Hebreos 4:12", "t": "Porque la palabra de Dios es viva y eficaz, y más cortante que toda espada de dos filos; y penetra hasta partir el alma y el espíritu, las coyunturas y los tuétanos, y discierne los pensamientos y las intenciones del corazón.", "p": "La Palabra de Dios es viva y llega hasta lo más hondo. Léela hoy."},
+{"r": "Salmo 51:17", "t": "Los sacrificios de Dios son el espíritu quebrantado; Al corazón contrito y humillado no despreciarás tú, oh Dios.", "p": "Dios no desprecia al corazón contrito y humillado."},
+{"r": "Lucas 18:27", "t": "El les dijo: Lo que es imposible para los hombres, es posible para Dios.", "p": "Lo que a ti te parece imposible no lo es para Dios."},
+{"r": "Salmo 16:11", "t": "Me mostrarás la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "p": "La plenitud de gozo está en su presencia. ¿Dónde la buscas tú?"},
+{"r": "Juan 14:1", "t": "No se turbe vuestro corazón; creéis en Dios, creed también en mí.", "p": "Jesús responde a la turbación con una invitación: creer en él."},
+{"r": "2 Corintios 12:9", "t": "Y me ha dicho: Bástate mi gracia; porque mi poder se perfecciona en la debilidad. Por tanto, de buena gana me gloriaré más bien en mis debilidades, para que repose sobre mí el poder de Cristo.", "p": "Su gracia basta. Su poder se perfecciona justo donde eres débil."},
+{"r": "Proverbios 31:30", "t": "Engañosa es la gracia, y vana la hermosura; La mujer que teme a Jehová, ésa será alabada.", "p": "Lo que se alaba aquí no es la apariencia, sino el temor a Jehová."},
+{"r": "Salmo 42:1", "t": "Como el ciervo brama por las corrientes de las aguas, Así clama por ti, oh Dios, el alma mía.", "p": "El alma tiene sed de Dios. ¿Qué tanta sed traes hoy?"},
+{"r": "Gálatas 5:22-23", "t": "Mas el fruto del Espíritu es amor, gozo, paz, paciencia, benignidad, bondad, fe, mansedumbre, templanza; contra tales cosas no hay ley.", "p": "Nueve frutos, un solo Espíritu. ¿Cuál necesitas hoy?"},
+{"r": "Isaías 55:8-9", "t": "Porque mis pensamientos no son vuestros pensamientos, ni vuestros caminos mis caminos, dijo Jehová. Como son más altos los cielos que la tierra, así son mis caminos más altos que vuestros caminos, y mis pensamientos más que vuestros pensamientos.", "p": "Sus pensamientos y caminos son más altos que los nuestros. Confía aunque no entiendas."},
+{"r": "Mateo 5:3", "t": "Bienaventurados los pobres en espíritu, porque de ellos es el reino de los cielos.", "p": "El reino de los cielos es para los pobres en espíritu."},
+{"r": "Salmo 34:4", "t": "Busqué a Jehová, y él me oyó, Y me libró de todos mis temores.", "p": "Buscó a Jehová, y Jehová lo oyó. Búscalo con tus temores."},
+{"r": "Romanos 15:13", "t": "Y el Dios de esperanza os llene de todo gozo y paz en el creer, para que abundéis en esperanza por el poder del Espíritu Santo.", "p": "Gozo, paz y esperanza vienen del Dios de esperanza."},
+{"r": "Salmo 56:3", "t": "En el día que temo, Yo en ti confío.", "p": "El día que temes es el día de confiar en él."},
+{"r": "Juan 6:35", "t": "Jesús les dijo: Yo soy el pan de vida; el que a mí viene, nunca tendrá hambre; y el que en mí cree, no tendrá sed jamás.", "p": "Cristo es el pan de vida. ¿Con qué intentas saciarte?"},
+{"r": "Proverbios 18:10", "t": "Torre fuerte es el nombre de Jehová; A él correrá el justo, y será levantado.", "p": "El nombre de Jehová es una torre. Corre a ella cuando la necesites."},
+{"r": "Isaías 53:5", "t": "Mas él herido fue por nuestras rebeliones, molido por nuestros pecados; el castigo de nuestra paz fue sobre él, y por su llaga fuimos nosotros curados.", "p": "Fue herido por nuestras rebeliones. Esa es la razón de nuestra paz."},
+{"r": "Salmo 73:26", "t": "Mi carne y mi corazón desfallecen; Mas la roca de mi corazón y mi porción es Dios para siempre.", "p": "Cuando las fuerzas fallan, Dios sigue siendo tu roca y tu porción."},
+{"r": "Efesios 6:10", "t": "Por lo demás, hermanos míos, fortaleceos en el Señor, y en el poder de su fuerza.", "p": "La fortaleza se busca en el Señor y en el poder de su fuerza."},
+{"r": "Salmo 40:1-2", "t": "Pacientemente esperé a Jehová, Y se inclinó a mí, y oyó mi clamor. Y me hizo sacar del pozo de la desesperación, del lodo cenagoso; Puso mis pies sobre peña, y enderezó mis pasos.", "p": "Esperó, clamó y Jehová lo sacó del pozo. ¿Estás esperando?"},
+{"r": "Lucas 6:36", "t": "Sed, pues, misericordiosos, como también vuestro Padre es misericordioso.", "p": "Hoy, la medida de la misericordia es la del Padre."},
+{"r": "1 Pedro 2:24", "t": "quien llevó él mismo nuestros pecados en su cuerpo sobre el madero, para que nosotros, estando muertos a los pecados, vivamos a la justicia; y por cuya herida fuisteis sanados.", "p": "Cristo llevó nuestros pecados en su cuerpo, para que vivamos a la justicia."},
+{"r": "Salmo 130:3-4", "t": "JAH, si mirares a los pecados, ¿Quién, oh Señor, podrá mantenerse? Pero en ti hay perdón, Para que seas reverenciado.", "p": "Nadie podría sostenerse ante él por sí mismo, pero en él hay perdón."},
+{"r": "Santiago 4:7-8", "t": "Someteos, pues, a Dios; resistid al diablo, y huirá de vosotros. Acercaos a Dios, y él se acercará a vosotros. Pecadores, limpiad las manos; y vosotros los de doble ánimo, purificad vuestros corazones.", "p": "Acércate a Dios y él se acercará a ti."},
+{"r": "Mateo 16:24", "t": "Entonces Jesús dijo a sus discípulos: Si alguno quiere venir en pos de mí, niéguese a sí mismo, y tome su cruz, y sígame.", "p": "Seguir a Cristo implica negarse a uno mismo. ¿Qué te toca soltar hoy?"},
+{"r": "Salmo 25:4-5", "t": "Muéstrame, oh Jehová, tus caminos; Enséñame tus sendas. Encamíname en tu verdad, y enséñame, Porque tú eres el Dios de mi salvación; En ti he esperado todo el día.", "p": "Pídele que te muestre sus caminos y espéralo todo el día."},
+{"r": "Hebreos 10:23", "t": "Mantengamos firme, sin fluctuar, la profesión de nuestra esperanza, porque fiel es el que prometió.", "p": "Puedes mantenerte firme porque quien prometió es fiel."},
+{"r": "Lucas 15:7", "t": "Os digo que así habrá más gozo en el cielo por un pecador que se arrepiente, que por noventa y nueve justos que no necesitan de arrepentimiento.", "p": "El cielo se alegra cuando un pecador se arrepiente."},
+{"r": "Juan 11:25-26", "t": "Le dijo Jesús: Yo soy la resurrección y la vida; el que cree en mí, aunque esté muerto, vivirá. Y todo aquel que vive y cree en mí, no morirá eternamente. ¿Crees esto?", "p": "Cristo no solo da la resurrección: él es la resurrección y la vida. ¿Crees esto?"},
+{"r": "Salmo 121:7-8", "t": "Jehová te guardará de todo mal; El guardará tu alma. Jehová guardará tu salida y tu entrada Desde ahora y para siempre.", "p": "Jehová guarda tu entrada y tu salida, hoy y siempre."},
+{"r": "Juan 3:16", "t": "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.", "p": "Dios no dio lo que le sobraba: dio lo que más amaba. ¿Cómo respondes tú hoy?"},
+{"r": "Salmo 46:1", "t": "Dios es nuestro amparo y fortaleza, Nuestro pronto auxilio en las tribulaciones.", "p": "Cuando todo se mueve, él sigue firme. Acude a él primero."},
+{"r": "Salmo 34:8", "t": "Gustad, y ved que es bueno Jehová; Dichoso el hombre que confía en él.", "p": "Dios invita a confiar en él y llama dichoso a quien lo hace. ¿En qué le confiarás hoy?"},
+{"r": "Salmo 119:11", "t": "En mi corazón he guardado tus dichos, Para no pecar contra ti.", "p": "Guardar la Palabra en el corazón te protege. ¿Qué versículo aprenderás esta semana?"},
+{"r": "Proverbios 15:1", "t": "La blanda respuesta quita la ira; Mas la palabra áspera hace subir el furor.", "p": "Una respuesta amable apaga una pelea. Piensa en tu próxima conversación difícil."},
+{"r": "Isaías 41:10", "t": "No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te esfuerzo; siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia.", "p": "Dios no promete que no pasará nada: promete que está contigo."},
+{"r": "Jeremías 29:11", "t": "Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis.", "p": "Dios tiene planes de paz, aun cuando el camino se alargue."},
+{"r": "Deuteronomio 31:6", "t": "Esforzaos y cobrad ánimo; no temáis, ni tengáis miedo de ellos, porque Jehová tu Dios es el que va contigo; no te dejará, ni te desamparará.", "p": "Ser valiente es obedecer aunque tengas miedo, porque Dios va contigo."},
+{"r": "Mateo 5:16", "t": "Así alumbre vuestra luz delante de los hombres, para que vean vuestras buenas obras, y glorifiquen a vuestro Padre que está en los cielos.", "p": "Tus buenas obras no son para lucirte: son para que otros vean al Padre."},
+{"r": "Mateo 6:34", "t": "Así que, no os afanéis por el día de mañana, porque el día de mañana traerá su afán. Basta a cada día su propio mal.", "p": "El afán de mañana no te toca cargarlo hoy."},
+{"r": "Mateo 11:28", "t": "Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar.", "p": "Jesús no pide que llegues arreglado, sino cansado. Ven."},
+{"r": "Marcos 10:45", "t": "Porque el Hijo del Hombre no vino para ser servido, sino para servir, y para dar su vida en rescate por muchos.", "p": "Jesús vino a servir y a dar su vida: esa es la medida del amor."},
+{"r": "Juan 8:12", "t": "Otra vez Jesús les habló, diciendo: Yo soy la luz del mundo; el que me sigue, no andará en tinieblas, sino que tendrá la luz de la vida.", "p": "Seguir a Jesús es caminar con luz, no a tientas."},
+{"r": "Juan 10:11", "t": "Yo soy el buen pastor; el buen pastor su vida da por las ovejas.", "p": "El buen pastor da su vida por las ovejas. Eso hizo Jesús por ti."},
+{"r": "Juan 14:6", "t": "Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí.", "p": "Hay un solo camino al Padre, y es una persona: Jesús."},
+{"r": "Romanos 5:8", "t": "Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros.", "p": "Dios no esperó a que fueras mejor para amarte: murió por ti siendo aún pecador."},
+{"r": "Romanos 6:23", "t": "Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro.", "p": "El pecado paga con muerte; Dios regala vida eterna. Un regalo no se gana, se recibe."},
+{"r": "Romanos 8:1", "t": "Ahora, pues, ninguna condenación hay para los que están en Cristo Jesús, los que no andan conforme a la carne, sino conforme al Espíritu.", "p": "En Cristo, la condenación ya no es tu veredicto."},
+{"r": "Romanos 8:28", "t": "Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien, esto es, a los que conforme a su propósito son llamados.", "p": "Aun lo que duele, Dios puede usarlo para el bien de los que lo aman."},
+{"r": "Romanos 10:9", "t": "que si confesares con tu boca que Jesús es el Señor, y creyeres en tu corazón que Dios le levantó de los muertos, serás salvo.", "p": "La salvación empieza confesando a Jesús como Señor y creyendo que resucitó."},
+{"r": "2 Corintios 5:17", "t": "De modo que si alguno está en Cristo, nueva criatura es; las cosas viejas pasaron; he aquí todas son hechas nuevas.", "p": "En Cristo no eres una versión mejorada de ti: eres nuevo."},
+{"r": "Gálatas 6:2", "t": "Sobrellevad los unos las cargas de los otros, y cumplid así la ley de Cristo.", "p": "Llevar la carga de otro es cumplir la ley de Cristo. ¿Quién necesita tu ayuda hoy?"},
+{"r": "Efesios 2:8", "t": "Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios;", "p": "La salvación es un regalo: ni la ganas ni la compras."},
+{"r": "Efesios 4:32", "t": "Antes sed benignos unos con otros, misericordiosos, perdonándoos unos a otros, como Dios también os perdonó a vosotros en Cristo.", "p": "Perdona como fuiste perdonado. ¿A quién le debes un perdón hoy?"},
+{"r": "Filipenses 1:21", "t": "Porque para mí el vivir es Cristo, y el morir es ganancia.", "p": "Si Cristo es tu vida, ni la muerte te quita nada."},
+{"r": "Filipenses 4:6", "t": "Por nada estéis afanosos, sino sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias.", "p": "Cambia el afán por oración con gracias. ¿Por qué darás gracias hoy?"},
+{"r": "1 Tesalonicenses 5:18", "t": "Dad gracias en todo, porque esta es la voluntad de Dios para con vosotros en Cristo Jesús.", "p": "Dar gracias en todo: también cuando es difícil."},
+{"r": "Hebreos 11:1", "t": "Es, pues, la fe la certeza de lo que se espera, la convicción de lo que no se ve.", "p": "Fe es confiar en lo que Dios dijo, aunque todavía no lo veas."},
+{"r": "1 Pedro 5:7", "t": "echando toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros.", "p": "Tus preocupaciones no le pesan a Dios. Entrégaselas."},
+{"r": "1 Juan 1:9", "t": "Si confesamos nuestros pecados, él es fiel y justo para perdonar nuestros pecados, y limpiarnos de toda maldad.", "p": "Confesar no es humillarte: es volver a la luz, donde Dios perdona."}
 ];
+const VOTD_D={"01-01": "Lamentaciones 3:22-23", "01-02": "Isaías 43:18-19", "01-03": "Salmo 119:105", "01-04": "Josué 1:9", "01-05": "Proverbios 3:5-6", "01-06": "Mateo 6:33", "01-07": "Salmo 90:12", "01-08": "Filipenses 3:13-14", "01-09": "Salmo 1:1-2", "01-10": "Colosenses 3:17", "01-11": "Génesis 1:1", "01-12": "Hebreos 11:6", "01-13": "Salmo 37:5", "01-14": "Juan 15:5", "01-15": "Isaías 40:31", "01-16": "Salmo 143:8", "01-17": "Santiago 1:5", "01-18": "Proverbios 16:3", "01-19": "Romanos 12:2", "01-20": "Salmo 19:14", "01-21": "2 Timoteo 1:7", "01-22": "Salmo 27:14", "01-23": "Efesios 2:10", "01-24": "Éxodo 14:14", "01-25": "Salmo 121:1-2", "01-26": "Mateo 7:7", "01-27": "Deuteronomio 31:8", "01-28": "Colosenses 3:23", "01-29": "Salmo 118:24", "01-30": "Nehemías 8:10", "01-31": "Filipenses 4:13", "02-01": "Salmo 23:4", "02-02": "Juan 14:27", "02-03": "Proverbios 4:23", "02-04": "Romanos 8:31", "02-05": "Salmo 46:10", "02-06": "Mateo 11:29-30", "02-07": "1 Corintios 10:13", "02-08": "Isaías 26:3", "02-09": "Hebreos 13:8", "02-10": "Salmo 34:18", "02-11": "Gálatas 6:9", "02-12": "Jeremías 33:3", "02-13": "Jeremías 31:3", "02-14": "1 Corintios 13:13", "02-15": "Salmo 51:10", "02-16": "1 Pedro 4:8", "02-17": "Salmo 139:14", "02-18": "Santiago 1:2-3", "02-19": "Zacarías 4:6", "02-20": "Salmo 62:1", "02-21": "Filipenses 4:6-7", "02-22": "Proverbios 17:17", "02-23": "Josué 24:15", "02-24": "Salmo 103:12", "02-25": "Salmo 94:19", "02-26": "Miqueas 6:8", "02-27": "Salmo 34:1", "02-28": "Salmo 100:4-5", "02-29": "Salmo 23:1", "03-01": "Isaías 41:13", "03-02": "Hebreos 4:12", "03-03": "Salmo 51:17", "03-04": "Lucas 18:27", "03-05": "Salmo 16:11", "03-06": "Juan 14:1", "03-07": "2 Corintios 12:9", "03-08": "Proverbios 31:30", "03-09": "Salmo 42:1", "03-10": "Gálatas 5:22-23", "03-11": "Isaías 55:8-9", "03-12": "Mateo 5:3", "03-13": "Salmo 34:4", "03-14": "Romanos 15:13", "03-15": "Salmo 56:3", "03-16": "Juan 6:35", "03-17": "Proverbios 18:10", "03-18": "Isaías 53:5", "03-19": "Salmo 73:26", "03-20": "Efesios 6:10", "03-21": "Salmo 40:1-2", "03-22": "Lucas 6:36", "03-23": "1 Pedro 2:24", "03-24": "Salmo 130:3-4", "03-25": "Santiago 4:7-8", "03-26": "Mateo 16:24", "03-27": "Salmo 25:4-5", "03-28": "Hebreos 10:23", "03-29": "Lucas 15:7", "03-30": "Juan 11:25-26", "03-31": "Salmo 121:7-8"};
+
 /* Versículo plegable: la primera vez que se muestra en el día va completo; pasado un rato (o al volver) se pliega a una línea. Tocarlo lo abre. */
 let VOPEN=false;
 function vSeen(){
@@ -2925,7 +2848,14 @@ function vSeen(){
   if(!o||o.d!==t){o={d:t,ts:Date.now()};try{localStorage.setItem('lampy_vts',JSON.stringify(o));}catch(e){}return false;}
   return Date.now()-o.ts>45000;
 }
-function votd(){let h=0;for(const ch of today())h=(h*31+ch.charCodeAt(0))>>>0;return VOTD[h%VOTD.length];}
+function votd(){
+  const d=today(),r=VOTD_D[d.slice(5,10)];
+  if(r){const v=VOTD.find(x=>x.r===r);if(v)return v;}
+  const fb=VOTD.filter(x=>!Object.values(VOTD_D).includes(x.r));
+  const y=+d.slice(0,4),m=+d.slice(5,7),dd=+d.slice(8,10);
+  const n=Math.floor((Date.UTC(y,m-1,dd)-Date.UTC(y,0,0))/864e5);
+  return fb[n%fb.length];
+}
 
 const GK_DICT=[
 {
